@@ -2,6 +2,8 @@ import * as React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
+import ReservationPage from './pages/Reservation';
+import Navigation from './layout/Naviagation'
 
 export interface IAppProps {
 }
@@ -9,10 +11,15 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<HomePage />}/>
-        <Route path='login' element={<LoginPage />}/>
-      </Routes>
+      <Navigation>
+        <Routes>
+          <Route path='/' element={<HomePage />} />
+          <Route path='login' element={<LoginPage />} />
+          <Route path='reservation' element={<ReservationPage />} />
+          <Route path='topics' element={<ReservationPage />} />
+          <Route path='my' element={<ReservationPage />} />
+        </Routes>
+      </Navigation>
     </BrowserRouter>
   );
 }
