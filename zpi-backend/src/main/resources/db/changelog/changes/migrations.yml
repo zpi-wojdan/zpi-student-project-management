@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - createTable:
+            tableName: student
+            columns:
+              - column:
+                  name: mail
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: surname
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: index
+                  type: CHAR(6)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: program
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: teaching_cycle
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: stage
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: admission_date
+                  type: DATE
+                  constraints:
+                    nullable: true
+              - column:
+                  name: role
+                  type: VARCHAR(30)
+
+        - createTable:
+            tableName: employee
+            columns:
+              - column:
+                  name: mail
+                  type: VARCHAR(50)
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: surname
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: title
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: role
+                  type: VARCHAR(30)
+              - column:
+                  name: department_symbol
+                  type: VARCHAR(10)
+                  constraints:
+                    nullable: true
