@@ -2,14 +2,15 @@ import pandas as pd
 from datetime import datetime
 
 
-# Custom date parser
-# def date_parser(date_str):
-#     try:
-#         # Parse the date using the specified format
-#         return datetime.strptime(str(date_str), "%d.%m.%y")
-#     except ValueError:
-#         # If parsing fails, return the original string
-#         return date_str
+def capitalize_surname(surname):
+    # Check if the input is NaN
+    if pd.notna(surname):
+        words = surname.split('-')
+        words = [word.capitalize() for word in words]
+        return '-'.join(words)
+    else:
+        return surname 
+
 
 
 def read_file(file_path):
@@ -33,11 +34,18 @@ def read_file(file_path):
         #   format datetime columns to string in the desired format
         df['DATA_PRZYJECIA'] = df['DATA_PRZYJECIA'].dt.strftime("%d.%m.%y")
         df['DATA_ROZPOCZECIA'] = df['DATA_ROZPOCZECIA'].dt.strftime("%d.%m.%y")
+
+        df['NAZWISKO'] = df['NAZWISKO'].apply(capitalize_surname)
+        df['IMIE'] = df['IMIE'].str.capitalize()
+        df['PROGRAM'] = df['PROGRAM'].str.upper()
+        df['CYKL_DYDAKTYCZNY'] = df['CYKL_DYDAKTYCZNY'].str.upper()
+        df['STATUS'] = df['STATUS'].str.upper()
+        df['ETAP'] = df['ETAP'].str.upper()
         
         #   picking invalid rows from the original dataframe through regex expressions
         invalid_index_rows = df[~df["INDEKS"].astype(str).str.match(r'^\d{6}$')]
-        invalid_surname_rows = df[~df["NAZWISKO"].astype(str).str.match(r'^[A-Z][a-z]{0,10}$')]
-        invalid_name_rows = df[~df["IMIE"].astype(str).str.match(r'^[A-Z][a-z]{0,10}$')]
+        invalid_surname_rows = df[~df["NAZWISKO"].astype(str).str.match(r'^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s-]{0,50}$')]
+        invalid_name_rows = df[~df["IMIE"].astype(str).str.match(r'^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s-]{0,50}$')]
         invalid_program_rows = df[~df["PROGRAM"].astype(str).str.match(r"^[A-Z0-9]{1,5}-[A-Z]{1,5}-[A-Z0-9]{1,5}-[A-Z0-9]{1,6}$")]
         invalid_teaching_cycle_rows = df[~df["CYKL_DYDAKTYCZNY"].astype(str).str.match(r"^\d{4}/\d{2}-[A-Z]{1,3}$")]
         invalid_status_rows = df[~df["STATUS"].astype(str).str.match(r"^[A-Z]{1,5}$")]
@@ -47,6 +55,7 @@ def read_file(file_path):
 
         #   filtering the original dataframe based on the lists with invalid rows
         df_valid = df[~df.index.isin(invalid_index_rows.index)]
+        df_valid = df_valid[~df_valid.index.isin(invalid_surname_rows.index)]
         df_valid = df_valid[~df_valid.index.isin(invalid_name_rows.index)]
         df_valid = df_valid[~df_valid.index.isin(invalid_program_rows.index)]
         df_valid = df_valid[~df_valid.index.isin(invalid_teaching_cycle_rows.index)]
