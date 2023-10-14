@@ -73,7 +73,7 @@ def read_file(file_path):
         raise ValueError("Error parsing the file. Please check the file format and structure.") from e
 
 def main():
-    file_path = "ZPI_dane.xlsx" 
+    file_path = "src/test/resources/ZPI_dane.xlsx" 
     try:
         df_valid, invalid_index_rows, invalid_surname_rows,\
             invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\

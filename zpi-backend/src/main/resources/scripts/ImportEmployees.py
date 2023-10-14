@@ -78,7 +78,7 @@ def read_file(file_path):
         raise ValueError("Error parsing the file. Please check the file format and structure.") from e
 
 def main():
-    file_path = "pracownicy-1.xlsx" 
+    file_path = "src/test/resources/pracownicy-1.xlsx" 
     try:
         df_valid, invalid_index_rows, invalid_academic_title_rows,\
             invalid_surname_rows, invalid_name_rows, invalid_unit_rows,\
