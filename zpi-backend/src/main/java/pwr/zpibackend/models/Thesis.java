@@ -17,6 +17,8 @@ public class Thesis {
     private String nameEN;
     private String description;
     private Integer num_people;
+    @JoinColumn(name = "employee" , referencedColumnName = "emp_id")
+    @OneToOne
     private Employee supervisor;
     private String faculty; //change String to Faculty when table exist
     private String field; //change String to Field when table exist
