@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: postgres
+      author: Kuba
       changes:
         - createTable:
             tableName: student
@@ -81,3 +81,17 @@ databaseChangeLog:
                   type: VARCHAR(10)
                   constraints:
                     nullable: true
+
+  - changeSet:
+      id: 2
+      author: Kuba
+      changes:
+        - addColumn:
+            tableName: student
+            columns:
+              - column:
+                  name: status
+                  type: VARCHAR(5)
+                  constraints:
+                    nullable: false
+
