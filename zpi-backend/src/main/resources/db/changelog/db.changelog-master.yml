@@ -1,0 +1,7 @@
+#databaseChangeLog:
+#  - include:
+#      file: classpath:/db/changelog/changes/migrations.yml
+
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/migrations.yml
