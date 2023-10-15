@@ -7,20 +7,20 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "employee")
-public class Employee {
+@Table(name = "person")
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "emp_id")
+    @Column(name = "person_id")
     private long Id;
 
     private String name;
 
-    public Employee() {
+    public Person() {
     }
 
-    public Employee(String name) {
+    public Person(String name) {
         this.name = name;
     }
 
