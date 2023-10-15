@@ -28,4 +28,10 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<Thesis> addThesis(@RequestBody Thesis thesis)
+    {
+        return new ResponseEntity<>(thesisService.addThesis(thesis), HttpStatus.CREATED);
+    }
+
 }
