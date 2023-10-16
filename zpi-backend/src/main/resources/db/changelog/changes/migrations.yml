@@ -95,3 +95,30 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+  - changeSet:
+      id: 3
+      author: Kuba
+      changes:
+        - createTable:
+            tableName: uploaded_files
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_data
+                  type: BYTEA
+                  constraints:
+                    nullable: false
+
+
+
