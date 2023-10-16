@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+import json
 
 
 def capitalize_surname(surname):
@@ -71,6 +72,43 @@ def read_file(file_path):
                 invalid_start_date_rows, invalid_stage_rows
     except pd.errors.ParserError as e:
         raise ValueError("Error parsing the file. Please check the file format and structure.") from e
+    
+
+def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
+                invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
+                invalid_status_rows, invalid_admission_date_rows,\
+                invalid_start_date_rows, invalid_stage_rows):
+    try:
+        df_valid_json = df_valid.to_json(orient='records')
+        invalid_index_json = invalid_index_rows.to_json(orient='records')
+        invalid_surname_json = invalid_surname_rows.to_json(orient='records')
+        invalid_name_json = invalid_name_rows.to_json(orient='records')
+        invalid_program_json = invalid_program_rows.to_json(orient='records')
+        invalid_teaching_cycle_json = invalid_teaching_cycle_rows.to_json(orient='records')
+        invalid_status_json = invalid_status_rows.to_json(orient='records')
+        invalid_admission_date_json = invalid_admission_date_rows.to_json(orient='records')
+        invalid_start_date_json = invalid_start_date_rows.to_json(orient='records')
+        invalid_stage_json = invalid_stage_rows.to_json(orient='records')
+
+        full_json = {
+            'valid_data': json.loads(df_valid_json),
+            'invalid_indices': json.loads(invalid_index_json),
+            'invalid_surnames': json.loads(invalid_surname_json),
+            'invalid_names': json.loads(invalid_name_json),
+            'invalid_programs': json.loads(invalid_program_json),
+            'invalid_teaching_cycles': json.loads(invalid_teaching_cycle_json),
+            'invalid_statuses': json.loads(invalid_status_json),
+            'invalid_admission_dates': json.loads(invalid_admission_date_json),
+            'invalid_start_dates': json.loads(invalid_start_date_json),
+            'invalid_stages': json.loads(invalid_stage_json)
+        }
+
+        output = json.dumps(full_json, indent=3, allow_nan=True)
+        return output 
+    except json.JSONDecodeError as jserr:
+        print(f"Error occured while decoding JSON: {str(jserr)}")
+
+
 
 def main():
     file_path = "src/test/resources/ZPI_dane.xlsx" 
@@ -79,27 +117,11 @@ def main():
             invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
             invalid_status_rows, invalid_admission_date_rows,\
             invalid_start_date_rows, invalid_stage_rows  = read_file(file_path)
-
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - valid\n")
-        print(df_valid) 
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid indexes\n")
-        print(invalid_index_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid surnames\n")
-        print(invalid_surname_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid names\n")
-        print(invalid_name_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid programs\n")
-        print(invalid_program_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid teaching cycles\n")
-        print(invalid_teaching_cycle_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid status rows\n")
-        print(invalid_status_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid admission dates\n")
-        print(invalid_admission_date_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid start dates\n")
-        print(invalid_start_date_rows)
-        print ("\n- - - - - - - - - - - - - - -\nDataframe - invalid stage rows\n")
-        print(invalid_stage_rows)
+        
+        dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
+            invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
+            invalid_status_rows, invalid_admission_date_rows,\
+            invalid_start_date_rows, invalid_stage_rows)
 
     except ValueError as e:
         print(f"Error: {str(e)}")
