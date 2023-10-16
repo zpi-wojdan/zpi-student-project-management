@@ -10,7 +10,7 @@ const Naviagation = ({ children }: NavigationProps) => {
 
     return (
         <>
-            <div className='container-fluid'>
+            <div className='container-fluid p-0'>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light p-0">
                     <div className="container">
                         <div className="me-auto"></div>
@@ -36,7 +36,7 @@ const Naviagation = ({ children }: NavigationProps) => {
             <img
                 src="logo-pwr-2016/logo PWr kolor poziom ang  bez tla.png"
                 alt="Logo Politechniki Wrocławskiej"
-                className='w-25 my-2'
+                className='w-25 my-3 ps-4 pe-5'
             />
             <div className='container'>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
