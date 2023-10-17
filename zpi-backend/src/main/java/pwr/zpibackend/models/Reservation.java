@@ -14,7 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(generator = "reservation_seq", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "reservation_seq", sequenceName = "reservation_seq", allocationSize = 1)
     private long Id;
     @Column(name = "is_confirmed_by_leader")
     private boolean isConfirmedByLeader;
@@ -24,10 +25,10 @@ public class Reservation {
     private boolean isReadyForApproval;
     @Column(name = "reservation_date")
     private LocalDate reservationDate;
-
-//    @JoinColumn(name = "mail", referencedColumnName = "mail")
-//    private Student student;
-    @JoinColumn(name = "thesis_id", referencedColumnName = "the_id")
+    @JoinColumn(name = "mail", referencedColumnName = "mail")
+    @OneToOne
+    private Student student;
+    @JoinColumn(name = "thesis_id", referencedColumnName = "thesis_id")
     @ManyToOne
     private Thesis thesis;
 }

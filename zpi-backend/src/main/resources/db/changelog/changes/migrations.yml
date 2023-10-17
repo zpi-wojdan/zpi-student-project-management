@@ -191,4 +191,61 @@ databaseChangeLog:
                       referencedTableName: employee
                       referencedColumnNames: mail
 
+  - changeSet:
+      id: 4
+      author: Piotr
+      changes:
+        - createTable:
+            tableName: reservation
+            columns:
+              - column:
+                  name: id
+                  type: integer(10)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: mail
+                  type: varchar(255)
+                  constraints:
+                    foreignKeyName: fk_reservations_students
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: thesis_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_reservations_thesis
+                    referencedTableName: thesis
+                    referencedColumnNames: thesis_id
+                    nullable: false
+              - column:
+                  name: is_confirmed_by_leader
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_confirmed_by_supervisor
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_ready_for_approval
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: reservation_date
+                  type: date
 
+  - changeSet:
+      id: 5
+      author: Piotr
+      changes:
+        - createSequence:
+            sequenceName: reservation_seq
+            incrementBy: 1
+            startValue: 1
+            minValue: 1
+            maxValue: 2147483647
+            cycle: false
+            dataType: bigint
+            ownedByTable: reservation
