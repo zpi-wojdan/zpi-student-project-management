@@ -1,4 +1,5 @@
 import {useEffect} from "react";
+import {Col, Container, Row} from "react-bootstrap";
 
 const LoginPage = () => {
 
@@ -27,15 +28,27 @@ const LoginPage = () => {
 
     return (
         <div className="login page">
-            <div className="login-panel-container">
-                <div className="login-panel">
-                    <h2>Witaj w systemie logowania</h2>
-                    <div id="sign-in-prompt">
-                        <p>Kliknij przycisk poniżej, aby zalogować się za pomocą uczelnianego adresu email</p>
-                    </div>
-                    <div id="sign-in-button"></div>
-                </div>
-            </div>
+            <Container>
+                <Row>
+                    <Col md={6}>
+                        <div className="container">
+                            <h2>Witaj w systemie logowania</h2>
+                            <div id="sign-in-prompt">
+                                <p>Kliknij przycisk poniżej, aby zalogować się za pomocą uczelnianego adresu email.</p>
+                            </div>
+                            <div id="sign-in-button"></div>
+                        </div>
+                    </Col>
+                    <Col md={6} className="d-none d-md-block">
+                        <div className="login-image">
+                            <img
+                                src="images/login-img.JPG"
+                                alt="Budynek A1 z logo PWr"
+                            />
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
         </div>
     );
 }
