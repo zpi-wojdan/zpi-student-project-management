@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: create_table_student_and_employee
       author: Kuba
       changes:
         - createTable:
@@ -83,7 +83,7 @@ databaseChangeLog:
                     nullable: true
 
   - changeSet:
-      id: 2
+      id: alter_table_student_add_status
       author: Kuba
       changes:
         - addColumn:
@@ -96,7 +96,7 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
-      id: 3
+      id: alter_table_employee_and_student_and_create_table_thesis
       author: Kuba
       changes:
         - addNotNullConstraint:
@@ -192,7 +192,7 @@ databaseChangeLog:
                       referencedColumnNames: mail
 
   - changeSet:
-      id: 4
+      id: create_table_reservation
       author: Piotr
       changes:
         - createTable:
@@ -237,7 +237,7 @@ databaseChangeLog:
                   type: date
 
   - changeSet:
-      id: 5
+      id: create_sequence_reservation
       author: Piotr
       changes:
         - createSequence:
