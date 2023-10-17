@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-//import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +14,14 @@ import lombok.NoArgsConstructor;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "emp_id")
-    private long Id;
-
+    private String mail;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String surname;
+
+    private String role;    //  change String to Role when table exist
+    private String department_symbol;
+    private String title;   //  change String to Title when table exist
+
 }

@@ -6,5 +6,5 @@ import pwr.zpibackend.models.Employee;
 
 
 @RepositoryRestResource
-public interface EmployeeRepository extends JpaRepository<Employee, Long>{ }
+public interface EmployeeRepository extends JpaRepository<Employee, String>{ }
 
