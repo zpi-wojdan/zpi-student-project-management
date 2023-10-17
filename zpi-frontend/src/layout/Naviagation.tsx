@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import {Link, NavLink, useLocation} from 'react-router-dom'
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -7,6 +7,8 @@ type NavigationProps = {} & {
 
 const Naviagation = ({ children }: NavigationProps) => {
     const [showNav, setShowNav] = useState(false);
+    const location = useLocation();
+    const isLoginPage = location.pathname === '/login';
 
     return (
         <>
@@ -34,11 +36,12 @@ const Naviagation = ({ children }: NavigationProps) => {
                 </nav>
             </div>
             <img
-                src="logo-pwr-2016/logo PWr kolor poziom ang  bez tla.png"
+                src="images/logo-pwr-2016/logo PWr kolor poziom ang  bez tla.png"
                 alt="Logo Politechniki Wrocławskiej"
                 className='w-25 my-3 ps-4 pe-5'
             />
             <div className='container'>
+            <div className={`container p-0 ${isLoginPage ? 'd-none' : ''}`}>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <div className="container">
                         <Link className="navbar-brand" to="/">ZPI Helper</Link>
@@ -61,6 +64,7 @@ const Naviagation = ({ children }: NavigationProps) => {
                         </div>
                     </div>
                 </nav>
+            </div>
                 {children}
             </div>
         </>
