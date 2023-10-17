@@ -19,7 +19,7 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployee(Long id) {
+    public Employee getEmployee(String id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         return employee.orElse(null);
     }

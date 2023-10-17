@@ -42,22 +42,9 @@ public class ThesisController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Thesis> updateThesis(@PathVariable Long id, @RequestBody ObjectNode json) {
-        if (!json.has("namePL") || !json.has("nameEN") || !json.has("description") || !json.has("num_people") ||
-                !json.has("supervisorId") || !json.has("faculty") || !json.has("field") || !json.has("edu_cycle")) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Thesis> updateThesis(@PathVariable Long id, @RequestBody Thesis param) {
         try{
-            Long supervisorId = json.get("supervisorId").asLong();
-            Employee supervisor = employeeService.getEmployee(supervisorId);
-            if (supervisor == null) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            Thesis thesis = thesisService.updateThesis(id, json.get("namePL").asText(), json.get("nameEN").asText(),
-                    json.get("description").asText(), json.get("num_people").asInt(), supervisor,
-                    json.get("faculty").asText(), json.get("field").asText(), json.get("edu_cycle").asText());
-            return new ResponseEntity<>(thesis, HttpStatus.OK);
+            return new ResponseEntity<>(thesisService.updateThesis(id, param), HttpStatus.OK);
         }
         catch(NotFoundException err){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
