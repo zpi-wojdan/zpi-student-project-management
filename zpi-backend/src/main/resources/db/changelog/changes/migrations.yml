@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: create_table_student_and_employee
       author: Kuba
       changes:
         - createTable:
@@ -83,7 +83,7 @@ databaseChangeLog:
                     nullable: true
 
   - changeSet:
-      id: 2
+      id: alter_table_student_add_status
       author: Kuba
       changes:
         - addColumn:
@@ -96,7 +96,7 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
-      id: 3
+      id: alter_table_employee_and_student_and_create_table_thesis
       author: Kuba
       changes:
         - addNotNullConstraint:
@@ -192,6 +192,65 @@ databaseChangeLog:
                       referencedColumnNames: mail
 
   - changeSet:
+      id: create_table_reservation
+      author: Piotr
+      changes:
+        - createTable:
+            tableName: reservation
+            columns:
+              - column:
+                  name: id
+                  type: integer(10)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: mail
+                  type: varchar(255)
+                  constraints:
+                    foreignKeyName: fk_reservations_students
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: thesis_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_reservations_thesis
+                    referencedTableName: thesis
+                    referencedColumnNames: thesis_id
+                    nullable: false
+              - column:
+                  name: is_confirmed_by_leader
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_confirmed_by_supervisor
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_ready_for_approval
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: reservation_date
+                  type: date
+
+  - changeSet:
+      id: create_sequence_reservation
+      author: Piotr
+      changes:
+        - createSequence:
+            sequenceName: reservation_seq
+            incrementBy: 1
+            startValue: 1
+            minValue: 1
+            maxValue: 2147483647
+            cycle: false
+            dataType: bigint
+            ownedByTable: reservation
+            
+  - changeSet:
       id: alter_table_thesis_name_length
       author: Marta
       changes:
@@ -203,4 +262,3 @@ databaseChangeLog:
               tableName: thesis
               columnName: name_en
               newDataType: VARCHAR(200)
-
