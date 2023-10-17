@@ -6,6 +6,7 @@ import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.repositories.EmployeeRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -17,8 +18,9 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployee(Long id) {
-        return employeeRepository.findById(id).get();
+    public Employee getEmployee(String id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        return employee.orElse(null);
     }
 
     public Employee addEmployee(Employee employee)
