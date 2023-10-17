@@ -2,7 +2,6 @@ package pwr.zpibackend.controllers;
 
 
 import org.apache.commons.collections4.IterableUtils;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,18 +15,20 @@ import pwr.zpibackend.utils.ResponseMessage;
 import java.util.List;
 
 @RestController
-@CrossOrigin("http://localhost:8080")
+@RequestMapping("/file")
 public class FileUploadController {
 
     @Autowired
     private FileUploadService service;
 
-    @PostMapping("/uploadFile")
+    @PostMapping
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file){
         String mess = "";
+        System.out.println("I'm in file upload controller");
         try{
             service.storeFile(file);
             mess = "The file was uploaded successfully - " + file.getOriginalFilename();
+            System.out.println("Should have been saved - controller");
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(mess));
         }
         catch(Exception err){
@@ -36,7 +37,7 @@ public class FileUploadController {
         }
     }
 
-    @GetMapping("/files/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable Long id){
         try{
             UploadedFile file = service.getFile(id);
@@ -49,7 +50,7 @@ public class FileUploadController {
         }
     }
 
-    @GetMapping("/files")
+    @GetMapping
     public ResponseEntity<List<UploadedFile>> getAllFiles(){
         try{
             List<UploadedFile> files = IterableUtils.toList(service.getAllFiles());
