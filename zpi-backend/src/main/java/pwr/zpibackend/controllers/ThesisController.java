@@ -1,13 +1,10 @@
 package pwr.zpibackend.controllers;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Thesis;
-import pwr.zpibackend.repositories.EmployeeRepository;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.ThesisService;
 

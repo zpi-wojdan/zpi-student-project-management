@@ -1,7 +1,6 @@
 package pwr.zpibackend.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;

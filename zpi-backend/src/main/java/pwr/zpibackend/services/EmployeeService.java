@@ -3,7 +3,6 @@ package pwr.zpibackend.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.repositories.EmployeeRepository;
 
 import java.util.List;
