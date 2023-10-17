@@ -249,3 +249,16 @@ databaseChangeLog:
             cycle: false
             dataType: bigint
             ownedByTable: reservation
+            
+  - changeSet:
+      id: alter_table_thesis_name_length
+      author: Marta
+      changes:
+          - modifyDataType:
+              tableName: thesis
+              columnName: name_pl
+              newDataType: VARCHAR(200)
+          - modifyDataType:
+              tableName: thesis
+              columnName: name_en
+              newDataType: VARCHAR(200)
