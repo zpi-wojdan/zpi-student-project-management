@@ -16,3 +16,7 @@ code {
   background-color: #9A342D;
   color: white;
 }
+
+#sign-in-button {
+  width: 20%;
+}
