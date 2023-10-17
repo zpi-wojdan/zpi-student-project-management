@@ -99,26 +99,96 @@ databaseChangeLog:
       id: 3
       author: Kuba
       changes:
+        - addNotNullConstraint:
+            tableName: employee
+            columnDataType: VARCHAR(50)
+            columnName: name
+        - addNotNullConstraint:
+            tableName: employee
+            columnDataType: VARCHAR(50)
+            columnName: surname
+
+        - addNotNullConstraint:
+            tableName: student
+            columnDataType: VARCHAR(50)
+            columnName: name
+        - addNotNullConstraint:
+            tableName: student
+            columnDataType: VARCHAR(50)
+            columnName: surname
+        - addNotNullConstraint:
+            tableName: student
+            columnDataType: CHAR(6)
+            columnName: index
+        - addNotNullConstraint:
+            tableName: student
+            columnDataType: VARCHAR(50)
+            columnName: program
+        - addNotNullConstraint:
+            tableName: student
+            columnDataType: VARCHAR(50)
+            columnName: teaching_cycle
+        - addNotNullConstraint:
+            tableName: student
+            columnDataType: VARCHAR(30)
+            columnName: role
+
         - createTable:
-            tableName: uploaded_files
+            tableName: thesis
             columns:
               - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
+                    name: thesis_id
+                    type: BIGINT
+                    constraints:
+                      primaryKey: true
+                      nullable: false
               - column:
-                  name: file_name
+                  name: name_pl
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
               - column:
-                  name: file_data
-                  type: BYTEA
+                  name: name_en
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
-
+              - column:
+                    name: description
+                    type: VARCHAR(1000)
+                    constraints:
+                        nullable: false
+              - column:
+                  name: num_people
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                    name: faculty
+                    type: VARCHAR(50)
+                    constraints:
+                        nullable: false
+              - column:
+                    name: field
+                    type: VARCHAR(50)
+                    constraints:
+                        nullable: false
+              - column:
+                  name: edu_cycle
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: supervisor
+                  type: VARCHAR(50)
+                  constraints:
+                      nullable: false
+                      foreignKeyName: supervisor_fk
+                      referencedTableName: employee
+                      referencedColumnNames: mail
 
 
