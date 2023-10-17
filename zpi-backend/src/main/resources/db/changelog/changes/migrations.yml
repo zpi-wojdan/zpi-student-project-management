@@ -50,37 +50,37 @@ databaseChangeLog:
                   name: role
                   type: VARCHAR(30)
 
-        - createTable:
-            tableName: employee
-            columns:
-              - column:
-                  name: mail
-                  type: VARCHAR(50)
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: name
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: surname
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: title
-                  type: VARCHAR(30)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: role
-                  type: VARCHAR(30)
-              - column:
-                  name: department_symbol
-                  type: VARCHAR(10)
-                  constraints:
-                    nullable: true
+#        - createTable:
+#            tableName: employee
+#            columns:
+#              - column:
+#                  name: mail
+#                  type: VARCHAR(50)
+#                  constraints:
+#                    primaryKey: true
+#              - column:
+#                  name: name
+#                  type: VARCHAR(50)
+#                  constraints:
+#                    nullable: true
+#              - column:
+#                  name: surname
+#                  type: VARCHAR(50)
+#                  constraints:
+#                    nullable: true
+#              - column:
+#                  name: title
+#                  type: VARCHAR(30)
+#                  constraints:
+#                    nullable: true
+#              - column:
+#                  name: role
+#                  type: VARCHAR(30)
+#              - column:
+#                  name: department_symbol
+#                  type: VARCHAR(10)
+#                  constraints:
+#                    nullable: true
 
   - changeSet:
       id: 2
@@ -95,3 +95,47 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+  - changeSet:
+      id: 3
+      author: Piotr
+      changes:
+        - createTable:
+            tableName: reservations
+            columns:
+              - column:
+                  name: id
+                  type: integer(10)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: mail
+                  type: varchar(255)
+                  constraints:
+                    foreignKeyName: fk_reservations_students
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: thesis_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_reservations_thesis
+                    referencedTableName: thesis
+                    referencedColumnNames: the_id
+                    nullable: false
+              - column:
+                  name: is_confirmed_by_leader
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_confirmed_by_supervisor
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_ready_for_approval
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: reservation_date
+                  type: date
