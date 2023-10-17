@@ -69,3 +69,15 @@ VALUES
     ('sophia.wells@pwr.edu.pl', 'Sophia', 'Wells', 'dr hab.', 'teacher', 'K34W04ND03'),
     ('william.rose@pwr.edu.pl', 'William', 'Rose', 'prof', 'teacher', 'K34W04ND03'),
     ('ava.chapman@pwr.edu.pl', 'Ava', 'Chapman', 'mgr', 'teacher', 'K34W04ND03');
+
+INSERT INTO Thesis (name_pl, name_en, description, num_people, supervisor, faculty, field, edu_cycle)
+VALUES
+    ('Thesis1_PL', 'Thesis1_EN', 'Description1', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'john.doe@pwr.edu.pl'), 'Faculty1', 'Field1', 'EduCycle1'),
+    ('Thesis2_PL', 'Thesis2_EN', 'Description2', 3, (SELECT e.mail FROM Employee e WHERE e.mail = 'alice.smith@pwr.edu.pl'), 'Faculty2', 'Field2', 'EduCycle2'),
+    ('Thesis3_PL', 'Thesis3_EN', 'Description3', 2, (SELECT e.mail FROM Employee e WHERE e.mail = 'michael.johnson@pwr.edu.pl'), 'Faculty3', 'Field3', 'EduCycle3'),
+    ('Thesis4_PL', 'Thesis4_EN', 'Description4', 4, (SELECT e.mail FROM Employee e WHERE e.mail = 'sarah.williams@pwr.edu.pl'), 'Faculty4', 'Field4', 'EduCycle4'),
+    ('Thesis5_PL', 'Thesis5_EN', 'Description5', 1, (SELECT e.mail FROM Employee e WHERE e.mail = 'david.brown@pwr.edu.pl'), 'Faculty5', 'Field5', 'EduCycle5'),
+    ('Thesis6_PL', 'Thesis6_EN', 'Description6', 2, (SELECT e.mail FROM Employee e WHERE e.mail = 'jennifer.lee@pwr.edu.pl'), 'Faculty6', 'Field6', 'EduCycle6'),
+    ('Thesis7_PL', 'Thesis7_EN', 'Description7', 3, (SELECT e.mail FROM Employee e WHERE e.mail = 'christopher.taylor@pwr.edu.pl'), 'Faculty7', 'Field7', 'EduCycle7'),
+    ('Thesis8_PL', 'Thesis8_EN', 'Description8', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'jessica.harris@pwr.edu.pl'), 'Faculty8', 'Field8', 'EduCycle8'),
+    ('Thesis9_PL', 'Thesis9_EN', 'Description9', 4, (SELECT e.mail FROM Employee e WHERE e.mail = 'john.doe@pwr.edu.pl'), 'Faculty9', 'Field9', 'EduCycle9');

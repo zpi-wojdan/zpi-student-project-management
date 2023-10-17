@@ -3,9 +3,11 @@ package pwr.zpibackend.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.repositories.EmployeeRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -18,7 +20,8 @@ public class EmployeeService {
     }
 
     public Employee getEmployee(Long id) {
-        return employeeRepository.findById(id).get();
+        Optional<Employee> employee = employeeRepository.findById(id);
+        return employee.orElse(null);
     }
 
     public Employee addEmployee(Employee employee)
