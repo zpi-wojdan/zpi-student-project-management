@@ -16,7 +16,7 @@ public class UploadedFile {
     @GeneratedValue(generator = "file_seq", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "file_seq", sequenceName = "file_seq", allocationSize = 1)
     private Long id;
+
     private String fileName;
-    @Lob
     private byte[] fileData;
 }

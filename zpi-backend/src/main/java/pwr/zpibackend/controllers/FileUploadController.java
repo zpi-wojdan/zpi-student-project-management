@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pwr.zpibackend.models.UploadedFile;
 import pwr.zpibackend.services.FileUploadService;
-import pwr.zpibackend.utils.ResponseMessage;
 
 import java.util.List;
 
@@ -22,28 +21,26 @@ public class FileUploadController {
     private FileUploadService service;
 
     @PostMapping
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         System.out.println("I'm in file upload controller");
         try{
             service.storeFile(file);
             mess = "The file was uploaded successfully - " + file.getOriginalFilename();
             System.out.println("Should have been saved - controller");
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(mess));
+            return ResponseEntity.status(HttpStatus.OK).body(mess);
         }
         catch(Exception err){
             mess = "Could not upload the file - " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(mess));
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable Long id){
+    public ResponseEntity<UploadedFile> getFile(@PathVariable Long id){
         try{
             UploadedFile file = service.getFile(id);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"" )
-                    .body(file.getFileData());
+            return ResponseEntity.ok().body(file);
         }
         catch(Exception err){
             return ResponseEntity.notFound().build();

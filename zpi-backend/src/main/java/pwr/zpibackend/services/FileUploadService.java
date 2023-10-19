@@ -20,7 +20,7 @@ public class FileUploadService {
             if (!file.isEmpty()){
                 UploadedFile newFile = new UploadedFile();
 
-                newFile.setId(repository.count() + 1);
+//                newFile.setId(repository.count() + 1);
                 newFile.setFileName(file.getOriginalFilename());
                 newFile.setFileData(file.getBytes());
 
