@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/thesis")
+
 public class ThesisController {
 
     private final ThesisService thesisService;
@@ -21,7 +22,7 @@ public class ThesisController {
         this.thesisService = thesisService;
         this.employeeService = employeeService;
     }
-
+    @CrossOrigin(origins = "http://localhost:3000/theses")
     @GetMapping
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);

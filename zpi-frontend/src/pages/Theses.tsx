@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 
 interface Thesis {
-  id: number;
+  Id: number;
   namePL: string;
   supervisor: {
+    title: string;
     name: string;
+    surname: string;
   };
   num_people: number;
 }
@@ -15,7 +17,10 @@ const ThesisTable: React.FC = () => {
 
   useEffect(() => {
     Axios.get('http://localhost:8080/thesis')
-      .then((response) => setTheses(response.data))
+    .then((response) => {
+      console.log(response.data);
+      setTheses(response.data);
+    })
       .catch((error) => console.error(error));
   }, []);
 
@@ -32,10 +37,10 @@ const ThesisTable: React.FC = () => {
         </thead>
         <tbody>
           {theses.map((thesis, index) => (
-            <tr key={thesis.id}>
+            <tr key={thesis.Id}>
               <td>{index + 1}</td>
               <td>{thesis.namePL}</td>
-              <td>{thesis.supervisor.name}</td>
+              <td>{thesis.supervisor.title + thesis.supervisor.name + thesis.supervisor.surname}</td>
               <td>{thesis.num_people}</td>
             </tr>
           ))}
