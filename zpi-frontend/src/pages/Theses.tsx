@@ -18,7 +18,7 @@ const ThesisTable: React.FC = () => {
   const [theses, setTheses] = useState<Thesis[]>([]);
   
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 5;
+  const recordsPerPage = 25;
 
   useEffect(() => {
     Axios.get('http://localhost:8080/thesis')
@@ -61,17 +61,17 @@ const ThesisTable: React.FC = () => {
       <table className="thesis-table">
         <thead className ='active'>
           <tr>
-            <th className="centered">#</th>
-            <th>Temat</th>
-            <th>Promotor</th>
-            <th className="centered">Zajęte miejsca</th>
+            <th style={{ width: '3%', textAlign: 'center'}}>#</th>
+            <th style={{ width: '70%' }}>Temat</th>
+            <th style={{ width: '17%' }}>Promotor</th>
+            <th style={{ width: '10%', textAlign: 'center'}}>Zajęte miejsca</th>
           </tr>
         </thead>
         <tbody>
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.Id}>
               <td className="centered">{indexOfFirstRecord + index + 1}</td>
-              <td className="wrap-text">{thesis.namePL}</td>
+              <td>{thesis.namePL}</td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>
