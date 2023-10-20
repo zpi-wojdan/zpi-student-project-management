@@ -138,6 +138,7 @@ function ReservationPage({ thesis, mail }: ReservationProps) {
                                 Dodaj osobę
                             </button>
                             <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
+                                {/* zrobić inactive gdy l. indeksow mniejsza niz 2 */}
                                 Zarezerwuj
                             </button>
                         </div>
