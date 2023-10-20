@@ -33,4 +33,8 @@ build/
 .vscode/
 .vs/
 
-/venv/
+# Python virtual environment
+venv/
+*.pyc
+*.pyo
+__pycache__/

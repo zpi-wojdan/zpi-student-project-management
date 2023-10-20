@@ -190,7 +190,45 @@ databaseChangeLog:
                       foreignKeyName: supervisor_fk
                       referencedTableName: employee
                       referencedColumnNames: mail
+  - changeSet:
+      id: 4
+      author: Kuba
+      changes:
+        - createTable:
+            tableName: uploaded_files
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_data
+                  type: BYTEA
+                  constraints:
+                    nullable: false
 
+  - changeSet:
+      id: create_sequence_files
+      author: Kuba
+      changes:
+        - createSequence:
+            sequenceName: file_seq
+            incrementBy: 1
+            startValue: 1
+            minValue: 1
+            maxValue: 2147483647
+            cycle: false
+            dataType: bigint
+            ownedByTable: uploaded_files
+            
   - changeSet:
       id: create_table_reservation
       author: Piotr
