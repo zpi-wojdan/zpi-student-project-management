@@ -1,8 +1,10 @@
 package pwr.zpibackend.controllers;
 
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
@@ -33,13 +35,16 @@ public class ReservationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Reservation> addReservation(@RequestBody Reservation reservation) {
+    public ResponseEntity<Object> addReservation(@Valid @RequestBody Reservation reservation) {
         try {
             return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
         } catch (AlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @RequestParam Long id) {
