@@ -39,5 +39,6 @@ public class Thesis {
 
     @Column(nullable = false)
     private String status; //change String to Status when table exist
-
+    @Column(nullable = false)
+    private Integer occupied = 0;
 }

@@ -300,3 +300,16 @@ databaseChangeLog:
               tableName: thesis
               columnName: name_en
               newDataType: VARCHAR(200)
+
+  - changeSet:
+      id: add_occupied_to_thesis
+      author: Marta
+      changes:
+        - addColumn:
+            tableName: thesis
+            columns:
+              - column:
+                  name: occupied
+                  type: INT
+                  defaultValue: 0
+
