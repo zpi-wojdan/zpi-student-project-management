@@ -4,6 +4,7 @@ import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
 import ReservationPage from './pages/Reservation';
 import ThesesTable from './pages/Theses';
+import ThesisDetails from './pages/ThesisDetails';
 import Navigation from './layout/Naviagation'
 import { Thesis } from './models/Models';
 
@@ -35,6 +36,7 @@ export default function App(props: IAppProps) {
           <Route path='reservation' element={<ReservationPage />} />
           <Route path='topics' element={<ReservationPage thesis={exampleThesis}/>} />
           <Route path='theses' element={<ThesesTable/>} />
+          <Route path='theses/:id' element={<ThesisDetails/>} />
           <Route path='my' element={<ReservationPage />} />
         </Routes>
       </Navigation>

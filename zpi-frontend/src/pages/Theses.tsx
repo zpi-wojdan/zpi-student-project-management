@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
+import { Link } from 'react-router-dom';
 
 interface Thesis {
   id: number;
@@ -70,7 +71,7 @@ const ThesesTable: React.FC = () => {
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstRecord + index + 1}</td>
-              <td>{thesis.namePL}</td>
+              <td><Link to={`/theses/${thesis.id}`} className="link-style">{thesis.namePL}</Link></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>
