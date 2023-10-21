@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 
 interface Thesis {
-  Id: number;
+  id: number;
   namePL: string;
   supervisor: {
     title: string;
@@ -14,7 +14,7 @@ interface Thesis {
 }
 
 
-const ThesisTable: React.FC = () => {
+const ThesesTable: React.FC = () => {
   const [theses, setTheses] = useState<Thesis[]>([]);
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +23,6 @@ const ThesisTable: React.FC = () => {
   useEffect(() => {
     Axios.get('http://localhost:8080/thesis')
       .then((response) => {
-        console.log(response.data);
         setTheses(response.data);
       })
       .catch((error) => console.error(error));
@@ -58,7 +57,7 @@ const ThesisTable: React.FC = () => {
 
   return (
     <div>
-      <table className="thesis-table">
+      <table className="theses-table">
         <thead className ='active'>
           <tr>
             <th style={{ width: '3%', textAlign: 'center'}}>#</th>
@@ -69,7 +68,7 @@ const ThesisTable: React.FC = () => {
         </thead>
         <tbody>
           {currentTheses.map((thesis, index) => (
-            <tr key={thesis.Id}>
+            <tr key={thesis.id}>
               <td className="centered">{indexOfFirstRecord + index + 1}</td>
               <td>{thesis.namePL}</td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
@@ -97,4 +96,4 @@ const ThesisTable: React.FC = () => {
   );
 }
 
-export default ThesisTable;
+export default ThesesTable;

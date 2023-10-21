@@ -21,21 +21,21 @@ code {
   width: 20%;
 }
 
-.thesis-table {
+.theses-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 2px;
 }
 
-.thesis-table tbody tr:nth-child(odd) {
+.theses-table tbody tr:nth-child(odd) {
   background-color: #f2f2f2;
 }
 
-.thesis-table tbody td.centered {
+.theses-table tbody td.centered {
   text-align: center;
 }
 
-.thesis-table th, .thesis-table td {
+.theses-table th, .theses-table td {
   padding: 10px;
 }
 
