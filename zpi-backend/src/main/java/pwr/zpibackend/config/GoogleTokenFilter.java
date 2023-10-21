@@ -46,17 +46,29 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
         try {
             GoogleIdToken token = validateTokenFromHeader(authenticationHeader);
 
+            if (!isEmailValid(token, request)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token!");
+            }
+
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
                             GoogleUser.fromGoogleTokenPayload(token.getPayload()),
                             null, null));
-        } catch (GeneralSecurityException e) {
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token!");
         }
 
         filterChain.doFilter(request, response);
+    }
 
-
+    private boolean isEmailValid(GoogleIdToken token, HttpServletRequest request) {
+        GoogleUser googleUser = GoogleUser.fromGoogleTokenPayload(token.getPayload());
+        String email = googleUser.getEmail();
+        if (email != null && email.endsWith("pwr.edu.pl")) {
+            request.setAttribute("googleEmail", email);
+            return true;
+        }
+        return false;
     }
 
 

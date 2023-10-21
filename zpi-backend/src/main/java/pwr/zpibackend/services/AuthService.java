@@ -2,6 +2,8 @@ package pwr.zpibackend.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Student;
@@ -21,6 +23,13 @@ public class AuthService {
 
         if (!email.endsWith("pwr.edu.pl")) {
             throw new IllegalArgumentException("Email must be from pwr.edu.pl domain");
+        }
+
+        String googleEmail = (String) RequestContextHolder.currentRequestAttributes()
+                .getAttribute("googleEmail", RequestAttributes.SCOPE_REQUEST);
+
+        if (googleEmail == null || !googleEmail.equals(email)) {
+            throw new IllegalArgumentException("Email does not match the token email");
         }
 
         try {
