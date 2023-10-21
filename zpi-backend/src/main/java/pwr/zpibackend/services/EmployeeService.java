@@ -6,6 +6,7 @@ import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.repositories.EmployeeRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -18,9 +19,10 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployee(String id) {
-        Optional<Employee> employee = employeeRepository.findById(id);
-        return employee.orElse(null);
+    public Employee getEmployee(String email) {
+        return employeeRepository.findById(email).orElseThrow(
+                () -> new NoSuchElementException("Employee with email " + email + " does not exist")
+        );
     }
 
     public Employee addEmployee(Employee employee)
