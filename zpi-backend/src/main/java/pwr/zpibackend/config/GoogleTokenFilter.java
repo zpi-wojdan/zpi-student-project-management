@@ -65,7 +65,8 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
             }
 
             if (!isUserInDatabase(email)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not in database!");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                        "User not in database or user is both student and employee!");
             }
 
             SecurityContextHolder.getContext().setAuthentication(
@@ -86,7 +87,7 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean isUserInDatabase(String email) {
-        return employeeService.exists(email) || studentService.exists(email);
+        return employeeService.exists(email) ^ studentService.exists(email);
     }
 
 
