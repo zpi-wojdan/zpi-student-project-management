@@ -16,17 +16,17 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class WebSecurityConfiguration {
 
     private final FilterChainExceptionHandler filterChainExceptionHandler;
-    private final GoogleAuthService googleAuthService;
 
-    public WebSecurityConfiguration(GoogleAuthService googleAuthService,
-                                    FilterChainExceptionHandler filterChainExceptionHandler) {
-        this.googleAuthService = googleAuthService;
+    private final GoogleTokenFilter googleTokenFilter;
+
+    public WebSecurityConfiguration(FilterChainExceptionHandler filterChainExceptionHandler,
+                                    GoogleTokenFilter googleTokenFilter) {
         this.filterChainExceptionHandler = filterChainExceptionHandler;
+        this.googleTokenFilter = googleTokenFilter;
     }
 
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        GoogleTokenFilter googleTokenFilter = new GoogleTokenFilter(googleAuthService);
         http.cors().and()
                 .csrf().disable();
 

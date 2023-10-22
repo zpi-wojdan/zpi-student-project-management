@@ -24,6 +24,10 @@ public class StudentService {
         return studentRepository.findById(mail)
                 .orElseThrow(NotFoundException::new);
     }
+    
+    public boolean exists(String email) {
+        return studentRepository.existsById(email);
+    }
 
     public Student addStudent(Student student) throws AlreadyExistsException
     {
