@@ -18,4 +18,8 @@ public class StudentService {
                 () -> new NoSuchElementException("Student with email " + email + " does not exist")
         );
     }
+
+    public boolean exists(String email) {
+        return studentRepository.existsById(email);
+    }
 }
