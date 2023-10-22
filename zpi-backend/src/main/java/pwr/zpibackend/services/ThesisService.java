@@ -22,9 +22,9 @@ public class ThesisService {
         return thesisRepository.findAll();
     }
 
-    public Thesis getThesis(Long id) {
-        Optional<Thesis> thesis = thesisRepository.findById(id);
-        return thesis.orElse(null);
+    public Thesis getThesis(Long id) throws NotFoundException {
+        return thesisRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
     }
 
     public Thesis addThesis(Thesis thesis)

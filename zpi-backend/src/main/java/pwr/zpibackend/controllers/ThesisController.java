@@ -29,7 +29,12 @@ public class ThesisController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Thesis> getThesisById(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
+        }
+        catch(NotFoundException err){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping
