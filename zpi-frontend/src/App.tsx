@@ -7,6 +7,8 @@ import ThesesTable from './pages/Theses';
 import ThesisDetails from './pages/ThesisDetails';
 import Navigation from './layout/Naviagation'
 import { Thesis } from './models/Models';
+import {useState} from "react";
+import { AuthContext } from './auth/AuthContext';
 
 export interface IAppProps {
 }
@@ -27,7 +29,24 @@ const exampleThesis: Thesis = {
 
 
 export default function App(props: IAppProps) {
+
+  const [currentUser, setCurrentUser] = useState();
+
+  const setAuth = (data: string) => {
+    if(data) {
+      localStorage.setItem("user", data);
+      // @ts-ignore
+      setCurrentUser({user: data});
+      // console.log('Data in setAuth: ', data);
+    } else {
+      localStorage.clear();
+      setCurrentUser(undefined);
+      console.log("Data is not present!!")
+    }
+
+  }
   return (
+      <AuthContext.Provider value={{ currentUser, setCurrentUser: setAuth }}>
     <BrowserRouter>
       <Navigation>
         <Routes>
@@ -41,5 +60,6 @@ export default function App(props: IAppProps) {
         </Routes>
       </Navigation>
     </BrowserRouter>
+        </AuthContext.Provider>
   );
 }

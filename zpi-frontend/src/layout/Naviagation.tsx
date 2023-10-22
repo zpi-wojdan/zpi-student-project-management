@@ -1,5 +1,7 @@
 import React, { ReactNode, useState } from 'react'
 import {Link, NavLink, useLocation} from 'react-router-dom'
+import getLoggedUser from "../auth/auth";
+import {useAuth} from "../auth/AuthContext";
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -7,8 +9,21 @@ type NavigationProps = {} & {
 
 const Naviagation = ({ children }: NavigationProps) => {
     const [showNav, setShowNav] = useState(false);
+    const [user, setUser] = useState({});
+    // @ts-ignore
+    const {setCurrentUser} = useAuth();
+    const isLoggedIn = !!getLoggedUser();
+    const userName = getLoggedUser()?.name;
     const location = useLocation();
     const isLoginPage = location.pathname === '/login';
+
+    function handleSignOut(response: any) {
+        console.log("Signed out");
+        localStorage.clear();
+        setCurrentUser(undefined);
+        setUser({});
+        console.log("User: ", user, "Current user: ", getLoggedUser(), "Is logged in: ", isLoggedIn);
+    }
 
     return (
         <>
@@ -19,17 +34,22 @@ const Naviagation = ({ children }: NavigationProps) => {
 
                         <ul className="navbar-nav mw-auto">
                             <li className="nav-item">
-                                <Link className="nav-link" to="login">PL</Link>
+                                <div className="nav-link">PL</div>
                             </li>
                             <li className="nav-item">
                                 <div className="nav-link">|</div>
                             </li>
-                            {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego czy zalogowany czy nie */}
                             <li className="nav-item">
-                                <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="login">Logowanie</NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="logout">Logout</Link>
+                                {isLoggedIn ? (
+                                    <Link className="nav-link" to="login" onClick={handleSignOut}>Wyloguj {userName}</Link>
+                                ) : (
+                                    <NavLink
+                                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                                        to="login"
+                                    >
+                                        Logowanie
+                                    </NavLink>
+                                )}
                             </li>
                         </ul>
                     </div>
