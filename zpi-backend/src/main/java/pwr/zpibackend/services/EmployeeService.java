@@ -6,6 +6,7 @@ import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.repositories.EmployeeRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -17,8 +18,14 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployee(Long id) {
-        return employeeRepository.findById(id).get();
+    public Employee getEmployee(String email) {
+        return employeeRepository.findById(email).orElseThrow(
+                () -> new NoSuchElementException("Employee with email " + email + " does not exist")
+        );
+    }
+
+    public boolean exists(String email) {
+        return employeeRepository.existsById(email);
     }
 
     public Employee addEmployee(Employee employee)
