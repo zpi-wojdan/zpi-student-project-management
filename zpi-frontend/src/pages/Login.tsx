@@ -5,13 +5,23 @@ import jwt_decode from "jwt-decode";
 import {useNavigate} from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
+import useAuth from "../auth/useAuth";
 
 const LoginPage = () => {
+    // @ts-ignore
+    const {auth, setAuth} = useAuth();
     const navigate = useNavigate();
     const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
+        if(auth && auth.reasonOfLogout === 'token_expired') {
+            setAlertMessage('Twoja sesja wygasła. Zaloguj się ponownie.')
+            setShowAlert(true)
+            setAuth(null);
+        }
+
         // @ts-ignore
         google.accounts.id.initialize({
             client_id: "333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com",
@@ -50,6 +60,7 @@ const LoginPage = () => {
                 console.error(error);
                 Cookies.remove('google_token');
                 setErrorMessage(error.response.data.message)
+                setAlertMessage('Wystąpił błąd logowania!')
                 setShowAlert(true)
             })
     }
@@ -60,7 +71,7 @@ const LoginPage = () => {
                 <Row>
                     <Col md={6}>
                         <Alert show={showAlert} variant="danger">
-                            <Alert.Heading>Wystąpił błąd logowania!</Alert.Heading>
+                            <Alert.Heading>{alertMessage}</Alert.Heading>
                             {errorMessage}
                         </Alert>
                         <div className="container">

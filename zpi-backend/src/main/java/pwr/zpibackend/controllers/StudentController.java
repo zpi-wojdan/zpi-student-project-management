@@ -3,6 +3,7 @@ package pwr.zpibackend.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
@@ -24,6 +25,7 @@ public class StudentController {
         return new ResponseEntity<>(studentService.getAllStudents(), HttpStatus.OK);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{mail}")
     public ResponseEntity<Student> getStudentById(@PathVariable String mail) {
         try{

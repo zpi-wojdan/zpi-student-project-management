@@ -5,7 +5,8 @@ import LoginPage from './pages/Login';
 import ReservationPage from './pages/Reservation';
 import ThesesTable from './pages/Theses';
 import ThesisDetails from './pages/ThesisDetails';
-import Navigation from './layout/Navigation'
+// @ts-ignore
+import Navigation from './layout/Navigation';
 import {AuthProvider} from "./auth/AuthProvider";
 
 export interface IAppProps {

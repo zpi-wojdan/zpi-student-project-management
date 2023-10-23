@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react'
-import {Link, NavLink, useLocation} from 'react-router-dom'
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
@@ -14,6 +14,8 @@ const Navigation = ({ children }: NavigationProps) => {
     const user = Cookies.get('user') ? JSON.parse(Cookies.get('user') as string) : '';
 
     const location = useLocation();
+    const navigate = useNavigate();
+    const signOut = () => handleSignOut(navigate);
     const isLoginPage = location.pathname === '/login';
 
 
@@ -41,7 +43,7 @@ const Navigation = ({ children }: NavigationProps) => {
                             </li>
                             <li className="nav-item">
                                 {isLoggedIn ? (
-                                    <Link className="nav-link" to="login" onClick={handleSignOut}>Wyloguj</Link>
+                                    <Link className="nav-link" to="login" onClick={signOut}>Wyloguj</Link>
                                 ) : (
                                     <NavLink
                                         className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
