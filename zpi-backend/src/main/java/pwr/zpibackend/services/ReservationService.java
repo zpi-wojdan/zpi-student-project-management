@@ -16,6 +16,9 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
 
     public Reservation addReservation(Reservation reservation) throws AlreadyExistsException {
+        if (reservation.getThesis() == null || reservation.getStudent() == null || reservation.getReservationDate() == null) {
+            throw new IllegalArgumentException();
+        }
         if (reservationRepository.findByStudent_Mail(reservation.getStudent().getMail()) != null) {
             throw new AlreadyExistsException();
         }
@@ -26,7 +29,8 @@ public class ReservationService {
         newReservation.setReservationDate(reservation.getReservationDate());
         newReservation.setStudent(reservation.getStudent());
         newReservation.setThesis(reservation.getThesis());
-        return reservationRepository.saveAndFlush(newReservation);
+        reservationRepository.saveAndFlush(newReservation);
+        return newReservation;
     }
 
     public List<Reservation> getAllReservations() {
