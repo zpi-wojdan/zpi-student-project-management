@@ -8,12 +8,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.ReservationController;
 import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.Thesis;
+import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.ReservationService;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.services.StudentService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,11 +31,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class ReservationControllerTests {
     private static final String BASE_URL = "/reservation";
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @MockBean private ReservationService reservationService;
+    @MockBean private GoogleAuthService googleAuthService;
+    @MockBean private EmployeeService employeeService;
+    @MockBean private StudentService studentService;
 
     @Test
     public void testAddReservationShouldReturnStatusBadRequest() throws Exception {
@@ -74,8 +79,8 @@ public class ReservationControllerTests {
     @Test
     public void testGetAllReservations() throws Exception {
         List<Reservation> reservations = List.of(
-                new Reservation(1L, false, false, false, LocalDate.parse("2023-10-05"), new Student(), new Thesis()),
-                new Reservation(2L, false, false, false, LocalDate.parse("2023-10-10"), new Student(), new Thesis())
+                new Reservation(1L, false, false, false, false, LocalDate.parse("2023-10-05"), new Student(), new Thesis()),
+                new Reservation(2L, false, false, false, false, LocalDate.parse("2023-10-10"), new Student(), new Thesis())
         );
 
         Mockito.when(reservationService.getAllReservations()).thenReturn(reservations);
@@ -109,6 +114,7 @@ public class ReservationControllerTests {
                 "\"id\":1," +
                 "\"confirmedByLeader\":false," +
                 "\"confirmedBySupervisor\":false," +
+                "\"confirmedByStudent\":false," +
                 "\"readyForApproval\":false}," +
                 "{\"reservationDate\":\"2023-10-10\"," +
                 "\"student\":" +
@@ -137,6 +143,7 @@ public class ReservationControllerTests {
                 "\"id\":2," +
                 "\"confirmedByLeader\":false," +
                 "\"confirmedBySupervisor\":false," +
+                "\"confirmedByStudent\":false," +
                 "\"readyForApproval\":false}]\n";
 
 
@@ -164,6 +171,7 @@ public class ReservationControllerTests {
         Mockito.when(reservationService.getReservation(1L))
                 .thenReturn(new Reservation(
                         1L,
+                        false,
                         false,
                         false,
                         false,
@@ -200,6 +208,7 @@ public class ReservationControllerTests {
                 "\"id\":1," +
                 "\"confirmedByLeader\":false," +
                 "\"confirmedBySupervisor\":false," +
+                "\"confirmedByStudent\":false," +
                 "\"readyForApproval\":false}";
 
         mockMvc.perform(get(BASE_URL + "/1")

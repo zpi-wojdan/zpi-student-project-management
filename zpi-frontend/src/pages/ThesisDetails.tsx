@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Axios from 'axios';
 import { Thesis } from '../models/Models';
 
 const ThesisDetails: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { id } = useParams<{ id: string }>();
-  const [thesis, setThesis] = useState<Thesis | null>(null);
+  const thesis = location.state?.thesis as Thesis;
 
-  useEffect(() => {
-    Axios.get(`http://localhost:8080/thesis/${id}`)
-      .then((response) => setThesis(response.data))
-      .catch((error) => console.error(error));
-  }, [id]);
 
   return (
     <>

@@ -327,3 +327,25 @@ databaseChangeLog:
             dataType: bigint
             ownedByTable: thesis
 
+  - changeSet:
+      id: add_is_confirmed_by_student_to_reservation_and_leader_to_thesis
+      author: Piotr
+      changes:
+        - addColumn:
+            tableName: reservation
+            columns:
+              - column:
+                  name: is_confirmed_by_student
+                  type: boolean
+                  defaultValue: false
+        - addColumn:
+            tableName: thesis
+            columns:
+              - column:
+                  name: leader
+                  type: varchar(50)
+                  constraints:
+                    foreignKeyName: fk_thesis_leader
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: true

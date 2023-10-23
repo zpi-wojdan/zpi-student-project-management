@@ -1,13 +1,12 @@
 package pwr.zpibackend.controllers;
 
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.services.ReservationService;
 
@@ -41,6 +40,8 @@ public class ReservationController {
             return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
         } catch (AlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (ThesisOccupancyFullException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

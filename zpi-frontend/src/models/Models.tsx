@@ -12,7 +12,7 @@ export type Student = {
 }
 
 export type Thesis = {
-    thesis_id: number;
+    id: number;
     namePL: string;
     nameEN: string;
     description: string;
