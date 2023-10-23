@@ -61,7 +61,8 @@ function ReservationPage({ }: ReservationProps) {
 
         if (!isReservationValid(reservation)) {
             console.error(`Invalid reservation number: ${reservation}`);
-
+            newStudents[index] = {} as Student;
+            setStudents(newStudents);
             newErrors[index] = true;
             setErrors(newErrors);
             return;
@@ -72,12 +73,12 @@ function ReservationPage({ }: ReservationProps) {
         await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)
             .then(response => {
                 newStudents[index] = response.data as Student;
-                setStudents(newStudents);
             })
             .catch(error => {
-
+                newStudents[index] = {} as Student;
                 newErrors[index] = true;
             })
+        setStudents(newStudents);
         setErrors(newErrors);
     };
 
