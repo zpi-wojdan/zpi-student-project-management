@@ -11,7 +11,7 @@ function ReservationPage({ }: ReservationProps) {
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
 
-    const [reservations, setReservations] = useState<string[]>([""]);
+    const [reservations, setReservations] = useState<string[]>(["", ""]);
     const [errors, setErrors] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([])
 
@@ -91,8 +91,8 @@ function ReservationPage({ }: ReservationProps) {
                     thesis: thesis,
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
-                }
-                console.log(JSON.stringify(responseBody));
+                };
+
                 const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
                     headers: {
                         "Content-Type": "application/json",
@@ -109,6 +109,9 @@ function ReservationPage({ }: ReservationProps) {
                     });
             }
         } else {
+            for (const reservation of reservations) {
+                handleReservationBlur(reservations.indexOf(reservation));
+            }
             console.error("Invalid reservation numbers");
         }
     };
@@ -134,7 +137,7 @@ function ReservationPage({ }: ReservationProps) {
                                 onBlur={() => handleReservationBlur(index)}
                                 placeholder="Indeks"
                             />
-                            {index > 0 ? (
+                            {index > 1 ? (
                                 <button type="button" className="btn btn-sm ml-2" onClick={() => removeReservationInput(index)}>
                                     <span>&times;</span>
                                 </button>

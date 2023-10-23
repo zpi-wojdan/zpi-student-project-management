@@ -30,6 +30,10 @@ public class Thesis {
     @ManyToOne(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Employee supervisor;
+    @JoinColumn(name = "leader", referencedColumnName = "mail", nullable = false)
+    @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Student leader;
     @Column(nullable = false)
     private String faculty; //change String to lIST of faculties when table exist
     @Column(nullable = false)

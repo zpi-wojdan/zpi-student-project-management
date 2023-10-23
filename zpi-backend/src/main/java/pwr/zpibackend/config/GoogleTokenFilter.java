@@ -1,7 +1,6 @@
 package pwr.zpibackend.config;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

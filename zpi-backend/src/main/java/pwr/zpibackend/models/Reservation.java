@@ -23,6 +23,8 @@ public class Reservation {
     private boolean isConfirmedByLeader;
     @Column(name = "is_confirmed_by_supervisor")
     private boolean isConfirmedBySupervisor;
+    @Column(name = "is_confirmed_by_student")
+    private boolean isConfirmedByStudent;
     @Column(name = "is_ready_for_approval")
     private boolean isReadyForApproval;
     @Column(name = "reservation_date", nullable = false)

@@ -6,7 +6,6 @@ import ReservationPage from './pages/Reservation';
 import ThesesTable from './pages/Theses';
 import ThesisDetails from './pages/ThesisDetails';
 import Navigation from './layout/Naviagation'
-import StudentTable, { Student } from './components/StudentsTable';
 
 export interface IAppProps {
 }

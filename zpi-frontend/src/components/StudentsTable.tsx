@@ -1,15 +1,5 @@
 import React from 'react';
-
-export type Student = {
-    email: string;
-    name: string;
-    surname: string;
-    collegeIndex: string;
-}
-
-type Thesis = {
-  topic: string;
-}
+import { Student, Thesis } from '../models/Models';
 
 type StudentTableProps = {
     students: Student[];
@@ -31,7 +21,7 @@ function StudentTable({ students }: StudentTableProps) {
             <tr key={index}>
               <td>{index}</td>
               <td>{student.name + ' ' + student.surname}</td>
-              <td>{student.collegeIndex}</td>
+              <td>{student.index}</td>
             </tr>
           ))}
         </tbody>
