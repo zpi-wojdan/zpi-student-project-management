@@ -25,3 +25,11 @@ export type Thesis = {
     leader: string;
 }
 
+export type Employee = {
+    mail: string;
+    name: string;
+    surname: string;
+    academic_title: string;
+    role: string;
+    department_symbol: string;
+}

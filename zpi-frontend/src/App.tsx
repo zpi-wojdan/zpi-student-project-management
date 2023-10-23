@@ -39,9 +39,9 @@ export default function App(props: IAppProps) {
           <Route path='theses' element={<ThesesTable/>} />
           <Route path='theses/:id' element={<ThesisDetails/>} />
           <Route path='my' element={<ReservationPage />} />
+          <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
         </Routes>
       </Navigation>
-      <Route path='addthesis' element={<AddThesisPage mail={'mariusz.pudzianowski@pwr.edu.pl'} />} />
     </BrowserRouter>
   );
 }

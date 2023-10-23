@@ -39,11 +39,9 @@
 
 .resizable-input {
   resize: none;
-  min-height: 30px; 
-  max-height: 100px; 
   overflow: hidden;
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer/Edge */
+  -ms-overflow-style: none; /* Internet Explorer / Edge */
 }
 
 .resizable-input::-webkit-scrollbar {
@@ -53,3 +51,4 @@
 .resizable-input::-webkit-scrollbar-thumb {
   background-color: transparent;
 }
+
