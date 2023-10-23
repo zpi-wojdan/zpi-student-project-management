@@ -53,6 +53,6 @@
 }
 
 .list-group-item-hover:hover {
-  background-color: lightgray; /* Change the background color on hover */
-  cursor: pointer; /* Change the cursor to a pointer on hover to indicate interactivity */
+  background-color: lightgray; 
+  cursor: pointer; 
 }
