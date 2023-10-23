@@ -30,7 +30,7 @@ public class Thesis {
     @ManyToOne(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Employee supervisor;
-    @JoinColumn(name = "leader", referencedColumnName = "mail", nullable = false)
+    @JoinColumn(name = "leader", referencedColumnName = "mail")
     @OneToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Student leader;
