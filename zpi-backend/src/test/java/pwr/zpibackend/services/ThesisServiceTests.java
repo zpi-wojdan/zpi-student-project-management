@@ -34,8 +34,8 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllTheses() {
         List<Thesis> theses = List.of(
-                new Thesis(1L, "Thesis 1 PL", "Thesis 1 EN", "Description 1", 2, new Employee("employee1@mail.com", "John", "Doe", "Role 1", "Department 1", "Title 1"), "Faculty 1", "Field 1", "Edu Cycle 1", "Status 1", 0),
-                new Thesis(2L, "Thesis 2 PL", "Thesis 2 EN", "Description 2", 3, new Employee("employee2@mail.com", "Jane", "Smith", "Role 2", "Department 2", "Title 2"), "Faculty 2", "Field 2", "Edu Cycle 2", "Status 2", 1)
+                new Thesis(1L, "Thesis 1 PL", "Thesis 1 EN", "Description 1", 2, new Employee("employee1@mail.com", "John", "Doe", "Role 1", "Department 1", "Title 1"), null, "Faculty 1", "Field 1", "Edu Cycle 1", "Status 1", 0),
+                new Thesis(2L, "Thesis 2 PL", "Thesis 2 EN", "Description 2", 3, new Employee("employee2@mail.com", "Jane", "Smith", "Role 2", "Department 2", "Title 2"), null,  "Faculty 2", "Field 2", "Edu Cycle 2", "Status 2", 1)
         );
 
         when(thesisRepository.findAll()).thenReturn(theses);
@@ -48,7 +48,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetThesisById() throws NotFoundException {
         Long thesisId = 1L;
-        Thesis thesis = new Thesis(1L, "Thesis 1 PL", "Thesis 1 EN", "Description 1", 2, new Employee("employee1@mail.com", "John", "Doe", "Role 1", "Department 1", "Title 1"), "Faculty 1", "Field 1", "Edu Cycle 1", "Status 1", 0);
+        Thesis thesis = new Thesis(1L, "Thesis 1 PL", "Thesis 1 EN", "Description 1", 2, new Employee("employee1@mail.com", "John", "Doe", "Role 1", "Department 1", "Title 1"), null, "Faculty 1", "Field 1", "Edu Cycle 1", "Status 1", 0);
 
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
 
