@@ -24,6 +24,7 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   
   const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
+  const [supervisorError, setSupervisorError] = useState<string | null>(null);
 
   const [formState, setFormState] = useState({
     namePL: '',
@@ -121,15 +122,16 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
             ...formState,
             supervisor: supervisorData,
           });
+          setSupervisorError(null);
         }
         else{
-          console.log("Supervisor does not exist in the database")
+          setSupervisorError("Supervisor does not exist in the database");
         }
 
       }
       catch(error) {
-        console.log("Error fetching supervisor data: ")
-        throw(error)
+        setSupervisorError("Error fetching supervisor data");
+        console.log("Error fetching supervisor data: ", error);
       }
     }
   }
@@ -277,15 +279,18 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
           />
           )}
           {role == 'admin' && (
-            <input
-              type="text"
-              className="form-control"
-              id="supervisorMail"
-              name="supervisorMail"
-              value={formState.supervisorMail}
-              onChange={handleSupervisorInputChange}
-              onBlur={handleBlurSupervisor}
-          />
+            <>
+              <input
+                type="text"
+                className="form-control"
+                id="supervisorMail"
+                name="supervisorMail"
+                value={formState.supervisorMail}
+                onChange={handleSupervisorInputChange}
+                onBlur={handleBlurSupervisor}
+            />
+            {supervisorError && <div className="text-danger">{supervisorError}</div>}
+          </>
           )}
           {suggestions.length > 0 && (
             <ul className="list-group">
@@ -339,7 +344,7 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
         </div>
         <button 
           type="submit" 
-          className="btn btn-primary" 
+          className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
           style={{ marginRight: '10px' }}
           onClick={(event) => handleSubmit(event, 'TO_BE_REVIEWED')}
           >
@@ -347,10 +352,13 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
         </button>
         <button 
           type="submit" 
-          className="btn btn-secondary" 
+          className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
           onClick={(event) => handleSubmit(event, 'DRAFT')}>
             Zapisz wersję roboczą
         </button>
+        {supervisorError && (
+        <div className="text-danger mt-2">{supervisorError}</div>
+         )}
       </form>
     </div>
   );
