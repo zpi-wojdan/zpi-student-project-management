@@ -60,6 +60,9 @@ const Naviagation = ({ children }: NavigationProps) => {
                                 <li className="nav-item">
                                     <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
                                 </li>
+                                {/* <li className='nav-item'>
+                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/addthesis">Dodaj temat</NavLink>
+                                </li> */}
                             </ul>
                         </div>
                     </div>
