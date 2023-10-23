@@ -313,3 +313,17 @@ databaseChangeLog:
                   type: INT
                   defaultValue: 0
 
+  - changeSet:
+      id: create_sequence_thesis
+      author: Kuba
+      changes:
+        - createSequence:
+            sequenceName: thesis_seq
+            incrementBy: 1
+            startValue: 1
+            minValue: 1
+            maxValue: 2147483647
+            cycle: false
+            dataType: bigint
+            ownedByTable: thesis
+
