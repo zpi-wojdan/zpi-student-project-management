@@ -5,10 +5,9 @@ import LoginPage from './pages/Login';
 import ReservationPage from './pages/Reservation';
 import ThesesTable from './pages/Theses';
 import ThesisDetails from './pages/ThesisDetails';
-import Navigation from './layout/Naviagation'
+import Navigation from './layout/Navigation'
 import { Thesis } from './models/Models';
-import {useState} from "react";
-import { AuthContext } from './auth/AuthContext';
+import {AuthProvider} from "./auth/AuthProvider";
 
 export interface IAppProps {
 }
@@ -30,36 +29,21 @@ const exampleThesis: Thesis = {
 
 export default function App(props: IAppProps) {
 
-  const [currentUser, setCurrentUser] = useState();
-
-  const setAuth = (data: string) => {
-    if(data) {
-      localStorage.setItem("user", data);
-      // @ts-ignore
-      setCurrentUser({user: data});
-      // console.log('Data in setAuth: ', data);
-    } else {
-      localStorage.clear();
-      setCurrentUser(undefined);
-      console.log("Data is not present!!")
-    }
-
-  }
   return (
-      <AuthContext.Provider value={{ currentUser, setCurrentUser: setAuth }}>
-    <BrowserRouter>
-      <Navigation>
-        <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='login' element={<LoginPage />} />
-          <Route path='reservation' element={<ReservationPage />} />
-          <Route path='topics' element={<ReservationPage thesis={exampleThesis}/>} />
-          <Route path='theses' element={<ThesesTable/>} />
-          <Route path='theses/:id' element={<ThesisDetails/>} />
-          <Route path='my' element={<ReservationPage />} />
-        </Routes>
-      </Navigation>
-    </BrowserRouter>
-        </AuthContext.Provider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Navigation>
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route path='login' element={<LoginPage />} />
+              <Route path='reservation' element={<ReservationPage />} />
+              <Route path='topics' element={<ReservationPage thesis={exampleThesis}/>} />
+              <Route path='theses' element={<ThesesTable/>} />
+              <Route path='theses/:id' element={<ThesisDetails/>} />
+              <Route path='my' element={<ReservationPage />} />
+            </Routes>
+          </Navigation>
+        </BrowserRouter>
+      </AuthProvider>
   );
 }

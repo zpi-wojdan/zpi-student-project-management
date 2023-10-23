@@ -1,28 +1,24 @@
 import React, { ReactNode, useState } from 'react'
 import {Link, NavLink, useLocation} from 'react-router-dom'
-import getLoggedUser from "../auth/auth";
-import {useAuth} from "../auth/AuthContext";
+// @ts-ignore
+import Cookies from "js-cookie";
 
 type NavigationProps = {} & {
     children?: ReactNode
 }
 
-const Naviagation = ({ children }: NavigationProps) => {
+const Navigation = ({ children }: NavigationProps) => {
     const [showNav, setShowNav] = useState(false);
-    const [user, setUser] = useState({});
-    // @ts-ignore
-    const {setCurrentUser} = useAuth();
-    const isLoggedIn = !!getLoggedUser();
-    const userName = getLoggedUser()?.name;
+    const isLoggedIn = Cookies.get('user') !== undefined;
+    const user = Cookies.get('user') ? JSON.parse(Cookies.get('user') as string) : '';
+
     const location = useLocation();
     const isLoginPage = location.pathname === '/login';
 
     function handleSignOut(response: any) {
         console.log("Signed out");
-        localStorage.clear();
-        setCurrentUser(undefined);
-        setUser({});
-        console.log("User: ", user, "Current user: ", getLoggedUser(), "Is logged in: ", isLoggedIn);
+        Cookies.remove('user');
+        Cookies.remove('google_token');
     }
 
     return (
@@ -33,6 +29,14 @@ const Naviagation = ({ children }: NavigationProps) => {
                         <div className="me-auto"></div>
 
                         <ul className="navbar-nav mw-auto">
+                            {isLoggedIn ? (
+                                <li className="nav-item">
+                                    <div className="nav-link">{user.name} {user.surname}</div>
+                                </li>
+                            ) : (<li></li>)}
+                            <li className="nav-item">
+                                <div className="nav-link">|</div>
+                            </li>
                             <li className="nav-item">
                                 <div className="nav-link">PL</div>
                             </li>
@@ -41,7 +45,7 @@ const Naviagation = ({ children }: NavigationProps) => {
                             </li>
                             <li className="nav-item">
                                 {isLoggedIn ? (
-                                    <Link className="nav-link" to="login" onClick={handleSignOut}>Wyloguj {userName}</Link>
+                                    <Link className="nav-link" to="login" onClick={handleSignOut}>Wyloguj</Link>
                                 ) : (
                                     <NavLink
                                         className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
@@ -91,4 +95,4 @@ const Naviagation = ({ children }: NavigationProps) => {
     )
 }
 
-export default Naviagation
+export default Navigation
