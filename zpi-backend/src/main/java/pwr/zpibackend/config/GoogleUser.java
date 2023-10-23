@@ -1,7 +1,9 @@
 package pwr.zpibackend.config;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import lombok.Getter;
 
+@Getter
 public class GoogleUser {
     private final String userId;
     private final String email;

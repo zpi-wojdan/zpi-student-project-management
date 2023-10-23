@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.services.ReservationService;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservation")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -24,7 +26,7 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservation(@RequestParam Long id) {
+    public ResponseEntity<Reservation> getReservation(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(reservationService.getReservation(id), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -38,11 +40,16 @@ public class ReservationController {
             return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
         } catch (AlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (ThesisOccupancyFullException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @RequestParam Long id) {
+    public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @PathVariable Long id) {
         try {
             return new ResponseEntity<>(reservationService.updateReservation(reservation, id), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -51,7 +58,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reservation> deleteReservation(@RequestParam Long id) {
+    public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(reservationService.deleteReservation(id), HttpStatus.OK);
         } catch (NotFoundException e) {
