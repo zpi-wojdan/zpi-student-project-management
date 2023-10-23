@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Student, Thesis } from '../models/Models';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type ReservationProps = {
-    thesis?: Thesis;
-    mail?: string;
 }
 
-function ReservationPage({ thesis, mail }: ReservationProps) {
+function ReservationPage({ }: ReservationProps) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const thesis = location.state?.thesis as Thesis;
 
     const [reservations, setReservations] = useState<string[]>([""]);
     const [errors, setErrors] = useState<boolean[]>([]);
@@ -51,8 +51,17 @@ function ReservationPage({ thesis, mail }: ReservationProps) {
         const newErrors = [...errors];
         const newStudents = [...students];
 
+        if (reservation === "") {
+            newStudents[index] = {} as Student;
+            setStudents(newStudents);
+            newErrors[index] = false;
+            setErrors(newErrors);
+            return;
+        }
+
         if (!isReservationValid(reservation)) {
             console.error(`Invalid reservation number: ${reservation}`);
+
             newErrors[index] = true;
             setErrors(newErrors);
             return;
@@ -60,37 +69,43 @@ function ReservationPage({ thesis, mail }: ReservationProps) {
             newErrors[index] = false;
         }
 
-        // await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)      // get student info and set students with the students data if exists else add error for that index        
-        //     .then(response => {
-        //         newStudents[index] = response.data;
-        //         setStudents(newStudents);
-        //     })
-        //     .catch(error => {
-        //         newErrors[index] = true;
-        //     })
+        await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)
+            .then(response => {
+                newStudents[index] = response.data as Student;
+                setStudents(newStudents);
+            })
+            .catch(error => {
+
+                newErrors[index] = true;
+            })
         setErrors(newErrors);
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
         if (reservations.every(isReservationValid)) {
-            // Iterate over each reservation and send a POST request to the API
+
             for (const reservation of reservations) {
-                const response = await axios.post("http://localhost:8080/reservation", {
+                const responseBody = {
+                    thesis: thesis,
+                    student: students.find(student => student.index === reservation),
+                    reservationDate: new Date(),
+                }
+                console.log(JSON.stringify(responseBody));
+                const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({
-                        thesis,
-                        mail,
-                        reservation,
-                    }),
-                });
-                // Handle API response for each reservation
-                if (response.status === 401) {
-                    console.log(`Reservation ${reservation} created successfully`);
-                } else {
-                    console.error(`Failed to submit reservation ${reservation} - it already exists`);
-                }
+                })
+                    .then(response => {
+                        if (response.status === 201) {
+                            console.log(`Reservation ${reservation} created successfully`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Failed to submit reservation ${reservation}`);
+                        console.error(error)
+                    });
             }
         } else {
             console.error("Invalid reservation numbers");
@@ -103,12 +118,12 @@ function ReservationPage({ thesis, mail }: ReservationProps) {
                 &larr; Powrót
             </button>
             <h1>Rezerwacja tematu:</h1>
-            <h3>Temat: {thesis?.name_pl}</h3>
+            <h3>Temat: {thesis?.namePL}</h3>
             <form>
                 {reservations.map((reservation, index) => (
                     <div key={index} className="form-group row justify-content-center">
                         <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">Student {index + 1}:</label>
-                        <div className="col-sm-6 d-flex">
+                        <div className="col-sm-4 d-flex">
                             <input
                                 id={`reservation-${index}`}
                                 type="text"
@@ -126,9 +141,17 @@ function ReservationPage({ thesis, mail }: ReservationProps) {
                                 <span className="btn btn-sm ml-2" style={{ visibility: "hidden" }}>&times;</span>
                             )}
                         </div>
-                        <div className="col-sm-4">
-                            <p className="col-form-label">{students[index] && students[index].name + ' ' + students[index].surname}</p> {/* Imię i nazwisko wczytane po wpisaniu */}
+
+                        <div className="col-sm-6">
+                            <p className={errors[index] ? "col-form-label text-danger" : "col-form-label"}>
+                                {students[index] && students[index].name !== undefined ?
+                                    students[index].name + ' ' + students[index].surname
+                                    : (errors[index] &&
+                                        'Indeks jest niepoprawny lub nie istnieje w systemie!'
+                                    )}
+                            </p>
                         </div>
+
                     </div>
                 ))}
                 <div className="row justify-content-center">

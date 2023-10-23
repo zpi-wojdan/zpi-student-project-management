@@ -1,25 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Axios from 'axios';
-
-interface Thesis {
-  Id: number;
-  namePL: string;
-  nameEN: string;
-  description: string;
-  supervisor: {
-    title: string;
-    name: string;
-    surname: string;
-  };
-  faculty: string;
-  field: string;
-  edu_cycle: string;
-  num_people: number;
-  occupied: number;
-}
+import { Thesis } from '../models/Models';
 
 const ThesisDetails: React.FC = () => {
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
   const [thesis, setThesis] = useState<Thesis | null>(null);
 
@@ -30,9 +16,18 @@ const ThesisDetails: React.FC = () => {
   }, [id]);
 
   return (
-    <div className='thesis-details'>
-      {thesis ? (
-        <div>
+    <>
+      <div className='row d-flex justify-content-between'>
+        <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
+          &larr; Powrót
+        </button>
+        <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => navigate('/reservation', {state: {thesis : thesis}})}>
+          Zarezerwuj
+        </button>
+      </div>
+      <div className='thesis-details'>
+        {thesis ? (
+          <div>
             <p className="bold">Temat po polsku:</p>
             <p>{thesis.namePL}</p>
             <p className="bold">Temat po angielsku:</p>
@@ -42,16 +37,17 @@ const ThesisDetails: React.FC = () => {
             <p><span className="bold">Promotor:</span> <span>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
             <p><span className="bold">Wydział:</span> <span>{thesis.faculty}</span></p>
             <p><span className="bold">Kierunek:</span> <span>{thesis.field}</span></p>
-            <p><span className="bold">Cykl kształcenia:</span> <span>{thesis.edu_cycle}</span></p>
+            <p><span className="bold">Cykl kształcenia:</span> <span>{thesis.eduCycle}</span></p>
             <div>
-                <p><span className="bold">Zapisani:</span> <span>{thesis.occupied + "/" + thesis.num_people}</span></p>
-                {/* Tabela zapisanych */}
+              <p><span className="bold">Zapisani:</span> <span>{thesis.occupied + "/" + thesis.num_people}</span></p>
+              {/* Tabela zapisanych */}
             </div>
-        </div>
-      ) : (
-        <p>Loading... {id}</p>
-      )}
-    </div>
+          </div>
+        ) : (
+          <p>Loading... {id}</p>
+        )}
+      </div>
+    </>
   );
 };
 
