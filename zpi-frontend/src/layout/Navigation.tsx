@@ -2,6 +2,7 @@ import React, { ReactNode, useState } from 'react'
 import {Link, NavLink, useLocation} from 'react-router-dom'
 // @ts-ignore
 import Cookies from "js-cookie";
+import handleSignOut from "../auth/Logout";
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -15,11 +16,6 @@ const Navigation = ({ children }: NavigationProps) => {
     const location = useLocation();
     const isLoginPage = location.pathname === '/login';
 
-    function handleSignOut(response: any) {
-        console.log("Signed out");
-        Cookies.remove('user');
-        Cookies.remove('google_token');
-    }
 
     return (
         <>
@@ -81,9 +77,11 @@ const Navigation = ({ children }: NavigationProps) => {
                                     <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/topics" >Tematy</NavLink>
                                 </li>
                                 {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego kto zalogowany */}
-                                <li className="nav-item">
-                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
-                                </li>
+                                {isLoggedIn ? (
+                                    <li className="nav-item">
+                                        <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
+                                    </li>
+                                ) : (<li></li>)}
                             </ul>
                         </div>
                     </div>

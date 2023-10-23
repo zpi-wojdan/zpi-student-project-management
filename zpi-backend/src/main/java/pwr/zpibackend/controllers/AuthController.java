@@ -19,7 +19,6 @@ public class AuthController {
 
     @Operation(summary = "Get logged user details", description = "Returns logged user details based on email")
     @PreAuthorize("isAuthenticated()")
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/user/{email}/details")
     public ResponseEntity<Object> getUserDetails(@PathVariable String email) throws EmployeeAndStudentWithTheSameEmailException {
         return ResponseEntity.ok(authService.getUserDetails(email));
