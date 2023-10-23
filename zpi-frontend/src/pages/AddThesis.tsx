@@ -22,6 +22,8 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  
+  const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
 
   const [formState, setFormState] = useState({
     namePL: '',
@@ -33,7 +35,7 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
     faculty: '',
     field: '',
     edu_cycle: '',
-    status: 'OPEN',
+    status: '',
   });
 
   useEffect(() => {
@@ -67,6 +69,22 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
     }
   }
 
+  const fetchMatchingEmployees = async (supervisorMail: string): Promise<SupervisorData[] | null> => {
+    try {
+      const response = await fetch(`http://localhost:8080/employee/match/${supervisorMail}`);
+  
+      if (response.ok) {
+        const supervisorData: SupervisorData[] = await response.json();
+        return supervisorData;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching supervisor data: ", error);
+      throw(error)
+    }
+  };
+  
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormState({
@@ -96,8 +114,8 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
 
     if (supervisorMail){
       try{
-
         const supervisorData = await fetchSupervisor(supervisorMail);
+
         if (supervisorData != null){
           setFormState({
             ...formState,
@@ -110,12 +128,43 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
 
       }
       catch(error) {
-        console.log("Error fetching supervisor data: ", error)
+        console.log("Error fetching supervisor data: ")
+        throw(error)
       }
     }
   }
+
+  const handleSuggestionClick = (selectedEmployee: SupervisorData) => {
+    const selectedMail = selectedEmployee.mail || '';
+    setFormState({
+      ...formState,
+      supervisorMail: selectedMail, 
+      supervisor: selectedEmployee,
+    });
+    setSuggestions([]); 
+  };
+
+  const handleSupervisorInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   
-  const handleSubmit = async (event: React.FormEvent) => {
+    if (name === 'supervisorMail') {
+      // Fetch matching employees as the user types
+      fetchMatchingEmployees(value).then((matchingEmployees) => {
+        if (matchingEmployees) {
+          setSuggestions(matchingEmployees);
+        } else {
+          setSuggestions([]);
+          console.log("Supervisor does not exist in the database");
+        }
+      });
+    }
+  };
+  
+  const handleSubmit = async (event: React.FormEvent, status: string) => {
     event.preventDefault();
     
     const formData = {
@@ -146,7 +195,7 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
         },
       });
   
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log('Request was successful');
       } else {
         console.log('POST request was not successful');
@@ -159,8 +208,8 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
   return (
     <div className="container mt-5">
       <h2>Dodaj temat</h2>
-      <form onSubmit={handleSubmit}>
-      
+      <form onSubmit={(event) => handleSubmit(event, formState.status)}>
+
       <div className="mb-3">
         <label htmlFor="namePL">Tytuł (PL):</label>
         <textarea
@@ -234,9 +283,22 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
               id="supervisorMail"
               name="supervisorMail"
               value={formState.supervisorMail}
-              onChange={handleInputChange}
+              onChange={handleSupervisorInputChange}
               onBlur={handleBlurSupervisor}
           />
+          )}
+          {suggestions.length > 0 && (
+            <ul className="list-group">
+              {suggestions.map((employee) => (
+                <li
+                  key={employee.mail}
+                  className="list-group-item list-group-item-hover"
+                  onClick={() => handleSuggestionClick(employee)}
+                >
+                  {employee.title} {employee.name} {employee.surname} - {employee.mail}
+                </li>
+              ))}
+            </ul>
           )}
 
         </div>
@@ -275,11 +337,19 @@ function AddThesisPage({ role, mail }: AddThesisProps) {
             maxLength={11}
           />
         </div>
-        <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
-          Zgłoś temat
+        <button 
+          type="submit" 
+          className="btn btn-primary" 
+          style={{ marginRight: '10px' }}
+          onClick={(event) => handleSubmit(event, 'TO_BE_REVIEWED')}
+          >
+            Zgłoś temat
         </button>
-        <button type="submit" className="btn btn-secondary">
-          Zapisz wersję roboczą
+        <button 
+          type="submit" 
+          className="btn btn-secondary" 
+          onClick={(event) => handleSubmit(event, 'DRAFT')}>
+            Zapisz wersję roboczą
         </button>
       </form>
     </div>

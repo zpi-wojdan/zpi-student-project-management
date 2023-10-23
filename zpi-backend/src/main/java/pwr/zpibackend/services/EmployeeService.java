@@ -33,4 +33,8 @@ public class EmployeeService {
         employeeRepository.saveAndFlush(employee);
         return employee;
     }
+
+    public List<Employee> getEmployeesByPrefix(String prefix) {
+        return employeeRepository.findAllByMailStartingWith(prefix);
+    }
 }

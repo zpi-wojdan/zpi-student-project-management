@@ -27,9 +27,22 @@ public class ThesisService {
         return thesis.orElse(null);
     }
 
-    public Thesis addThesis(Thesis thesis)
-    {
-        thesisRepository.saveAndFlush(thesis);
+    public Thesis addThesis(Thesis thesis){
+        Thesis newThesis = new Thesis();
+        newThesis.setNamePL(thesis.getNamePL());
+        newThesis.setNameEN(thesis.getNameEN());
+        newThesis.setDescription(thesis.getDescription());
+        newThesis.setNum_people(thesis.getNum_people());
+        newThesis.setSupervisor(thesis.getSupervisor());
+        newThesis.setFaculty(thesis.getFaculty());
+        newThesis.setField(thesis.getField());
+        newThesis.setEdu_cycle(thesis.getEdu_cycle());
+        newThesis.setStatus(thesis.getStatus());
+        newThesis.setOccupied(0);
+
+        Employee supervisor = employeeRepository.findById(thesis.getSupervisor().getMail()).get();
+        newThesis.setSupervisor(supervisor);
+        thesisRepository.saveAndFlush(newThesis);
         return thesis;
     }
 
