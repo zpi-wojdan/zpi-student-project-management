@@ -19,7 +19,6 @@ export default function App(props: IAppProps) {
           <Route path='/' element={<HomePage />} />
           <Route path='login' element={<LoginPage />} />
           <Route path='reservation' element={<ReservationPage />} />
-          <Route path='topics' element={<ThesesTable />} />
           <Route path='theses' element={<ThesesTable />} />
           <Route path='theses/:id' element={<ThesisDetails />} />
           <Route path='my' element={<ReservationPage />} />
