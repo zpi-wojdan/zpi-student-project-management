@@ -42,6 +42,7 @@ public class StudentService {
     public Student updateStudent(String mail, Student updatedStudent) throws NotFoundException {
         Student student = studentRepository.findById(mail).orElse(null);
         if (student != null) {
+            student.setMail(updatedStudent.getMail());
             student.setName(updatedStudent.getName());
             student.setSurname(updatedStudent.getSurname());
             student.setIndex(updatedStudent.getIndex());
