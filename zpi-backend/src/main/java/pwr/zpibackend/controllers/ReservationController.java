@@ -26,7 +26,7 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservation(@RequestParam Long id) {
+    public ResponseEntity<Reservation> getReservation(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(reservationService.getReservation(id), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -35,7 +35,7 @@ public class ReservationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> addReservation(@Valid @RequestBody Reservation reservation) {
+    public ResponseEntity<Reservation> addReservation(@RequestBody Reservation reservation) {
         try {
             return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
         } catch (AlreadyExistsException e) {
@@ -47,7 +47,7 @@ public class ReservationController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @RequestParam Long id) {
+    public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @PathVariable Long id) {
         try {
             return new ResponseEntity<>(reservationService.updateReservation(reservation, id), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -56,7 +56,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reservation> deleteReservation(@RequestParam Long id) {
+    public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(reservationService.deleteReservation(id), HttpStatus.OK);
         } catch (NotFoundException e) {

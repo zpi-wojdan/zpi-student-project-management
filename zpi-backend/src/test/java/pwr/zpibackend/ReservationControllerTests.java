@@ -18,10 +18,11 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ReservationController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -48,6 +49,8 @@ public class ReservationControllerTests {
                 .contentType("application/json")
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
+
+        verify(reservationService).addReservation(any(Reservation.class));
     }
 
     @Test
@@ -64,6 +67,8 @@ public class ReservationControllerTests {
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isCreated());
+
+        verify(reservationService).addReservation(any(Reservation.class));
     }
 
     @Test
@@ -139,65 +144,117 @@ public class ReservationControllerTests {
                         .contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(resultJson));
+
+        verify(reservationService).getAllReservations();
     }
 
-//    te jeszcze nie działają
-//    @Test
-//    public void testGetReservationByIdShouldReturnStatusNotFound() throws Exception {
-//        Mockito.when(reservationService.getReservation(1L)).thenThrow(NotFoundException.class);
-//
-//        mockMvc.perform(get(BASE_URL + "/1")
-//                        .contentType("application/json"))
-//                .andExpect(status().isNotFound());
-//    }
-//
-//    @Test
-//    public void testGetReservationByIdShouldReturnStatusOk() throws Exception {
-//        Mockito.when(reservationService.getReservation(1L))
-//                .thenReturn(new Reservation(
-//                        1L,
-//                        false,
-//                        false,
-//                        false,
-//                        LocalDate.parse("2023-10-05"),
-//                        new Student(),
-//                        new Thesis()));
-//
-//        String resultJson = "{" +
-//                "\"reservationDate\":\"2023-10-05\"," +
-//                "\"student\":" +
-//                "{\"mail\":null," +
-//                "\"name\":null," +
-//                "\"surname\":null," +
-//                "\"index\":null," +
-//                "\"program\":null," +
-//                "\"teaching_cycle\":null," +
-//                "\"status\":null," +
-//                "\"role\":null," +
-//                "\"admission_date\":null," +
-//                "\"stage\":null" +
-//                "}," +
-//                "\"thesis\":{" +
-//                "\"namePL\":null," +
-//                "\"nameEN\":null," +
-//                "\"description\":null," +
-//                "\"num_people\":null," +
-//                "\"supervisor\":null," +
-//                "\"faculty\":null," +
-//                "\"field\":null," +
-//                "\"edu_cycle\":null," +
-//                "\"status\":null," +
-//                "\"id\":0" +
-//                "}," +
-//                "\"id\":1," +
-//                "\"confirmedByLeader\":false," +
-//                "\"confirmedBySupervisor\":false," +
-//                "\"readyForApproval\":false}";
-//
-//        mockMvc.perform(get(BASE_URL + "//1")
-//                        .contentType("application/json"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().json(resultJson));
-//    }
+    @Test
+    public void testGetReservationByIdShouldReturnStatusNotFound() throws Exception {
+        Mockito.when(reservationService.getReservation(1L)).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get(BASE_URL + "/1")
+                        .contentType("application/json"))
+                .andExpect(status().isNotFound());
+
+        verify(reservationService).getReservation(1L);
+    }
+
+    @Test
+    public void testGetReservationByIdShouldReturnStatusOk() throws Exception {
+        Mockito.when(reservationService.getReservation(1L))
+                .thenReturn(new Reservation(
+                        1L,
+                        false,
+                        false,
+                        false,
+                        LocalDate.parse("2023-10-05"),
+                        new Student(),
+                        new Thesis()));
+
+        String resultJson = "{" +
+                "\"reservationDate\":\"2023-10-05\"," +
+                "\"student\":" +
+                "{\"mail\":null," +
+                "\"name\":null," +
+                "\"surname\":null," +
+                "\"index\":null," +
+                "\"program\":null," +
+                "\"teaching_cycle\":null," +
+                "\"status\":null," +
+                "\"role\":null," +
+                "\"admission_date\":null," +
+                "\"stage\":null" +
+                "}," +
+                "\"thesis\":{" +
+                "\"namePL\":null," +
+                "\"nameEN\":null," +
+                "\"description\":null," +
+                "\"num_people\":null," +
+                "\"supervisor\":null," +
+                "\"faculty\":null," +
+                "\"field\":null," +
+                "\"edu_cycle\":null," +
+                "\"status\":null," +
+                "\"id\":0" +
+                "}," +
+                "\"id\":1," +
+                "\"confirmedByLeader\":false," +
+                "\"confirmedBySupervisor\":false," +
+                "\"readyForApproval\":false}";
+
+        mockMvc.perform(get(BASE_URL + "/1")
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(resultJson));
+
+        verify(reservationService).getReservation(1L);
+    }
+
+    @Test
+    public void testUpdateReservationShouldReturnStatusNotFound() throws Exception {
+        Reservation newReservation = new Reservation();
+        newReservation.setReservationDate(LocalDate.parse("2023-10-05"));
+        newReservation.setThesis(new Thesis());
+        newReservation.setStudent(new Student());
+        newReservation.setConfirmedByLeader(false);
+
+        String requestBody = objectMapper.writeValueAsString(newReservation);
+
+        Mockito.when(reservationService.updateReservation(newReservation, 1L)).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(put(BASE_URL + "/1")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateReservationShouldReturnStatusOk() throws Exception {
+        Reservation newReservation = new Reservation();
+        newReservation.setReservationDate(LocalDate.parse("2023-10-05"));
+        newReservation.setThesis(new Thesis());
+        newReservation.setStudent(new Student());
+        newReservation.setConfirmedByLeader(true);
+
+        Mockito.when(reservationService.updateReservation(any(Reservation.class), eq(1L))).thenReturn(newReservation);
+
+        mockMvc.perform(put("/reservation/1")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(newReservation)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(newReservation)));
+
+        verify(reservationService).updateReservation(any(Reservation.class), eq(1L));
+    }
+
+    @Test
+    void testDeleteReservation() throws Exception {
+        Mockito.when(reservationService.deleteReservation(1L)).thenReturn(new Reservation());
+
+        mockMvc.perform(delete("/reservation/1"))
+                .andExpect(status().isOk());
+
+        verify(reservationService).deleteReservation(1L);
+    }
 
 }
