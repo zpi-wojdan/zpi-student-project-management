@@ -1,6 +1,5 @@
 package pwr.zpibackend.models;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
