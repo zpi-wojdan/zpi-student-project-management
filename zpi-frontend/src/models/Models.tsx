@@ -12,16 +12,35 @@ export type Student = {
 }
 
 export type Thesis = {
-    thesis_id: number;
-    name_pl: string;
-    name_ang: string;
+    id: number;
+    namePL: string;
+    nameEN: string;
     description: string;
     num_people: number;
     status: string;
     faculty: string;
     field: string;
     eduCycle: string;
-    supervisor: string;
+    supervisor: Employee;
     leader: string;
+    occupied: number;
 }
 
+export type Reservation = {
+    thesis: Thesis;
+    student: Student;
+    reservationDate: Date;
+    id: number;
+    isConfirmedByLeader: boolean;
+    isConfirmedBySupervisor: boolean;
+    isReadyForApproval: boolean;
+}
+
+export type Employee = {
+    mail: string;
+    name: string;
+    surname: string;
+    departament_symbol: string;
+    title: string;
+    role: string;
+}

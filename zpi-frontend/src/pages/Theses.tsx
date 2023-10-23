@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
-import { Link } from 'react-router-dom';
-
-interface Thesis {
-  id: number;
-  namePL: string;
-  supervisor: {
-    title: string;
-    name: string;
-    surname: string;
-  };
-  num_people: number;
-  occupied: number;
-}
+import { Link, useNavigate } from 'react-router-dom';
+import { Thesis } from '../models/Models';
 
 
 const ThesesTable: React.FC = () => {
+  const navigate = useNavigate();
   const [theses, setTheses] = useState<Thesis[]>([]);
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,7 +61,7 @@ const ThesesTable: React.FC = () => {
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstRecord + index + 1}</td>
-              <td><Link to={`/theses/${thesis.id}`} className="link-style">{thesis.namePL}</Link></td>
+              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}} className="link-style btn">{thesis.namePL}</button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>

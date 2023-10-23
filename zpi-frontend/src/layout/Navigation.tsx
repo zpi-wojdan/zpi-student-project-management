@@ -74,7 +74,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                     <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/">Strona główna</NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/topics" >Tematy</NavLink>
+                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/theses" >Tematy</NavLink>
                                 </li>
                                 {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego kto zalogowany */}
                                 {isLoggedIn ? (
