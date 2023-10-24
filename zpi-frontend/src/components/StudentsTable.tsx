@@ -9,7 +9,7 @@ type StudentTableProps = {
 }
 
 function StudentTable({ students, thesis, role }: StudentTableProps) {
-  const [user, setUser] = useState<Student | Employee>();
+  const [user, setUser] = useState<Student & Employee>();
   const [showButtons, setShowButtons] = useState<boolean[]>(students.map((s) => false));
 
   const handleClick = () => {
@@ -24,14 +24,18 @@ function StudentTable({ students, thesis, role }: StudentTableProps) {
   const whichButtonsToShow = () => {
     if (role === "student") {
       if (user?.mail === thesis.leader) {
-        let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].isConfirmedByLeader);
+        let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].confirmedByLeader);
         newShowButtons[0] = false;
         setShowButtons(newShowButtons);
       } else {
-        let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].isConfirmedByStudent);
+        let newShowButtons = showButtons.map((s, i) => user?.index === students[i].index && !thesis.reservations[i].confirmedByStudent);
         setShowButtons(newShowButtons);
       }
-      // poprawic to pozniej jeszcze 
+    } else if (role === "supervisor" && user?.mail === thesis.supervisor.mail) {
+      let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].confirmedBySupervisor);
+      setShowButtons(newShowButtons);
+    } else {
+      setShowButtons(showButtons.map((s) => false));
     }
   }
 

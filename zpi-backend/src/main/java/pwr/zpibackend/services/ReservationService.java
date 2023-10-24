@@ -35,6 +35,7 @@ public class ReservationService {
         Reservation newReservation = new Reservation();
         newReservation.setConfirmedByLeader(reservation.isConfirmedByLeader());
         newReservation.setConfirmedBySupervisor(reservation.isConfirmedBySupervisor());
+        newReservation.setConfirmedByStudent(reservation.isConfirmedByStudent());
         newReservation.setReadyForApproval(reservation.isReadyForApproval());
         newReservation.setReservationDate(reservation.getReservationDate());
         Student student = studentRepository.findById(reservation.getStudent().getMail()).get();
