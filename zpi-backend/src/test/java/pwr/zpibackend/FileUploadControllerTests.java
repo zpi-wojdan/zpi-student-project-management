@@ -1,10 +1,8 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend;
 
-import aj.org.objectweb.asm.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,31 +14,30 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pwr.zpibackend.config.GoogleAuthService;
+import pwr.zpibackend.controllers.FileUploadController;
+import pwr.zpibackend.exceptions.EmptyFileException;
 import pwr.zpibackend.models.UploadedFile;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.FileUploadService;
 import pwr.zpibackend.services.StudentService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FileUploadController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class FileUploadControllerTests {
 
-    private static final String BASE_URL = "/file";
+    private static final String BASE_URL = "http://localhost:808/file";
     @Autowired
     private MockMvc mockMvc;
-    @InjectMocks
-    private FileUploadController fileUploadController;
+
     @MockBean
     private FileUploadService fileUploadService;
     @MockBean
@@ -61,24 +58,24 @@ public class FileUploadControllerTests {
                         .file(file))
                 .andExpect(status().isOk());
 
-        MockMultipartFile invalidFileType = new MockMultipartFile("file", "test.jpg", "image/jpeg", "Invalid content".getBytes());
+        MockMultipartFile new_file_type = new MockMultipartFile("file", "test.jpg", "image/jpeg", "Invalid content".getBytes());
         mockMvc.perform(multipart(BASE_URL)
-                        .file(invalidFileType))
+                        .file(new_file_type))
                 .andExpect(status().isOk());
 
-        MockMultipartFile emptyFile = new MockMultipartFile("file", "empty.txt", "text/plain", new byte[0]);
-        mockMvc.perform(multipart(BASE_URL)
-                        .file(emptyFile))
-                .andExpect(status().isOk());
     }
 
     @Test
     public void testUploadFileFailure() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "File content".getBytes());
-        Mockito.doThrow(new IOException("Error occurred while uploading the file")).when(fileUploadService).storeFile(Mockito.any());
+        MockMultipartFile emptyFile = new MockMultipartFile("file", "empty.txt", "text/plain", new byte[0]);
+        doThrow(new EmptyFileException("Empty file")).when(fileUploadService).storeFile(emptyFile);
 
-        ResponseEntity<String> response = fileUploadController.uploadFile(file);
-        assert response.getStatusCode() == HttpStatus.EXPECTATION_FAILED;
+        MvcResult result = mockMvc.perform(multipart(BASE_URL)
+                                .file(emptyFile))
+                                .andReturn();
+
+        int status = result.getResponse().getStatus();
+        assert (status == HttpStatus.EXPECTATION_FAILED.value());
     }
 
     @Test
@@ -87,7 +84,7 @@ public class FileUploadControllerTests {
         uploadedFile.setId(1L);
         Mockito.when(fileUploadService.getFile(1L)).thenReturn(uploadedFile);
 
-        MvcResult result = mockMvc.perform(get("/file/{id}", 1L))
+        MvcResult result = mockMvc.perform(get(BASE_URL + "/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -95,9 +92,7 @@ public class FileUploadControllerTests {
         ObjectMapper objectMapper = new ObjectMapper();
         UploadedFile responseEntity = objectMapper.readValue(content, UploadedFile.class);
 
-        // Verify the response status
         assert (result.getResponse().getStatus() == HttpStatus.OK.value());
-        // Verify the response body
         assert (responseEntity.getId() == 1L);
     }
 
@@ -107,7 +102,7 @@ public class FileUploadControllerTests {
         uploadedFile.setId(1L);
         Mockito.when(fileUploadService.getFile(1L)).thenReturn(uploadedFile);
 
-        MvcResult result = mockMvc.perform(get("/file/{id}", 1L))
+        MvcResult result = mockMvc.perform(get(BASE_URL + "/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -115,9 +110,7 @@ public class FileUploadControllerTests {
         ObjectMapper objectMapper = new ObjectMapper();
         UploadedFile responseEntity = objectMapper.readValue(content, UploadedFile.class);
 
-        // Verify the response status
         assert (result.getResponse().getStatus() == HttpStatus.OK.value());
-        // Verify the response body
         assert (responseEntity.getId() == 1L);
     }
 
@@ -139,7 +132,7 @@ public class FileUploadControllerTests {
 
         Mockito.when(fileUploadService.getAllFiles()).thenReturn(mockFiles);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/file"))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -147,50 +140,20 @@ public class FileUploadControllerTests {
         ObjectMapper objectMapper = new ObjectMapper();
         List responseFiles = objectMapper.readValue(content, List.class);
 
-        // Verify the response status
         assert (result.getResponse().getStatus() == HttpStatus.OK.value());
-        // Verify the number of files in the response
         assert (responseFiles.size() == 4);
     }
 
-//    @Test
-//    public void testGetAllFilesFailure() throws Exception {
-//        List<UploadedFile> mockFiles = new ArrayList<>();
-//        UploadedFile file1 = new UploadedFile();
-//        file1.setId(1L);
-//        UploadedFile file2 = new UploadedFile();
-//        file2.setId(2L);
-//        UploadedFile file3 = new UploadedFile();
-//        file2.setId(3L);
-//        UploadedFile file4 = new UploadedFile();
-//        file2.setId(4L);
-//        mockFiles.add(file1);
-//        mockFiles.add(file2);
-//        mockFiles.add(file3);
-//        mockFiles.add(file4);
-//        Mockito.when(fileUploadService.getAllFiles()).thenReturn(null);
-//
-//
-//
-//        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/file"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        String content = result.getResponse().getContentAsString();
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        List responseFiles = objectMapper.readValue(content, List.class);
-//
-//        // Verify the response status
-//        assert (result.getResponse().getStatus() == HttpStatus.OK.value());
-//        assert (responseFiles.size() != 4);
-//    }
     @Test
     public void testGetAllFilesFailure() throws Exception {
-        Mockito.when(fileUploadService.getAllFiles()).thenThrow(new RuntimeException("Simulated error"));
+        Mockito.when(fileUploadService.getAllFiles()).thenThrow(new RuntimeException("NOT FOUND"));
 
-        MvcResult result = mockMvc.perform(get("/file"))
-                .andExpect(status().is(HttpStatus.NOT_FOUND.value())) // Expect a 404 status due to the exception
+        MvcResult result = mockMvc.perform(get(BASE_URL))
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()))
                 .andReturn();
+
+        int status = result.getResponse().getStatus();
+        assert (status == HttpStatus.NOT_FOUND.value());
     }
 
 
