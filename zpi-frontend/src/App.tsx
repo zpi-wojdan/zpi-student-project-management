@@ -8,6 +8,10 @@ import ThesisDetails from './pages/ThesisDetails';
 // @ts-ignore
 import Navigation from './layout/Navigation';
 import {AuthProvider} from "./auth/AuthProvider";
+import { Thesis } from './models/Models';
+import AddThesisPage from './pages/AddThesis';
+import UpdateThesisPage from './pages/UpdateThesis';
+import Unauthorized from './pages/Unauthorized';
 
 export interface IAppProps {
 }
@@ -25,6 +29,9 @@ export default function App(props: IAppProps) {
           <Route path='theses' element={<ThesesTable />} />
           <Route path='theses/:id' element={<ThesisDetails />} />
               <Route path='my' element={<ReservationPage />} />
+          <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
+          <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'} mail={'john.doe@pwr.edu.pl'} />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
           </Navigation>
         </BrowserRouter>
