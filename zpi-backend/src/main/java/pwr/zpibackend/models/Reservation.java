@@ -3,6 +3,7 @@ package pwr.zpibackend.models;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,5 +38,6 @@ public class Reservation {
     @JoinColumn(name = "thesis_id", referencedColumnName = "thesis_id", nullable = false)
     @ManyToOne
     @NotNull(message = "Thesis cannot be null")
+    @JsonIgnore
     private Thesis thesis;
 }

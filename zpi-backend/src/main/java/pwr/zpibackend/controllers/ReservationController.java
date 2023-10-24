@@ -8,6 +8,7 @@ import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.Reservation;
+import pwr.zpibackend.models.ReservationDTO;
 import pwr.zpibackend.services.ReservationService;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class ReservationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Reservation> addReservation(@RequestBody Reservation reservation) {
+    public ResponseEntity<Reservation> addReservation(@RequestBody ReservationDTO reservation) {
         try {
             return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
         } catch (AlreadyExistsException e) {
@@ -46,7 +47,6 @@ public class ReservationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @PathVariable Long id) {

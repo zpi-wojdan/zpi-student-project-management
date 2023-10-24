@@ -96,10 +96,12 @@ function ReservationPage({ }: ReservationProps) {
 
             for (const reservation of reservations) {
                 const responseBody = {
-                    thesis: thesis,
+                    thesisId: thesis.id,
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
+                    confirmedByLeader: true,
                 };
+                console.log(JSON.stringify(responseBody));
 
                 const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
                     headers: {
