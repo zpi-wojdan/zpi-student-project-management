@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.ReservationController;
 import pwr.zpibackend.models.Reservation;
+import pwr.zpibackend.models.ReservationDTO;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.services.EmployeeService;
@@ -41,9 +42,9 @@ public class ReservationControllerTests {
 
     @Test
     public void testAddReservationShouldReturnStatusBadRequest() throws Exception {
-        Reservation newReservation = new Reservation();
+        ReservationDTO newReservation = new ReservationDTO();
         newReservation.setReservationDate(null);
-        newReservation.setThesis(null);
+        newReservation.setThesisId(null);
         newReservation.setStudent(null);
 
         String requestBody = objectMapper.writeValueAsString(newReservation);
@@ -55,14 +56,14 @@ public class ReservationControllerTests {
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
 
-        verify(reservationService).addReservation(any(Reservation.class));
+        verify(reservationService).addReservation(any(ReservationDTO.class));
     }
 
     @Test
     public void testAddReservationShouldReturnStatusCreated() throws Exception {
-        Reservation newReservation = new Reservation();
+        ReservationDTO newReservation = new ReservationDTO();
         newReservation.setReservationDate(LocalDate.parse("2023-10-05"));
-        newReservation.setThesis(new Thesis());
+        newReservation.setThesisId(1L);
         newReservation.setStudent(new Student());
         newReservation.setConfirmedByLeader(false);
 
@@ -73,7 +74,7 @@ public class ReservationControllerTests {
                         .content(requestBody))
                 .andExpect(status().isCreated());
 
-        verify(reservationService).addReservation(any(Reservation.class));
+        verify(reservationService).addReservation(any(ReservationDTO.class));
     }
 
     @Test
@@ -99,18 +100,6 @@ public class ReservationControllerTests {
                     "\"admission_date\":null," +
                     "\"stage\":null" +
                 "}," +
-                "\"thesis\":{" +
-                    "\"namePL\":null," +
-                    "\"nameEN\":null," +
-                    "\"description\":null," +
-                    "\"num_people\":null," +
-                    "\"supervisor\":null," +
-                    "\"faculty\":null," +
-                    "\"field\":null," +
-                    "\"edu_cycle\":null," +
-                    "\"status\":null," +
-                    "\"id\":0" +
-                "}," +
                 "\"id\":1," +
                 "\"confirmedByLeader\":false," +
                 "\"confirmedBySupervisor\":false," +
@@ -128,18 +117,6 @@ public class ReservationControllerTests {
                     "\"role\":null," +
                     "\"admission_date\":null," +
                     "\"stage\":null}," +
-                "\"thesis\":{" +
-                    "\"namePL\":null," +
-                    "\"nameEN\":null," +
-                    "\"description\":null," +
-                    "\"num_people\":null," +
-                    "\"supervisor\":null," +
-                    "\"faculty\":null," +
-                    "\"field\":null," +
-                    "\"edu_cycle\":null," +
-                    "\"status\":null," +
-                    "\"id\":0" +
-                "}," +
                 "\"id\":2," +
                 "\"confirmedByLeader\":false," +
                 "\"confirmedBySupervisor\":false," +
@@ -193,18 +170,6 @@ public class ReservationControllerTests {
                 "\"admission_date\":null," +
                 "\"stage\":null" +
                 "}," +
-                "\"thesis\":{" +
-                "\"namePL\":null," +
-                "\"nameEN\":null," +
-                "\"description\":null," +
-                "\"num_people\":null," +
-                "\"supervisor\":null," +
-                "\"faculty\":null," +
-                "\"field\":null," +
-                "\"edu_cycle\":null," +
-                "\"status\":null," +
-                "\"id\":0" +
-                "}," +
                 "\"id\":1," +
                 "\"confirmedByLeader\":false," +
                 "\"confirmedBySupervisor\":false," +
@@ -229,12 +194,14 @@ public class ReservationControllerTests {
 
         String requestBody = objectMapper.writeValueAsString(newReservation);
 
-        Mockito.when(reservationService.updateReservation(newReservation, 1L)).thenThrow(NotFoundException.class);
+        Mockito.doThrow(NotFoundException.class).when(reservationService).updateReservation(newReservation, 10L);
 
-        mockMvc.perform(put(BASE_URL + "/1")
+        mockMvc.perform(put(BASE_URL + "/10")
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isNotFound());
+
+        verify(reservationService).updateReservation(any(Reservation.class), eq(10L));
     }
 
     @Test

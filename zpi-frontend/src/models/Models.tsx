@@ -24,6 +24,24 @@ export type Thesis = {
     supervisor: Employee;
     leader: string;
     occupied: number;
+    students: Student[];
+    reservations: Reservation[];
+}
+
+export type ThesisDB = {
+    id: number;
+    namePL: string;
+    nameEN: string;
+    description: string;
+    num_people: number;
+    status: string;
+    faculty: string;
+    field: string;
+    eduCycle: string;
+    supervisor: Employee;
+    leader: string;
+    occupied: number;
+    reservations: Reservation[];
 }
 
 export type Reservation = {
@@ -33,6 +51,7 @@ export type Reservation = {
     id: number;
     isConfirmedByLeader: boolean;
     isConfirmedBySupervisor: boolean;
+    isConfirmedByStudent: boolean;
     isReadyForApproval: boolean;
 }
 

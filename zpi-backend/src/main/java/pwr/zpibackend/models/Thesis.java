@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,4 +47,7 @@ public class Thesis {
     private String status; //change String to Status when table exist
     @Column(nullable = false)
     private Integer occupied = 0;
+    @JoinColumn(name = "thesis_id")
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Reservation> reservations;
 }
