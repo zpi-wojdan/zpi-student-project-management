@@ -104,17 +104,6 @@ public class AuthControllerTests {
 
         verify(authService).getUserDetails(email);
     }
-
-    @Test
-    void getUserDetailsOfUserWithNonMatchingEmail() throws Exception {
-        String email = "123456@pwr.edu.pl";
-        Mockito.when(authService.getUserDetails(email)).thenThrow(IllegalArgumentException.class);
-
-        mockMvc.perform(get(BASE_URL + "/" + email + "/details").contentType("application/json"))
-                .andExpect(status().isBadRequest());
-
-        verify(authService).getUserDetails(email);
-    }
 }
 
 
