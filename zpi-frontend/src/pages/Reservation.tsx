@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { Student, Thesis } from '../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
+import handleSignOut from "../auth/Logout";
+import useAuth from "../auth/useAuth";
 
 type ReservationProps = {
 }
 
 function ReservationPage({ }: ReservationProps) {
+    // @ts-ignore
+    const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
@@ -77,6 +81,10 @@ function ReservationPage({ }: ReservationProps) {
             .catch(error => {
                 newStudents[index] = {} as Student;
                 newErrors[index] = true;
+                if (error.response.status === 401 || error.response.status === 403) {
+                    setAuth({...auth, reasonOfLogout: 'token_expired'});
+                    handleSignOut(navigate);
+                }
             })
         setStudents(newStudents);
         setErrors(newErrors);
@@ -106,6 +114,10 @@ function ReservationPage({ }: ReservationProps) {
                     .catch(error => {
                         console.error(`Failed to submit reservation ${reservation}`);
                         console.error(error)
+                        if (error.response.status === 401 || error.response.status === 403) {
+                            setAuth({...auth, reasonOfLogout: 'token_expired'});
+                            handleSignOut(navigate);
+                        }
                     });
             }
         } else {

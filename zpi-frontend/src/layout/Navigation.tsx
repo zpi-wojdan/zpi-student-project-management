@@ -1,14 +1,23 @@
 import React, { ReactNode, useState } from 'react'
-import {Link, NavLink, useLocation} from 'react-router-dom'
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
+// @ts-ignore
+import Cookies from "js-cookie";
+import handleSignOut from "../auth/Logout";
 
 type NavigationProps = {} & {
     children?: ReactNode
 }
 
-const Naviagation = ({ children }: NavigationProps) => {
+const Navigation = ({ children }: NavigationProps) => {
     const [showNav, setShowNav] = useState(false);
+    const isLoggedIn = Cookies.get('user') !== undefined;
+    const user = Cookies.get('user') ? JSON.parse(Cookies.get('user') as string) : '';
+
     const location = useLocation();
+    const navigate = useNavigate();
+    const signOut = () => handleSignOut(navigate);
     const isLoginPage = location.pathname === '/login';
+
 
     return (
         <>
@@ -18,18 +27,31 @@ const Naviagation = ({ children }: NavigationProps) => {
                         <div className="me-auto"></div>
 
                         <ul className="navbar-nav mw-auto">
+                            {isLoggedIn ? (
+                                <li className="nav-item">
+                                    <div className="nav-link">{user.name} {user.surname}</div>
+                                </li>
+                            ) : (<li></li>)}
                             <li className="nav-item">
-                                <Link className="nav-link" to="login">PL</Link>
+                                <div className="nav-link">|</div>
+                            </li>
+                            <li className="nav-item">
+                                <div className="nav-link">PL</div>
                             </li>
                             <li className="nav-item">
                                 <div className="nav-link">|</div>
                             </li>
-                            {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego czy zalogowany czy nie */}
                             <li className="nav-item">
-                                <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="login">Logowanie</NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="logout">Logout</Link>
+                                {isLoggedIn ? (
+                                    <Link className="nav-link" to="login" onClick={signOut}>Wyloguj</Link>
+                                ) : (
+                                    <NavLink
+                                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                                        to="login"
+                                    >
+                                        Logowanie
+                                    </NavLink>
+                                )}
                             </li>
                         </ul>
                     </div>
@@ -57,9 +79,11 @@ const Naviagation = ({ children }: NavigationProps) => {
                                     <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/theses" >Tematy</NavLink>
                                 </li>
                                 {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego kto zalogowany */}
-                                <li className="nav-item">
-                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
-                                </li>
+                                {isLoggedIn ? (
+                                    <li className="nav-item">
+                                        <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
+                                    </li>
+                                ) : (<li></li>)}
                             </ul>
                         </div>
                     </div>
@@ -71,4 +95,4 @@ const Naviagation = ({ children }: NavigationProps) => {
     )
 }
 
-export default Naviagation
+export default Navigation
