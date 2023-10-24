@@ -99,6 +99,7 @@ function ReservationPage({ }: ReservationProps) {
                     thesisId: thesis.id,
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
+                    confirmedByLeader: true,
                 };
                 console.log(JSON.stringify(responseBody));
 

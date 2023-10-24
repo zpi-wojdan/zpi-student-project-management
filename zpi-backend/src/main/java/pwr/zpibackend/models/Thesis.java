@@ -16,7 +16,8 @@ import java.util.List;
 public class Thesis {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "thesis_seq", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "thesis_seq", sequenceName = "thesis_seq", allocationSize = 1)
     @Column(name = "thesis_id")
     private long Id;
     @Column(name = "name_pl", nullable = false)

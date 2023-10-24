@@ -27,9 +27,24 @@ public class ThesisService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Thesis addThesis(Thesis thesis)
-    {
-        thesisRepository.saveAndFlush(thesis);
+    public Thesis addThesis(Thesis thesis) throws NotFoundException {
+        Employee supervisor = employeeRepository
+                .findById(thesis.getSupervisor().getMail())
+                .orElseThrow(NotFoundException::new);
+
+        Thesis newThesis = new Thesis();
+        newThesis.setNamePL(thesis.getNamePL());
+        newThesis.setNameEN(thesis.getNameEN());
+        newThesis.setDescription(thesis.getDescription());
+        newThesis.setNum_people(thesis.getNum_people());
+        newThesis.setSupervisor(supervisor);
+        newThesis.setFaculty(thesis.getFaculty());
+        newThesis.setField(thesis.getField());
+        newThesis.setEdu_cycle(thesis.getEdu_cycle());
+        newThesis.setStatus(thesis.getStatus());
+        newThesis.setOccupied(0);
+
+        thesisRepository.saveAndFlush(newThesis);
         return thesis;
     }
 

@@ -49,10 +49,10 @@ export type Reservation = {
     student: Student;
     reservationDate: Date;
     id: number;
-    isConfirmedByLeader: boolean;
-    isConfirmedBySupervisor: boolean;
-    isConfirmedByStudent: boolean;
-    isReadyForApproval: boolean;
+    confirmedByLeader: boolean;
+    confirmedBySupervisor: boolean;
+    confirmedByStudent: boolean;
+    readyForApproval: boolean;
 }
 
 export type Employee = {
