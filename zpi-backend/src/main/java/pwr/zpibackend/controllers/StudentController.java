@@ -58,13 +58,12 @@ public class StudentController {
     }
 
     @DeleteMapping("/{mail}")
-    public void deleteStudent(@PathVariable String mail) {
+    public ResponseEntity<Student> deleteStudent(@PathVariable String mail) {
         try{
-            studentService.deleteStudent(mail);
+            return new ResponseEntity<>(studentService.deleteStudent(mail), HttpStatus.OK);
         }
         catch(NotFoundException err){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
     }
 }

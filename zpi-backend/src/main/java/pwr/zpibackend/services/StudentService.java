@@ -8,6 +8,7 @@ import pwr.zpibackend.models.Student;
 import pwr.zpibackend.repositories.StudentRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -41,6 +42,7 @@ public class StudentService {
     public Student updateStudent(String mail, Student updatedStudent) throws NotFoundException {
         Student student = studentRepository.findById(mail).orElse(null);
         if (student != null) {
+            student.setMail(updatedStudent.getMail());
             student.setName(updatedStudent.getName());
             student.setSurname(updatedStudent.getSurname());
             student.setIndex(updatedStudent.getIndex());
@@ -56,11 +58,16 @@ public class StudentService {
         throw new NotFoundException();
     }
 
-    public void deleteStudent(String mail) throws NotFoundException
+    public Student deleteStudent(String mail) throws NotFoundException
     {
-        if (studentRepository.existsById(mail)) {
+        Optional<Student> studentOptional = studentRepository.findById(mail);
+
+        if (studentOptional.isPresent()) {
+            Student deletedStudent = studentOptional.get();
             studentRepository.deleteById(mail);
+            return deletedStudent;
+        } else {
+            throw new NotFoundException();
         }
-        else throw new NotFoundException();
     }
 }
