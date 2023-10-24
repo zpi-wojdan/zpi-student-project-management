@@ -33,8 +33,7 @@ public class ThesisController {
     }
 
     @PostMapping
-    public ResponseEntity<Thesis> addThesis(@RequestBody Thesis thesis)
-    {
+    public ResponseEntity<Thesis> addThesis(@RequestBody Thesis thesis) throws NotFoundException {
         return new ResponseEntity<>(thesisService.addThesis(thesis), HttpStatus.CREATED);
     }
 
