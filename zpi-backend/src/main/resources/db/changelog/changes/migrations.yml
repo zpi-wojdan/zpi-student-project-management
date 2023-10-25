@@ -349,3 +349,189 @@ databaseChangeLog:
                     referencedTableName: student
                     referencedColumnNames: mail
                     nullable: true
+  - changeSet:
+      id: add_university_tables
+      author: Piotr
+      changes:
+        - createTable:
+            tableName: faculty
+            columns:
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: department
+            columns:
+              - column:
+                  name: code
+                  type: varchar(15)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: faculty_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_department_faculty
+                    referencedTableName: faculty
+                    referencedColumnNames: abbreviation
+                    nullable: false
+        - createTable:
+            tableName: study_field
+            columns:
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: specialization
+            columns:
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: study_field_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_specialization_study_field
+                    referencedTableName: study_field
+                    referencedColumnNames: abbreviation
+                    nullable: false
+        - createTable:
+            tableName: study_cycle
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    autoIncrement: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(15)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: program
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    autoIncrement: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: study_field_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_program_study_field
+                    referencedTableName: study_field
+                    referencedColumnNames: abbreviation
+                    nullable: true
+              - column:
+                  name: specialization_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_program_specialization
+                    referencedTableName: specialization
+                    referencedColumnNames: abbreviation
+                    nullable: true
+        - createTable:
+            tableName: student_program
+            columns:
+              - column:
+                  name: student_mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_program_student
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_program_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+        - createTable:
+            tableName: student_cycle
+            columns:
+              - column:
+                  name: student_mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_cycle_student
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_cycle_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+        - createTable:
+            tableName: program_cycle
+            columns:
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_cycle_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_cycle_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+
