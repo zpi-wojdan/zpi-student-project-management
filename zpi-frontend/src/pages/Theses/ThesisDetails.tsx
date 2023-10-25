@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Axios from 'axios';
-import { Thesis } from '../models/Models';
+import { Thesis } from '../../models/Models';
 
 const ThesisDetails: React.FC = () => {
   const navigate = useNavigate();

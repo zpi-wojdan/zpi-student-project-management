@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
-import { AddUpdateThesisProps, SupervisorData, StatusEnum } from '../utils/types';
-import '../App.css'
+import { AddUpdateThesisProps, SupervisorData, StatusEnum } from '../../utils/types';
+import '../../App.css'
 
 
 function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {

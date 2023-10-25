@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import '../App.css'
+import '../../App.css'
 import Axios from 'axios';
-import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../utils/types';
+import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Thesis } from '../models/Models';
+import { Thesis } from '../../models/Models';
 
 
 const ThesesTable: React.FC = () => {
