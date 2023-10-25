@@ -9,7 +9,6 @@ import ThesisDetails from './pages/ThesisDetails';
 import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/SingleReservation';
 import {AuthProvider} from "./auth/AuthProvider";
-import { Thesis } from './models/Models';
 import AddThesisPage from './pages/AddThesis';
 import UpdateThesisPage from './pages/UpdateThesis';
 import Unauthorized from './pages/Unauthorized';
@@ -30,6 +29,14 @@ export default function App(props: IAppProps) {
               <Route path='single-reservation' element={<SingleReservationPage />} />
               <Route path='theses' element={<ThesesTable />} />
               <Route path='theses/:id' element={<ThesisDetails />} />
+              <Route path='students' element={<HomePage />} />
+              <Route path='employees' element={<HomePage />} />
+              <Route path='faculties' element={<HomePage />} />
+              <Route path='fields' element={<HomePage />} />
+              <Route path='specializations' element={<HomePage />} />
+              <Route path='programs' element={<HomePage />} />
+              <Route path='cycles' element={<HomePage />} />
+              <Route path='departments' element={<HomePage />} />
               <Route path='my' element={<ReservationPage />} />
               <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
               <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'} mail={'john.doe@pwr.edu.pl'} />} />
