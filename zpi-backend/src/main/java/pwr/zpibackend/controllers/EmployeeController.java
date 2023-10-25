@@ -33,7 +33,7 @@ public class EmployeeController {
 
     @GetMapping("/match/{prefix}")
     public ResponseEntity<List<Employee>> getEmployeesByPrefix(@PathVariable String prefix) {
-        List<Employee> matchingEmployees = employeeService.getEmployeesByPrefix(prefix);
+        List<Employee> matchingEmployees = employeeService.getEmployeesByPrefix(prefix.toLowerCase());
         return new ResponseEntity<>(matchingEmployees, HttpStatus.OK);
     }
 
