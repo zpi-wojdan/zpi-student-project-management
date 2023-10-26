@@ -564,3 +564,57 @@ databaseChangeLog:
         - dropColumn:
             tableName: student
             columnName: admission_date
+        - dropColumn:
+            tableName: student
+            columnName: program
+
+  - changeSet:
+      id: add_table_thesis_program
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: thesis
+            columnName: edu_cycle
+        - addColumn:
+            tableName: thesis
+            columns:
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_thesis_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+        - createTable:
+            tableName: program_thesis
+            columns:
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_thesis_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: thesis_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_thesis_thesis
+                    referencedTableName: thesis
+                    referencedColumnNames: thesis_id
+                    nullable: false
+
+  - changeSet:
+      id: remove_faculty_and_field_from_thesis
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: thesis
+            columnName: faculty
+        - dropColumn:
+            tableName: thesis
+            columnName: field
