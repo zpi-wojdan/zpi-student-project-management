@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Employee, Student, Thesis } from '../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import Cookies from 'js-cookie';
+import { Employee } from '../models/Employee';
+import { Student } from '../models/Student';
+import { ThesisFront } from '../models/Thesis';
 
 type SingleReservationProps = {
 }
@@ -14,7 +16,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const thesis = location.state?.thesis as Thesis;
+    const thesis = location.state?.thesis as ThesisFront;
 
     const [reservation, setReservation] = useState<string>("");
     const [user, setUser] = useState<Student & Employee>();

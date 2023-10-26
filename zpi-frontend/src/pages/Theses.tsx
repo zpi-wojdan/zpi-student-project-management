@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Thesis, ThesisDB } from '../models/Models';
-
+import { ThesisFront, Thesis } from '../models/Thesis';
 
 const ThesesTable: React.FC = () => {
   const navigate = useNavigate();
-  const [theses, setTheses] = useState<Thesis[]>([]);
+  const [theses, setTheses] = useState<ThesisFront[]>([]);
   
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 25;
@@ -14,15 +13,15 @@ const ThesesTable: React.FC = () => {
   useEffect(() => {
     Axios.get('http://localhost:8080/thesis')
       .then((response) => {
-        const thesis_response = response.data.map((thesisDb: ThesisDB) => {
-          const thesis: Thesis = {
+        console.log(response);
+        const thesis_response = response.data.map((thesisDb: Thesis) => {
+          const thesis: ThesisFront = {
             id: thesisDb.id,
             namePL: thesisDb.namePL,
             nameEN: thesisDb.nameEN,
             description: thesisDb.description,
-            faculty: thesisDb.faculty,
-            field: thesisDb.field,
-            eduCycle: thesisDb.eduCycle,
+            programs: thesisDb.programs,
+            studyCycle: thesisDb.studyCycle,
             num_people: thesisDb.num_people,
             occupied: thesisDb.occupied,
             supervisor: thesisDb.supervisor,
@@ -33,7 +32,7 @@ const ThesesTable: React.FC = () => {
           };
           return thesis;
         });
-        thesis_response.sort((a: Thesis, b: Thesis) => a.id - b.id);
+        thesis_response.sort((a: ThesisFront, b: ThesisFront) => a.id - b.id);
         setTheses(thesis_response);
         
       })

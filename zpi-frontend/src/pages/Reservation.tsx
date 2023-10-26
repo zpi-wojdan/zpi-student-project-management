@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Student, Thesis } from '../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
+import { ThesisFront } from '../models/Thesis';
+import { Student } from '../models/Student';
 
 type ReservationProps = {
 }
@@ -13,7 +14,7 @@ function ReservationPage({ }: ReservationProps) {
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const thesis = location.state?.thesis as Thesis;
+    const thesis = location.state?.thesis as ThesisFront;
 
     const [reservations, setReservations] = useState<string[]>(["", ""]);
     const [errors, setErrors] = useState<boolean[]>([]);
