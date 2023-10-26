@@ -24,7 +24,7 @@ public class Employee {
     @Column(nullable = false)
     private String surname;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "employee_role",
             joinColumns = @JoinColumn(name = "mail"),

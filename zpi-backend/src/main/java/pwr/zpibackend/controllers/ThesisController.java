@@ -3,6 +3,7 @@ package pwr.zpibackend.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Thesis;
@@ -18,6 +19,7 @@ public class ThesisController {
     private final ThesisService thesisService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
     }

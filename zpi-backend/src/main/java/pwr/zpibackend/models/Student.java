@@ -33,7 +33,7 @@ public class Student {
     private String status;
 
     @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull(message = "Role cannot be null")
     private Role role;
 

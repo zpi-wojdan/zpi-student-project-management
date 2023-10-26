@@ -78,7 +78,7 @@ VALUES
     ('william.rose@pwr.edu.pl', 'William', 'Rose', 'prof', 'K34W04ND03'),
     ('ava.chapman@pwr.edu.pl', 'Ava', 'Chapman', 'mgr', 'K34W04ND03');
 
-INSERT INTO employee_role (employee_mail, role_id)
+INSERT INTO employee_role (mail, role_id)
 VALUES
     ('john.doe@pwr.edu.pl', '2'),
     ('alice.smith@pwr.edu.pl', '2'),

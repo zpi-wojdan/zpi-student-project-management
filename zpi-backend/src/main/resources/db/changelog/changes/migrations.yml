@@ -396,7 +396,7 @@ databaseChangeLog:
                 tableName: employee_role
                 columns:
                     - column:
-                        name: employee_mail
+                        name: mail
                         type: varchar(50)
                         constraints:
                           primaryKey: true

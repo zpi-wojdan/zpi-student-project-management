@@ -3,6 +3,8 @@ package pwr.zpibackend.config;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 
 @Component
 public class GoogleTokenFilter extends OncePerRequestFilter {
@@ -68,10 +71,13 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
                         "User not in database or user is both student and employee!");
             }
 
+            ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
                             GoogleUser.fromGoogleTokenPayload(token.getPayload()),
-                            null, null));
+                            null, authorities));
 
             request.setAttribute("googleEmail", email);
         } catch (GeneralSecurityException | IllegalArgumentException e) {
