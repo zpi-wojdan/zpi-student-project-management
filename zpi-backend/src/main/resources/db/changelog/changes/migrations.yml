@@ -386,7 +386,7 @@ databaseChangeLog:
               columns:
                 - column:
                     name: role_id
-                    type: integer(10)
+                    type: BIGINT
                     constraints:
                       foreignKeyName: fk_student_role
                       referencedTableName: role
