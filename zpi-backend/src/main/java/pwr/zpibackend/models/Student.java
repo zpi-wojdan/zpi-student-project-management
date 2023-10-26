@@ -1,9 +1,8 @@
 package pwr.zpibackend.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,8 +31,11 @@ public class Student {
     private String teaching_cycle;
     @Column(nullable = false)
     private String status;
-    @Column(nullable = false)
-    private String role;    //  change String to Role when table exist
+
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    @ManyToOne
+    @NotNull(message = "Role cannot be null")
+    private Role role;
 
     private Date admission_date;
     private String stage;

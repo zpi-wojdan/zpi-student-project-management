@@ -2,9 +2,13 @@ package pwr.zpibackend.models;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +24,14 @@ public class Employee {
     @Column(nullable = false)
     private String surname;
 
-    private String role;    //  change String to Role when table exist
+    @ManyToMany
+    @JoinTable(
+            name = "employee_role",
+            joinColumns = @JoinColumn(name = "mail"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @NotNull(message = "Roles cannot be null")
+    private List<Role> roles;
+
     private String department_symbol;
     private String title;   //  change String to Title when table exist
 
