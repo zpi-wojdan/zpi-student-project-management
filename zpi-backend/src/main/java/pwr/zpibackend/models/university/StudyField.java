@@ -1,11 +1,10 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.university;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

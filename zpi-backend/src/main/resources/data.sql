@@ -38,10 +38,14 @@ VALUES
     ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', 'W04-ISTP-035M-OSIW9', '2023/24-Z', 'Stage2', '12/12/23', 'student', ''),
     ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', 'W04-PHYS-036M-OSIW7', '2023/24-Z', 'Stage3', '03/11/21', 'student', 'STU');
 
+INSERT INTO faculty
+VALUES('W04N', 'Wydział Informatyki i Telekomunikacji');
+
+INSERT INTO department
+VALUES('K34W04ND03', 'Katedra Telekomunikacji i Teleinformatyki', 'W04N')
 
 
-
-INSERT INTO employee (mail, name, surname, title, role, department_symbol)
+INSERT INTO employee (mail, name, surname, title, role, department_code)
 VALUES
     ('john.doe@pwr.edu.pl', 'John', 'Doe', 'dr', 'teacher', 'K34W04ND03'),
     ('alice.smith@pwr.edu.pl', 'Alice', 'Smith', 'dr hab.', 'teacher', 'K34W04ND03'),
@@ -120,3 +124,5 @@ VALUES
     ('45', 'System zarządzania relacjami studentów z pracownikami uczelni', 'Student relation management', 'Description45', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'matthew.clark@pwr.edu.pl'), 'Faculty45', 'Field45', 'EduCycle45', 'CLOSED'),
     ('46', 'System webowy do składania zamówień w restauracji z uwzględnieniem kodu QR', 'Web system for placing orders in a restaurant, including the QR code', 'Description46', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'william.khan@pwr.edu.pl'), 'Faculty46', 'Field46', 'EduCycle46', 'OPEN'),
     ('47', 'System webowy do wyszukiwania atrakcji turystycznych', 'Web system for searching tourist attractions', 'Description47', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'william.khan@pwr.edu.pl'), 'Faculty47', 'Field47', 'EduCycle47', 'OPEN');
+
+

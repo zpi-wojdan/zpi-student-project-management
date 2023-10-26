@@ -535,3 +535,32 @@ databaseChangeLog:
                     referencedColumnNames: id
                     nullable: false
 
+  - changeSet:
+      id: add_department_to_employee
+      author: Piotr
+      changes:
+        - addColumn:
+            tableName: employee
+            columns:
+              - column:
+                  name: department_code
+                  type: varchar(15)
+                  constraints:
+                    foreignKeyName: fk_employee_department
+                    referencedTableName: department
+                    referencedColumnNames: code
+                    nullable: false
+        - dropColumn:
+            tableName: employee
+            columnName: department_symbol
+
+  - changeSet:
+      id: remove_stage_and_admission_date_from_student
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: student
+            columnName: stage
+        - dropColumn:
+            tableName: student
+            columnName: admission_date
