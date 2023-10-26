@@ -1,48 +1,64 @@
-INSERT INTO student (mail, name, surname, index, program, teaching_cycle, stage, admission_date, role, status)
-VALUES
-    ('123456@student.pwr.edu.pl', 'John', 'Doe', '123456', 'W04-ISTP-000P-OSIW7', '2023/24-Z', 'Stage1', '01/01/21', 'student', 'STU'),
-    ('234567@student.pwr.edu.pl', 'Alice', 'Smith', '234567', 'W04-COMP-001M-OSIW8', '2023/24-A', 'Stage2', '02/02/21', 'student', 'STU'),
-    ('345678@student.pwr.edu.pl', 'Michael', 'Johnson', '345678', 'W04-ENG-002M-OSIW9', '2023/24-B', 'Stage1', '03/03/21', 'student', 'STU'),
-    ('456789@student.pwr.edu.pl', 'Sarah', 'Williams', '456789', 'W04-MATH-003P-OSIW7', '2023/24-Z', 'Stage3', '04/04/21', 'student', 'STU'),
-    ('567890@student.pwr.edu.pl', 'David', 'Brown', '567890', 'W04-PHYS-004P-OSIW8', '2023/24-C', 'Stage2', '05/05/21', 'student', 'STU'),
-    ('678901@student.pwr.edu.pl', 'Jennifer', 'Lee', '678901', 'W04-CHEM-005M-OSIW9', '2023/24-A', 'Stage1', '06/06/21', 'student', 'STU'),
-    ('789012@student.pwr.edu.pl', 'Christopher', 'Taylor', '789012', 'W04-ENG-006M-OSIW7', '2023/24-Z', 'Stage3', '07/07/21', 'student', 'STU'),
-    ('890123@student.pwr.edu.pl', 'Jessica', 'Harris', '890123', 'W04-ISTP-007P-OSIW8', '2023/24-B', 'Stage2', '08/08/21', 'student', 'STU'),
-    ('901234@student.pwr.edu.pl', 'Matthew', 'Clark', '901234', 'W04-COMP-008P-OSIW9', '2023/24-C', 'Stage1', '09/09/21', 'student', 'STU'),
-    ('012345@student.pwr.edu.pl', 'Emily', 'Anderson', '012345', 'W04-ENG-009M-OSIW7', '2023/24-Z', 'Stage3', '10/10/21', 'student', 'STU'),
-    ('987654@student.pwr.edu.pl', 'Daniel', 'Lewis', '987654', 'W04-CHEM-010M-OSIW8', '2023/24-A', 'Stage1', '11/11/21', 'student', 'STU'),
-    ('876543@student.pwr.edu.pl', 'Olivia', 'Ward', '876543', 'W04-MATH-011P-OSIW9', '2023/24-B', 'Stage2', '12/12/21', 'student', 'STU'),
-    ('765432@student.pwr.edu.pl', 'Andrew', 'Scott', '765432', 'W04-ISTP-012P-OSIW7', '2023/24-Z', 'Stage3', '01/01/22', 'student', 'STU'),
-    ('654321@student.pwr.edu.pl', 'Sophia', 'Baker', '654321', 'W04-PHYS-013M-OSIW8', '2023/24-C', 'Stage2', '02/02/22', 'student', 'STU'),
-    ('543210@student.pwr.edu.pl', 'William', 'Taylor', '543210', 'W04-ENG-014M-OSIW9', '2023/24-A', 'Stage1', '03/03/22', 'student', 'STU'),
-    ('432109@student.pwr.edu.pl', 'Ava', 'Green', '432109', 'W04-COMP-015M-OSIW7', '2023/24-Z', 'Stage3', '04/04/22', 'student', 'STU'),
-    ('321098@student.pwr.edu.pl', 'Michael', 'Wright', '321098', 'W04-CHEM-016P-OSIW8', '2023/24-B', 'Stage1', '05/05/22', 'student', 'STU'),
-    ('210987@student.pwr.edu.pl', 'Olivia', 'Young', '210987', 'W04-ISTP-017P-OSIW9', '2023/24-C', 'Stage2', '06/06/22', 'student', 'STU'),
-    ('109876@student.pwr.edu.pl', 'Daniel', 'King', '109876', 'W04-PHYS-018M-OSIW7', '2023/24-A', 'Stage3', '07/07/22', 'student', 'STU'),
-    ('987601@student.pwr.edu.pl', 'Sophia', 'Cooper', '987601', 'W04-MATH-019M-OSIW8', '2023/24-Z', 'Stage1', '08/08/22', 'student', 'STU'),
-    ('876502@student.pwr.edu.pl', 'William', 'Khan', '876502', 'W04-ENG-020P-OSIW9', '2023/24-B', 'Stage2', '09/09/22', 'student', 'STU'),
-    ('765403@student.pwr.edu.pl', 'Ava', 'Bryant', '765403', 'W04-COMP-021P-OSIW7', '2023/24-C', 'Stage3', '10/10/22', 'student', 'STU'),
-    ('654304@student.pwr.edu.pl', 'Michael', 'Evans', '654304', 'W04-CHEM-022M-OSIW8', '2023/24-A', 'Stage1', '11/11/22', 'student', 'STU'),
-    ('543205@student.pwr.edu.pl', 'Olivia', 'Fisher', '543205', 'W04-ISTP-023M-OSIW9', '2023/24-Z', 'Stage2', '12/12/22', 'student', 'STU'),
-    ('432106@student.pwr.edu.pl', 'Daniel', 'Nelson', '432106', 'W04-PHYS-024P-OSIW7', '2023/24-B', 'Stage3', '01/01/23', 'student', 'STU'),
-    ('321007@student.pwr.edu.pl', 'Sophia', 'Wells', '321007', 'W04-MATH-025P-OSIW8', '2023/24-C', 'Stage1', '02/02/23', 'student', 'STU'),
-    ('210908@student.pwr.edu.pl', 'William', 'Rose', '210908', 'W04-ENG-026M-OSIW9', '2023/24-A', 'Stage2', '03/03/23', 'student', 'STU'),
-    ('099809@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', 'W04-COMP-027M-OSIW7', '2023/24-Z', 'Stage3', '04/04/23', 'student', 'STU'),
-    ('988710@student.pwr.edu.pl', 'Michael', 'Gilbert', '988710', 'W04-CHEM-028M-OSIW8', '2023/24-B', 'Stage1', '05/05/23', 'student', 'STU'),
-    ('877611@student.pwr.edu.pl', 'Olivia', 'Thornton', '877611', 'W04-ISTP-029P-OSIW9', '2023/24-C', 'Stage2', '06/06/23', 'student', 'STU'),
-    ('766512@student.pwr.edu.pl', 'Daniel', 'Malone', '766512', 'W04-PHYS-030P-OSIW7', '2023/24-A', 'Stage3', '07/07/23', 'student', 'STU'),
-    ('655413@student.pwr.edu.pl', 'Sophia', 'Saunders', '655413', 'W04-MATH-031M-OSIW8', '2023/24-Z', 'Stage1', '08/08/23', 'student', 'STU'),
-    ('544314@student.pwr.edu.pl', 'William', 'Vargas', '544314', 'W04-ENG-032M-OSIW9', '2023/24-B', 'Stage2', '09/09/23', 'student', 'STU'),
-    ('433215@student.pwr.edu.pl', 'Ava', 'Maldonado', '433215', 'W04-COMP-033P-OSIW7', '2023/24-C', 'Stage3', '10/10/23', 'student', 'STU'),
-    ('322116@student.pwr.edu.pl', 'Michael', 'Santos', '322116', 'W04-CHEM-034P-OSIW8', '2023/24-A', 'Stage1', '11/11/23', 'student', ''),
-    ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', 'W04-ISTP-035M-OSIW9', '2023/24-Z', 'Stage2', '12/12/23', 'student', ''),
-    ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', 'W04-PHYS-036M-OSIW7', '2023/24-Z', 'Stage3', '03/11/21', 'student', 'STU');
-
 INSERT INTO faculty
 VALUES('W04N', 'Wydział Informatyki i Telekomunikacji');
 
 INSERT INTO department
-VALUES('K34W04ND03', 'Katedra Telekomunikacji i Teleinformatyki', 'W04N')
+VALUES('K34W04ND03', 'Katedra Telekomunikacji i Teleinformatyki', 'W04N');
+
+INSERT INTO study_field
+VALUES ('IST', 'Inżynieria Systemów Teleinformatycznych');
+
+INSERT INTO program (id, name, study_field_abbreviation)
+VALUES (1, 'W04-ISTP-000P-OSIW7', 'IST');
+
+
+INSERT INTO study_cycle (id, name)
+VALUES
+    (1, '2023/24-Z'),
+    (2, '2022/23-Z'),
+    (3, '2021/22-Z'),
+    (4, '2020/21-Z');
+
+
+INSERT INTO student (mail, name, surname, index, program, teaching_cycle, role, status)
+VALUES
+    ('123456@student.pwr.edu.pl', 'John', 'Doe', '123456', 1, 1, 'student', 'STU'),
+    ('234567@student.pwr.edu.pl', 'Alice', 'Smith', '234567', 1, 1, 'student', 'STU'),
+    ('345678@student.pwr.edu.pl', 'Michael', 'Johnson', '345678', 1, 1, 'student', 'STU'),
+    ('456789@student.pwr.edu.pl', 'Sarah', 'Williams', '456789', 1, 1, 'student', 'STU'),
+    ('567890@student.pwr.edu.pl', 'David', 'Brown', '567890', 1, 1, 'student', 'STU'),
+    ('678901@student.pwr.edu.pl', 'Jennifer', 'Lee', '678901', 1, 1, 'student', 'STU'),
+    ('789012@student.pwr.edu.pl', 'Christopher', 'Taylor', '789012', 1, 1, 'student', 'STU'),
+    ('890123@student.pwr.edu.pl', 'Jessica', 'Harris', '890123', 1, 1, 'student', 'STU'),
+    ('901234@student.pwr.edu.pl', 'Matthew', 'Clark', '901234', 1, 1, 'student', 'STU'),
+    ('012345@student.pwr.edu.pl', 'Emily', 'Anderson', '012345', 1, 1, 'student', 'STU'),
+    ('987654@student.pwr.edu.pl', 'Daniel', 'Lewis', '987654', 1, 1, 'student', 'STU'),
+    ('876543@student.pwr.edu.pl', 'Olivia', 'Ward', '876543', 1, 1, 'student', 'STU'),
+    ('765432@student.pwr.edu.pl', 'Andrew', 'Scott', '765432', 1, 1, 'student', 'STU'),
+    ('654321@student.pwr.edu.pl', 'Sophia', 'Baker', '654321', 1, 1, 'student', 'STU'),
+    ('543210@student.pwr.edu.pl', 'William', 'Taylor', '543210', 1, 1, 'student', 'STU'),
+    ('432109@student.pwr.edu.pl', 'Ava', 'Green', '432109', 1, 1, 'student', 'STU'),
+    ('321098@student.pwr.edu.pl', 'Michael', 'Wright', '321098', 1, 1, 'student', 'STU'),
+    ('210987@student.pwr.edu.pl', 'Olivia', 'Young', '210987', 1, 1, 'student', 'STU'),
+    ('109876@student.pwr.edu.pl', 'Daniel', 'King', '109876', 1, 1, 'student', 'STU'),
+    ('987601@student.pwr.edu.pl', 'Sophia', 'Cooper', '987601', 1, 1, 'student', 'STU'),
+    ('876502@student.pwr.edu.pl', 'William', 'Khan', '876502', 1, 1, 'student', 'STU'),
+    ('765403@student.pwr.edu.pl', 'Ava', 'Bryant', '765403', 1, 1, 'student', 'STU'),
+    ('654304@student.pwr.edu.pl', 'Michael', 'Evans', '654304', 1, 1, 'student', 'STU'),
+    ('543205@student.pwr.edu.pl', 'Olivia', 'Fisher', '543205', 1, 1, 'student', 'STU'),
+    ('432106@student.pwr.edu.pl', 'Daniel', 'Nelson', '432106', 1, 1, 'student', 'STU'),
+    ('321007@student.pwr.edu.pl', 'Sophia', 'Wells', '321007', 1, 1, 'student', 'STU'),
+    ('210908@student.pwr.edu.pl', 'William', 'Rose', '210908', 1, 1, 'student', 'STU'),
+    ('099809@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', 1, 1, 'student', 'STU'),
+    ('988710@student.pwr.edu.pl', 'Michael', 'Gilbert', '988710', 1, 1, 'student', 'STU'),
+    ('877611@student.pwr.edu.pl', 'Olivia', 'Thornton', '877611', 1, 1, 'student', 'STU'),
+    ('766512@student.pwr.edu.pl', 'Daniel', 'Malone', '766512', 1, 1, 'student', 'STU'),
+    ('655413@student.pwr.edu.pl', 'Sophia', 'Saunders', '655413', 1, 1, 'student', 'STU'),
+    ('544314@student.pwr.edu.pl', 'William', 'Vargas', '544314', 1, 1, 'student', 'STU'),
+    ('433215@student.pwr.edu.pl', 'Ava', 'Maldonado', '433215', 1, 1, 'student', 'STU'),
+    ('322116@student.pwr.edu.pl', 'Michael', 'Santos', '322116', 1, 1, 'student', ''),
+    ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', 1, 1, 'student', ''),
+    ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', 1, 1, 'student', 'STU');
+
 
 
 INSERT INTO employee (mail, name, surname, title, role, department_code)
