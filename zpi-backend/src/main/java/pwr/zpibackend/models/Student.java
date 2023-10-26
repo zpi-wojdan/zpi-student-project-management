@@ -6,11 +6,8 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.university.StudyCycle;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -40,11 +37,10 @@ public class Student {
     @NotNull(message = "Role cannot be null")
     private Role role;
 
-    @JoinColumn(name = "program_code", referencedColumnName = "code")
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Program> programs;
+    private Date admission_date;
+    private String stage;
 
-    @JoinColumn(name = "study_cycle_id", referencedColumnName = "id")
-    @ManyToMany
-    private List<StudyCycle> studyCycles;
+    //@Column(nullable = false)
+    //private List<StudyField> study_field;
+
 }

@@ -50,6 +50,8 @@ public class StudentService {
             student.setTeaching_cycle(updatedStudent.getTeaching_cycle());
             student.setStatus(updatedStudent.getStatus());
             student.setRole(updatedStudent.getRole());
+            student.setAdmission_date(updatedStudent.getAdmission_date());
+            student.setStage(updatedStudent.getStage());
 
             return studentRepository.save(student);
         }
