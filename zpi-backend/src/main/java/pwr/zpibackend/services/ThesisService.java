@@ -38,9 +38,8 @@ public class ThesisService {
         newThesis.setDescription(thesis.getDescription());
         newThesis.setNum_people(thesis.getNum_people());
         newThesis.setSupervisor(supervisor);
-        newThesis.setFaculty(thesis.getFaculty());
-        newThesis.setField(thesis.getField());
-        newThesis.setEdu_cycle(thesis.getEdu_cycle());
+        newThesis.setPrograms(thesis.getPrograms());
+        newThesis.setStudyCycle(thesis.getStudyCycle());
         newThesis.setStatus(thesis.getStatus());
         newThesis.setOccupied(0);
 
@@ -65,9 +64,8 @@ public class ThesisService {
                 throw new NotFoundException();
             }
 
-            updated.setFaculty(param.getFaculty());
-            updated.setField(param.getField());
-            updated.setEdu_cycle(param.getEdu_cycle());
+            updated.setPrograms(param.getPrograms());
+            updated.setStudyCycle(param.getStudyCycle());
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
