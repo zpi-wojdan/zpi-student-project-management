@@ -618,6 +618,7 @@ databaseChangeLog:
         - dropColumn:
             tableName: thesis
             columnName: field
+
   - changeSet:
       id: create-table-roles
       author: Zuzia

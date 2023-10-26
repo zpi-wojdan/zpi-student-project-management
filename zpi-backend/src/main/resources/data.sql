@@ -1,11 +1,10 @@
-INSERT INTO role (name)
+INSERT INTO role (role_id, name)
 VALUES
-    ('student'),
-    ('supervisor'),
-    ('approver'),
-    ('admin');
+    (1, 'student'),
+    (2, 'supervisor'),
+    (3, 'approver'),
+    (4, 'admin');
 
-INSERT INTO student (mail, name, surname, index, program, teaching_cycle, stage, admission_date, role_id, status)
 INSERT INTO faculty
 VALUES('W04N', 'Wydział Informatyki i Telekomunikacji');
 
@@ -171,7 +170,7 @@ VALUES
     ('william.rose@pwr.edu.pl', '3'),
     ('ava.chapman@pwr.edu.pl', '4');
 
-INSERT INTO Thesis (thesis_id, name_pl, name_en, description, num_people, supervisor, edu_cycle, status)
+INSERT INTO Thesis (thesis_id, name_pl, name_en, description, num_people, supervisor, cycle_id, status)
 VALUES
     ('1', 'Mobilna aplikacja dla miłośników starych zamków', 'Mobile application for lovers of old castles', 'Description1', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'john.doe@pwr.edu.pl'), 1, 'OPEN'),
     ('2', 'Wieloosobowa i wielopoziomowa gra komputerowa', 'Multiplayer, and multi-level computer game', 'Description2', 5, (SELECT e.mail FROM Employee e WHERE e.mail = 'emily.anderson@pwr.edu.pl'), 1, 'OPEN'),
