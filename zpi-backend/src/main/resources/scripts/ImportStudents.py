@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import datetime
+# from datetime import datetime
 import json
 
 
@@ -24,17 +24,17 @@ def read_file(file_path):
             raise ValueError("Unsupported file format")
     
         required_columns = ["INDEKS", "NAZWISKO", "IMIE", "PROGRAM", "CYKL_DYDAKTYCZNY", 
-                            "STATUS", "DATA_PRZYJECIA", "DATA_ROZPOCZECIA", "ETAP"]
+                            "STATUS", "ETAP"] # "DATA_PRZYJECIA", "DATA_ROZPOCZECIA",
         missing_columns = [col for col in required_columns if col not in df.columns]
         if missing_columns:
             raise ValueError(f"Missing columns: {', '.join(missing_columns)}")
         
-        #   convert to datetime if possible, ignore errors and leave non-convertible values as they are
-        df['DATA_PRZYJECIA'] = pd.to_datetime(df['DATA_PRZYJECIA'], errors='coerce')
-        df['DATA_ROZPOCZECIA'] = pd.to_datetime(df['DATA_ROZPOCZECIA'], errors='coerce')
-        #   format datetime columns to string in the desired format
-        df['DATA_PRZYJECIA'] = df['DATA_PRZYJECIA'].dt.strftime("%d.%m.%y")
-        df['DATA_ROZPOCZECIA'] = df['DATA_ROZPOCZECIA'].dt.strftime("%d.%m.%y")
+        # #   convert to datetime if possible, ignore errors and leave non-convertible values as they are
+        # df['DATA_PRZYJECIA'] = pd.to_datetime(df['DATA_PRZYJECIA'], errors='coerce')
+        # df['DATA_ROZPOCZECIA'] = pd.to_datetime(df['DATA_ROZPOCZECIA'], errors='coerce')
+        # #   format datetime columns to string in the desired format
+        # df['DATA_PRZYJECIA'] = df['DATA_PRZYJECIA'].dt.strftime("%d.%m.%y")
+        # df['DATA_ROZPOCZECIA'] = df['DATA_ROZPOCZECIA'].dt.strftime("%d.%m.%y")
 
         df['NAZWISKO'] = df['NAZWISKO'].apply(capitalize_surname)
         df['IMIE'] = df['IMIE'].str.capitalize()
@@ -50,8 +50,8 @@ def read_file(file_path):
         invalid_program_rows = df[~df["PROGRAM"].astype(str).str.match(r"^[A-Z0-9]{1,5}-[A-Z]{1,5}-[A-Z0-9]{1,5}-[A-Z0-9]{1,6}$")]
         invalid_teaching_cycle_rows = df[~df["CYKL_DYDAKTYCZNY"].astype(str).str.match(r"^\d{4}/\d{2}-[A-Z]{1,3}$")]
         invalid_status_rows = df[~df["STATUS"].astype(str).str.match(r"^[A-Z]{1,5}$")]
-        invalid_admission_date_rows = df[~df["DATA_PRZYJECIA"].astype(str).str.match(r'^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{2}$')]
-        invalid_start_date_rows = df[~df["DATA_ROZPOCZECIA"].astype(str).str.match(r'^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{2}$')]
+        # invalid_admission_date_rows = df[~df["DATA_PRZYJECIA"].astype(str).str.match(r'^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{2}$')]
+        # invalid_start_date_rows = df[~df["DATA_ROZPOCZECIA"].astype(str).str.match(r'^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{2}$')]
         invalid_stage_rows = df[~df["ETAP"].astype(str).str.match(r'^[A-Z0-9]{1,5}-[A-Z]{1,5}-\d{1,5}$')]
 
         #   filtering the original dataframe based on the lists with invalid rows
@@ -61,23 +61,21 @@ def read_file(file_path):
         df_valid = df_valid[~df_valid.index.isin(invalid_program_rows.index)]
         df_valid = df_valid[~df_valid.index.isin(invalid_teaching_cycle_rows.index)]
         df_valid = df_valid[~df_valid.index.isin(invalid_status_rows.index)]
-        df_valid = df_valid[~df_valid.index.isin(invalid_admission_date_rows.index)]
-        df_valid = df_valid[~df_valid.index.isin(invalid_start_date_rows.index)]
+        # df_valid = df_valid[~df_valid.index.isin(invalid_admission_date_rows.index)]
+        # df_valid = df_valid[~df_valid.index.isin(invalid_start_date_rows.index)]
         df_valid = df_valid[~df_valid.index.isin(invalid_stage_rows.index)]
 
                 
         return df_valid, invalid_index_rows, invalid_surname_rows,\
                 invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
-                invalid_status_rows, invalid_admission_date_rows,\
-                invalid_start_date_rows, invalid_stage_rows
+                invalid_status_rows, invalid_stage_rows #invalid_admission_date_rows, invalid_start_date_rows,
     except pd.errors.ParserError as e:
         raise ValueError("Error parsing the file. Please check the file format and structure.") from e
     
 
 def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
                 invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
-                invalid_status_rows, invalid_admission_date_rows,\
-                invalid_start_date_rows, invalid_stage_rows):
+                invalid_status_rows, invalid_stage_rows):#invalid_admission_date_rows, invalid_start_date_rows, 
     try:
         df_valid_json = df_valid.to_json(orient='records')
         invalid_index_json = invalid_index_rows.to_json(orient='records')
@@ -86,8 +84,8 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
         invalid_program_json = invalid_program_rows.to_json(orient='records')
         invalid_teaching_cycle_json = invalid_teaching_cycle_rows.to_json(orient='records')
         invalid_status_json = invalid_status_rows.to_json(orient='records')
-        invalid_admission_date_json = invalid_admission_date_rows.to_json(orient='records')
-        invalid_start_date_json = invalid_start_date_rows.to_json(orient='records')
+        # invalid_admission_date_json = invalid_admission_date_rows.to_json(orient='records')
+        # invalid_start_date_json = invalid_start_date_rows.to_json(orient='records')
         invalid_stage_json = invalid_stage_rows.to_json(orient='records')
 
         full_json = {
@@ -98,8 +96,8 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
             'invalid_programs': json.loads(invalid_program_json),
             'invalid_teaching_cycles': json.loads(invalid_teaching_cycle_json),
             'invalid_statuses': json.loads(invalid_status_json),
-            'invalid_admission_dates': json.loads(invalid_admission_date_json),
-            'invalid_start_dates': json.loads(invalid_start_date_json),
+            # 'invalid_admission_dates': json.loads(invalid_admission_date_json),
+            # 'invalid_start_dates': json.loads(invalid_start_date_json),
             'invalid_stages': json.loads(invalid_stage_json)
         }
 
@@ -115,13 +113,11 @@ def main():
     try:
         df_valid, invalid_index_rows, invalid_surname_rows,\
             invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
-            invalid_status_rows, invalid_admission_date_rows,\
-            invalid_start_date_rows, invalid_stage_rows  = read_file(file_path)
+            invalid_status_rows, invalid_stage_rows  = read_file(file_path) #invalid_admission_date_rows, invalid_start_date_rows, 
         
         dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
             invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
-            invalid_status_rows, invalid_admission_date_rows,\
-            invalid_start_date_rows, invalid_stage_rows)
+            invalid_status_rows, invalid_stage_rows) #invalid_admission_date_rows, invalid_start_date_rows, 
 
     except ValueError as e:
         print(f"Error: {str(e)}")
