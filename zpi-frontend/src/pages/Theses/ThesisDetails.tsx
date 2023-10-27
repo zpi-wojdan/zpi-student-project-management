@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Axios from 'axios';
-import StudentTable from '../components/StudentsTable';
-import { ThesisFront, Thesis } from '../models/Thesis';
+import StudentTable from '../../components/StudentsTable';
+import { ThesisFront, Thesis } from '../../models/Thesis';
+
 
 const ThesisDetails: React.FC = () => {
   const navigate = useNavigate();

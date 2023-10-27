@@ -3,14 +3,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
 import ReservationPage from './pages/Reservation';
-import ThesesTable from './pages/Theses';
-import ThesisDetails from './pages/ThesisDetails';
+import ThesesTable from './pages/Theses/Theses';
+import ThesisDetails from './pages/Theses/ThesisDetails';
 // @ts-ignore
 import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/SingleReservation';
 import {AuthProvider} from "./auth/AuthProvider";
-import AddThesisPage from './pages/AddThesis';
-import UpdateThesisPage from './pages/UpdateThesis';
+import AddThesisPage from './pages/Theses/AddThesis';
+import UpdateThesisPage from './pages/Theses/UpdateThesis';
 import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
