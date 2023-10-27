@@ -1,12 +1,11 @@
 package pwr.zpibackend.models.university;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -17,4 +16,8 @@ public class Department {
     private String code;
     @Column(nullable = false)
     private String name;
+    @JoinColumn(name = "faculty_abbreviation", nullable = false)
+    @ManyToOne
+    @JsonIgnore
+    private Faculty faculty;
 }
