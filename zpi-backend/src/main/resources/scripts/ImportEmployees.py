@@ -1,10 +1,7 @@
 import pandas as pd
-from datetime import datetime
-import re
 import json
 
-def capitalize_surname(surname):
-    # Check if the input is NaN
+def capitalize_surname(surname: str):
     if pd.notna(surname):
         words = surname.split('-')
         words = [word.capitalize() for word in words]
@@ -13,7 +10,7 @@ def capitalize_surname(surname):
         return surname
 
 
-def read_file(file_path):
+def read_file(file_path: str):
     try:
         if file_path.lower().endswith('.csv'):
             df = pd.read_csv(file_path)

@@ -40,6 +40,9 @@ def read_file(file_path):
         raise ValueError("Error parsing the file. Please check the file format and structure.") from e
 
 
+def dataframes_to_json(df_valid, invalid_program_codes, invalid_names, invalid_edu_cycles, invalid_study_forms, invalid_study_stages, invalid_field_codes, invalid_speciality_codes, invalid_faculty_codes, invalid_faculty, invalid):
+    pass
+
 def main():
     file_path = "src/test/resources/kody_prog.xlsx" 
     read_file(file_path)
