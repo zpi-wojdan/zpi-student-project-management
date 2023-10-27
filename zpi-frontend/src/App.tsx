@@ -12,6 +12,8 @@ import {AuthProvider} from "./auth/AuthProvider";
 import AddThesisPage from './pages/AddThesis';
 import UpdateThesisPage from './pages/UpdateThesis';
 import Unauthorized from './pages/Unauthorized';
+import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
+import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
 
 export interface IAppProps {
 }
@@ -41,6 +43,8 @@ export default function App(props: IAppProps) {
               <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
               <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'} mail={'john.doe@pwr.edu.pl'} />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/file/student" element={<UploadStudentFilePage />} />
+              <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
             </Routes>
           </Navigation>
         </BrowserRouter>

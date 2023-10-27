@@ -618,3 +618,23 @@ databaseChangeLog:
         - dropColumn:
             tableName: thesis
             columnName: field
+
+  - changeSet:
+      id: create_sequence_hibernate
+      author: Piotr
+      changes:
+        - createSequence:
+            sequenceName: hibernate_sequence
+
+  - changeSet:
+      id: add_faculty_abbreviation_to_program
+      author: Piotr
+      changes:
+        - addColumn:
+            tableName: program
+            columns:
+              - column:
+                  name: faculty_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    nullable: false

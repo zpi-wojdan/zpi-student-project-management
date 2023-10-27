@@ -41,14 +41,7 @@ const ThesisDetails: React.FC = () => {
         <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
           &larr; Powrót
         </button>
-        <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
-          if (thesis?.reservations.length === 0) {
-            navigate('/reservation', { state: { thesis: thesis } })
-          } else {
-            navigate('/single-reservation', { state: { thesis: thesis } })
-          }
-        }
-        }>
+        <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => navigate('/reservation', {state: {thesis : thesis}})}>
           Zarezerwuj
         </button>
       </div>

@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
-import '../App.css'
+import React, { useRef, useState, useEffect, } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
-import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../utils/types';
+import { AddUpdateThesisProps, SupervisorData, StatusEnum } from '../../utils/types';
 
 
-function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
+function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -12,7 +12,10 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
   const [supervisorError, setSupervisorError] = useState<string | null>(null);
 
+  const { thesisId } = useParams();
+
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   const [formState, setFormState] = useState({
     namePL: '',
@@ -28,19 +31,46 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   });
 
   useEffect(() => {
-    if (role === 'employee') {
-      setFormState((prevState) => ({
-        ...prevState,
-        supervisorMail: mail!,
-      }));
-    } else {
+    const fetchStatus = async () => {
+      try {
+        const response = await Axios.get(`http://localhost:8080/thesis/${thesisId}`);
+        if (response.status === 200) {
+          const existingThesisData = response.data; 
+          setFormState(existingThesisData);
 
-      setFormState((prevState) => ({
-        ...prevState,
-        supervisorMail: '',
-      }));
-    }
-  }, [role, mail]);
+          if (role === 'employee') {
+            setFormState((prevState) => ({
+              ...prevState,
+              supervisorMail: mail!,
+            }));
+          } 
+          else {
+            setFormState((prevState) => ({
+              ...prevState,
+              supervisorMail: '',
+            }));
+          }
+
+          return response.data.status;
+        }
+      } catch (error) {
+        console.error('Error fetching thesis status:', error);
+      }
+      return null; 
+    };
+  
+    const checkAuthorization = async () => {
+      const status = await fetchStatus();
+      
+      if (role === 'employee' && (status !== 'DRAFT' && status !== 'Draft')) {
+        navigate('/unauthorized');
+      }
+    };
+  
+    checkAuthorization();
+  }, [role]);
+  
+  
 
   const fetchSupervisor = async (supervisorMail: string): Promise<SupervisorData | null> => {
     try{
@@ -72,7 +102,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
       throw(error)
     }
   };
-  
+
   const handleOptionSelect = (value: string) => {
     const selectedStatus = value || '';
     setFormState({
@@ -113,37 +143,34 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   const handleBlurSupervisor = async (event: React.FocusEvent<HTMLInputElement>) => {
     const supervisorMail = event.target.value;
 
-    if (supervisorMail){
-      try{
+    if (supervisorMail) {
+      try {
         const supervisorData = await fetchSupervisor(supervisorMail);
 
-        if (supervisorData != null){
+        if (supervisorData != null) {
           setFormState({
             ...formState,
             supervisor: supervisorData,
           });
           setSupervisorError(null);
+        } else {
+          setSupervisorError('Supervisor does not exist in the database');
         }
-        else{
-          setSupervisorError("Supervisor does not exist in the database");
-        }
-
-      }
-      catch(error) {
-        setSupervisorError("Error fetching supervisor data");
-        console.log("Error fetching supervisor data: ", error);
+      } catch (error) {
+        setSupervisorError('Error fetching supervisor data');
+        console.log('Error fetching supervisor data: ', error);
       }
     }
-  }
+  };
 
   const handleSuggestionClick = (selectedEmployee: SupervisorData) => {
     const selectedMail = selectedEmployee.mail || '';
     setFormState({
       ...formState,
-      supervisorMail: selectedMail, 
+      supervisorMail: selectedMail,
       supervisor: selectedEmployee,
     });
-    setSuggestions([]); 
+    setSuggestions([]);
   };
 
   const handleSupervisorInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,22 +179,22 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
       ...formState,
       [name]: value,
     });
-  
+
     if (name === 'supervisorMail') {
       fetchMatchingEmployees(value).then((matchingEmployees) => {
         if (matchingEmployees) {
           setSuggestions(matchingEmployees);
         } else {
           setSuggestions([]);
-          console.log("Supervisor does not exist in the database");
+          console.log('Supervisor does not exist in the database');
         }
       });
     }
   };
-  
+
   const handleSubmit = async (event: React.FormEvent, status: string) => {
     event.preventDefault();
-    
+
     const formData = {
       namePL: formState.namePL,
       nameEN: formState.nameEN,
@@ -184,44 +211,44 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
       faculty: formState.faculty,
       field: formState.field,
       edu_cycle: formState.edu_cycle,
-      status: status,
+      status: formState.status,
     };
-  
+
     console.log(formData);
-  
+
     try {
-      const response = await Axios.post('http://localhost:8080/thesis', formData, {
+      const response = await Axios.put(`http://localhost:8080/thesis/${thesisId}`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
-      if (response.status === 201) {
+
+      if (response.status === 200) {
         console.log('Request was successful');
       } else {
-        console.log('POST request was not successful');
+        console.log('PUT request was not successful');
       }
     } catch (error) {
-      console.error('An error occurred in POST request:', error);
+      console.error('An error occurred in PUT request:', error);
     }
-  };
+};
+
 
   return (
     <div className="container mt-5">
-      <h2>Dodaj temat</h2>
+      <h2>Edytuj temat</h2>
       <form onSubmit={(event) => handleSubmit(event, formState.status)}>
-
-      <div className="mb-3">
-        <label htmlFor="namePL">Tytuł (PL):</label>
-        <textarea
-          className="form-control resizable-input"
-          id="namePL"
-          name="namePL"
-          value={formState.namePL}
-          onChange={(event) => handleTextAreaChange(event, namePLRef)}
-          maxLength={200}
-          ref={namePLRef}
-        />
+        <div className="mb-3">
+          <label htmlFor="namePL">Tytuł (PL):</label>
+          <textarea
+            className="form-control resizable-input"
+            id="namePL"
+            name="namePL"
+            value={formState.namePL}
+            onChange={(event) => handleTextAreaChange(event, namePLRef)}
+            maxLength={200}
+            ref={namePLRef}
+          />
         </div>
 
         <div className="mb-3">
@@ -265,8 +292,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
         <div className="mb-3">
           <label htmlFor="supervisor">Prowadzący:</label>
-
-          {role == 'employee' && (
+          {role === 'employee' && (
             <input
               type="text"
               className="form-control"
@@ -275,9 +301,9 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
               value={formState.supervisorMail}
               readOnly
               disabled
-          />
+            />
           )}
-          {role == 'admin' && (
+          {role === 'admin' && (
             <>
               <input
                 type="text"
@@ -287,9 +313,9 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
                 value={formState.supervisorMail}
                 onChange={handleSupervisorInputChange}
                 onBlur={handleBlurSupervisor}
-            />
-            {supervisorError && <div className="text-danger">{supervisorError}</div>}
-          </>
+              />
+              {supervisorError && <div className="text-danger">{supervisorError}</div>}
+            </>
           )}
           {suggestions.length > 0 && (
             <ul className="list-group">
@@ -304,8 +330,8 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
               ))}
             </ul>
           )}
-
         </div>
+
         <div className="mb-3">
           <label htmlFor="faculty">Kierunki:</label>
           <input
@@ -341,74 +367,64 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             maxLength={11}
           />
         </div>
-
-        {role === 'admin' && (
-          <div className="mb-3">
+        {role == 'admin' && (
+            <div className="mb-3">
             <label htmlFor="status">Status:</label>
-            <input
-              type="text"
-              id="status"
-              name="status"
-              value={formState.status}
-              onClick={handleInputClick}
-              readOnly
-              style={{ outline: 'none' }}
-              className="form-control"
-            />
-            {showDropdown && (
-              <ul className="list-group">
-                {Object.values(StatusEnum).map((cycle, index) => (
-                  <li
-                    key={index}
-                    className="list-group-item list-group-item-hover"
-                    onClick={() => handleOptionSelect(cycle)}
-                  >
-                    {cycle}
-                  </li>
-                ))}
-              </ul>
-            )}
+            
+              <input
+                type="text"
+                id="status"
+                name="status"
+                value={formState.status}
+                onClick={handleInputClick}
+                readOnly
+                style={{ outline: 'none' }}
+                className="form-control"
+              />
+              {showDropdown && (
+                <ul className="list-group">
+                  {Object.values(StatusEnum).map((cycle, index) => (
+                    <li
+                      key={index}
+                      className="list-group-item list-group-item-hover"
+                      onClick={() => handleOptionSelect(cycle)}
+                    >
+                      {cycle}
+                    </li>
+                  ))}
+                </ul>
+              )}
           </div>
-        )}
 
-        {role === 'employee' && (
-          <div>
-            <button 
-              type="submit" 
-              className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
-              style={{ marginRight: '10px' }}
-              onClick={(event) => handleSubmit(event, 'To be reviewed')}
-            >
-              Zgłoś temat
-            </button>
-            <button 
-              type="submit" 
-              className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
-              onClick={(event) => handleSubmit(event, 'Draft')}
-            >
-              Zapisz wersję roboczą
-            </button>
-          </div>
         )}
 
         {role === 'admin' && (
-          <button
-          type="submit"
-          className={`btn btn-primary ${supervisorError ? 'disabled' : ''}`}
-          style={{ marginRight: '10px' }}
-          onClick={(event) => handleSubmit(event, formState.status)}
-      >
-          Zapisz
-      </button>
+        <button
+            type="submit"
+            className={`btn btn-primary ${supervisorError ? 'disabled' : ''}`}
+            style={{ marginRight: '10px' }}
+            onClick={(event) => handleSubmit(event, formState.status)}
+        >
+            Zapisz zmiany
+        </button>
         )}
-
+        {role === 'employee' && (
+        <button
+            type="submit"
+            className={`btn btn-primary ${supervisorError ? 'disabled' : ''}`}
+            style={{ marginRight: '10px' }}
+            onClick={(event) => handleSubmit(event, formState.status)}
+        >
+            Zapisz zmiany
+        </button>
+        )}
 
         {supervisorError && (
           <div className="text-danger mt-2">{supervisorError}</div>
-         )}        
+        )}
       </form>
     </div>
   )
-};
+}
 
-export default AddThesisPage;
+export default UpdateThesisPage;

@@ -81,7 +81,7 @@ const ThesesTable: React.FC = () => {
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstRecord + index + 1}</td>
-              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`)}} className="link-style btn">{thesis.namePL}</button></td>
+              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}} className="link-style btn">{thesis.namePL}</button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>

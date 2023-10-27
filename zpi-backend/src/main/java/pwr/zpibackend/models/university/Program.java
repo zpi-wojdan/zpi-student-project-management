@@ -28,5 +28,9 @@ public class Program {
 
     @JoinColumn(name = "study_cycle_id", referencedColumnName = "id")
     @ManyToMany
+    @JoinTable(
+            name = "program_cycle",
+            joinColumns = @JoinColumn(name = "program_id"),
+            inverseJoinColumns = @JoinColumn(name = "cycle_id"))
     private List<StudyCycle> studyCycles;
 }

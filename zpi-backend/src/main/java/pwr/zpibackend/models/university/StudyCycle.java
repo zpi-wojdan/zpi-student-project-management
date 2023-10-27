@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "studycycle")
+@Entity(name = "study_cycle")
 public class StudyCycle {
     @Id
     @GeneratedValue
