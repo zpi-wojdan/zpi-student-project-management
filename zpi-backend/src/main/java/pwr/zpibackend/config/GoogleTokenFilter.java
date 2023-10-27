@@ -9,6 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
+import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.Student;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.StudentService;
 
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class GoogleTokenFilter extends OncePerRequestFilter {
@@ -71,8 +75,7 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
                         "User not in database or user is both student and employee!");
             }
 
-            ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            ArrayList<GrantedAuthority> authorities = getAuthorities(email);
 
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
@@ -93,6 +96,23 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
 
     private boolean isUserInDatabase(String email) {
         return employeeService.exists(email) ^ studentService.exists(email);
+    }
+
+    private ArrayList<GrantedAuthority> getAuthorities(String email) {
+        ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+        try {
+            Employee employee = employeeService.getEmployee(email);
+            List<Role> roles = employee.getRoles();
+            for (Role role : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
+            }
+        } catch (Exception ignored) {
+            try {
+                Student student = studentService.getStudent(email);
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + student.getRole().getName().toUpperCase()));
+            } catch (Exception ignored2) {}
+        }
+        return authorities;
     }
 
 
