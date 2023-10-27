@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 
-def capitalize_surname(surname: str):
+def capitalize_surname(surname: str) -> str:
     if pd.notna(surname):
         words = surname.split('-')
         words = [word.capitalize() for word in words]
@@ -71,7 +71,7 @@ def read_file(file_path: str):
 def dataframes_to_json(df_valid, invalid_index_rows, invalid_academic_title_rows,\
                 invalid_surname_rows, invalid_name_rows, invalid_unit_rows,\
                 invalid_subunit_rows, invalid_position_rows,\
-                invalid_phone_number_rows, invalid_email_rows):
+                invalid_phone_number_rows, invalid_email_rows) -> str:
     try:
         df_valid_json = df_valid.to_json(orient='records')
         invalid_index_json = invalid_index_rows.to_json(orient='records')
