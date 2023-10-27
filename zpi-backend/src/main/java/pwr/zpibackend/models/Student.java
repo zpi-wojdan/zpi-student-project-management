@@ -1,14 +1,15 @@
 package pwr.zpibackend.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.StudyCycle;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -35,10 +36,11 @@ public class Student {
     @Column(nullable = false)
     private String role;    //  change String to Role when table exist
 
-    private Date admission_date;
-    private String stage;
+    @JoinColumn(name = "program_code", referencedColumnName = "code")
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Program> programs;
 
-    //@Column(nullable = false)
-    //private List<StudyField> study_field;
-
+    @JoinColumn(name = "study_cycle_id", referencedColumnName = "id")
+    @ManyToMany
+    private List<StudyCycle> studyCycles;
 }
