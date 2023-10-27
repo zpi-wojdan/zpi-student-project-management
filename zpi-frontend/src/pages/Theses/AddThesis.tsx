@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react';
-import '../../App.css'
 import Axios from 'axios';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
 

@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
-import '../../App.css'
 
 function UplaodEmployeeFilePage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -13,11 +12,11 @@ function UplaodEmployeeFilePage() {
 
   setTimeout(() => {
     setDuplicateErrorMessageVisible(false);
-  }, 10000);
+  }, 20000);
 
   setTimeout(() => {
     setUploadErrorMessageVisible(false);
-  }, 10000);
+  }, 20000);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setDuplicateFilesError(null);
@@ -45,6 +44,14 @@ function UplaodEmployeeFilePage() {
   const handleUpload = () => {
     setUploadError(null);
     selectedFiles.forEach((file) => {
+      var size = +((file.size / (1024*1024)).toFixed(2))
+      if (size > 5){
+        const errorMessage = 'Zbyt duży rozmiar pliku ' + file.name + ' - jego rozmiar: ' + size + ' MB';
+        console.log(errorMessage);
+        setUploadError(errorMessage);
+        setUploadErrorMessageVisible(true);
+        return;
+      }
       const formData = new FormData();
       formData.append('file', file);
 
@@ -54,9 +61,9 @@ function UplaodEmployeeFilePage() {
           console.log('Przesłano plik:', response.data);
         })
         .catch((error) => {
-          setUploadError('Wystąpił błąd: nie udało się przesłać plików');
+          setUploadError('Nie udało się przesłać plików');
           setUploadErrorMessageVisible(true);
-          console.error('Wystąpił błąd: nie udało się przesłać plików', error);
+          console.error('Nie udało się przesłać plików', error);
         });
     });
     setSelectedFiles([]);
@@ -64,8 +71,8 @@ function UplaodEmployeeFilePage() {
   };
 
   return (
-    <div className="container d-flex justify-content-center">
-      <div className="border p-4 rounded shadow-lg">
+    <div className="container d-flex justify-content-center mt-5">
+      <div className="border p-4 rounded shadow-lg" style={{ width: '80%', maxWidth: '100%', overflow: 'hidden' }}>
         <h2 className="mb-4">Załącz pliki</h2>
         <div {...getRootProps()} className="dropzone">
           <input {...getInputProps()} />
@@ -77,33 +84,37 @@ function UplaodEmployeeFilePage() {
           </div>
         )}
         {selectedFiles.length > 0 && (
-          <section>
-            <h4>Wybrane pliki:</h4>
-            <ul className='list-group'>
-              {selectedFiles.map((file, index) => (
-                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                  {file.name}
-                  <button
-                    className="btn btn-danger btn-sm ml-3"
-                    onClick={() => deleteFile(file)}
-                  >
-                    Usuń
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+      <section>
+        <h4>Wybrane pliki:</h4>
+        <ul className="list-group mb-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
+          {selectedFiles.map((file, index) => (
+            <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {file.name}
+              </span>
+              <button
+                className="btn btn-danger btn-sm custom-pwr-button"
+                onClick={() => deleteFile(file)}
+              >
+                Usuń
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
         {uploadError && uploadErrorMessageVisible && (
-          <div className="alert alert-danger mt-3" role="alert">
+          <div className="alert alert-danger" role="alert">
             {uploadError}
           </div>
         )}
-        <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-3">
+        <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
           Prześlij pliki
         </button>
       </div>
     </div>
+
   );
 }
 
