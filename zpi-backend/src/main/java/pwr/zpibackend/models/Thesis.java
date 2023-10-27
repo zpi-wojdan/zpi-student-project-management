@@ -39,10 +39,14 @@ public class Thesis {
     @OneToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Student leader;
-    @JoinColumn(name = "program_code", referencedColumnName = "code")
+    @JoinColumn(name = "program_code", referencedColumnName = "code" )
     @ManyToMany
+    @JoinTable(
+            name = "program_thesis",
+            joinColumns = @JoinColumn(name = "thesis_id"),
+            inverseJoinColumns = @JoinColumn(name = "program_id"))
     private List<Program> programs;
-    @JoinColumn(name = "study_cycle_id", referencedColumnName = "id")
+    @JoinColumn(name = "cycle_id", referencedColumnName = "id")
     @ManyToOne
     private StudyCycle studyCycle;
     @Column(nullable = false)

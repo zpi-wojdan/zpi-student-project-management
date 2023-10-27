@@ -16,13 +16,16 @@ public class Faculty {
     private String abbreviation;
     @Column(nullable = false)
     private String name;
-    @JoinColumn(name = "study_field_abbreviation")
+    @JoinColumn(name = "abbreviation")
     @OneToMany(cascade = CascadeType.ALL)
     private List<StudyField> studyFields;
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "id")
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "program",
+            inverseJoinColumns = @JoinColumn(name = "id"))
     private List<Program> programs;
-    @JoinColumn(name = "department_code")
+    @JoinColumn(name = "code")
     @OneToMany(cascade = CascadeType.ALL)
     private List<Department> departments;
 }
