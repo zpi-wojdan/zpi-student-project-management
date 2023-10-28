@@ -14,7 +14,7 @@ const StudentList: React.FC = () => {
         .catch((error) => console.error(error));
     }, []);
   
-    const ITEMS_PER_PAGE = [10, 25, 50, students.length];
+    const ITEMS_PER_PAGE = [10, 25, 50];
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE[0]);
 
@@ -61,13 +61,13 @@ const StudentList: React.FC = () => {
                 </select>
             </div>
             <table className="custom-table">
-                <thead style={{ backgroundColor: "#9A342D", color: "white" }}>
+                <thead className ='active'>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Indeks</th>
-                    <th scope="col">Imię</th>
-                    <th scope="col">Nazwisko</th>
-                    <th scope="col">Szczegóły</th>
+                    <th style={{ width: '3%', textAlign: 'center'}}>#</th>
+                    <th style={{ width: '17%'}}>Indeks</th>
+                    <th style={{ width: '35%'}}>Imię</th>
+                    <th style={{ width: '35%'}}>Nazwisko</th>
+                    <th style={{ width: '10%', textAlign: 'center'}}>Szczegóły</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -84,7 +84,7 @@ const StudentList: React.FC = () => {
                             //Go to student details
                         }}
                         >
-                        --&gt;
+                        <i className="bi bi-arrow-right"></i>
                         </button>
                     </td>
                     </tr>
