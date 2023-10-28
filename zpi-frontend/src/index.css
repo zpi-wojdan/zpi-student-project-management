@@ -41,7 +41,6 @@ code {
 
 .custom-table td button {
   width: 100%;
-  height: 100%;
 }
 
 .pagination {
@@ -76,6 +75,23 @@ code {
 
 .bold {
   font-weight: bold;
+}
+
+.custom-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #9A342D;
+  color: white;
+  border: 1px solid #9A342D;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  text-decoration: underline;
 }
 
 .custom-pwr-button{
