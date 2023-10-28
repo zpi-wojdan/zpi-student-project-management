@@ -68,8 +68,8 @@ const ThesesTable: React.FC = () => {
   };
 
   return (
-    <div>
-      <table className="theses-table">
+    <div className='page-margin'>
+      <table className="custom-table">
         <thead className ='active'>
           <tr>
             <th style={{ width: '3%', textAlign: 'center'}}>#</th>

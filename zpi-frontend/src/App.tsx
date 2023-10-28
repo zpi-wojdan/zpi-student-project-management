@@ -14,6 +14,7 @@ import UpdateThesisPage from './pages/Theses/UpdateThesis';
 import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
+import StudentList from './pages/Admin/Student/List';
 
 export interface IAppProps {
 }
@@ -31,7 +32,7 @@ export default function App(props: IAppProps) {
               <Route path='single-reservation' element={<SingleReservationPage />} />
               <Route path='theses' element={<ThesesTable />} />
               <Route path='theses/:id' element={<ThesisDetails />} />
-              <Route path='students' element={<HomePage />} />
+              <Route path='students' element={<StudentList />} />
               <Route path='employees' element={<HomePage />} />
               <Route path='faculties' element={<HomePage />} />
               <Route path='fields' element={<HomePage />} />

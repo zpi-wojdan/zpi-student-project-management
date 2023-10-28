@@ -21,21 +21,21 @@ code {
   width: 20%;
 }
 
-.theses-table {
+.custom-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 2px;
 }
 
-.theses-table tbody tr:nth-child(odd) {
+.custom-table tbody tr:nth-child(odd) {
   background-color: #f2f2f2;
 }
 
-.theses-table tbody td.centered {
+.custom-table tbody td.centered {
   text-align: center;
 }
 
-.theses-table th, .theses-table td {
+.custom-table th, .custom-table td {
   padding: 10px;
 }
 
@@ -43,7 +43,8 @@ code {
   display: flex;
   float:right;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .pagination button {
@@ -63,8 +64,9 @@ code {
   cursor: pointer;
 }
 
-.thesis-details {
+.page-margin {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .bold {
