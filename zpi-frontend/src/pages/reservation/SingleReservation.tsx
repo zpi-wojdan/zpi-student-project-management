@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Employee, Student, Thesis } from '../models/Models';
+import { Employee, Student, Thesis } from '../../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
-import handleSignOut from "../auth/Logout";
-import useAuth from "../auth/useAuth";
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
 
 type SingleReservationProps = {
@@ -31,6 +31,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
                 thesisId: thesis.id,
                 student: user,
                 reservationDate: new Date(),
+                confirmedByStudent: true,
             };
             console.log(JSON.stringify(responseBody));
 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Student, Thesis } from '../models/Models';
+import { Student, Thesis } from '../../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
-import handleSignOut from "../auth/Logout";
-import useAuth from "../auth/useAuth";
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
+import Cookies from 'js-cookie';
 
 type ReservationProps = {
 }
@@ -17,7 +18,15 @@ function ReservationPage({ }: ReservationProps) {
 
     const [reservations, setReservations] = useState<string[]>(["", ""]);
     const [errors, setErrors] = useState<boolean[]>([]);
-    const [students, setStudents] = useState<Student[]>([])
+    const [students, setStudents] = useState<Student[]>([]);
+    const [user, setUser] = useState<Student>();
+
+    useEffect(() => {
+        setUser(JSON.parse(Cookies.get("user") || "{}"));
+        console.log(user);
+        reservations[0] = user?.index || "";
+        setReservations(reservations);
+    }, []);
 
     const addReservationInput = () => {
         if (thesis?.num_people && reservations.length >= thesis?.num_people) {
