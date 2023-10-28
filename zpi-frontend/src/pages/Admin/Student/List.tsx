@@ -77,7 +77,7 @@ const StudentList: React.FC = () => {
         </div>
       </div>
       <table className="custom-table">
-        <thead className='active'>
+        <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
             <th style={{ width: '17%' }}>Indeks</th>

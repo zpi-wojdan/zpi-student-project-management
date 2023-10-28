@@ -8,8 +8,7 @@ const ThesesTable: React.FC = () => {
   const navigate = useNavigate();
   const [theses, setTheses] = useState<ThesisFront[]>([]);
   
-  const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 25;
+  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
 
   useEffect(() => {
     Axios.get('http://localhost:8080/thesis')
@@ -35,18 +34,28 @@ const ThesesTable: React.FC = () => {
         });
         thesis_response.sort((a: ThesisFront, b: ThesisFront) => a.id - b.id);
         setTheses(thesis_response);
-        
+        const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
+          if (itemPerPage === 'All') {
+            return true;
+          } else {
+            const perPageValue = parseInt(itemPerPage, 10);
+            return perPageValue <= response.data.length;
+          }
+        });
+        setITEMS_PER_PAGE(filteredItemsPerPage);
       })
       .catch((error) => console.error(error));
   }, []);
 
-  const indexOfLastRecord = currentPage * recordsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentTheses = theses.slice(indexOfFirstRecord, indexOfLastRecord);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
+  const indexOfLastItem = itemsPerPage === 'All' ? theses.length : currentPage * parseInt(itemsPerPage, 10);
+  const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
+  const currentTheses = theses.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(theses.length / recordsPerPage);
+  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(theses.length / parseInt(itemsPerPage, 10));
 
-  const handlePageChange = (newPage:number) => {
+  const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
 
@@ -69,8 +78,23 @@ const ThesesTable: React.FC = () => {
 
   return (
     <div className='page-margin'>
+      <div className='d-flex justify-content-end  align-items-center mb-3'>
+        <div >
+            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <select
+            value={itemsPerPage}
+            onChange={(e) => setItemsPerPage(e.target.value)}
+            >
+            {ITEMS_PER_PAGE.map((value) => (
+                <option key={value} value={value}>
+                {value}
+                </option>
+            ))}
+            </select>
+        </div>
+      </div>
       <table className="custom-table">
-        <thead className ='active'>
+        <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center'}}>#</th>
             <th style={{ width: '70%' }}>Temat</th>
@@ -81,7 +105,7 @@ const ThesesTable: React.FC = () => {
         <tbody>
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
-              <td className="centered">{indexOfFirstRecord + index + 1}</td>
+              <td className="centered">{indexOfFirstItem + index + 1}</td>
               <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}} className="link-style btn">{thesis.namePL}</button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
@@ -89,21 +113,23 @@ const ThesesTable: React.FC = () => {
           ))}
         </tbody>
       </table>
-      <div className="pagination">
-        <button
-          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-        >
-          &lt;
-        </button>
-        {renderPageNumbers()}
-        <button
-          onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          &gt;
-        </button>
-      </div>
+      {itemsPerPage !== 'All' && (
+        <div className="pagination">
+          <button
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+          {renderPageNumbers()}
+          <button
+            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
+      )}
     </div>
   );
 }

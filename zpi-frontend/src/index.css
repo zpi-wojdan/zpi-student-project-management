@@ -35,8 +35,14 @@ code {
   text-align: center;
 }
 
-.custom-table th, .custom-table td {
+.custom-table th {
   padding: 10px;
+  background-color: #9A342D;
+  color: white;
+}
+
+.custom-table td {
+  padding: 5px;
 }
 
 .custom-table td button {
