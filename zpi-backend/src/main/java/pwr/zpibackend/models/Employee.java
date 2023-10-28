@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pwr.zpibackend.models.university.Department;
 
 import java.util.List;
 
@@ -29,10 +30,11 @@ public class Employee {
             name = "employee_role",
             joinColumns = @JoinColumn(name = "mail"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @NotNull(message = "Roles cannot be null")
     private List<Role> roles;
 
-    private String department_symbol;
+    @JoinColumn(name = "department_code", referencedColumnName = "code", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL)
+    private Department department;
     private String title;   //  change String to Title when table exist
 
 }

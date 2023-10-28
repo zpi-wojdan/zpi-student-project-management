@@ -704,3 +704,12 @@ databaseChangeLog:
                     referencedColumnNames: role_id
                     nullable: false
 
+  - changeSet:
+      id: remove-teaching-cycle-from-student
+      author: Zuzia
+      changes:
+        - dropColumn:
+            tableName: student
+            columnName: teaching_cycle
+
+
