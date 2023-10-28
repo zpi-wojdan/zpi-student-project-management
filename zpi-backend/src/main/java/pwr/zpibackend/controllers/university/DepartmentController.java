@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
-import pwr.zpibackend.models.university.DepartmentDTO;
+import pwr.zpibackend.dto.DepartmentDTO;
 import pwr.zpibackend.services.university.DepartmentService;
 
 import java.util.List;

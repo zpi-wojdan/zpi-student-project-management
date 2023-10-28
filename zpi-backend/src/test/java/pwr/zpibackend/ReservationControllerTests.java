@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.ReservationController;
 import pwr.zpibackend.models.Reservation;
-import pwr.zpibackend.models.ReservationDTO;
+import pwr.zpibackend.dto.ReservationDTO;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.services.EmployeeService;
