@@ -1,8 +1,9 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pwr.zpibackend.models.Student;
 
 import java.time.LocalDate;
 

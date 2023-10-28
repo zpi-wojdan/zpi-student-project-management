@@ -1,9 +1,9 @@
-INSERT INTO role (role_id, name)
+INSERT INTO role (name)
 VALUES
-    (1, 'student'),
-    (2, 'supervisor'),
-    (3, 'approver'),
-    (4, 'admin');
+    ('student'),
+    ('supervisor'),
+    ('approver'),
+    ('admin');
 
 INSERT INTO student (mail, name, surname, index, program, teaching_cycle, stage, admission_date, role_id, status)
 VALUES
