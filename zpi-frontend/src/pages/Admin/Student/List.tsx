@@ -89,13 +89,13 @@ const StudentList: React.FC = () => {
         <tbody>
           {currentStudents.map((student, index) => (
             <tr key={student.mail}>
-              <td>{indexOfFirstItem + index + 1}</td>
+              <td className="centered">{indexOfFirstItem + index + 1}</td>
               <td>{student.index}</td>
               <td>{student.name}</td>
               <td>{student.surname}</td>
               <td>
                 <button
-                  className="custom-button"
+                  className="custom-button coverall"
                   onClick={() => {
                     // Go to student details
                   }}
