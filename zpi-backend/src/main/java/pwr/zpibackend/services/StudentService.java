@@ -46,8 +46,8 @@ public class StudentService {
             student.setName(updatedStudent.getName());
             student.setSurname(updatedStudent.getSurname());
             student.setIndex(updatedStudent.getIndex());
-            student.setProgram(updatedStudent.getProgram());
-            student.setTeaching_cycle(updatedStudent.getTeaching_cycle());
+            student.setPrograms(updatedStudent.getPrograms());
+            student.setStudyCycles(updatedStudent.getStudyCycles());
             student.setStatus(updatedStudent.getStatus());
             student.setRole(updatedStudent.getRole());
             student.setAdmission_date(updatedStudent.getAdmission_date());

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
+import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.StudyCycle;
 
 import java.util.List;
 
@@ -37,13 +39,16 @@ public class Thesis {
     @OneToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Student leader;
-    @Column(nullable = false)
-    private String faculty; //change String to lIST of faculties when table exist
-    @Column(nullable = false)
-    private String field; //change String to Field when table exist
-    @Column(nullable = false)
-    private String edu_cycle;
-
+    @JoinColumn(name = "program_code", referencedColumnName = "code" )
+    @ManyToMany
+    @JoinTable(
+            name = "program_thesis",
+            joinColumns = @JoinColumn(name = "thesis_id"),
+            inverseJoinColumns = @JoinColumn(name = "program_id"))
+    private List<Program> programs;
+    @JoinColumn(name = "cycle_id", referencedColumnName = "id")
+    @ManyToOne
+    private StudyCycle studyCycle;
     @Column(nullable = false)
     private String status; //change String to Status when table exist
     @Column(nullable = false)

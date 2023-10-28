@@ -351,6 +351,296 @@ databaseChangeLog:
                     nullable: true
 
   - changeSet:
+      id: add_university_tables
+      author: Piotr
+      changes:
+        - createTable:
+            tableName: faculty
+            columns:
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: department
+            columns:
+              - column:
+                  name: code
+                  type: varchar(15)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: faculty_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_department_faculty
+                    referencedTableName: faculty
+                    referencedColumnNames: abbreviation
+                    nullable: false
+        - createTable:
+            tableName: study_field
+            columns:
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: specialization
+            columns:
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: study_field_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_specialization_study_field
+                    referencedTableName: study_field
+                    referencedColumnNames: abbreviation
+                    nullable: false
+        - createTable:
+            tableName: study_cycle
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    autoIncrement: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(15)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: program
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    autoIncrement: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: study_field_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_program_study_field
+                    referencedTableName: study_field
+                    referencedColumnNames: abbreviation
+                    nullable: true
+              - column:
+                  name: specialization_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    foreignKeyName: fk_program_specialization
+                    referencedTableName: specialization
+                    referencedColumnNames: abbreviation
+                    nullable: true
+        - createTable:
+            tableName: student_program
+            columns:
+              - column:
+                  name: student_mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_program_student
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_program_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+        - createTable:
+            tableName: student_cycle
+            columns:
+              - column:
+                  name: student_mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_cycle_student
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_cycle_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+        - createTable:
+            tableName: program_cycle
+            columns:
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_cycle_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_cycle_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+
+  - changeSet:
+      id: add_department_to_employee
+      author: Piotr
+      changes:
+        - addColumn:
+            tableName: employee
+            columns:
+              - column:
+                  name: department_code
+                  type: varchar(15)
+                  constraints:
+                    foreignKeyName: fk_employee_department
+                    referencedTableName: department
+                    referencedColumnNames: code
+                    nullable: false
+        - dropColumn:
+            tableName: employee
+            columnName: department_symbol
+
+  - changeSet:
+      id: remove_stage_and_admission_date_from_student
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: student
+            columnName: stage
+        - dropColumn:
+            tableName: student
+            columnName: admission_date
+        - dropColumn:
+            tableName: student
+            columnName: program
+
+  - changeSet:
+      id: add_table_thesis_program
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: thesis
+            columnName: edu_cycle
+        - addColumn:
+            tableName: thesis
+            columns:
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_thesis_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+        - createTable:
+            tableName: program_thesis
+            columns:
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_thesis_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: thesis_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_program_thesis_thesis
+                    referencedTableName: thesis
+                    referencedColumnNames: thesis_id
+                    nullable: false
+
+  - changeSet:
+      id: remove_faculty_and_field_from_thesis
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: thesis
+            columnName: faculty
+        - dropColumn:
+            tableName: thesis
+            columnName: field
+
+  - changeSet:
+      id: create_sequence_hibernate
+      author: Piotr
+      changes:
+        - createSequence:
+            sequenceName: hibernate_sequence
+
+  - changeSet:
+      id: add_faculty_abbreviation_to_program
+      author: Piotr
+      changes:
+        - addColumn:
+            tableName: program
+            columns:
+              - column:
+                  name: faculty_abbreviation
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
       id: create-table-roles
       author: Zuzia
       changes:
@@ -372,46 +662,45 @@ databaseChangeLog:
                     unique: true
 
   - changeSet:
-        id: change-roles-to-enum
-        author: Zuzia
-        changes:
-          - dropColumn:
-              tableName: employee
-              columnName: role
-          - dropColumn:
-              tableName: student
-              columnName: role
-          - addColumn:
-              tableName: student
-              columns:
-                - column:
-                    name: role_id
-                    type: BIGINT
-                    constraints:
-                      foreignKeyName: fk_student_role
-                      referencedTableName: role
-                      referencedColumnNames: role_id
-                      nullable: false
-          - createTable:
-                tableName: employee_role
-                columns:
-                    - column:
-                        name: mail
-                        type: varchar(50)
-                        constraints:
-                          primaryKey: true
-                          foreignKeyName: fk_employee
-                          referencedTableName: employee
-                          referencedColumnNames: mail
-                          nullable: false
-                    - column:
-                        name: role_id
-                        type: BIGINT
-                        constraints:
-                          primaryKey: true
-                          foreignKeyName: fk_role
-                          referencedTableName: role
-                          referencedColumnNames: role_id
-                          nullable: false
-
+      id: change-roles-to-enum
+      author: Zuzia
+      changes:
+        - dropColumn:
+            tableName: employee
+            columnName: role
+        - dropColumn:
+            tableName: student
+            columnName: role
+        - addColumn:
+            tableName: student
+            columns:
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_student_role
+                    referencedTableName: role
+                    referencedColumnNames: role_id
+                    nullable: false
+        - createTable:
+            tableName: employee_role
+            columns:
+              - column:
+                  name: mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_employee
+                    referencedTableName: employee
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_role
+                    referencedTableName: role
+                    referencedColumnNames: role_id
+                    nullable: false
 
