@@ -21,6 +21,7 @@ code {
   width: 20%;
 }
 
+/* Custom tables */
 .custom-table {
   width: 100%;
   border-collapse: separate;
@@ -49,6 +50,7 @@ code {
   width: 100%;
 }
 
+/* Pagination */
 .pagination {
   display: flex;
   float:right;
@@ -83,6 +85,7 @@ code {
   font-weight: bold;
 }
 
+/* Custom button */
 .custom-button {
   display: inline-block;
   padding: 10px 20px;
@@ -99,6 +102,29 @@ code {
 .custom-button:hover {
   text-decoration: underline;
 }
+
+/* Expanded details */
+.custom-toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+ul {
+  list-style: circle;
+  margin-left: 20px;
+}
+
+li {
+  margin: 10px;
+}
+
+ul > li > ul {
+  list-style: none;
+}
+
 
 .custom-pwr-button{
   background-color: #9A342D !important;
