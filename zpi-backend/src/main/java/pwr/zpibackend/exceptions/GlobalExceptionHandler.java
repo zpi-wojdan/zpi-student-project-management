@@ -1,9 +1,11 @@
 package pwr.zpibackend.exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -33,5 +35,12 @@ public class GlobalExceptionHandler {
 
     private ErrorDetails getErrorDetails(Exception e, WebRequest request) {
         return new ErrorDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        // Log the exception and return a custom error response
+        return new ResponseEntity<>("A data integrity violation occurred.", HttpStatus.FORBIDDEN);
     }
 }

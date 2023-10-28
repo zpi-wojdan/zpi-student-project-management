@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Thesis, ThesisDB } from '../models/Models';
+import { Thesis } from '../../models/Models';
 
 
 const ThesesTable: React.FC = () => {
@@ -14,28 +14,7 @@ const ThesesTable: React.FC = () => {
   useEffect(() => {
     Axios.get('http://localhost:8080/thesis')
       .then((response) => {
-        const thesis_response = response.data.map((thesisDb: ThesisDB) => {
-          const thesis: Thesis = {
-            id: thesisDb.id,
-            namePL: thesisDb.namePL,
-            nameEN: thesisDb.nameEN,
-            description: thesisDb.description,
-            faculty: thesisDb.faculty,
-            field: thesisDb.field,
-            eduCycle: thesisDb.eduCycle,
-            num_people: thesisDb.num_people,
-            occupied: thesisDb.occupied,
-            supervisor: thesisDb.supervisor,
-            status: thesisDb.status,
-            leader: thesisDb.leader,
-            students: thesisDb.reservations.map((reservation) => reservation.student),
-            reservations: thesisDb.reservations,
-          };
-          return thesis;
-        });
-        thesis_response.sort((a: Thesis, b: Thesis) => a.id - b.id);
-        setTheses(thesis_response);
-        
+        setTheses(response.data);
       })
       .catch((error) => console.error(error));
   }, []);
@@ -82,7 +61,7 @@ const ThesesTable: React.FC = () => {
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstRecord + index + 1}</td>
-              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`)}} className="link-style btn">{thesis.namePL}</button></td>
+              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}} className="link-style btn">{thesis.namePL}</button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>
