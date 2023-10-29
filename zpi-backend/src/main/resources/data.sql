@@ -19,12 +19,12 @@ VALUES
     (3, '2021/22-Z'),
     (4, '2020/21-Z');
 
-INSERT INTO role (role_id, name)
+INSERT INTO role (name)
 VALUES
-    (1, 'student'),
-    (2, 'supervisor'),
-    (3, 'approver'),
-    (4, 'admin');
+    ('student'),
+    ('supervisor'),
+    ('approver'),
+    ('admin');
 
 
 INSERT INTO student (mail, name, surname, index, role_id, status)
@@ -66,47 +66,6 @@ VALUES
     ('322116@student.pwr.edu.pl', 'Michael', 'Santos', '322116', 1, ''),
     ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', 1, ''),
     ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', 1, 'STU');
-
-INSERT INTO student_program (student_mail, program_id)
-VALUES
-    ('123456@student.pwr.edu.pl', 0),
-    ('234567@student.pwr.edu.pl', 0),
-    ('345678@student.pwr.edu.pl', 0),
-    ('456789@student.pwr.edu.pl', 0),
-    ('567890@student.pwr.edu.pl', 0),
-    ('678901@student.pwr.edu.pl', 0),
-    ('789012@student.pwr.edu.pl', 0),
-    ('890123@student.pwr.edu.pl', 0),
-    ('901234@student.pwr.edu.pl', 0),
-    ('012345@student.pwr.edu.pl', 0),
-    ('987654@student.pwr.edu.pl', 0),
-    ('876543@student.pwr.edu.pl', 0),
-    ('765432@student.pwr.edu.pl', 0),
-    ('654321@student.pwr.edu.pl', 0),
-    ('543210@student.pwr.edu.pl', 0),
-    ('432109@student.pwr.edu.pl', 0),
-    ('321098@student.pwr.edu.pl', 0),
-    ('210987@student.pwr.edu.pl', 1),
-    ('109876@student.pwr.edu.pl', 1),
-    ('987601@student.pwr.edu.pl', 1),
-    ('876502@student.pwr.edu.pl', 1),
-    ('765403@student.pwr.edu.pl', 1),
-    ('654304@student.pwr.edu.pl', 1),
-    ('543205@student.pwr.edu.pl', 1),
-    ('432106@student.pwr.edu.pl', 1),
-    ('321007@student.pwr.edu.pl', 1),
-    ('210908@student.pwr.edu.pl', 1),
-    ('099809@student.pwr.edu.pl', 1),
-    ('988710@student.pwr.edu.pl', 1),
-    ('877611@student.pwr.edu.pl', 1),
-    ('766512@student.pwr.edu.pl', 1),
-    ('655413@student.pwr.edu.pl', 1),
-    ('544314@student.pwr.edu.pl', 1),
-    ('433215@student.pwr.edu.pl', 1),
-    ('322116@student.pwr.edu.pl', 1),
-    ('211017@student.pwr.edu.pl', 1),
-    ('100918@student.pwr.edu.pl', 1);
-
 
 INSERT INTO employee (mail, name, surname, title, department_code)
 VALUES

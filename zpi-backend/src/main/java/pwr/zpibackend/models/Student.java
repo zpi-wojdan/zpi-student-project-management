@@ -30,7 +30,7 @@ public class Student {
     private String index;
     @Column(nullable = false)
     private String status;
-    @Column(nullable = false)
+    @NotNull(message = "Role cannot be null")
     @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;

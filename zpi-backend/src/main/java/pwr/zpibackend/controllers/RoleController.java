@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.models.Role;
-import pwr.zpibackend.models.dto.RoleDTO;
+import pwr.zpibackend.dto.RoleDTO;
 import pwr.zpibackend.services.RoleService;
 
 import java.util.List;

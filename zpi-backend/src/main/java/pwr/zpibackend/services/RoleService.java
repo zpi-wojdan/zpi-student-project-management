@@ -3,7 +3,7 @@ package pwr.zpibackend.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.models.Role;
-import pwr.zpibackend.models.dto.RoleDTO;
+import pwr.zpibackend.dto.RoleDTO;
 import pwr.zpibackend.repositories.RoleRepository;
 
 import java.util.List;
