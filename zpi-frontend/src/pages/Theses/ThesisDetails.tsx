@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Axios from 'axios';
-import { Thesis } from '../../models/Models';
+import { Student, Thesis, Employee } from '../../models/Models';
+import Cookies from 'js-cookie';
+import { spawn } from 'child_process';
 
 const ThesisDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -9,7 +11,11 @@ const ThesisDetails: React.FC = () => {
 
   const { id } = useParams<{ id: string }>();
   const thesis = location.state?.thesis as Thesis;
+  const [user, setUser] = useState<Student & Employee>();
 
+  useEffect(() => {
+    setUser(JSON.parse(Cookies.get("user") || "{}"));
+  }, []);
 
   return (
     <>
@@ -17,9 +23,35 @@ const ThesisDetails: React.FC = () => {
         <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
           &larr; Powrót
         </button>
-        <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => navigate('/reservation', {state: {thesis : thesis}})}>
-          Zarezerwuj
-        </button>
+        {(user?.role === 'student' || user?.role === 'supervisor' && user?.mail === thesis?.supervisor.mail) ?
+          (
+          <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
+            if (user?.role === 'student') {
+              if (thesis?.reservations.length === 0) {
+                navigate('/reservation', { state: { thesis: thesis } })
+              } else {
+                navigate('/single-reservation', { state: { thesis: thesis } })
+              }
+            } else {
+              navigate('/supervisor-reservation', { state: { thesis: thesis } })
+            }
+          }
+          }>
+            {user?.role === 'student' ? (
+              <span>Zarezerwuj</span>
+            ) : (
+              user?.mail === thesis?.supervisor.mail ?
+                (
+                  <span>Zapisz studentów</span>
+                ) : (
+                  <></>
+                )
+            )}
+          </button>
+          ) : (
+            <span></span>
+          )
+        }
       </div>
       <div className='thesis-details'>
         {thesis ? (
