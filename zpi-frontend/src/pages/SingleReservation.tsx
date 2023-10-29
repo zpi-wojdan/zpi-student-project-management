@@ -37,6 +37,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
             const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
                 headers: {
                     "Content-Type": "application/json",
+                    'Authorization': `Bearer ${Cookies.get('google_token')}`
                 },
             })
                 .then(response => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { Thesis } from '../../models/Models';
+import Cookies from "js-cookie";
 
 
 const ThesesTable: React.FC = () => {
@@ -12,7 +13,11 @@ const ThesesTable: React.FC = () => {
   const recordsPerPage = 25;
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/thesis')
+    Axios.get('http://localhost:8080/thesis', {
+        headers: {
+            'Authorization': `Bearer ${Cookies.get('google_token')}`
+        }
+    })
       .then((response) => {
         setTheses(response.data);
       })

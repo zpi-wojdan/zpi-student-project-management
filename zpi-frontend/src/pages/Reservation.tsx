@@ -4,6 +4,7 @@ import { Student, Thesis } from '../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
+import Cookies from "js-cookie";
 
 type ReservationProps = {
 }
@@ -74,7 +75,11 @@ function ReservationPage({ }: ReservationProps) {
             newErrors[index] = false;
         }
 
-        await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)
+        await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`, {
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('google_token')}`
+            }
+        })
             .then(response => {
                 newStudents[index] = response.data as Student;
             })
@@ -106,6 +111,7 @@ function ReservationPage({ }: ReservationProps) {
                 const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
                     headers: {
                         "Content-Type": "application/json",
+                        'Authorization': `Bearer ${Cookies.get('google_token')}`
                     },
                 })
                     .then(response => {

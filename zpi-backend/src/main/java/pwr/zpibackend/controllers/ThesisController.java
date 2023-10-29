@@ -19,12 +19,13 @@ public class ThesisController {
     private final ThesisService thesisService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STUDENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Thesis> getThesisById(@PathVariable Long id) {
         try{
             return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
@@ -35,11 +36,13 @@ public class ThesisController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Thesis> addThesis(@RequestBody Thesis thesis) throws NotFoundException {
         return new ResponseEntity<>(thesisService.addThesis(thesis), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<Thesis> updateThesis(@PathVariable Long id, @RequestBody Thesis param) {
         try{
             return new ResponseEntity<>(thesisService.updateThesis(id, param), HttpStatus.OK);
