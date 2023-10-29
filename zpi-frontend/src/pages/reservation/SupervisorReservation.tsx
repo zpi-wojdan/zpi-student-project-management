@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Student, Thesis } from '../../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { Student } from '../../models/Student';
+import { Thesis } from '../../models/Thesis';
 
 type SupervisorReservationProps = {
 }

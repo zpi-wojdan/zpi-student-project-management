@@ -4,12 +4,12 @@ import Axios from 'axios';
 import StudentTable from '../../components/StudentsTable';
 import { ThesisFront, Thesis } from '../../models/Thesis';
 import { Program } from '../../models/Program';
-import { StudyField } from '../../models/StudyField';
-import { StudyCycle } from '../../models/StydyCycle';
 import { Faculty } from '../../models/Faculty';
 
 import Cookies from 'js-cookie';
 import { spawn } from 'child_process';
+import { Employee } from '../../models/Employee';
+import { Student } from '../../models/Student';
 
 const ThesisDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -116,10 +116,8 @@ const ThesisDetails: React.FC = () => {
       <div>
         {thesis ? (
           <div>
-            <p className="bold">Temat po polsku:</p>
+            <p className="bold">Nazwa tematu:</p>
             <p>{thesis.namePL}</p>
-            <p className="bold">Temat po angielsku:</p>
-            <p>{thesis.nameEN}</p>
             <p className="bold">Opis:</p>
             <p>{thesis.description}</p>
             <p><span className="bold">Promotor:</span> <span>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
@@ -158,7 +156,7 @@ const ThesisDetails: React.FC = () => {
             </div>
           </div>
         ) : (
-          <p>Loading... {id}</p>
+          <p>Błąd wczytywania danych {id}</p>
         )}
       </div>
     </>
