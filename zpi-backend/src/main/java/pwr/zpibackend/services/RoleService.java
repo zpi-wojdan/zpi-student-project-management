@@ -59,4 +59,10 @@ public class RoleService {
         }
     }
 
+    public Role getRoleByName(String name) {
+        return roleRepository.findByName(name).orElseThrow(
+                () -> new NoSuchElementException("Role with name " + name + " does not exist")
+        );
+    }
+
 }

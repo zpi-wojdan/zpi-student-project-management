@@ -30,6 +30,7 @@ public class StudentService {
     private ProgramRepository programRepository;
     private StudyCycleRepository studyCycleRepository;
     private StudentProgramCycleRepository studentProgramCycleRepository;
+    private RoleService roleService;
 
     @Transactional(readOnly = true)
     public List<Student> getAllStudents() {
@@ -57,7 +58,7 @@ public class StudentService {
         newStudent.setSurname(student.getSurname());
         newStudent.setIndex(student.getIndex());
         newStudent.setStatus(student.getStatus());
-        newStudent.setRole(student.getRole());
+        newStudent.setRole(roleService.getRoleByName("student"));
 
         Set<StudentProgramCycle> spcSet = getStudentProgramCycles(student, newStudent);
         studentRepository.saveAndFlush(newStudent);
@@ -73,7 +74,7 @@ public class StudentService {
         student.setSurname(updatedStudent.getSurname());
         student.setIndex(updatedStudent.getIndex());
         student.setStatus(updatedStudent.getStatus());
-        student.setRole(updatedStudent.getRole());
+        student.setRole(roleService.getRoleByName("student"));
 
         Set<StudentProgramCycle> spcSet = getStudentProgramCycles(updatedStudent, student);
         studentRepository.save(student);

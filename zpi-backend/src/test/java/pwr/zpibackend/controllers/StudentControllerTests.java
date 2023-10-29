@@ -16,6 +16,7 @@ import pwr.zpibackend.controllers.ThesisController;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Role;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.services.EmployeeService;
@@ -50,8 +51,8 @@ class StudentControllerTests {
     @Test
     void getAllStudents() throws Exception {
         List<Student> students = List.of(
-                new Student("123456@student.pwr.edu.pl", "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", "Role 1", null, "Stage 1"),
-                new Student("456789@student.pwr.edu.pl", "Jane", "Smith", "456789", "Program 2", "Cycle 2", "Inactive", "Role 2", null, "Stage 2")
+                new Student("123456@student.pwr.edu.pl", "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", new Role("Role 1"), null, "Stage 1"),
+                new Student("456789@student.pwr.edu.pl", "Jane", "Smith", "456789", "Program 2", "Cycle 2", "Inactive", new Role("Role 2"), null, "Stage 2")
         );
 
         Mockito.when(studentService.getAllStudents()).thenReturn(students);
@@ -67,7 +68,7 @@ class StudentControllerTests {
     @Test
     void getStudentById() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student student = new Student(studentMail, "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", "Role 1", new Date(), "Stage 1");
+        Student student = new Student(studentMail, "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", new Role("Role 1"), new Date(), "Stage 1");
 
         Mockito.when(studentService.getStudent(studentMail)).thenReturn(student);
 
@@ -92,7 +93,7 @@ class StudentControllerTests {
 
     @Test
     void addStudent() throws Exception {
-        Student newStudent = new Student("123456@student.pwr.edu.pl", "Alice", "Johnson", "123456", "Program 2", "Cycle 2", "Active", "Role 2", null, "Stage 2");
+        Student newStudent = new Student("123456@student.pwr.edu.pl", "Alice", "Johnson", "123456", "Program 2", "Cycle 2", "Active", new Role("Role 2"), null, "Stage 2");
 
         String requestBody = objectMapper.writeValueAsString(newStudent);
 
@@ -106,7 +107,7 @@ class StudentControllerTests {
 
     @Test
     void addStudentAlreadyExists() throws Exception {
-        Student existingStudent = new Student("123456@student.pwr.edu.pl", "Bob", "Smith", "123456", "Program 1", "Cycle 1", "Active", "Role 1", null, "Stage 1");
+        Student existingStudent = new Student("123456@student.pwr.edu.pl", "Bob", "Smith", "123456", "Program 1", "Cycle 1", "Active", new Role("Role 1"), null, "Stage 1");
 
         Mockito.when(studentService.addStudent(existingStudent)).thenThrow(AlreadyExistsException.class);
 
@@ -123,7 +124,7 @@ class StudentControllerTests {
     @Test
     void updateStudent() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student updatedStudent = new Student(studentMail, "Updated", "Name", "123456", "Program 2", "Cycle 2", "Active", "Role 2", null, "Stage 2");
+        Student updatedStudent = new Student(studentMail, "Updated", "Name", "123456", "Program 2", "Cycle 2", "Active", new Role("Role 2"), null, "Stage 2");
 
         Mockito.when(studentService.updateStudent(studentMail, updatedStudent)).thenReturn(updatedStudent);
 
@@ -141,7 +142,7 @@ class StudentControllerTests {
     @Test
     void updateStudentNotFound() throws Exception {
         String nonExistingMail = "000000@student.pwr.edu.pl";
-        Student updatedStudent = new Student(nonExistingMail, "Updated", "Name", "000000", "Program 2", "Cycle 2", "Active", "Role 2", null, "Stage 2");
+        Student updatedStudent = new Student(nonExistingMail, "Updated", "Name", "000000", "Program 2", "Cycle 2", "Active", new Role("Role 2"), null, "Stage 2");
 
         Mockito.when(studentService.updateStudent(nonExistingMail, updatedStudent)).thenThrow(NotFoundException.class);
 
@@ -158,7 +159,7 @@ class StudentControllerTests {
     @Test
     void deleteStudent() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student deletedStudent = new Student(studentMail, "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", "Role 1", null, "Stage 1");
+        Student deletedStudent = new Student(studentMail, "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", new Role("Role 1"), null, "Stage 1");
 
         Mockito.when(studentService.deleteStudent(studentMail)).thenReturn(deletedStudent);
 

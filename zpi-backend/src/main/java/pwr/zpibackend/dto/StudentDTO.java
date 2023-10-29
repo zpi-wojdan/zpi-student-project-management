@@ -19,6 +19,5 @@ public class StudentDTO {
     private String surname;
     private String index;
     private String status;
-    private Role role;
     private List<StudentProgramCycleDTO> programsCycles;
 }
