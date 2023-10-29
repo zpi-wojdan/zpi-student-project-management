@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Student, Thesis } from '../models/Models';
+import { Student, Thesis } from '../../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
-import handleSignOut from "../auth/Logout";
-import useAuth from "../auth/useAuth";
-import Cookies from "js-cookie";
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 type ReservationProps = {
 }
@@ -18,7 +19,16 @@ function ReservationPage({ }: ReservationProps) {
 
     const [reservations, setReservations] = useState<string[]>(["", ""]);
     const [errors, setErrors] = useState<boolean[]>([]);
-    const [students, setStudents] = useState<Student[]>([])
+    const [doubles, setDoubles] = useState<boolean[]>([]);
+    const [students, setStudents] = useState<Student[]>([]);
+    const [user, setUser] = useState<Student>();
+
+    useEffect(() => {
+        setUser(JSON.parse(Cookies.get("user") || "{}"));
+        console.log(user);
+        reservations[0] = user?.index || "";
+        setReservations(reservations);
+    }, []);
 
     const addReservationInput = () => {
         if (thesis?.num_people && reservations.length >= thesis?.num_people) {
@@ -31,14 +41,17 @@ function ReservationPage({ }: ReservationProps) {
         const updatedReservations = [...reservations];
         const updatedErrors = [...errors];
         const updatedStudents = [...students];
+        const updatedDoubles = [...doubles];
 
         updatedReservations.splice(index, 1);
         updatedErrors.splice(index, 1);
         updatedStudents.splice(index, 1);
+        updatedDoubles.splice(index, 1);
 
         setReservations(updatedReservations);
         setErrors(updatedErrors);
         setStudents(updatedStudents);
+        setDoubles(updatedDoubles);
     };
 
     const handleReservationChange = (index: number, value: string) => {
@@ -47,8 +60,22 @@ function ReservationPage({ }: ReservationProps) {
         setReservations(updatedReservations);
     };
 
-    const isReservationValid = (reservation: string) => {
-        return /^[0-9]{6}$/.test(reservation);
+    const isReservationValid = (index: number, reservation: string) => {
+        if (!/^[0-9]{6}$/.test(reservation)) {
+            return false;
+        }
+
+        const otherReservations = reservations.filter((_, i) => i !== index);
+        if (otherReservations.includes(reservation)) {
+            const updatedDoubles = [...doubles];
+            updatedDoubles[index] = true;
+            setDoubles(updatedDoubles);
+            return false;
+        }
+        const updatedDoubles = [...doubles];
+        updatedDoubles[index] = false;
+        setDoubles(updatedDoubles);
+        return true;
     };
 
     const handleReservationBlur = async (index: number) => {
@@ -64,7 +91,7 @@ function ReservationPage({ }: ReservationProps) {
             return;
         }
 
-        if (!isReservationValid(reservation)) {
+        if (!isReservationValid(index, reservation)) {
             console.error(`Invalid reservation number: ${reservation}`);
             newStudents[index] = {} as Student;
             setStudents(newStudents);
@@ -87,7 +114,7 @@ function ReservationPage({ }: ReservationProps) {
                 newStudents[index] = {} as Student;
                 newErrors[index] = true;
                 if (error.response.status === 401 || error.response.status === 403) {
-                    setAuth({...auth, reasonOfLogout: 'token_expired'});
+                    setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
             })
@@ -97,7 +124,8 @@ function ReservationPage({ }: ReservationProps) {
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        if (reservations.every(isReservationValid)) {
+        if (reservations.every((reservation, index) => isReservationValid(index, reservation))) {
+            let allReservationsSuccessful = true;
 
             for (const reservation of reservations) {
                 const responseBody = {
@@ -122,11 +150,19 @@ function ReservationPage({ }: ReservationProps) {
                     .catch(error => {
                         console.error(`Failed to submit reservation ${reservation}`);
                         console.error(error)
+                        allReservationsSuccessful = false;
                         if (error.response.status === 401 || error.response.status === 403) {
-                            setAuth({...auth, reasonOfLogout: 'token_expired'});
+                            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                             handleSignOut(navigate);
                         }
                     });
+            }
+
+            if (allReservationsSuccessful) {
+                toast.success("Rezerwacja zakończona pomyślnie!");
+                navigate("/theses/" + thesis.id)
+            } else {
+                toast.error("Rezerwacja nie powiodła się!");
             }
         } else {
             for (const reservation of reservations) {
@@ -170,8 +206,9 @@ function ReservationPage({ }: ReservationProps) {
                             <p className={errors[index] ? "col-form-label text-danger" : "col-form-label"}>
                                 {students[index] && students[index].name !== undefined ?
                                     students[index].name + ' ' + students[index].surname
-                                    : (errors[index] &&
-                                        'Indeks jest niepoprawny lub nie istnieje w systemie!'
+                                    : (errors[index] ?
+                                        (doubles[index] ? 'Indeks juz wpisany w innym wierszu!' : 'Indeks jest niepoprawny lub nie istnieje w systemie!'
+                                        ) : ''
                                     )}
                             </p>
                         </div>
@@ -185,7 +222,6 @@ function ReservationPage({ }: ReservationProps) {
                                 Dodaj osobę
                             </button>
                             <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
-                                {/* zrobić inactive gdy l. indeksow mniejsza niz 2 */}
                                 Zarezerwuj
                             </button>
                         </div>
