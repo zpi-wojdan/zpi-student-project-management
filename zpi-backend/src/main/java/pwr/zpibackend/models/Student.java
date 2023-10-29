@@ -36,12 +36,4 @@ public class Student {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<StudentProgramCycle> studentProgramCycles = new HashSet<>();
-    @Transient
-    public Map<Program, StudyCycle> getPrograms() {
-        Map<Program, StudyCycle> programs = new HashMap<>();
-        for (StudentProgramCycle spc : studentProgramCycles) {
-            programs.put(spc.getProgram(), spc.getCycle());
-        }
-        return programs;
-    }
 }

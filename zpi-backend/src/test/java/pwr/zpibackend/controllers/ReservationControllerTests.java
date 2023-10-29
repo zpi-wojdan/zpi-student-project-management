@@ -153,15 +153,15 @@ public class ReservationControllerTests {
         newReservation.setConfirmedByLeader(false);
 
         String requestBody = objectMapper.writeValueAsString(newReservation);
-//
-        Mockito.doThrow(NotFoundException.class).when(reservationService).updateReservation(newReservation, 10L);
 
-        mockMvc.perform(put(BASE_URL + "/10")
+        Mockito.doThrow(NotFoundException.class).when(reservationService).updateReservation(any(Reservation.class), eq(1L));
+
+        mockMvc.perform(put(BASE_URL + "/1")
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isNotFound());
 
-        verify(reservationService).updateReservation(any(Reservation.class), eq(10L));
+        verify(reservationService).updateReservation(any(Reservation.class), eq(1L));
     }
 
     @Test
