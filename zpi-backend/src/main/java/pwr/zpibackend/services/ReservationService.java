@@ -6,7 +6,7 @@ import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.Reservation;
-import pwr.zpibackend.models.ReservationDTO;
+import pwr.zpibackend.dto.ReservationDTO;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.repositories.ReservationRepository;
@@ -38,6 +38,7 @@ public class ReservationService {
         newReservation.setConfirmedByStudent(reservation.isConfirmedByStudent());
         newReservation.setReadyForApproval(reservation.isReadyForApproval());
         newReservation.setReservationDate(reservation.getReservationDate());
+        newReservation.setSentForApprovalDate(reservation.getSentForApprovalDate());
         Student student = studentRepository.findById(reservation.getStudent().getMail()).get();
         newReservation.setStudent(student);
 
@@ -84,6 +85,7 @@ public class ReservationService {
                     reservation.setConfirmedBySupervisor(newReservation.isConfirmedBySupervisor());
                     reservation.setReadyForApproval(newReservation.isReadyForApproval());
                     reservation.setConfirmedByStudent(newReservation.isConfirmedByStudent());
+                    reservation.setSentForApprovalDate(newReservation.getSentForApprovalDate());
                     return reservationRepository.save(reservation);
                 })
                 .orElseThrow(NotFoundException::new);
