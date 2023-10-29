@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { Student } from '../../../models/Student';
 
 const StudentList: React.FC = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   useEffect(() => {
@@ -97,7 +99,7 @@ const StudentList: React.FC = () => {
                 <button
                   className="custom-button coverall"
                   onClick={() => {
-                    // Go to student details
+                    navigate(`/students/${student.mail}`, {state: {student}})
                   }}
                 >
                   <i className="bi bi-arrow-right"></i>
