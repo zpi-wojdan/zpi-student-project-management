@@ -2,22 +2,113 @@ INSERT INTO faculty
 VALUES('W04N', 'Wydział Informatyki i Telekomunikacji');
 
 INSERT INTO department
-VALUES('K34W04ND03', 'Katedra Telekomunikacji i Teleinformatyki', 'W04N');
+VALUES
+    ('K34W04ND03', 'Katedra Telekomunikacji i Teleinformatyki', 'W04N'),
+    ('K46W04ND03', 'Katedra Sztucznej Inteligencji', 'W04N'),
+    ('K30W04ND03', 'Katedra Informatyki Technicznej', 'W04N'),
+    ('K44W04ND03', 'Katedra Informatyki i Inżynierii Systemów', 'W04N'),
+    ('K68W04ND03', 'Katedra Podstaw Informatyki', 'W04N'),
+    ('K28W04ND03', 'Katedra Automatyki, Mechatroniki i Systemów Sterowania', 'W04N'),
+    ('K32W04ND03', 'Katedra Systemów i Sieci Komputerowych', 'W04N'),
+    ('K45W04ND03', 'Katedra Informatyki Stosowanej', 'W04N'),
+    ('W4N/KP/ZOS', 'Zespół Obsługi Studentów', 'W04N'),
+    ('W4N/KP/ZON', 'Zespół Obsługi Kształcenia', 'W04N'),
+    ('W4N/KP/ZJK', 'Zespół Jakości Kształcenia', 'W04N'),
+    ('W4N/KP/ZUI', 'Zespół Utrzymania Infrastruktury i Wsparcia Informatycznego', 'W04N'),
+    ('W4N/KP/SK', 'Sekretariat Katedr', 'W04N');
 
 INSERT INTO study_field
-VALUES ('IST', 'Inżynieria Systemów Teleinformatycznych');
+VALUES
+    ('INS', 'Inżynieria Systemów'),
+    ('CBE', 'Cyberbezpieczeństwo'),
+    ('INA', 'Informatyka algorytmiczna'),
+    ('INF', 'Informatyka'),
+    ('ISA', 'Informatyczne systemy automatyki'),
+    ('IST', 'Informatyka stosowana'),
+    ('ITE', 'Informatyka techniczna'),
+    ('SZT', 'Sztuczna inteligencja'),
+    ('TAI', 'Zaufane systemy sztucznej inteligencji'),
+    ('TEL', 'Telekomunikacja'),
+    ('TIN', 'Teleinformatyka');
 
-INSERT INTO program (id, name, study_field_abbreviation, faculty_abbreviation)
-VALUES (0, 'W04-ISTP-000P-OSIW7', 'IST', 'W04N'),
-       (1, 'W04-ISTA-000P-OSIW7', 'IST', 'W04N');
 
 INSERT INTO study_cycle (id, name)
 VALUES
-    (0, '2024/25-Z'),
-    (1, '2023/24-Z'),
+    (0, '2020/21-Z'),
+    (1, '2021/22-Z'),
     (2, '2022/23-Z'),
-    (3, '2021/22-Z'),
-    (4, '2020/21-Z');
+    (3, '2023/24-Z');
+
+INSERT INTO specialization (abbreviation, name, study_field_abbreviation)
+VALUES
+    ('CBD', 'Bezpieczeństwo danych', 'CBE'),
+    ('CBS', 'Bezpieczeństwo sieci teleinformatycznych', 'CBE'),
+    ('CEN', 'Bezpieczeństwo w energetyce', 'CBE'),
+    ('CIK', 'Bezpieczeństwo infrastruktury krytycznej', 'CBE'),
+    ('CSI', 'Bezpieczeństwo systemów informatycznych', 'CBE'),
+    ('ALG', 'Algorytmika', 'INA'),
+    ('CCS', 'Cryptography and computer security', 'INA'),
+--     ('AIC', 'Advanced informatics and control', 'INF'), /*  !!!  */
+--     ('COE', 'Computer engineering', 'INF'), /*  !!!  */
+--     ('DAN', 'Danologia', 'INF'), /*  !!!  */
+--     ('IGM', 'Grafika i systemy multimedialne', 'INF'),
+--     ('IMT', 'Systemy informatyki w medycynie', 'INF'),
+--     ('INE', 'Internet engineering', 'INF'),
+--     ('INS', 'Inżynieria systemów informatycznych', 'INF'),
+--     ('INT', 'Inżynieria internetowa', 'INF'),
+--     ('IOP', 'Inżynieria oprogramowania', 'INF'),    /*  !!!  */
+--     ('ISK', 'Systemy i sieci komputerowe', 'INF'),
+    ('IKA', 'Komputerowe systemy sterowania', 'ISA'),
+    ('IPS', 'Inteligentne systemy przemysłu 4.0', 'ISA'),
+    ('IZI', 'Zastosowania inżynierii komputerowej', 'ISA'),
+    ('IZT', 'Zastosowania technologii informacyjnych', 'ISA'),
+    ('COE', 'Computer engineering', 'IST'), /*  !!!  */
+    ('DAN', 'Danologia', 'IST'),    /*  !!!  */
+    ('IOP', 'Inżynieria oprogramowania', 'IST'),    /*  !!!  */
+    ('PSI', 'Projektowanie systemów informatycznych', 'IST'),
+    ('ZTI', 'Zastosowania specjalistycznych technologii informatycznych', 'IST'),
+    ('ACS', 'Advanced computer science', 'ITE'),
+    ('AIC', 'Advanced informatics and control', 'ITE'), /*  !!!  */
+    ('IGM', 'Grafika i systemy multimedialne', 'ITE'),
+    ('IMT', 'Systemy informatyki w medycynie', 'ITE'),
+    ('INE', 'Internet engineering', 'ITE'),
+    ('INS', 'Inżynieria systemów informatycznych', 'ITE'),
+    ('INT', 'Inżynieria internetowa', 'ITE'),
+    ('ISK', 'Systemy i sieci komputerowe', 'ITE'),
+    ('TEM', 'Telekomunikacja mobilna', 'TEL'),
+    ('TIM', 'Teleinformatyka i multimedia', 'TEL'),
+    ('TMU', 'Multimedia w telekomunikacji', 'TEL'),
+    ('TSI', 'Sieci teleinformatyczne', 'TEL'),
+    ('TSM', 'Teleinformatyczne sieci mobilne', 'TEL'),
+    ('TIP', 'Projektowanie sieci teleinformatycznych', 'TIN'),
+    ('TIU', 'Utrzymanie sieci teleinformatycznych', 'TIN');
+
+
+INSERT INTO program (id, name, study_field_abbreviation, specialization_abbreviation, faculty_abbreviation)
+VALUES
+    (0, 'W04-ISTP-000P-OSIW7', 'IST', NULL,  'W04N'),  /*  ?   */
+    (1, 'W04-ISTA-000P-OSIW7', 'IST', NULL, 'W04N'),  /*  ?   */
+    (2, 'W04-CBEP-000P-OSIE7', 'CBE', NULL, 'W04N'), /*  2022/23-Z   */
+    (3, 'W04-CBEP-000P-OSME3', 'CBE', NULL, 'W04N'), /*  2022/23-Z   */
+    (4, 'W04-INAP-000P-OSIE7', 'INA', NULL, 'W04N'), /*  2022/23-Z   */
+    (5, 'W04-INAP-000P-OSME3', 'INA', NULL, 'W04N'), /*  2022/23-Z   */
+    (6, 'W04-INAP-CCSA-OSME3', 'INA', 'CCS', 'W04N'), /*  2021/22-Z   */
+    (7, 'W04-INFP-000A-OSMW3', 'INF', NULL, 'W04N'), /*  2022/23-Z   */
+    (8, 'W04-INFP-IOPP-OSMW3', 'INF', 'IOP', 'W04N'), /*  2021/22-Z   */
+    (9, 'W04-ISAP-000P-OSIE7', 'ISA', NULL, 'W04N'), /*  2022/23-Z   */
+    (10, 'W04-ISAP-000P-OSME3', 'ISA', NULL, 'W04N'), /*  2022/23-Z   */
+    (11, 'W04-ISTP-000A-OSIE7', 'IST', NULL, 'W04N'), /*  2021\22-Z   */
+    (12, 'W04-ISTP-000A-OSME4', 'IST', NULL, 'W04N'), /*  2021\22-Z   */
+    (13, 'W04-ITEP-000P-OSIE7', 'ITE', NULL, 'W04N'),   /*  2021/22-Z   */
+    (14, 'W04-ITEP-000P-OSME3', 'ITE', NULL, 'W04N'),   /*  2021/22-Z   */
+    (15, 'W04-SZTP-000P-OSME3', 'SZT', NULL, 'W04N'),   /*  2022/23-Z   */
+    (16, 'W04-TAIP-000P-OSME3', 'TAI', NULL, 'W04N'),   /*  2022/23-Z   */
+    (17, 'W04-TELP-000P-OSIE7', 'TEL', NULL, 'W04N'),   /*  2022/23-Z   */
+    (18, 'W04-TELP-000P-OSME3', 'TEL', NULL, 'W04N'),   /*  2022/23-Z   */
+    (19, 'W04-TINP-000P-OSIE7', 'TIN', NULL, 'W04N'),   /*  2022/23-Z   */
+    (20, 'W04-TINP-000P-OSME3', 'TIN', NULL, 'W04N');   /*  2022/23-Z   */
+
+
 
 
 INSERT INTO student (mail, name, surname, index, teaching_cycle, role, status)

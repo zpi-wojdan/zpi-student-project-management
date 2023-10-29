@@ -41,13 +41,15 @@ def read_file(file_path: str):
         #   picking invalid rows from the original dataframe through regex expressions
         invalid_index_rows = df[~df["Lp."].astype(str).str.match(r'^\d{1,5}$')]
         invalid_academic_title_rows = df[~df["Tytul/stopien"].astype(str).str.match(r'^[a-z. ]{0,10}$')]
-        invalid_surname_rows = df[~df["Nazwisko"].astype(str).str.match(r'^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s-]{0,50}$')]
-        invalid_name_rows = df[~df["Imie"].astype(str).str.match(r'^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s-]{0,50}$')]
+        invalid_surname_rows = df[~df["Nazwisko"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
+        invalid_name_rows = df[~df["Imie"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
         invalid_unit_rows = df[~df["Jednostka"].astype(str).str.match(r'[A-Z0-9]{3,4}')]
         invalid_subunit_rows = df[~df["Podjednostka"].astype(str).str.match(r"^[A-Z0-9/]{1,10}$")]
         invalid_position_rows = df[~df["Stanowisko"].astype(str).str.match(r'^[a-z0-9zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s()\-]{1,50}$')]
         invalid_phone_number_rows = df[~df["Telefon"].astype(str).str.match(r'^(?:\+\d{1,4}[\s-]?\d{2,4}[\s-]?\d{3}[\s-]?\d{3}|\d{2,4}[\s-]?\d{3}[\s-]?\d{3})?$')]
         invalid_email_rows = df[~df["E-mail"].astype(str).str.match(r'^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$')]
+
+        print(invalid_surname_rows['Nazwisko'].unique())
 
         #   filtering the original dataframe based on the lists with invalid rows
         df_valid = df[~df.index.isin(invalid_index_rows.index)]

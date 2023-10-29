@@ -14,10 +14,8 @@ def read_file_prog(file_path) -> pd.DataFrame:
             raise ValueError(f"Missing columns: {', '.join(missing_columns)}")  
         
         df.drop(columns=[col for col in df.columns if col not in required_columns], inplace=True)
-        df.rename(columns = {'data_od' :'Cykl_dyd'}, inplace = True)
-        df.rename(columns = {'nazwa' :'Nazwa_kierunku'}, inplace = True)
-        df.rename(columns = {'forma' :'Forma'}, inplace = True)
-        df.rename(columns = {'stopien' :'Stopien'}, inplace = True)
+        df.rename(columns = {'data_od' :'Cykl_dyd', 'nazwa' :'Nazwa_kierunku',
+                              'forma' :'Forma', 'stopien' :'Stopien'}, inplace = True)
 
         df = df.fillna('')
         
@@ -34,8 +32,9 @@ def read_file_prog(file_path) -> pd.DataFrame:
         df['Cykl_dyd'] = df['FormattedDate']
         df.drop(['Year', 'NextYear', 'FormattedDate'], axis=1, inplace=True)
 
+        df['Cykl_dyd'] = df['Cykl_dyd'] + '-Z'
+
         df['Nazwa_kierunku'] = df['Nazwa_kierunku'].str.split(',').str[0].str.strip().str.capitalize()
-        print(df['Nazwa_kierunku'].unique())
 
         df[['Kod_wydzialu', 'Kod_kierunku', 'Kod_specjalizacji', 'Not_necessary']] = df['Kod_programu'].str.split('-', expand=True)
         df['Kod_kierunku'] = df['Kod_kierunku'].str[:3]
@@ -43,10 +42,12 @@ def read_file_prog(file_path) -> pd.DataFrame:
         df.drop('Not_necessary', axis=1, inplace=True)
 
         df = df[df['Kod_wydzialu'] == 'W04']
+        df.loc[df['Kod_wydzialu'] == 'W04', 'Kod_wydzialu'] = 'W04N'
 
         df = df.reindex(columns=['Kod_programu', 'Nazwa_kierunku', \
                                  'Kod_kierunku', 'Kod_specjalizacji',\
                                 'Cykl_dyd', 'Forma', 'Stopien', 'Kod_wydzialu'])
+
         return df
 
     except pd.errors.ParserError as e:
@@ -62,8 +63,8 @@ def read_file_kier(file_path: str, df: pd.DataFrame):
         if missing_columns:
             raise ValueError(f"Missing columns: {', '.join(missing_columns)}")  
         df_kier.drop(columns=[col for col in df_kier.columns if col not in required_columns], inplace=True)
-        df_kier.rename(columns = {'typ kodu' :'typ_kodu'}, inplace = True)
-        df_kier.rename(columns = {'kod kierunku nadrzednego' :'kod_kierunku_nadrzednego'}, inplace = True)
+        df_kier.rename(columns = {'typ kodu' :'typ_kodu',
+                                   'kod kierunku nadrzednego' :'kod_kierunku_nadrzednego'}, inplace = True)
         
         df_kier = df_kier.fillna('')
 
@@ -73,19 +74,21 @@ def read_file_kier(file_path: str, df: pd.DataFrame):
         
         df['Nazwa_specjalizacji'] = ''
 
+
+        to_print = []
         for index, row in df_kier.iterrows():
             code = row['Kod'].split('-')
-            # fields = ['CBE', 'INA', 'IST', 'INF', 'SZT', 'TAI', 'TEL', 'TIN', 'ISA']
-            fields = ['INA', 'IST', 'INF']
-            if (len(code) == 2):
-                # print(code[1])
-                if code[0] in fields:
-                    field = [f for f in fields if f == code[0]]
-                    print(str(field) + ' - ' + str(code[1]))
-                    condition = df['Kod_kierunku'] == code[1]
-                    value = row['nazwa']
-                    df.loc[condition, 'Nazwa_specjalizacji'] = value
+            fields = ['INS', 'CBE', 'INA', 'INF', 'ISA', 'IST', 'ITE', 'SZT', 'TAI', 'TEL', 'TIN']
+            if (len(code) == 2 and code[0] in fields):
+                field = [f for f in fields if f == code[0]]
+                condition = df['Kod_kierunku'] == code[1]
+                value = row['nazwa']
+                to_print.append(f'{code[1]} |   {value}  |   {field}')
+                df.loc[condition, 'Nazwa_specjalizacji'] = value
 
+        to_print.sort(key=lambda x: x.split("  |   ")[1])
+        for line in to_print:
+            print(line)
         # print(tabulate(df, headers='keys', tablefmt='psql'))
 
 
@@ -136,6 +139,9 @@ def main():
     file_path_kier = 'zpi-backend/src/test/resources/kody_kier.xlsx'
     df = read_file_prog(file_path_prog)
     read_file_kier(file_path_kier, df)
+
+    # tmp = pd.read_excel('zpi-backend/src/test/resources/pracownicy-1.xlsx')
+    # print(tmp['Podjednostka'].unique())
 
 
 if __name__ == '__main__':
