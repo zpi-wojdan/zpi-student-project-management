@@ -8,7 +8,7 @@ import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.Reservation;
-import pwr.zpibackend.models.dto.ReservationDTO;
+import pwr.zpibackend.dto.ReservationDTO;
 import pwr.zpibackend.services.ReservationService;
 
 import java.util.List;

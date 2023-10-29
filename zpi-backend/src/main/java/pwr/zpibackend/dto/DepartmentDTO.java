@@ -1,4 +1,4 @@
-package pwr.zpibackend.models.university;
+package pwr.zpibackend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
