@@ -1,10 +1,11 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pwr.zpibackend.models.Student;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,8 @@ public class ReservationDTO {
     private boolean isConfirmedBySupervisor;
     private boolean isConfirmedByStudent;
     private boolean isReadyForApproval;
-    private LocalDate reservationDate;
+    private LocalDateTime reservationDate;
+    private LocalDateTime sentForApprovalDate;
     private Student student;
     private Long thesisId;
 }
