@@ -23,7 +23,7 @@ const ThesisDetails: React.FC = () => {
           &larr; Powrót
         </button>
         <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
-          if (user?.role !== 'Student') {
+          if (user?.role === 'student') {
             if (thesis?.reservations.length === 0) {
               navigate('/reservation', { state: { thesis: thesis } })
             } else {
@@ -34,7 +34,7 @@ const ThesisDetails: React.FC = () => {
           }
         }
         }>
-          {user?.role !== 'Student' ? (
+          {user?.role === 'student' ? (
             <span>Zarezerwuj</span>
           ) : (
             <span>Zapisz studentów</span>

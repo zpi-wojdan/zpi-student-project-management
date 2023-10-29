@@ -16,6 +16,8 @@ import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export interface IAppProps {
 }
@@ -43,6 +45,7 @@ export default function App(props: IAppProps) {
             </Routes>
           </Navigation>
         </BrowserRouter>
+        <ToastContainer />
       </AuthProvider>
   );
 }

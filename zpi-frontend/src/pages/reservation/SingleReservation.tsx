@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 type SingleReservationProps = {
 }
@@ -43,6 +44,8 @@ function SingleReservationPage({ }: SingleReservationProps) {
                 .then(response => {
                     if (response.status === 201) {
                         console.log(`Reservation ${reservation} created successfully`);
+                        toast.success("Rezerwacja zakończona pomyślnie");
+                        navigate("/theses/" + thesis.id)
                     }
                 })
                 .catch(error => {
@@ -52,6 +55,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
                     }
+                    toast.error("Rezerwacja nie powiodła się");
                 });
     };
 
