@@ -1,6 +1,7 @@
 package pwr.zpibackend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.ThesisController;
+import pwr.zpibackend.dto.StudentDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
@@ -47,13 +49,38 @@ class StudentControllerTests {
     @MockBean
     private EmployeeService employeeService;
 
+    private Student student;
+    private StudentDTO studentDTO;
+    private List<Student> students;
+
+    @BeforeEach
+    public void setUp() {
+        student = new Student();
+        student.setMail("123456@student.pwr.edu.pl");
+        student.setName("John");
+        student.setSurname("Doe");
+        student.setIndex("123456");
+        student.setRole("Student");
+
+        studentDTO = new StudentDTO();
+        studentDTO.setMail("123456@student.pwr.edu.pl");
+        studentDTO.setName("John");
+        studentDTO.setSurname("Doe");
+        studentDTO.setIndex("123456");
+        studentDTO.setRole("Student");
+
+        Student student2 = new Student();
+        student2.setMail("456789@student.pwr.edu.pl");
+        student2.setName("John");
+        student2.setSurname("Doe");
+        student2.setIndex("456789");
+        student2.setRole("Student");
+
+        students = List.of(student, student2);
+    }
+
     @Test
     void getAllStudents() throws Exception {
-        List<Student> students = List.of(
-                new Student("123456@student.pwr.edu.pl", "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", "Role 1", null, "Stage 1"),
-                new Student("456789@student.pwr.edu.pl", "Jane", "Smith", "456789", "Program 2", "Cycle 2", "Inactive", "Role 2", null, "Stage 2")
-        );
-
         Mockito.when(studentService.getAllStudents()).thenReturn(students);
 
         mockMvc.perform(get(BASE_URL).contentType("application/json"))
@@ -67,7 +94,6 @@ class StudentControllerTests {
     @Test
     void getStudentById() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student student = new Student(studentMail, "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", "Role 1", new Date(), "Stage 1");
 
         Mockito.when(studentService.getStudent(studentMail)).thenReturn(student);
 
@@ -92,75 +118,71 @@ class StudentControllerTests {
 
     @Test
     void addStudent() throws Exception {
-        Student newStudent = new Student("123456@student.pwr.edu.pl", "Alice", "Johnson", "123456", "Program 2", "Cycle 2", "Active", "Role 2", null, "Stage 2");
-
-        String requestBody = objectMapper.writeValueAsString(newStudent);
+        String requestBody = objectMapper.writeValueAsString(studentDTO);
 
         mockMvc.perform(post(BASE_URL)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isCreated());
 
-        verify(studentService).addStudent(newStudent);
+        verify(studentService).addStudent(studentDTO);
     }
 
     @Test
     void addStudentAlreadyExists() throws Exception {
-        Student existingStudent = new Student("123456@student.pwr.edu.pl", "Bob", "Smith", "123456", "Program 1", "Cycle 1", "Active", "Role 1", null, "Stage 1");
+        Mockito.when(studentService.addStudent(studentDTO)).thenThrow(AlreadyExistsException.class);
 
-        Mockito.when(studentService.addStudent(existingStudent)).thenThrow(AlreadyExistsException.class);
-
-        String requestBody = objectMapper.writeValueAsString(existingStudent);
+        String requestBody = objectMapper.writeValueAsString(studentDTO);
 
         mockMvc.perform(post(BASE_URL)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isConflict());
 
-        verify(studentService).addStudent(existingStudent);
+        verify(studentService).addStudent(studentDTO);
     }
 
     @Test
     void updateStudent() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student updatedStudent = new Student(studentMail, "Updated", "Name", "123456", "Program 2", "Cycle 2", "Active", "Role 2", null, "Stage 2");
+        studentDTO.setName("Updated");
+        student.setName("Updated");
 
-        Mockito.when(studentService.updateStudent(studentMail, updatedStudent)).thenReturn(updatedStudent);
+        Mockito.when(studentService.updateStudent(studentMail, studentDTO)).thenReturn(student);
 
-        String requestBody = objectMapper.writeValueAsString(updatedStudent);
+        String requestBody = objectMapper.writeValueAsString(studentDTO);
+        String responseBody = objectMapper.writeValueAsString(student);
 
         mockMvc.perform(put(BASE_URL + "/{mail}", studentMail)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isOk())
-                .andExpect(content().json(requestBody));
+                .andExpect(content().json(responseBody));
 
-        verify(studentService).updateStudent(studentMail, updatedStudent);
+        verify(studentService).updateStudent(studentMail, studentDTO);
     }
 
     @Test
     void updateStudentNotFound() throws Exception {
         String nonExistingMail = "000000@student.pwr.edu.pl";
-        Student updatedStudent = new Student(nonExistingMail, "Updated", "Name", "000000", "Program 2", "Cycle 2", "Active", "Role 2", null, "Stage 2");
 
-        Mockito.when(studentService.updateStudent(nonExistingMail, updatedStudent)).thenThrow(NotFoundException.class);
+        Mockito.when(studentService.updateStudent(nonExistingMail, studentDTO)).thenThrow(NotFoundException.class);
 
-        String requestBody = objectMapper.writeValueAsString(updatedStudent);
+        String requestBody = objectMapper.writeValueAsString(studentDTO);
 
         mockMvc.perform(put(BASE_URL + "/{mail}", nonExistingMail)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isNotFound());
 
-        verify(studentService).updateStudent(nonExistingMail, updatedStudent);
+        verify(studentService).updateStudent(nonExistingMail, studentDTO);
     }
 
     @Test
     void deleteStudent() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student deletedStudent = new Student(studentMail, "John", "Doe", "123456", "Program 1", "Cycle 1", "Active", "Role 1", null, "Stage 1");
 
-        Mockito.when(studentService.deleteStudent(studentMail)).thenReturn(deletedStudent);
+        Mockito.when(studentService.deleteStudent(studentMail)).thenReturn(student);
 
         mockMvc.perform(delete(BASE_URL + "/{mail}", studentMail).contentType("application/json"))
                 .andExpect(status().isOk())

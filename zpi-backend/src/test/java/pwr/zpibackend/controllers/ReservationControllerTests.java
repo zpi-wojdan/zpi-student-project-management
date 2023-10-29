@@ -1,6 +1,7 @@
-package pwr.zpibackend;
+package pwr.zpibackend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.services.StudentService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,6 +42,36 @@ public class ReservationControllerTests {
     @MockBean private GoogleAuthService googleAuthService;
     @MockBean private EmployeeService employeeService;
     @MockBean private StudentService studentService;
+
+    private Reservation reservation;
+    private ReservationDTO reservationDTO;
+
+    private List<Reservation> reservations;
+
+    @BeforeEach
+    public void setUp() {
+        reservationDTO = new ReservationDTO();
+        reservationDTO.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
+        reservationDTO.setThesisId(1L);
+        reservationDTO.setStudent(new Student());
+        reservationDTO.setConfirmedByLeader(false);
+
+        reservation = new Reservation();
+        reservation.setId(1L);
+        reservation.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
+        reservation.setThesis(mock(Thesis.class));
+        reservation.setStudent(new Student());
+        reservation.setConfirmedByLeader(false);
+
+        Reservation reservation2 = new Reservation();
+        reservation2.setId(2L);
+        reservation2.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
+        reservation2.setThesis(mock(Thesis.class));
+        reservation2.setStudent(new Student());
+        reservation2.setConfirmedByLeader(false);
+
+        reservations = List.of(reservation, reservation2);
+    }
 
     @Test
     public void testAddReservationShouldReturnStatusBadRequest() throws Exception {
@@ -61,13 +94,7 @@ public class ReservationControllerTests {
 
     @Test
     public void testAddReservationShouldReturnStatusCreated() throws Exception {
-        ReservationDTO newReservation = new ReservationDTO();
-        newReservation.setReservationDate(LocalDate.parse("2023-10-05"));
-        newReservation.setThesisId(1L);
-        newReservation.setStudent(new Student());
-        newReservation.setConfirmedByLeader(false);
-
-        String requestBody = objectMapper.writeValueAsString(newReservation);
+        String requestBody = objectMapper.writeValueAsString(reservationDTO);
 
         mockMvc.perform(post(BASE_URL)
                         .contentType("application/json")
@@ -79,50 +106,9 @@ public class ReservationControllerTests {
 
     @Test
     public void testGetAllReservations() throws Exception {
-        List<Reservation> reservations = List.of(
-                new Reservation(1L, false, false, false, false, LocalDate.parse("2023-10-05"), new Student(), new Thesis()),
-                new Reservation(2L, false, false, false, false, LocalDate.parse("2023-10-10"), new Student(), new Thesis())
-        );
-
         Mockito.when(reservationService.getAllReservations()).thenReturn(reservations);
 
-        String resultJson = "[" +
-                "{\"reservationDate\":\"2023-10-05\"," +
-                "\"student\":" +
-                    "{\"mail\":null," +
-                    "\"name\":null," +
-                    "\"surname\":null," +
-                    "\"index\":null," +
-                    "\"program\":null," +
-                    "\"teaching_cycle\":null," +
-                    "\"status\":null," +
-                    "\"role\":null," +
-                    "\"admission_date\":null," +
-                    "\"stage\":null" +
-                "}," +
-                "\"id\":1," +
-                "\"confirmedByLeader\":false," +
-                "\"confirmedBySupervisor\":false," +
-                "\"confirmedByStudent\":false," +
-                "\"readyForApproval\":false}," +
-                "{\"reservationDate\":\"2023-10-10\"," +
-                "\"student\":" +
-                    "{\"mail\":null," +
-                    "\"name\":null," +
-                    "\"surname\":null," +
-                    "\"index\":null," +
-                    "\"program\":null," +
-                    "\"teaching_cycle\":null," +
-                    "\"status\":null," +
-                    "\"role\":null," +
-                    "\"admission_date\":null," +
-                    "\"stage\":null}," +
-                "\"id\":2," +
-                "\"confirmedByLeader\":false," +
-                "\"confirmedBySupervisor\":false," +
-                "\"confirmedByStudent\":false," +
-                "\"readyForApproval\":false}]\n";
-
+        String resultJson = objectMapper.writeValueAsString(reservations);
 
         mockMvc.perform(get(BASE_URL)
                         .contentType("application/json"))
@@ -146,35 +132,9 @@ public class ReservationControllerTests {
     @Test
     public void testGetReservationByIdShouldReturnStatusOk() throws Exception {
         Mockito.when(reservationService.getReservation(1L))
-                .thenReturn(new Reservation(
-                        1L,
-                        false,
-                        false,
-                        false,
-                        false,
-                        LocalDate.parse("2023-10-05"),
-                        new Student(),
-                        new Thesis()));
+                .thenReturn(reservation);
 
-        String resultJson = "{" +
-                "\"reservationDate\":\"2023-10-05\"," +
-                "\"student\":" +
-                "{\"mail\":null," +
-                "\"name\":null," +
-                "\"surname\":null," +
-                "\"index\":null," +
-                "\"program\":null," +
-                "\"teaching_cycle\":null," +
-                "\"status\":null," +
-                "\"role\":null," +
-                "\"admission_date\":null," +
-                "\"stage\":null" +
-                "}," +
-                "\"id\":1," +
-                "\"confirmedByLeader\":false," +
-                "\"confirmedBySupervisor\":false," +
-                "\"confirmedByStudent\":false," +
-                "\"readyForApproval\":false}";
+        String resultJson = objectMapper.writeValueAsString(reservation);
 
         mockMvc.perform(get(BASE_URL + "/1")
                         .contentType("application/json"))
@@ -187,7 +147,7 @@ public class ReservationControllerTests {
     @Test
     public void testUpdateReservationShouldReturnStatusNotFound() throws Exception {
         Reservation newReservation = new Reservation();
-        newReservation.setReservationDate(LocalDate.parse("2023-10-05"));
+        newReservation.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
         newReservation.setThesis(new Thesis());
         newReservation.setStudent(new Student());
         newReservation.setConfirmedByLeader(false);
@@ -207,7 +167,7 @@ public class ReservationControllerTests {
     @Test
     public void testUpdateReservationShouldReturnStatusOk() throws Exception {
         Reservation newReservation = new Reservation();
-        newReservation.setReservationDate(LocalDate.parse("2023-10-05"));
+        newReservation.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
         newReservation.setThesis(new Thesis());
         newReservation.setStudent(new Student());
         newReservation.setConfirmedByLeader(true);

@@ -1,4 +1,4 @@
-package pwr.zpibackend;
+package pwr.zpibackend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
