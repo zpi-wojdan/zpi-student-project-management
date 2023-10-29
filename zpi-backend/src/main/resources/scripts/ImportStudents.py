@@ -1,8 +1,5 @@
 import pandas as pd
 import json
-from tabulate import tabulate
-import re
-from typing import Dict, List
 
 
 def capitalize_surname(surname: str) -> str:
@@ -37,7 +34,7 @@ def merge_rows_json(json: list[dict]) -> list[dict]:
     return list(merged_data.values())
 
 
-def merge_full_json(data: Dict[str, List[Dict[str, any]]]) -> Dict[str, List[Dict[str, any]]]:
+def merge_full_json(data: dict[str, list[dict[str, any]]]) -> dict[str, list[dict[str, any]]]:
     # Create a dictionary to store the merged data
     merged_data = {}
     
@@ -117,20 +114,7 @@ def read_file(file_path: str):
         invalid_status_rows = df[~df["status"].astype(str).str.match(r"^[A-Z]{1,5}$")]
         # invalid_stage_rows = df[~df["ETAP"].astype(str).str.match(r'^[A-Z0-9]{1,5}-[A-Z]{1,5}-\d{1,5}$')]
 
-        agg_funcs = {
-            'name': 'first',
-            'surname': 'first',
-            'index': 'first',
-            'status': 'first',
-            'role': 'first',
-            'programsCycles': list,
-            'PROGRAM': list,
-            'CYKL_DYDAKTYCZNY': list,
-            'ETAP': 'first'
-        }
-        df = df.groupby('mail').agg(agg_funcs).reset_index()
-
-        
+       
         df_valid = df[~df['index'].isin(invalid_index_rows['index'])]
         df_valid = df_valid[~df_valid['surname'].isin(invalid_surname_rows['surname'])]
         df_valid = df_valid[~df_valid['name'].isin(invalid_name_rows['name'])]
@@ -148,8 +132,6 @@ def read_file(file_path: str):
         invalid_teaching_cycle_rows = invalid_teaching_cycle_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         invalid_status_rows = invalid_status_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         # invalid_stage_rows = invalid_stage_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
-
-        print(tabulate(df_valid, headers='keys', tablefmt='psql'))
 
                 
         return df_valid, invalid_index_rows, invalid_surname_rows,\
@@ -183,15 +165,9 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
             # 'invalid_stages': json.loads(invalid_stage_json)
         }
 
-
-        # final_form = merge_full_json(full_json)
+        full_json = merge_full_json(full_json)
         output = json.dumps(full_json, indent=3, allow_nan=True)
-        # print(output)
-        valid_data_json = full_json['valid_data']
-        valid_data_2 = merge_rows_json(valid_data_json)
-        dbg = json.dumps(valid_data_2, indent=3, allow_nan=True)
-        print(dbg)
-
+        print(output)
 
         return output 
     except json.JSONDecodeError as jserr:
@@ -200,7 +176,7 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
 
 
 def main():
-    file_path = "zpi-backend/src/test/resources/ZPI_dane.xlsx" 
+    file_path = "src/test/resources/ZPI_dane.xlsx" 
     # file_path = "src/test/resources/ZPI_dane (1).xlsx" 
 
     try:
