@@ -2,6 +2,8 @@ import pandas as pd
 import json
 from tabulate import tabulate
 import re
+from typing import Dict, List
+
 
 def capitalize_surname(surname: str) -> str:
     if pd.notna(surname):
@@ -17,6 +19,38 @@ def create_student_mail(index: str):
         return str(index) + '@student.pwr.edu.pl'
     else:
         return index
+
+
+def merge_rows_json(json: list[dict]) -> list[dict]:
+    merged_data = {}
+    for entry in json:
+        mail = entry["mail"]
+        programsCycles = tuple(entry["programsCycles"])
+        
+        if mail not in merged_data:
+            merged_data[mail] = entry
+            merged_data[mail]["programsCycles"] = [programsCycles]
+        else:
+            if programsCycles not in merged_data[mail]["programsCycles"]:
+                merged_data[mail]["programsCycles"].append(programsCycles)
+    
+    return list(merged_data.values())
+
+
+def merge_full_json(data: Dict[str, List[Dict[str, any]]]) -> Dict[str, List[Dict[str, any]]]:
+    # Create a dictionary to store the merged data
+    merged_data = {}
+    
+    for key, value in data.items():
+        # Check if the value is a list of dictionaries
+        if isinstance(value, list) and all(isinstance(entry, dict) for entry in value):
+            # Apply the merge_rows_json function to the list
+            merged_data[key] = merge_rows_json(value)
+        else:
+            # If the value is not a list of dictionaries, keep it as-is
+            merged_data[key] = value
+
+    return merged_data
 
 
 def read_file(file_path: str):
@@ -48,6 +82,8 @@ def read_file(file_path: str):
 
         df.rename(columns = {'NAZWISKO' :'surname', 'IMIE' :'name',
                               'INDEKS': 'index', 'STATUS': 'status'}, inplace = True)
+        
+        df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
 
         df['surname'] = df['surname'].apply(capitalize_surname)
         df['name'] = df['name'].str.capitalize()
@@ -60,15 +96,17 @@ def read_file(file_path: str):
         df['mail'] = df['index'].apply(create_student_mail)
         df['role'] = 'student'
 
+        df = df.fillna('')
+
         df = df.reindex(columns=['mail', 'name', \
                                  'surname', 'index',\
                                 'status', 'role', 'programsCycles',\
                                 'PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'])
-        df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+        print(df.columns)
 
-        df = df.fillna('')
-        df['index'] = df['index'].astype(str)
 
+        # for index, row in df.iterrows():
+        #     print(row['programsCycles'])
 
         invalid_index_rows = df[~df["index"].astype(str).str.match(r'^\d{6}$')]
         invalid_surname_rows = df[~df["surname"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
@@ -78,29 +116,19 @@ def read_file(file_path: str):
         # invalid_teaching_cycle_rows = df[~df["CYKL_DYDAKTYCZNY"].astype(str).str.match(r"^\d{4}/\d{2}(?:-[A-Z]{1,3})?$")]
         invalid_status_rows = df[~df["status"].astype(str).str.match(r"^[A-Z]{1,5}$")]
         # invalid_stage_rows = df[~df["ETAP"].astype(str).str.match(r'^[A-Z0-9]{1,5}-[A-Z]{1,5}-\d{1,5}$')]
-        
+
         agg_funcs = {
             'name': 'first',
             'surname': 'first',
             'index': 'first',
             'status': 'first',
             'role': 'first',
+            'programsCycles': list,
             'PROGRAM': list,
             'CYKL_DYDAKTYCZNY': list,
-            'ETAP': 'first',
-            'programsCycles': list
+            'ETAP': 'first'
         }
         df = df.groupby('mail').agg(agg_funcs).reset_index()
-
-
-
-        #   filtering the original dataframe based on the lists with invalid rows
-        # df_valid = df[df['index'].astype(str).str.match(r'^\d{6}$')]
-        # df_valid = df[df['surname'].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
-        # df_valid = df[df['name'].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
-        # df_valid = df[df['PROGRAM'].astype(str).str.match(r'^[A-Z0-9]{1,5}-[A-Z]{1,5}-[A-Z0-9]{1,5}-[A-Z0-9]{1,6}$')]
-        # df_valid = df[df['CYKL_DYDAKTYCZNY'].astype(str).str.match(r"^\d{4}/\d{2}-[A-Z]{1,3}$")]
-        # df_valid = df[df['status'].astype(str).str.match(r"^[A-Z]{1,5}$")]
 
         
         df_valid = df[~df['index'].isin(invalid_index_rows['index'])]
@@ -111,11 +139,8 @@ def read_file(file_path: str):
         df_valid = df_valid[~df_valid['status'].isin(invalid_status_rows['status'])]
         # df_valid = df_valid[~df_valid.index.isin(invalid_stage_rows.index)]
 
-        
-        for index, row in df_valid.iterrows():
-            print(row['programsCycles'])
-
         df.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1, inplace=True)
+        df_valid = df_valid.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         invalid_index_rows = invalid_index_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         invalid_surname_rows = invalid_surname_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         invalid_name_rows = invalid_name_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
@@ -123,6 +148,9 @@ def read_file(file_path: str):
         invalid_teaching_cycle_rows = invalid_teaching_cycle_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         invalid_status_rows = invalid_status_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
         # invalid_stage_rows = invalid_stage_rows.drop(['PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'], axis=1)
+
+        print(tabulate(df_valid, headers='keys', tablefmt='psql'))
+
                 
         return df_valid, invalid_index_rows, invalid_surname_rows,\
                 invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
@@ -155,10 +183,13 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
             # 'invalid_stages': json.loads(invalid_stage_json)
         }
 
-        output = json.dumps(full_json, indent=3, allow_nan=True)
 
+        # final_form = merge_full_json(full_json)
+        output = json.dumps(full_json, indent=3, allow_nan=True)
+        # print(output)
         valid_data_json = full_json['valid_data']
-        dbg = json.dumps(valid_data_json, indent=3, allow_nan=True)
+        valid_data_2 = merge_rows_json(valid_data_json)
+        dbg = json.dumps(valid_data_2, indent=3, allow_nan=True)
         print(dbg)
 
 
@@ -169,8 +200,8 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
 
 
 def main():
-    # file_path = "zpi-backend/src/test/resources/ZPI_dane.xlsx" 
-    file_path = "src/test/resources/ZPI_dane (1).xlsx" 
+    file_path = "zpi-backend/src/test/resources/ZPI_dane.xlsx" 
+    # file_path = "src/test/resources/ZPI_dane (1).xlsx" 
 
     try:
         df_valid, invalid_index_rows, invalid_surname_rows,\
