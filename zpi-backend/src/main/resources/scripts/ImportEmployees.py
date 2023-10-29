@@ -27,29 +27,30 @@ def read_file(file_path: str):
             raise ValueError(f"Missing columns: {', '.join(missing_columns)}")  
 
         df = df.fillna('')    
-        df = df.rename(columns={'Tytuł/stopień': 'Tytul/stopien',
-                                 'Imię': 'Imie'})
+        df = df.rename(columns={'Lp.': 'id', 'Tytuł/stopień': 'title', 'Nazwisko': 'surname',
+                                'Imię': 'name', 'Jednostka': 'faculty',
+                                'Podjednostka': 'department', 'Stanowisko': 'position',
+                                'Telefon': 'phone_number', 'E-mail': 'mail'})
 
-        df["Tytul/stopien"] = df['Tytul/stopien'].str.lower()
-        df['Nazwisko'] = df['Nazwisko'].apply(capitalize_surname)
-        df['Imie'] = df['Imie'].str.capitalize()
-        df['Jednostka'] = df['Jednostka'].str.upper()
-        df['Podjednostka'] = df['Podjednostka'].str.upper()
-        df['Stanowisko'] = df['Stanowisko'].str.lower()
-        df['E-mail'] = df['E-mail'].str.lower()    
+        df["title"] = df['title'].str.lower()
+        df['surname'] = df['surname'].apply(capitalize_surname)
+        df['name'] = df['name'].str.capitalize()
+        df['faculty'] = df['faculty'].str.upper()
+        df['department'] = df['department'].str.upper()
+        df['position'] = df['position'].str.lower()
+        df['mail'] = df['mail'].str.lower()    
 
         #   picking invalid rows from the original dataframe through regex expressions
-        invalid_index_rows = df[~df["Lp."].astype(str).str.match(r'^\d{1,5}$')]
-        invalid_academic_title_rows = df[~df["Tytul/stopien"].astype(str).str.match(r'^[a-z. ]{0,10}$')]
-        invalid_surname_rows = df[~df["Nazwisko"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
-        invalid_name_rows = df[~df["Imie"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
-        invalid_unit_rows = df[~df["Jednostka"].astype(str).str.match(r'[A-Z0-9]{3,4}')]
-        invalid_subunit_rows = df[~df["Podjednostka"].astype(str).str.match(r"^[A-Z0-9/]{1,10}$")]
-        invalid_position_rows = df[~df["Stanowisko"].astype(str).str.match(r'^[a-z0-9zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s()\-]{1,50}$')]
-        invalid_phone_number_rows = df[~df["Telefon"].astype(str).str.match(r'^(?:\+\d{1,4}[\s-]?\d{2,4}[\s-]?\d{3}[\s-]?\d{3}|\d{2,4}[\s-]?\d{3}[\s-]?\d{3})?$')]
-        invalid_email_rows = df[~df["E-mail"].astype(str).str.match(r'^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$')]
+        invalid_index_rows = df[~df["id"].astype(str).str.match(r'^\d{1,5}$')]
+        invalid_academic_title_rows = df[~df["title"].astype(str).str.match(r'^[a-z. ]{0,10}$')]
+        invalid_surname_rows = df[~df["surname"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
+        invalid_name_rows = df[~df["name"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
+        invalid_unit_rows = df[~df["faculty"].astype(str).str.match(r'[A-Z0-9]{3,4}')]
+        invalid_subunit_rows = df[~df["department"].astype(str).str.match(r"^[A-Z0-9/]{1,10}$")]
+        invalid_position_rows = df[~df["position"].astype(str).str.match(r'^[a-z0-9zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s()\-]{1,50}$')]
+        invalid_phone_number_rows = df[~df["phone_number"].astype(str).str.match(r'^(?:([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$|$)')]
+        invalid_email_rows = df[~df["mail"].astype(str).str.match(r'^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$')]
 
-        print(invalid_surname_rows['Nazwisko'].unique())
 
         #   filtering the original dataframe based on the lists with invalid rows
         df_valid = df[~df.index.isin(invalid_index_rows.index)]
@@ -100,6 +101,7 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_academic_title_rows
         }
 
         output = json.dumps(full_json, indent=3, allow_nan=True)
+        # print(output)
         return output
     except json.JSONDecodeError as jserr:
         print(f"Error occured while decoding JSON: {str(jserr)}")
