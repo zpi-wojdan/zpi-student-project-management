@@ -1,15 +1,11 @@
-import { Program } from "./Program";
-import { StudyCycle } from "./StydyCycle";
+import { StudentProgramCycle } from "./StudentProgramCycle";
 
 export type Student = {
     mail: string;
     name: string;
     surname: string;
     index: string;
-    program: string;
-    teaching_cycle: string;
     status: string;
     role: string;
-    programs: Program[];
-    studyCycles: StudyCycle[];
+    studentProgramCycles: StudentProgramCycle[];
   }
