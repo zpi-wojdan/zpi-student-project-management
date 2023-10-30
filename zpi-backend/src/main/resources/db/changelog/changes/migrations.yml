@@ -349,6 +349,7 @@ databaseChangeLog:
                     referencedTableName: student
                     referencedColumnNames: mail
                     nullable: true
+
   - changeSet:
       id: add_university_tables
       author: Piotr
@@ -705,3 +706,69 @@ databaseChangeLog:
                     referencedTableName: study_cycle
                     referencedColumnNames: id
                     nullable: false
+
+  - changeSet:
+      id: create-table-roles
+      author: Zuzia
+      changes:
+        - createTable:
+            tableName: role
+            columns:
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: change-roles-to-enum
+      author: Zuzia
+      changes:
+        - dropColumn:
+            tableName: employee
+            columnName: role
+        - dropColumn:
+            tableName: student
+            columnName: role
+        - addColumn:
+            tableName: student
+            columns:
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_student_role
+                    referencedTableName: role
+                    referencedColumnNames: role_id
+                    nullable: false
+        - createTable:
+            tableName: employee_role
+            columns:
+              - column:
+                  name: mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_employee
+                    referencedTableName: employee
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_role
+                    referencedTableName: role
+                    referencedColumnNames: role_id
+                    nullable: false
+
+

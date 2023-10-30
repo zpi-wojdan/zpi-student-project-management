@@ -3,10 +3,15 @@ package pwr.zpibackend.config;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
+import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.Student;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.StudentService;
 
@@ -16,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class GoogleTokenFilter extends OncePerRequestFilter {
@@ -68,10 +75,12 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
                         "User not in database or user is both student and employee!");
             }
 
+            ArrayList<GrantedAuthority> authorities = getAuthorities(email);
+
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
                             GoogleUser.fromGoogleTokenPayload(token.getPayload()),
-                            null, null));
+                            null, authorities));
 
             request.setAttribute("googleEmail", email);
         } catch (GeneralSecurityException | IllegalArgumentException e) {
@@ -87,6 +96,23 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
 
     private boolean isUserInDatabase(String email) {
         return employeeService.exists(email) ^ studentService.exists(email);
+    }
+
+    private ArrayList<GrantedAuthority> getAuthorities(String email) {
+        ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+        try {
+            Employee employee = employeeService.getEmployee(email);
+            List<Role> roles = employee.getRoles();
+            for (Role role : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
+            }
+        } catch (Exception ignored) {
+            try {
+                Student student = studentService.getStudent(email);
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + student.getRole().getName().toUpperCase()));
+            } catch (Exception ignored2) {}
+        }
+        return authorities;
     }
 
 

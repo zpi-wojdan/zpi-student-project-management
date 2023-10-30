@@ -3,6 +3,7 @@ package pwr.zpibackend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pwr.zpibackend.models.Role;
 import pwr.zpibackend.models.university.StudentProgramCycle;
 
 import javax.persistence.Column;
@@ -18,6 +19,5 @@ public class StudentDTO {
     private String surname;
     private String index;
     private String status;
-    private String role;
     private List<StudentProgramCycleDTO> programsCycles;
 }

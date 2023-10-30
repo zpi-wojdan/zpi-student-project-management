@@ -1,6 +1,7 @@
 package pwr.zpibackend.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -29,8 +30,10 @@ public class Student {
     private String index;
     @Column(nullable = false)
     private String status;
-    @Column(nullable = false)
-    private String role;    //  change String to Role when table exist
+    @NotNull(message = "Role cannot be null")
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Role role;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     @JsonManagedReference
     @ToString.Exclude
