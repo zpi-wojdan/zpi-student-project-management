@@ -14,7 +14,9 @@ import UpdateThesisPage from './pages/Theses/UpdateThesis';
 import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
+// @ts-ignore
 import StudentList from './pages/Admin/Student/List';
+// @ts-ignore
 import StudentDetails from './pages/Admin/Student/Details';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
@@ -38,6 +40,7 @@ export default function App(props: IAppProps) {
               <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
               <Route path='theses' element={<ThesesTable />} />
               <Route path='theses/:id' element={<ThesisDetails />} />
+
               <Route path='students' element={<StudentList />} />
               <Route path='students/:mail' element={<StudentDetails />} />
               <Route path='employees' element={<HomePage />} />
@@ -47,6 +50,7 @@ export default function App(props: IAppProps) {
               <Route path='programs' element={<HomePage />} />
               <Route path='cycles' element={<HomePage />} />
               <Route path='departments' element={<HomePage />} />
+
               <Route path='my' element={<ReservationPage />} />
               <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
               <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'} mail={'john.doe@pwr.edu.pl'} />} />
