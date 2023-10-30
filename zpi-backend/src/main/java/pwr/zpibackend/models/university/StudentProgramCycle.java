@@ -1,5 +1,6 @@
 package pwr.zpibackend.models.university;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pwr.zpibackend.models.Student;
@@ -20,7 +21,7 @@ public class StudentProgramCycle {
     @JoinColumn(name = "student_mail")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @JsonIgnore
+    @JsonBackReference
     private Student student;
 
     @ManyToOne
