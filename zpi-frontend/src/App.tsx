@@ -22,6 +22,7 @@ import SupervisorReservationPage from './pages/reservation/SupervisorReservation
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RequireAuth from "./auth/RequireAuth";
+import Missing from "./Missing";
 
 
 export interface IAppProps {
@@ -69,6 +70,8 @@ export default function App(props: IAppProps) {
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
               </Route>
+
+              <Route path="*" element={<Missing />} />
             </Routes>
           </Navigation>
         </BrowserRouter>
