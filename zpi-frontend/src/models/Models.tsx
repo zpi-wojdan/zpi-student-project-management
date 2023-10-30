@@ -7,7 +7,7 @@ export type Student = {
     teachingCycle: string;
     stage: string;
     admissionDate: Date;
-    role: string;
+    role: Role;
     status: string;
 }
 
@@ -61,5 +61,10 @@ export type Employee = {
     surname: string;
     departament_symbol: string;
     title: string;
-    role: string;
+    roles: Role[];
+}
+
+export type Role = {
+    id: number;
+    name: string;
 }

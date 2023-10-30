@@ -23,10 +23,11 @@ const ThesisDetails: React.FC = () => {
         <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
           &larr; Powrót
         </button>
-        {(user?.role === 'student' || user?.role === 'supervisor' && user?.mail === thesis?.supervisor.mail) ?
+        {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
+            user?.mail === thesis?.supervisor.mail) ?
           (
           <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
-            if (user?.role === 'student') {
+            if (user?.role?.name === 'student') {
               if (thesis?.reservations.length === 0) {
                 navigate('/reservation', { state: { thesis: thesis } })
               } else {
@@ -37,7 +38,7 @@ const ThesisDetails: React.FC = () => {
             }
           }
           }>
-            {user?.role === 'student' ? (
+            {user?.role?.name === 'student' ? (
               <span>Zarezerwuj</span>
             ) : (
               user?.mail === thesis?.supervisor.mail ?
