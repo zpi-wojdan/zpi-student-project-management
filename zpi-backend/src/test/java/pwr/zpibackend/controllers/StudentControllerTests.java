@@ -18,6 +18,7 @@ import pwr.zpibackend.dto.StudentDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Role;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.services.EmployeeService;
@@ -55,26 +56,27 @@ class StudentControllerTests {
 
     @BeforeEach
     public void setUp() {
+        Role role = new Role("student");
+
         student = new Student();
         student.setMail("123456@student.pwr.edu.pl");
         student.setName("John");
         student.setSurname("Doe");
         student.setIndex("123456");
-        student.setRole("Student");
+        student.setRole(role);
 
         studentDTO = new StudentDTO();
         studentDTO.setMail("123456@student.pwr.edu.pl");
         studentDTO.setName("John");
         studentDTO.setSurname("Doe");
         studentDTO.setIndex("123456");
-        studentDTO.setRole("Student");
 
         Student student2 = new Student();
         student2.setMail("456789@student.pwr.edu.pl");
         student2.setName("John");
         student2.setSurname("Doe");
         student2.setIndex("456789");
-        student2.setRole("Student");
+        student2.setRole(role);
 
         students = List.of(student, student2);
     }
