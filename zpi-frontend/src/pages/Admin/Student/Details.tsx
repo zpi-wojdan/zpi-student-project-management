@@ -4,8 +4,7 @@ import Axios from 'axios';
 import { Student } from '../../../models/Student';
 import { Faculty } from '../../../models/Faculty';
 import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
-
-
+import Cookies from "js-cookie";
 
 const StudentDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +13,11 @@ const StudentDetails: React.FC = () => {
     
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty')
+    Axios.get('http://localhost:8080/faculty', {
+      headers: {
+          'Authorization': `Bearer ${Cookies.get('google_token')}`
+      }
+  })
       .then((response) => {
         setFaculties(response.data);
         console.log(faculties);
