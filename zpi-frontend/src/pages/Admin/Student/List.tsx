@@ -95,7 +95,7 @@ const StudentList: React.FC = () => {
               <td>{student.index}</td>
               <td>{student.name}</td>
               <td>{student.surname}</td>
-              <td>
+              <td style={{display: "flex"}}>
                 <button
                   className="custom-button coverall"
                   onClick={() => {
