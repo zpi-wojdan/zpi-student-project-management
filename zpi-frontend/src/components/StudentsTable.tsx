@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Employee, Student, Thesis } from '../models/Models';
 import Cookies from "js-cookie";
+import { Employee } from '../models/Employee';
+import { Student } from '../models/Student';
+import { ThesisFront } from '../models/Thesis';
 
 type StudentTableProps = {
   students: Student[];
-  thesis: Thesis;
+  thesis: ThesisFront;
   role: string;
 }
 
@@ -23,7 +25,7 @@ function StudentTable({ students, thesis, role }: StudentTableProps) {
 
   const whichButtonsToShow = () => {
     if (role === "student") {
-      if (user?.mail === thesis.leader) {
+      if (user?.mail === thesis.leader?.mail) {
         let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].confirmedByLeader);
         newShowButtons[0] = false;
         setShowButtons(newShowButtons);

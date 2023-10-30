@@ -3,6 +3,7 @@ import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
+import { Dropdown, Nav } from 'react-bootstrap';
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -77,6 +78,37 @@ const Navigation = ({ children }: NavigationProps) => {
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/theses" >Tematy</NavLink>
+                                </li>
+                                <li className="nav-item">
+                                <Dropdown as={Nav.Item}>
+                                    <Dropdown.Toggle as={Nav.Link}>Zarządzaj</Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item as={Link} to="/students">
+                                            Studenci
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/employees">
+                                            Pracownicy
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/faculties">
+                                            Wydziały
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/fields">
+                                            Kierunki
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/specializations">
+                                            Specjalności
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/programs">
+                                            Programy studiów
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/cycles">
+                                            Cykle nauczania
+                                        </Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/departments">
+                                            Katedry
+                                        </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
                                 </li>
                                 {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego kto zalogowany */}
                                 {isLoggedIn ? (

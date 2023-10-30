@@ -13,37 +13,50 @@ code {
 }
 
 .active , .pagination button.active{
-  background-color: #9A342D;
-  color: white;
+  background-color: #9A342D !important;
+  color: white !important;
 }
 
 #sign-in-button {
   width: 20%;
 }
 
-.theses-table {
+/* Custom tables */
+.custom-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 2px;
 }
 
-.theses-table tbody tr:nth-child(odd) {
+.custom-table tbody tr:nth-child(odd) {
   background-color: #f2f2f2;
 }
 
-.theses-table tbody td.centered {
+.custom-table tbody td.centered {
   text-align: center;
 }
 
-.theses-table th, .theses-table td {
+.custom-table th {
   padding: 10px;
+  background-color: #9A342D;
+  color: white;
 }
 
+.custom-table td {
+  padding: 5px;
+}
+
+.custom-table td .coverall {
+  width: 100%;
+}
+
+/* Pagination */
 .pagination {
   display: flex;
   float:right;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .pagination button {
@@ -63,13 +76,61 @@ code {
   cursor: pointer;
 }
 
-.thesis-details {
+.page-margin {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .bold {
   font-weight: bold;
 }
+
+/* Custom button */
+.custom-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #9A342D;
+  color: white;
+  border: 1px solid #9A342D;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.custom-button:hover {
+  text-decoration: underline;
+}
+
+.another-color{
+  background-color: #888888;
+  border: 1px solid #888888;
+}
+
+/* Expanded details */
+.custom-toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+ul {
+  list-style: circle;
+  margin-left: 20px;
+}
+
+li {
+  margin: 10px;
+}
+
+ul > li > ul {
+  list-style: none;
+}
+
 
 .custom-pwr-button{
   background-color: #9A342D !important;
