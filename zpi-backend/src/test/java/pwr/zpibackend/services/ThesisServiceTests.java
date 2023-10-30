@@ -1,5 +1,6 @@
 package pwr.zpibackend.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -8,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Thesis;
+import pwr.zpibackend.models.university.Department;
+import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.repositories.EmployeeRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
@@ -17,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -31,12 +35,27 @@ public class ThesisServiceTests {
     @InjectMocks
     private ThesisService thesisService;
 
+    private List<Thesis> theses;
+    private Thesis thesis;
+
+    @BeforeEach
+    public void setUp() {
+        thesis = new Thesis();
+        thesis.setId(1L);
+        thesis.setNamePL("Thesis 1 PL");
+        thesis.setNameEN("Thesis 1 EN");
+        thesis.setDescription("Description 1");
+        thesis.setNum_people(4);
+        thesis.setSupervisor(mock(Employee.class));
+        thesis.setPrograms(List.of(mock(Program.class)));
+
+        theses = new ArrayList<>();
+        theses.add(thesis);
+
+    }
+
     @Test
     public void testGetAllTheses() {
-        List<Thesis> theses = List.of(
-                new Thesis(1L, "Thesis 1 PL", "Thesis 1 EN", "Description 1", 2, new Employee("employee1@mail.com", "John", "Doe", "Role 1", "Department 1", "Title 1"), null, "Faculty 1", "Field 1", "Edu Cycle 1", "Status 1", 0),
-                new Thesis(2L, "Thesis 2 PL", "Thesis 2 EN", "Description 2", 3, new Employee("employee2@mail.com", "Jane", "Smith", "Role 2", "Department 2", "Title 2"), null,  "Faculty 2", "Field 2", "Edu Cycle 2", "Status 2", 1)
-        );
 
         when(thesisRepository.findAll()).thenReturn(theses);
 
@@ -48,7 +67,6 @@ public class ThesisServiceTests {
     @Test
     public void testGetThesisById() throws NotFoundException {
         Long thesisId = 1L;
-        Thesis thesis = new Thesis(1L, "Thesis 1 PL", "Thesis 1 EN", "Description 1", 2, new Employee("employee1@mail.com", "John", "Doe", "Role 1", "Department 1", "Title 1"), null, "Faculty 1", "Field 1", "Edu Cycle 1", "Status 1", 0);
 
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
 

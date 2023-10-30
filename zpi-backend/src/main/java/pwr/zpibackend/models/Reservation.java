@@ -31,7 +31,7 @@ public class Reservation {
     @Column(name = "reservation_date", nullable = false)
     @NotNull(message = "Reservation date cannot be null")
     private LocalDateTime reservationDate;
-    @Column(name = "sent_for_approval_date", nullable = false)
+    @Column(name = "sent_for_approval_date")
     @NotNull(message = "Reservation date cannot be null")
     private LocalDateTime sentForApprovalDate;
     @JoinColumn(name = "mail", referencedColumnName = "mail", nullable = false)

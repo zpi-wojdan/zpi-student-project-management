@@ -45,8 +45,11 @@ public class AuthControllerTests {
     @Test
     void getUserDetailsOfStudent() throws Exception {
         String studentMail = "123456@student.pwr.edu.pl";
-        Student student = new Student(studentMail, "John", "Doe", "123456", "Program 1",
-                "Cycle 1", "Active", "Role 1", new Date(), "Stage 1");
+        Student student = new Student();
+        student.setMail(studentMail);
+        student.setName("John");
+        student.setSurname("Doe");
+
 
         Mockito.when(authService.getUserDetails(studentMail)).thenReturn(student);
 
@@ -60,8 +63,11 @@ public class AuthControllerTests {
     @Test
     void getUserDetailsOfEmployee() throws Exception {
         String employeeMail = "john.doe@pwr.edu.pl";
-        Employee employee = new Employee(employeeMail, "John", "Doe", "Role 1",
-                "Department 1", "Title 1");
+        Employee employee = new Employee();
+        employee.setMail(employeeMail);
+        employee.setName("John");
+        employee.setSurname("Doe");
+        employee.setRole("Supervisor");
 
         Mockito.when(authService.getUserDetails(employeeMail)).thenReturn(employee);
 
