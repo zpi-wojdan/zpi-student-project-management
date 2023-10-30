@@ -1,3 +1,4 @@
+import { Role } from "./Role";
 import { StudentProgramCycle } from "./StudentProgramCycle";
 
 export type Student = {
@@ -6,6 +7,6 @@ export type Student = {
     surname: string;
     index: string;
     status: string;
-    role: string;
+    role: Role;
     studentProgramCycles: StudentProgramCycle[];
   }
