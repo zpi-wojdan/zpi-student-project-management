@@ -63,9 +63,7 @@ const StudentList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
-          <button className="custom-button" onClick={() => {
-            // Obsługa dodawania nowego studenta
-          }}>
+          <button className="custom-button" onClick={() =>{navigate('/students/add')}}>
             Dodaj studenta
           </button>
         </div>

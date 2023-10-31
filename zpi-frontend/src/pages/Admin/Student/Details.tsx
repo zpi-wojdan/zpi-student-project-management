@@ -52,9 +52,7 @@ const StudentDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; Powrót
         </button>
-        <button type="button" className="custom-button" onClick={() => {
-            // go to student edit
-            }}>
+        <button type="button" className="custom-button" onClick={() => {navigate(`/students/edit/${student.mail}`, {state: {student}})}}>
           Edytuj
         </button>
       </div>

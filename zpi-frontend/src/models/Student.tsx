@@ -1,5 +1,5 @@
 import { Role } from "./Role";
-import { StudentProgramCycle } from "./StudentProgramCycle";
+import { StudentProgramCycle, StudentProgramCycleDTO } from "./StudentProgramCycle";
 
 export type Student = {
     mail: string;
@@ -10,3 +10,12 @@ export type Student = {
     role: Role;
     studentProgramCycles: StudentProgramCycle[];
   }
+
+export type StudentDTO = {
+  mail: string;
+  name: string;
+  surname: string;
+  index: string;
+  status: string;
+  studentProgramCycles: StudentProgramCycleDTO[];
+}
