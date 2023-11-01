@@ -21,6 +21,7 @@ public class FileUploadController {
     }
 
     @PostMapping("/student")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadStudentFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         try{
@@ -36,6 +37,7 @@ public class FileUploadController {
     }
 
     @PostMapping("/employee")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadEmployeeFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         try{
