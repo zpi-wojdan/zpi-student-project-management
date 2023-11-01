@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import { spawn } from 'child_process';
 import { Employee } from '../../models/Employee';
 import { Student } from '../../models/Student';
+import api from '../../utils/api';
 
 const ThesisDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const ThesisDetails: React.FC = () => {
   const [thesis, setThesis] = useState<ThesisFront>();
 
   useEffect(() => {
-    const response = Axios.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(`http://localhost:8080/thesis/${id}`)
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const thesis: ThesisFront = {
@@ -37,6 +38,7 @@ const ThesisDetails: React.FC = () => {
           reservations: thesisDb.reservations,
         };
         setThesis(thesis);
+        console.log(thesis);
       })
       .catch((error) => console.error(error));
 
@@ -44,7 +46,7 @@ const ThesisDetails: React.FC = () => {
 
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty')
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setFaculties(response.data);
         console.log(faculties);
@@ -54,14 +56,14 @@ const ThesisDetails: React.FC = () => {
 
   function findFacultyNameByProgram(programId: number): string | null {
     for (const faculty of faculties) {
-        for (const program of faculty.programs) {
-            if (program.id === programId) {
-                return faculty.name;
-            }
+      for (const program of faculty.programs) {
+        if (program.id === programId) {
+          return faculty.name;
         }
+      }
     }
     return null;
-}
+  }
 
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
@@ -71,11 +73,32 @@ const ThesisDetails: React.FC = () => {
     } else {
       setExpandedPrograms([...expandedPrograms, programId]);
     }
-  };  const [user, setUser] = useState<Student & Employee>();
+  }; const [user, setUser] = useState<Student & Employee>();
 
   useEffect(() => {
     setUser(JSON.parse(Cookies.get("user") || "{}"));
+    console.log(user);
   }, []);
+
+  const handleReadyForApproval = async () => {
+    if (thesis?.reservations) {
+      for (const reservation of thesis.reservations) {
+        try {
+          reservation.readyForApproval = true;
+          reservation.sentForApprovalDate = new Date();
+          const response = await api.put('http://localhost:8080/reservation/' + reservation.id,
+            JSON.stringify(reservation)
+          );
+
+          if (response.status === 200) {
+            console.log('All users reservations sent for approval successfully');
+          }
+        } catch (error) {
+          console.error(`Failed to update reservations for reservation: ${reservation}`, error);
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -84,31 +107,31 @@ const ThesisDetails: React.FC = () => {
           &larr; Powrót
         </button>
         {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
-            user?.mail === thesis?.supervisor.mail) ?
+          user?.mail === thesis?.supervisor.mail) ?
           (
-          <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
-            if (user?.role?.name === 'student') {
-              if (thesis?.reservations.length === 0) {
-                navigate('/reservation', { state: { thesis: thesis } })
+            <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
+              if (user?.role?.name === 'student') {
+                if (thesis?.reservations.length === 0) {
+                  navigate('/reservation', { state: { thesis: thesis } })
+                } else {
+                  navigate('/single-reservation', { state: { thesis: thesis } })
+                }
               } else {
-                navigate('/single-reservation', { state: { thesis: thesis } })
+                navigate('/supervisor-reservation', { state: { thesis: thesis } })
               }
-            } else {
-              navigate('/supervisor-reservation', { state: { thesis: thesis } })
             }
-          }
-          }>
-            {user?.role?.name === 'student' ? (
-              <span>Zarezerwuj</span>
-            ) : (
-              user?.mail === thesis?.supervisor.mail ?
-                (
-                  <span>Zapisz studentów</span>
-                ) : (
-                  <></>
-                )
-            )}
-          </button>
+            }>
+              {user?.role?.name === 'student' ? (
+                <span>Zarezerwuj</span>
+              ) : (
+                user?.mail === thesis?.supervisor.mail ?
+                  (
+                    <span>Zapisz studentów</span>
+                  ) : (
+                    <></>
+                  )
+              )}
+            </button>
           ) : (
             <span></span>
           )
@@ -125,28 +148,28 @@ const ThesisDetails: React.FC = () => {
             <p><span className="bold">Cykl:</span> <span>{thesis.studyCycle ? thesis.studyCycle.name : 'N/A'}</span></p>
             <p className="bold">Programy:</p>
             <ul>
-            {thesis.programs.map((program: Program) => (
-              <li key={program.id}>
-                {program.name}
-                <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
-                  {expandedPrograms.includes(program.id) ? '▼' : '▶'} 
-                </button>
-                {expandedPrograms.includes(program.id) && (
-                  <ul>
-                    <li>
-                      <p><span className="bold">Wydział - </span> <span>{findFacultyNameByProgram(program.id)}</span></p>
-                    </li>
-                    <li>
-                      <p><span className="bold">Kierunek - </span> <span>{program.studyField.name}</span></p>
-                    </li>
-                    <li>
-                      <p><span className="bold">Specjalność - </span> <span>{program.specialization ? program.specialization.name : "brak"}</span></p>
-                    </li>
-                </ul>
-                )}
-              </li>
-            ))}
-          </ul>
+              {thesis.programs.map((program: Program) => (
+                <li key={program.id}>
+                  {program.name}
+                  <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
+                    {expandedPrograms.includes(program.id) ? '▼' : '▶'}
+                  </button>
+                  {expandedPrograms.includes(program.id) && (
+                    <ul>
+                      <li>
+                        <p><span className="bold">Wydział - </span> <span>{findFacultyNameByProgram(program.id)}</span></p>
+                      </li>
+                      <li>
+                        <p><span className="bold">Kierunek - </span> <span>{program.studyField.name}</span></p>
+                      </li>
+                      <li>
+                        <p><span className="bold">Specjalność - </span> <span>{program.specialization ? program.specialization.name : "brak"}</span></p>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
             <div>
               <p><span className="bold">Zapisani:</span> <span>{thesis.occupied + "/" + thesis.num_people}</span></p>
               {thesis.students.length > 0 ? (
@@ -154,6 +177,16 @@ const ThesisDetails: React.FC = () => {
               ) : (
                 <></>
               )}
+              {thesis?.leader?.mail === user?.mail && thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) && (
+                <button
+                  type="button"
+                  className="col-sm-2 btn btn-primary m-3"
+                  onClick={handleReadyForApproval}
+                >
+                  Prześlij do akceptacji
+                </button>
+              )}
+
             </div>
           </div>
         ) : (

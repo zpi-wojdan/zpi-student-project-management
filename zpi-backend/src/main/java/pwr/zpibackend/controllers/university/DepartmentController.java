@@ -19,13 +19,13 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Department>> getAllDepartments() {
         return ResponseEntity.ok(departmentService.getAllDepartments());
     }
 
     @GetMapping("/{code}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Department> getDepartmentById(@PathVariable String code) {
         try {
             return ResponseEntity.ok(departmentService.getDepartmentByCode(code));

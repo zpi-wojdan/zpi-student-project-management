@@ -18,13 +18,13 @@ public class SpecializationController {
     private final SpecialisationService specialisationService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Specialization>> getAllSpecializations() {
         return ResponseEntity.ok(specialisationService.getAllSpecializations());
     }
 
     @GetMapping("/{abbreviation}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Specialization> getSpecializationByAbbreviation(@PathVariable String abbreviation) {
         try {
             return ResponseEntity.ok(specialisationService.getSpecializationByAbbreviation(abbreviation));

@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
 import useAuth from "../auth/useAuth";
+import api from "../utils/api";
 
 const LoginPage = () => {
     // @ts-ignore
@@ -45,11 +46,7 @@ const LoginPage = () => {
         const decodedUser: any = jwt_decode(response.credential);
         console.log(decodedUser);
 
-        axios.get(`http://localhost:8080/user/${decodedUser.email}/details`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.get(`http://localhost:8080/user/${decodedUser.email}/details`)
             .then((res) => {
                 Cookies.set('user', JSON.stringify(res.data));
                 setShowAlert(false)

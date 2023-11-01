@@ -19,12 +19,12 @@ VALUES
     (3, '2021/22-Z'),
     (4, '2020/21-Z');
 
-INSERT INTO role (name)
+INSERT INTO role (role_id, name)
 VALUES
-    ('student'),
-    ('supervisor'),
-    ('approver'),
-    ('admin');
+    (1, 'student'),
+    (2, 'supervisor'),
+    (3, 'approver'),
+    (4, 'admin');
 
 
 INSERT INTO student (mail, name, surname, index, role_id, status)
@@ -223,3 +223,10 @@ VALUES
     ('42', 1),
     ('43', 1);
 
+
+
+INSERT INTO student_program_cycle (student_mail, program_id, cycle_id)
+VALUES
+    ('012345@student.pwr.edu.pl', 0, 1),
+    ('012345@student.pwr.edu.pl', 1, 2),
+    ('099809@student.pwr.edu.pl', 0, 1);
