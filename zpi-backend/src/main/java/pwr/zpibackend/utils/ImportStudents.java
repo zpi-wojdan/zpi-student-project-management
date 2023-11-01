@@ -11,71 +11,55 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class ImportStudents {
 
-    public static boolean isValidIndex(String index) {
-        return Pattern.matches("^\\d{6}$", index);
-    }
+    public static void processFile(String file_path) throws IOException{
 
-    public static boolean isValidSurname(String surname) {
-        return Pattern.matches("^[a-zA-ZàáâäãåčćèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĆČĖÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$", surname);
-    }
-
-    public static boolean isValidName(String name) {
-        return Pattern.matches("^[a-zA-ZàáâäãåčćèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĆČĖÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$", name);
-    }
-
-    public static boolean isValidProgram(String program) {
-        return Pattern.matches("^[A-Z0-9]{1,5}-[A-Z]{1,5}-[A-Z0-9]{1,5}-[A-Z0-9]{1,6}$", program);
-    }
-
-    public static boolean isValidTeachingCycle(String teachingCycle) {
-        return Pattern.matches("^\\d{4}/\\d{2}-[A-Z]{1,3}$", teachingCycle);
-    }
-
-    public static boolean isValidStatus(String status) {
-        return Pattern.matches("^[A-Z]{1,5}$", status);
-    }
-
-    public static void processFile(String file_path) {
-        try {
 //            String file_path = "C:\\zpi-student-project-management\\zpi-backend\\src\\test\\resources\\ZPI_dane.xlsx";
-            List<ObjectNode> validData = new ArrayList<>();
-            List<ObjectNode> invalidIndexData = new ArrayList<>();
-            List<ObjectNode> invalidSurnameData = new ArrayList<>();
-            List<ObjectNode> invalidNameData = new ArrayList<>();
-            List<ObjectNode> invalidProgramData = new ArrayList<>();
-            List<ObjectNode> invalidTeachingCycleData = new ArrayList<>();
-            List<ObjectNode> invalidStatusData = new ArrayList<>();
+        List<ObjectNode> validData = new ArrayList<>();
+        List<ObjectNode> invalidIndexData = new ArrayList<>();
+        List<ObjectNode> invalidSurnameData = new ArrayList<>();
+        List<ObjectNode> invalidNameData = new ArrayList<>();
+        List<ObjectNode> invalidProgramData = new ArrayList<>();
+        List<ObjectNode> invalidTeachingCycleData = new ArrayList<>();
+        List<ObjectNode> invalidStatusData = new ArrayList<>();
 
-            readStudentFile(file_path, validData, invalidIndexData, invalidSurnameData, invalidNameData, invalidProgramData, invalidTeachingCycleData, invalidStatusData);
+        readStudentFile(file_path, validData, invalidIndexData, invalidSurnameData,
+                        invalidNameData, invalidProgramData, invalidTeachingCycleData,
+                        invalidStatusData);
 
-            String fullJson = dataframesToJson(validData, invalidIndexData, invalidSurnameData, invalidNameData, invalidProgramData, invalidTeachingCycleData, invalidStatusData);
-            System.out.println("\nFull JSON:");
-            System.out.println(fullJson);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String fullJson = dataframesToJson(validData, invalidIndexData,
+                            invalidSurnameData, invalidNameData, invalidProgramData,
+                            invalidTeachingCycleData, invalidStatusData);
+        System.out.println("\nFull JSON:");
+        System.out.println(fullJson);
     }
 
-    public static void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData, List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData, List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData, List<ObjectNode> invalidStatusData) throws IOException {
+    public static void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
+                                       List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
+                                       List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
+                                       List<ObjectNode> invalidStatusData) throws IOException {
         FileInputStream excelFile = new FileInputStream(file_path);
         Workbook workbook = new XSSFWorkbook(excelFile);
 
         Sheet sheet = workbook.getSheetAt(0);
-        Map<String, Integer> columnMap = getColumnMap(sheet.getRow(0));
+        Map<String, Integer> columns = ImportUtils.getColumnMap(sheet.getRow(0));
+
+        if (!columns.containsKey("INDEKS") || !columns.containsKey("NAZWISKO") ||
+                !columns.containsKey("IMIE") || !columns.containsKey("PROGRAM") ||
+                !columns.containsKey("CYKL_DYDAKTYCZNY") || !columns.containsKey("STATUS") ||
+                !columns.containsKey("ETAP")) {
+            throw new IOException("Missing required columns");
+        }
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
 
             boolean isRowEmpty = true;
-            for (Cell cell : row) {
-                if (cell.getCellType() != CellType.BLANK) {
+            for (int cellIndex = 0; cellIndex < row.getLastCellNum(); cellIndex++) {
+                Cell cell = row.getCell(cellIndex);
+                if (cell != null && cell.getCellType() != CellType.BLANK) {
                     isRowEmpty = false;
                     break;
                 }
@@ -83,17 +67,23 @@ public class ImportStudents {
 
             if (!isRowEmpty) {
                 ObjectNode data = new ObjectMapper().createObjectNode();
-                data.put("surname", capitalizeString(row.getCell(columnMap.get("NAZWISKO")).getStringCellValue()));
-                data.put("name", capitalizeString(row.getCell(columnMap.get("IMIE")).getStringCellValue()));
-                data.put("index", String.valueOf((int) row.getCell(columnMap.get("INDEKS")).getNumericCellValue()));
-                data.put("status", row.getCell(columnMap.get("STATUS")).getStringCellValue());
-                data.put("role", "student");
 
-                String program = row.getCell(columnMap.get("PROGRAM")).getStringCellValue().toUpperCase();
-                String cycle = row.getCell(columnMap.get("CYKL_DYDAKTYCZNY")).getStringCellValue().toUpperCase();
+                String surname = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("NAZWISKO"))));
+                String name = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("IMIE"))));
+                String index = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("INDEKS"))));
+                String status = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("STATUS"))));
+                String role = "student";
 
+                String program = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("PROGRAM")))).toUpperCase();
+                String cycle = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("CYKL_DYDAKTYCZNY")))).toUpperCase();
                 String[] programParts = program.split(" - ");
                 String[] cycleParts = cycle.split(" - ");
+
+                data.put("surname", surname);
+                data.put("name", name);
+                data.put("index", index);
+                data.put("status", status);
+                data.put("role", role);
 
                 ArrayNode programsCyclesArray = new ObjectMapper().createArrayNode();
                 for (int i = 0; i < programParts.length; i++) {
@@ -103,23 +93,38 @@ public class ImportStudents {
                     programsCyclesArray.add(cycleData);
                 }
                 data.set("programsCycles", programsCyclesArray);
+                data.put("mail", ImportUtils.createStudentMail(data.get("index").asText()));
 
-                data.put("mail", createStudentMail(data.get("index").asText()));
+                boolean validIndex = ImportUtils.isValidIndex(index);
+                boolean validSurname = ImportUtils.isValidSurname(surname);
+                boolean validName = ImportUtils.isValidName(name);
+                boolean validProgram = ImportUtils.isValidProgram(program);
+                boolean validTeachingCycle = ImportUtils.isValidTeachingCycle(cycle);
+                boolean validStatus = ImportUtils.isValidStatus(status);
 
-                if (!isValidIndex(data.get("index").asText())) {
-                    invalidIndexData.add(data);
-                } else if (!isValidSurname(data.get("surname").asText())) {
-                    invalidSurnameData.add(data);
-                } else if (!isValidName(data.get("name").asText())) {
-                    invalidNameData.add(data);
-                } else if (!isValidProgram(program)) {
-                    invalidProgramData.add(data);
-                } else if (!isValidTeachingCycle(cycle)) {
-                    invalidTeachingCycleData.add(data);
-                } else if (!isValidStatus(data.get("status").asText())) {
-                    invalidStatusData.add(data);
-                } else {
+                if (validIndex && validSurname && validName &&
+                        validProgram && validTeachingCycle && validStatus){
                     validData.add(data);
+                }
+                else{
+                    if (!validIndex) {
+                        invalidIndexData.add(data);
+                    }
+                    if (!validSurname) {
+                        invalidSurnameData.add(data);
+                    }
+                    if (!validName) {
+                        invalidNameData.add(data);
+                    }
+                    if (!validProgram) {
+                        invalidProgramData.add(data);
+                    }
+                    if (!validTeachingCycle) {
+                        invalidTeachingCycleData.add(data);
+                    }
+                    if (!validStatus) {
+                        invalidStatusData.add(data);
+                    }
                 }
             }
         }
@@ -127,54 +132,24 @@ public class ImportStudents {
         excelFile.close();
     }
 
-    public static String capitalizeString(String surname) {
-        if (surname != null && !surname.isEmpty()) {
-            String[] words = surname.split("-");
-            for (int i = 0; i < words.length; i++) {
-                words[i] = StringUtils.capitalize(words[i]);
-            }
-            return String.join("-", words);
-        } else {
-            return surname;
-        }
-    }
+    public static String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
+                                          List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
+                                          List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
+                                          List<ObjectNode> invalidStatusData) throws IOException{
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String createStudentMail(String index) {
-        if (index != null && !index.isEmpty()) {
-            return index + "@student.pwr.edu.pl";
-        } else {
-            return index;
-        }
-    }
+        Map<String, List<ObjectNode>> fullJson = new HashMap<>();
+        fullJson.put("valid_data", validData);
+        fullJson.put("invalid_indices", invalidIndexData);
+        fullJson.put("invalid_surnames", invalidSurnameData);
+        fullJson.put("invalid_names", invalidNameData);
+        fullJson.put("invalid_programs", invalidProgramData);
+        fullJson.put("invalid_teaching_cycles", invalidTeachingCycleData);
+        fullJson.put("invalid_statuses", invalidStatusData);
 
-    public static Map<String, Integer> getColumnMap(Row headerRow) {
-        Map<String, Integer> columnMap = new HashMap<>();
-        for (Cell cell : headerRow) {
-            columnMap.put(cell.getStringCellValue(), cell.getColumnIndex());
-        }
-        return columnMap;
-    }
+        fullJson = mergeFullJson(fullJson);
 
-    public static String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData, List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData, List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData, List<ObjectNode> invalidStatusData) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            Map<String, List<ObjectNode>> fullJson = new HashMap<>();
-            fullJson.put("valid_data", validData);
-            fullJson.put("invalid_indices", invalidIndexData);
-            fullJson.put("invalid_surnames", invalidSurnameData);
-            fullJson.put("invalid_names", invalidNameData);
-            fullJson.put("invalid_programs", invalidProgramData);
-            fullJson.put("invalid_teaching_cycles", invalidTeachingCycleData);
-            fullJson.put("invalid_statuses", invalidStatusData);
-
-            fullJson = mergeFullJson(fullJson);
-
-            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(fullJson);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
+        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(fullJson);
     }
 
     public static Map<String, List<ObjectNode>> mergeFullJson(Map<String, List<ObjectNode>> data) {
@@ -217,7 +192,7 @@ public class ImportStudents {
                 if (programsCyclesNode.isArray()) {
                     programsCyclesArray.addAll((ArrayNode) programsCyclesNode);
                 } else {
-                    if (!containsCycle(programsCyclesArray, programsCyclesNode.asText())) {
+                    if (!containsProgramCycleTuple(programsCyclesArray, programsCyclesNode.asText())) {
                         programsCyclesArray.add(programsCyclesNode.asText());
                     }
                 }
@@ -226,7 +201,7 @@ public class ImportStudents {
         return new ArrayList<>(mergedData.values());
     }
 
-    private static boolean containsCycle(ArrayNode programsCyclesArray, String cycle) {
+    private static boolean containsProgramCycleTuple(ArrayNode programsCyclesArray, String cycle) {
         for (JsonNode existingCycle : programsCyclesArray) {
             if (existingCycle.asText().equals(cycle)) {
                 return true;
