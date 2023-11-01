@@ -1,5 +1,7 @@
 import pandas as pd
 import json
+import os
+import sys
 
 
 def capitalize_surname(surname: str) -> str:
@@ -18,6 +20,22 @@ def create_student_mail(index: str):
         return index
 
 
+def merge_full_json(data: dict[str, list[dict[str, any]]]) -> dict[str, list[dict[str, any]]]:
+    # Create a dictionary to store the merged data
+    merged_data = {}
+    
+    for key, value in data.items():
+        # Check if the value is a list of dictionaries
+        if isinstance(value, list) and all(isinstance(entry, dict) for entry in value):
+            # Apply the merge_rows_json function to the list
+            merged_data[key] = merge_rows_json(value)
+        else:
+            # If the value is not a list of dictionaries, keep it as-is
+            merged_data[key] = value
+
+    return merged_data
+
+
 def merge_rows_json(json: list[dict]) -> list[dict]:
     merged_data = {}
     for entry in json:
@@ -33,21 +51,6 @@ def merge_rows_json(json: list[dict]) -> list[dict]:
     
     return list(merged_data.values())
 
-
-def merge_full_json(data: dict[str, list[dict[str, any]]]) -> dict[str, list[dict[str, any]]]:
-    # Create a dictionary to store the merged data
-    merged_data = {}
-    
-    for key, value in data.items():
-        # Check if the value is a list of dictionaries
-        if isinstance(value, list) and all(isinstance(entry, dict) for entry in value):
-            # Apply the merge_rows_json function to the list
-            merged_data[key] = merge_rows_json(value)
-        else:
-            # If the value is not a list of dictionaries, keep it as-is
-            merged_data[key] = value
-
-    return merged_data
 
 
 def read_file(file_path: str):
@@ -99,11 +102,6 @@ def read_file(file_path: str):
                                  'surname', 'index',\
                                 'status', 'role', 'programsCycles',\
                                 'PROGRAM', 'CYKL_DYDAKTYCZNY', 'ETAP'])
-        print(df.columns)
-
-
-        # for index, row in df.iterrows():
-        #     print(row['programsCycles'])
 
         invalid_index_rows = df[~df["index"].astype(str).str.match(r'^\d{6}$')]
         invalid_surname_rows = df[~df["surname"].astype(str).str.match(r'^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\'-]{1,50}$')]
@@ -176,17 +174,26 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
 
 
 def main():
-    file_path = "src/test/resources/ZPI_dane.xlsx" 
-    # file_path = "src/test/resources/ZPI_dane (1).xlsx" 
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "..\\..\\..\\test\\resources\\ZPI_dane.xlsx")
+    # print(file_path)
+    # if len(sys.argv) != 2:
+    #     print('File was not passed')
+    #     sys.exit(1)
+    
+    # file_path = sys.argv[1]
 
     try:
         df_valid, invalid_index_rows, invalid_surname_rows,\
             invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
             invalid_status_rows  = read_file(file_path) # , invalid_stage_rows  = read_file(file_path) 
         
-        dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
+        output = dataframes_to_json(df_valid, invalid_index_rows, invalid_surname_rows,\
             invalid_name_rows, invalid_program_rows, invalid_teaching_cycle_rows,\
             invalid_status_rows)    # , invalid_stage_rows) 
+        
+
+
 
     except ValueError as e:
         print(f"Error: {str(e)}")

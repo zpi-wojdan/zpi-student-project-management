@@ -1,5 +1,7 @@
 import pandas as pd
 import json
+import os
+
 
 def capitalize_surname(surname: str) -> str:
     if pd.notna(surname):
@@ -108,7 +110,8 @@ def dataframes_to_json(df_valid, invalid_index_rows, invalid_academic_title_rows
 
 
 def main():
-    file_path = "src/test/resources/pracownicy-1.xlsx" 
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "..\\..\\..\\test\\resources\\pracownicy-1.xlsx")
     try:
         df_valid, invalid_index_rows, invalid_academic_title_rows,\
             invalid_surname_rows, invalid_name_rows, invalid_unit_rows,\
