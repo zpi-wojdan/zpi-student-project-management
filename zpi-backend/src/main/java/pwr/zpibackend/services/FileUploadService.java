@@ -1,49 +1,50 @@
 package pwr.zpibackend.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-import pwr.zpibackend.exceptions.EmptyFileException;
-import pwr.zpibackend.models.UploadedFile;
-import pwr.zpibackend.repositories.UploadedFileRepository;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Objects;
+
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import pwr.zpibackend.utils.ImportStudents;
 
 @Service
 public class FileUploadService {
 
-    @Autowired
-    private UploadedFileRepository repository;
-
-    public void storeFile(MultipartFile file) throws EmptyFileException, IOException {
+    public void processStudentFile(MultipartFile file) throws IOException {
         if (file.isEmpty()){
-            throw new EmptyFileException("File is empty");
+            throw new IOException("File is empty");
         }
-        else{
-            try {
-                UploadedFile newFile = new UploadedFile();
-//                newFile.setId(repository.count() + 1);
-                newFile.setFileName(file.getOriginalFilename());
-                newFile.setFileData(file.getBytes());
+        File tempFile = File.createTempFile("temp", Objects.requireNonNull(file.getOriginalFilename()));
+        file.transferTo(tempFile);
 
-                repository.save(newFile);
-            }
-            catch (IOException e){
-                throw new IOException("Could not store file " + file.getOriginalFilename());
-            }
+        ImportStudents.processFile(tempFile.getAbsolutePath());
+    }
+
+    public void processEmployeeFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()){
+            throw new IOException("File is empty");
         }
+        System.out.println("File is not empty");
+        System.out.println(file.getOriginalFilename());
+        System.out.println(file.getSize());
     }
-
-    public UploadedFile getFile(Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    public Iterable<UploadedFile> getAllFiles(){
-        return repository.findAll();
-    }
-
 
 }
