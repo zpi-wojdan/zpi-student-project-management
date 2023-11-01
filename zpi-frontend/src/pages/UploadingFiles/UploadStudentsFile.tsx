@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
+import Cookies from "js-cookie";
 
 function UploadStudentFilePage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -56,7 +57,11 @@ function UploadStudentFilePage() {
       formData.append('file', file);
 
       axios
-        .post('http://localhost:8080/file/student', formData)
+        .post('http://localhost:8080/file/student', formData, {
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('google_token')}`
+            },
+        })
         .then((response) => {
           console.log('Przesłano plik:', response.data);
         })

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { AddUpdateThesisProps, SupervisorData, StatusEnum } from '../../utils/types';
+import Cookies from "js-cookie";
 
 
 function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
@@ -33,7 +34,11 @@ function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await Axios.get(`http://localhost:8080/thesis/${thesisId}`);
+        const response = await Axios.get(`http://localhost:8080/thesis/${thesisId}`, {
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('google_token')}`
+            },
+        });
         if (response.status === 200) {
           const existingThesisData = response.data; 
           setFormState(existingThesisData);
@@ -220,6 +225,7 @@ function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
       const response = await Axios.put(`http://localhost:8080/thesis/${thesisId}`, formData, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('google_token')}`
         },
       });
 

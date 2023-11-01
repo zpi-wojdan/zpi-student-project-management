@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
-import pwr.zpibackend.models.university.DepartmentDTO;
+import pwr.zpibackend.dto.DepartmentDTO;
 import pwr.zpibackend.repositories.university.DepartmentRepository;
 import pwr.zpibackend.repositories.university.FacultyRepository;
 

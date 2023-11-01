@@ -349,6 +349,7 @@ databaseChangeLog:
                     referencedTableName: student
                     referencedColumnNames: mail
                     nullable: true
+
   - changeSet:
       id: add_university_tables
       author: Piotr
@@ -638,3 +639,136 @@ databaseChangeLog:
                   type: varchar(5)
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: remove_teaching_cycle_from_student_and_modify_reservations_and_thesis
+      author: Piotr
+      changes:
+        - dropColumn:
+            tableName: student
+            columnName: teaching_cycle
+        - addColumn:
+            tableName: reservation
+            columns:
+              - column:
+                  name: sent_for_approval_date
+                  type: timestamp
+                  constraints:
+                      nullable: true
+        - modifyDataType:
+            tableName: reservation
+            columnName: reservation_date
+            newDataType: timestamp
+        - addColumn:
+            tableName: thesis
+            columns:
+              - column:
+                  name: description_en
+                  type: varchar(1000)
+                  constraints:
+                      nullable: true
+
+  - changeSet:
+      id: merge_student_program_and_student_cycle_to_one_table
+      author: Piotr
+      changes:
+        - dropTable:
+            tableName: student_cycle
+        - dropTable:
+            tableName: student_program
+        - createTable:
+            tableName: student_program_cycle
+            columns:
+              - column:
+                  name: student_mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_program_student
+                    referencedTableName: student
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: program_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_program_program
+                    referencedTableName: program
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: cycle_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_student_cycle_cycle
+                    referencedTableName: study_cycle
+                    referencedColumnNames: id
+                    nullable: false
+
+  - changeSet:
+      id: create-table-roles
+      author: Zuzia
+      changes:
+        - createTable:
+            tableName: role
+            columns:
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: change-roles-to-enum
+      author: Zuzia
+      changes:
+        - dropColumn:
+            tableName: employee
+            columnName: role
+        - dropColumn:
+            tableName: student
+            columnName: role
+        - addColumn:
+            tableName: student
+            columns:
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_student_role
+                    referencedTableName: role
+                    referencedColumnNames: role_id
+                    nullable: false
+        - createTable:
+            tableName: employee_role
+            columns:
+              - column:
+                  name: mail
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_employee
+                    referencedTableName: employee
+                    referencedColumnNames: mail
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_role
+                    referencedTableName: role
+                    referencedColumnNames: role_id
+                    nullable: false
+
+

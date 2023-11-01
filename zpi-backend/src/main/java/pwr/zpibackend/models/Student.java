@@ -1,17 +1,18 @@
 package pwr.zpibackend.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.models.university.StudyCycle;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +20,8 @@ import java.util.List;
 @Entity
 @Table(name = "student")
 public class Student {
-
     @Id
     private String mail;
-
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
@@ -31,23 +30,13 @@ public class Student {
     private String index;
     @Column(nullable = false)
     private String status;
-    @Column(nullable = false)
-    private String role;    //  change String to Role when table exist
-
-    @JoinColumn(name = "program_code", referencedColumnName = "code")
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "student_program",
-            joinColumns = @JoinColumn(name = "student_mail"),
-            inverseJoinColumns = @JoinColumn(name = "program_id"))
-    private List<Program> programs;
-
-    @JoinColumn(name = "study_cycle_id", referencedColumnName = "id")
-    @ManyToMany
-    @JoinTable(
-            name = "student_cycle",
-            joinColumns = @JoinColumn(name = "student_mail"),
-            inverseJoinColumns = @JoinColumn(name = "cycle_id"))
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private List<StudyCycle> studyCycles;
+    @NotNull(message = "Role cannot be null")
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Role role;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<StudentProgramCycle> studentProgramCycles = new HashSet<>();
 }

@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -30,7 +30,10 @@ public class Reservation {
     private boolean isReadyForApproval;
     @Column(name = "reservation_date", nullable = false)
     @NotNull(message = "Reservation date cannot be null")
-    private LocalDate reservationDate;
+    private LocalDateTime reservationDate;
+    @Column(name = "sent_for_approval_date")
+    @NotNull(message = "Reservation date cannot be null")
+    private LocalDateTime sentForApprovalDate;
     @JoinColumn(name = "mail", referencedColumnName = "mail", nullable = false)
     @OneToOne
     @NotNull(message = "Student cannot be null")

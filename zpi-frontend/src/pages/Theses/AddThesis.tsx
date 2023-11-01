@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Axios from 'axios';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
+import Cookies from "js-cookie";
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
@@ -192,6 +193,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
       const response = await Axios.post('http://localhost:8080/thesis', formData, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('google_token')}`
         },
       });
   

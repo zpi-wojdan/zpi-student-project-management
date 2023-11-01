@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Employee, Student, Thesis } from '../models/Models';
 import { useLocation, useNavigate } from 'react-router-dom';
-import handleSignOut from "../auth/Logout";
-import useAuth from "../auth/useAuth";
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
+import { Employee } from '../../models/Employee';
+import { Student } from '../../models/Student';
+import { Thesis } from '../../models/Thesis';
 
 type SingleReservationProps = {
 }
@@ -31,17 +34,21 @@ function SingleReservationPage({ }: SingleReservationProps) {
                 thesisId: thesis.id,
                 student: user,
                 reservationDate: new Date(),
+                confirmedByStudent: true,
             };
             console.log(JSON.stringify(responseBody));
 
             const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
                 headers: {
                     "Content-Type": "application/json",
+                    'Authorization': `Bearer ${Cookies.get('google_token')}`
                 },
             })
                 .then(response => {
                     if (response.status === 201) {
                         console.log(`Reservation ${reservation} created successfully`);
+                        toast.success("Rezerwacja zakończona pomyślnie");
+                        navigate("/theses/" + thesis.id)
                     }
                 })
                 .catch(error => {
@@ -51,6 +58,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
                     }
+                    toast.error("Rezerwacja nie powiodła się");
                 });
     };
 
