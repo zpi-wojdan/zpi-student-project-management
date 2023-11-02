@@ -3,8 +3,12 @@ import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Student } from '../../../models/Student';
 import Cookies from "js-cookie";
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 
 const StudentList: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
@@ -27,7 +31,13 @@ const StudentList: React.FC = () => {
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+          }
+      });
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
