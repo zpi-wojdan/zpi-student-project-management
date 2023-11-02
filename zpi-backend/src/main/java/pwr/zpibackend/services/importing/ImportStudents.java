@@ -243,6 +243,8 @@ public class ImportStudents {
                 continue;
             }
 
+            boolean failed = false;
+            JsonNode programsCyclesNode = node.get("programsCycles");
             if (existingStudent.isEmpty()) {
                 //  save a new student to the repository
                 Student student = new Student();
@@ -254,97 +256,98 @@ public class ImportStudents {
 
                 student.setRole(existingRole.get());
 
-                JsonNode programsCyclesNode = node.get("programsCycles");
                 if (programsCyclesNode.isArray()){
 
-                    Set<StudentProgramCycle> studentProgramCycles = new HashSet<>();
-
-                    for (JsonNode programCycle : programsCyclesNode){
+                    for (JsonNode elem : programsCyclesNode){
                         StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
                         StudentProgramCycleId studentProgramCycleId = new StudentProgramCycleId();
-                        studentProgramCycleId.setStudentMail(student.getMail());
-                        //  TODO: program and cycle ids for studentProgramCycleId
 
-                        String programName = programCycle.get(0).asText();
-                        String cycleName = programCycle.get(1).asText();
+                        String programName = elem.get(0).asText();
+                        String cycleName = elem.get(1).asText();
 
                         Optional<Program> existingProgram = programRepository.findByName(programName);
                         Optional<StudyCycle> existingStudyCycle = studyCycleRepository.findByName(cycleName);
 
                         if (existingProgram.isEmpty()){
-                            //  TODO: what if there is no such program at the moment in the database
+                            failed = true;
+                            break;
                         }
                         else{
+                            if (existingStudyCycle.isEmpty()){
+                                failed = true;
+                                break;
+                            }
+                            else{
+                                studentProgramCycleId.setStudentMail(student.getMail());
+                                studentProgramCycleId.setProgramId(existingProgram.get().getId());
+                                studentProgramCycleId.setCycleId(existingStudyCycle.get().getId());
 
+                                studentProgramCycle.setCycle(existingStudyCycle.get());
+                                studentProgramCycle.setProgram(existingProgram.get());
+                                studentProgramCycle.setStudent(student);
+                                studentProgramCycle.setId(studentProgramCycleId);
+
+                                student.getStudentProgramCycles().add(studentProgramCycle);
+                            }
                         }
-
-                        if (existingStudyCycle.isEmpty()){
-                            //  TODO: what if there is no such cycle at the moment in the database
-                        }
-                        else{
-
-                        }
-//                        Program program = new Program();
-//                        program.setName(programName);
-//                        programRepository.save(program);
-//
-//                        StudyCycle cycle = new StudyCycle();
-//                        cycle.setName(cycleName);
-//                        studyCycleRepository.save(cycle);
-
                     }
-
-//                    for (JsonNode programCycle : programsCyclesNode){
-//                        StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
-//                        StudentProgramCycleId id = new StudentProgramCycleId();
-//                        id.setStudentMail(student.getMail());
-//                        //  program and cycle ids for id
-//                        //  program and cycle for studentProgramCycle
-//
-//                        String programName = programCycle.get(0).asText();
-//                        Optional<Program> existingProgram = programRepository.findByName(programName);
-//
-//                        if (existingProgram.isEmpty()){
-//                            Program program = new Program();
-//                            program.setName(programName);
-//                            programRepository.save(program);
-//                            studentProgramCycle.setProgram(program);
-//                            id.setProgramId(program.getId());
-//                        }
-//                        else{
-//                            studentProgramCycle.setProgram(existingProgram.get());
-//                            id.setProgramId(existingProgram.get().getId());
-//                        }
-//
-//                        String cycleName = programCycle.get(1).asText();
-//                        Optional<StudyCycle> existingCycle = studyCycleRepository.findByName(cycleName);
-//
-//                        if (existingCycle.isEmpty()){
-//                            StudyCycle cycle = new StudyCycle();
-//                            cycle.setName(cycleName);
-//                            studyCycleRepository.save(cycle);
-//                            studentProgramCycle.setCycle(cycle);
-//                            id.setCycleId(cycle.getId());
-//                        }
-//                        else{
-//                            studentProgramCycle.setCycle(existingCycle.get());
-//                            id.setCycleId(existingCycle.get().getId());
-//                        }
-//
-//                        student.setStudentProgramCycles(new HashSet<>());
-//                        student.getStudentProgramCycles().add(studentProgramCycle);
-//                    }
                 }
                 else {
-                    //  TODO: what if it is not an array?
+                    failed = true;
                 }
-                studentRepository.save(student);
+                if (failed){
+                    invalidData.add(node);
+                }
+                else{
+                    studentRepository.save(student);
+                }
             }
             else{
-                //  TODO: update the existing students - programsCycles mostly
+                Set<StudentProgramCycle> existingStudentProgramCycles = existingStudent.get().getStudentProgramCycles();
+                Set<StudentProgramCycle> newStudentProgramCycles = new HashSet<>();
+
+                for (JsonNode elem : programsCyclesNode){
+                    String programName = elem.get(0).asText();
+                    String cycleName = elem.get(1).asText();
+
+                    boolean isPresent = false;
+                    for (StudentProgramCycle existing : existingStudentProgramCycles){
+                        if(existing.getProgram().getName().equals(programName) &&
+                                existing.getCycle().getName().equals(cycleName)){
+                            isPresent = true;
+                            break;
+                        }
+                    }
+                    if (!isPresent){
+                        Optional<Program> existingProgram = programRepository.findByName(programName);
+                        Optional<StudyCycle> existingCycle = studyCycleRepository.findByName(cycleName);
+
+                        if (existingProgram.isEmpty() || existingCycle.isEmpty()){
+                            invalidData.add(node);
+                            failed = true;
+                            break;
+                        }
+
+                        StudentProgramCycle newStudProgCyc = new StudentProgramCycle();
+                        StudentProgramCycleId id = new StudentProgramCycleId();
+
+                        id.setStudentMail(existingStudent.get().getMail());
+                        id.setProgramId(existingProgram.get().getId());
+                        id.setCycleId(existingCycle.get().getId());
+
+                        newStudProgCyc.setProgram(existingProgram.get());
+                        newStudProgCyc.setCycle(existingCycle.get());
+                        newStudProgCyc.setStudent(existingStudent.get());
+                        newStudProgCyc.setId(id);
+
+                        newStudentProgramCycles.add(newStudProgCyc);
+                    }
+                }
+                if (!failed){
+                    existingStudent.get().getStudentProgramCycles().addAll(newStudentProgramCycles);
+                    studentRepository.save(existingStudent.get()); // Save the updated student
+                }
             }
-
-
         }
     }
 

@@ -260,56 +260,11 @@ public class ImportEmployees{
                 }
                 if (!roleIsPresent){
                     existingEmployee.get().getRoles().add(roleRepository.findByName(node.get("role").asText()).get());
+                    employeeRepository.save(existingEmployee.get());
                 }
             }
 
         }
-
-        System.out.println("\nValid data:");
-        System.out.println(validData.size());
-
-        System.out.println("\nInvalid data:");
-        System.out.println(invalidData.size());
-
-        System.out.println("\nEntries added to database:");
-        System.out.println(validData.size() - invalidData.size());
-
     }
 
 }
-
-/*
-// Assuming you have the necessary data in your JSON node
-JsonNode programsCyclesNode = node.get("programsCycles");
-
-if (programsCyclesNode.isArray()) {
-    Set<StudentProgramCycle> studentProgramCycles = new HashSet<>();
-
-    for (JsonNode programCycle : programsCyclesNode) {
-        StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
-
-        // Assuming you have the necessary data in your JSON node
-        String programName = programCycle.get(0).asText();
-        String cycleName = programCycle.get(1).asText();
-
-        // Create new instances for Program and StudyCycle
-        Program program = new Program();
-        program.setName(programName);
-        programRepository.save(program);
-
-        StudyCycle cycle = new StudyCycle();
-        cycle.setName(cycleName);
-        studyCycleRepository.save(cycle);
-
-        // Set the Program and StudyCycle in StudentProgramCycle
-        studentProgramCycle.setProgram(program);
-        studentProgramCycle.setCycle(cycle);
-
-        studentProgramCycles.add(studentProgramCycle);
-    }
-
-    // Now you can associate studentProgramCycles with your Student entity
-    student.setStudentProgramCycles(studentProgramCycles);
-}
-
- */
