@@ -16,9 +16,11 @@ import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
 import StudentList from './pages/Admin/Student/List';
 import StudentDetails from './pages/Admin/Student/Details';
+import FacultyList from './pages/Admin/Faculty/List';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FacultyForm from './pages/Admin/Faculty/Form';
 
 
 export interface IAppProps {
@@ -41,7 +43,9 @@ export default function App(props: IAppProps) {
               <Route path='students' element={<StudentList />} />
               <Route path='students/:mail' element={<StudentDetails />} />
               <Route path='employees' element={<HomePage />} />
-              <Route path='faculties' element={<HomePage />} />
+              <Route path='faculties' element={<FacultyList />} />
+              <Route path='faculties/add' element={<FacultyForm />} />
+              <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
               <Route path='fields' element={<HomePage />} />
               <Route path='specializations' element={<HomePage />} />
               <Route path='programs' element={<HomePage />} />
