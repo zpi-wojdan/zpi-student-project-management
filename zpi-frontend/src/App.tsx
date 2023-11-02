@@ -19,6 +19,8 @@ import StudentDetails from './pages/Admin/Student/Details';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import EmployeeList from './pages/Admin/Employee/List';
+import EmployeeDetails from './pages/Admin/Employee/Details';
 
 
 export interface IAppProps {
@@ -40,7 +42,8 @@ export default function App(props: IAppProps) {
               <Route path='theses/:id' element={<ThesisDetails />} />
               <Route path='students' element={<StudentList />} />
               <Route path='students/:mail' element={<StudentDetails />} />
-              <Route path='employees' element={<HomePage />} />
+              <Route path='employees' element={<EmployeeList />} />
+              <Route path='employees/:mail' element={<EmployeeDetails />} />
               <Route path='faculties' element={<HomePage />} />
               <Route path='fields' element={<HomePage />} />
               <Route path='specializations' element={<HomePage />} />
