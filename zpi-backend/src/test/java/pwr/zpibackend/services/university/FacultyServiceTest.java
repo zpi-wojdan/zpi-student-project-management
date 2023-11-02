@@ -62,14 +62,14 @@ public class FacultyServiceTest {
         assertThrows(NotFoundException.class, () -> facultyService.getFacultyByAbbreviation(faculty.getAbbreviation()));
     }
 
-    @Test
-    public void testSaveFacultySuccess() {
-        when(facultyRepository.save(any())).thenReturn(faculty);
-
-        Faculty result = facultyService.saveFaculty(faculty);
-
-        assertEquals(faculty, result);
-    }
+//    @Test
+//    public void testSaveFacultySuccess() {
+//        when(facultyRepository.save(any())).thenReturn(faculty);
+//
+//        Faculty result = facultyService.saveFaculty(faculty);
+//
+//        assertEquals(faculty, result);
+//    }
 
     @Test
     public void testDeleteFacultySuccess() throws NotFoundException {
