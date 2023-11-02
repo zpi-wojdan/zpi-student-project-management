@@ -47,43 +47,4 @@ public class FileUploadController {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
         }
     }
-
-//    @PostMapping
-//    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-//        String mess = "";
-//        try {
-//            service.storeFile(file);
-//            mess = "The file was uploaded successfully - " + file.getOriginalFilename();
-//            return ResponseEntity.status(HttpStatus.OK).body(mess);
-//        } catch (EmptyFileException err) {
-//            mess = "Could not upload the file - " + file.getOriginalFilename();
-//            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<UploadedFile> getFile(@PathVariable Long id){
-//        try{
-//            UploadedFile file = service.getFile(id);
-//            return ResponseEntity.ok().body(file);
-//        }
-//        catch(Exception err){
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<List<UploadedFile>> getAllFiles(){
-//        try{
-//            List<UploadedFile> files = IterableUtils.toList(service.getAllFiles());
-//            return ResponseEntity.ok().body(files);
-//        }
-//        catch(Exception err){
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
 }
