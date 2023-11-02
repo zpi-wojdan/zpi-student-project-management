@@ -1,6 +1,7 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.importing;
 
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,11 +9,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import pwr.zpibackend.utils.ImportEmployees;
-import pwr.zpibackend.utils.ImportStudents;
-
 @Service
+@AllArgsConstructor
 public class FileUploadService {
+
+    private final ImportEmployees importEmployees;
+    private final ImportStudents importStudents;
 
     public void processStudentFile(MultipartFile file) throws IOException {
         if (file.isEmpty()){
@@ -20,8 +22,7 @@ public class FileUploadService {
         }
         File tempFile = File.createTempFile("temp", Objects.requireNonNull(file.getOriginalFilename()));
         file.transferTo(tempFile);
-
-        ImportStudents.processFile(tempFile.getAbsolutePath());
+        importStudents.processFile(tempFile.getAbsolutePath());
     }
 
     public void processEmployeeFile(MultipartFile file) throws IOException {
@@ -30,8 +31,7 @@ public class FileUploadService {
         }
         File tempFile = File.createTempFile("temp", Objects.requireNonNull(file.getOriginalFilename()));
         file.transferTo(tempFile);
-
-        ImportEmployees.processFile(tempFile.getAbsolutePath());
+        importEmployees.processFile(tempFile.getAbsolutePath());
     }
 
 }

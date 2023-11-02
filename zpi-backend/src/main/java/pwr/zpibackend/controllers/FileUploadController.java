@@ -1,27 +1,23 @@
 package pwr.zpibackend.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pwr.zpibackend.services.FileUploadService;
+import pwr.zpibackend.services.importing.FileUploadService;
 
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/file")
+@AllArgsConstructor
 public class FileUploadController {
 
-    @Autowired
-    private FileUploadService service;
-
-    public FileUploadController(FileUploadService fileUploadService) {
-    }
+    private final FileUploadService service;
 
     @PostMapping("/student")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadStudentFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         try{
@@ -37,7 +33,7 @@ public class FileUploadController {
     }
 
     @PostMapping("/employee")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadEmployeeFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         try{

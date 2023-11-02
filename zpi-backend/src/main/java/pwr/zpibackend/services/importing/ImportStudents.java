@@ -1,20 +1,39 @@
-package pwr.zpibackend.utils;
+package pwr.zpibackend.services.importing;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.stereotype.Service;
+import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.StudentProgramCycle;
+import pwr.zpibackend.models.university.StudentProgramCycleId;
+import pwr.zpibackend.models.university.StudyCycle;
+import pwr.zpibackend.repositories.RoleRepository;
+import pwr.zpibackend.repositories.StudentRepository;
+import pwr.zpibackend.repositories.university.ProgramRepository;
+import pwr.zpibackend.repositories.university.StudyCycleRepository;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
+@Service
+@AllArgsConstructor
 public class ImportStudents {
 
-    public static void processFile(String file_path) throws IOException{
+    private StudentRepository studentRepository;
+    private RoleRepository roleRepository;
+    private ProgramRepository programRepository;
+    private StudyCycleRepository studyCycleRepository;
+
+    public void processFile(String file_path) throws IOException{
 
 //            String file_path = "C:\\zpi-student-project-management\\zpi-backend\\src\\test\\resources\\ZPI_dane.xlsx";
         List<ObjectNode> validData = new ArrayList<>();
@@ -34,9 +53,11 @@ public class ImportStudents {
                             invalidTeachingCycleData, invalidStatusData);
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
+
+        saveValidToDatabase(validData);
     }
 
-    public static void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
+    public void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
                                        List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
                                        List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
                                        List<ObjectNode> invalidStatusData) throws IOException {
@@ -132,7 +153,7 @@ public class ImportStudents {
         excelFile.close();
     }
 
-    public static String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
+    public String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
                                           List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
                                           List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
                                           List<ObjectNode> invalidStatusData) throws IOException{
@@ -152,7 +173,7 @@ public class ImportStudents {
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(fullJson);
     }
 
-    public static Map<String, List<ObjectNode>> mergeFullJson(Map<String, List<ObjectNode>> data) {
+    public Map<String, List<ObjectNode>> mergeFullJson(Map<String, List<ObjectNode>> data) {
         Map<String, List<ObjectNode>> mergedData = new HashMap<>();
 
         for (Map.Entry<String, List<ObjectNode>> entry : data.entrySet()) {
@@ -168,7 +189,7 @@ public class ImportStudents {
         return mergedData;
     }
 
-    public static List<ObjectNode> mergeRowsJson(List<ObjectNode> json) {
+    public List<ObjectNode> mergeRowsJson(List<ObjectNode> json) {
         Map<String, ObjectNode> mergedData = new HashMap<>();
 
         for (ObjectNode entry : json) {
@@ -201,13 +222,130 @@ public class ImportStudents {
         return new ArrayList<>(mergedData.values());
     }
 
-    private static boolean containsProgramCycleTuple(ArrayNode programsCyclesArray, String cycle) {
+    private boolean containsProgramCycleTuple(ArrayNode programsCyclesArray, String cycle) {
         for (JsonNode existingCycle : programsCyclesArray) {
             if (existingCycle.asText().equals(cycle)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private void saveValidToDatabase(List<ObjectNode> validData){
+        List<ObjectNode> invalidData = new ArrayList<>();
+
+        for (ObjectNode node : validData) {
+            Optional<Student> existingStudent = studentRepository.findByIndex(node.get("index").asText());
+            Optional<Role> existingRole = roleRepository.findByName(node.get("role").asText());
+
+            if (existingRole.isEmpty()){
+                invalidData.add(node);
+                continue;
+            }
+
+            if (existingStudent.isEmpty()) {
+                //  save a new student to the repository
+                Student student = new Student();
+                student.setSurname(node.get("surname").asText());
+                student.setName(node.get("name").asText());
+                student.setIndex(node.get("index").asText());
+                student.setMail(node.get("mail").asText());
+                student.setStatus(node.get("status").asText());
+
+                student.setRole(existingRole.get());
+
+                JsonNode programsCyclesNode = node.get("programsCycles");
+                if (programsCyclesNode.isArray()){
+
+                    Set<StudentProgramCycle> studentProgramCycles = new HashSet<>();
+
+                    for (JsonNode programCycle : programsCyclesNode){
+                        StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
+                        StudentProgramCycleId studentProgramCycleId = new StudentProgramCycleId();
+                        studentProgramCycleId.setStudentMail(student.getMail());
+                        //  TODO: program and cycle ids for studentProgramCycleId
+
+                        String programName = programCycle.get(0).asText();
+                        String cycleName = programCycle.get(1).asText();
+
+                        Optional<Program> existingProgram = programRepository.findByName(programName);
+                        Optional<StudyCycle> existingStudyCycle = studyCycleRepository.findByName(cycleName);
+
+                        if (existingProgram.isEmpty()){
+                            //  TODO: what if there is no such program at the moment in the database
+                        }
+                        else{
+
+                        }
+
+                        if (existingStudyCycle.isEmpty()){
+                            //  TODO: what if there is no such cycle at the moment in the database
+                        }
+                        else{
+
+                        }
+//                        Program program = new Program();
+//                        program.setName(programName);
+//                        programRepository.save(program);
+//
+//                        StudyCycle cycle = new StudyCycle();
+//                        cycle.setName(cycleName);
+//                        studyCycleRepository.save(cycle);
+
+                    }
+
+//                    for (JsonNode programCycle : programsCyclesNode){
+//                        StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
+//                        StudentProgramCycleId id = new StudentProgramCycleId();
+//                        id.setStudentMail(student.getMail());
+//                        //  program and cycle ids for id
+//                        //  program and cycle for studentProgramCycle
+//
+//                        String programName = programCycle.get(0).asText();
+//                        Optional<Program> existingProgram = programRepository.findByName(programName);
+//
+//                        if (existingProgram.isEmpty()){
+//                            Program program = new Program();
+//                            program.setName(programName);
+//                            programRepository.save(program);
+//                            studentProgramCycle.setProgram(program);
+//                            id.setProgramId(program.getId());
+//                        }
+//                        else{
+//                            studentProgramCycle.setProgram(existingProgram.get());
+//                            id.setProgramId(existingProgram.get().getId());
+//                        }
+//
+//                        String cycleName = programCycle.get(1).asText();
+//                        Optional<StudyCycle> existingCycle = studyCycleRepository.findByName(cycleName);
+//
+//                        if (existingCycle.isEmpty()){
+//                            StudyCycle cycle = new StudyCycle();
+//                            cycle.setName(cycleName);
+//                            studyCycleRepository.save(cycle);
+//                            studentProgramCycle.setCycle(cycle);
+//                            id.setCycleId(cycle.getId());
+//                        }
+//                        else{
+//                            studentProgramCycle.setCycle(existingCycle.get());
+//                            id.setCycleId(existingCycle.get().getId());
+//                        }
+//
+//                        student.setStudentProgramCycles(new HashSet<>());
+//                        student.getStudentProgramCycles().add(studentProgramCycle);
+//                    }
+                }
+                else {
+                    //  TODO: what if it is not an array?
+                }
+                studentRepository.save(student);
+            }
+            else{
+                //  TODO: update the existing students - programsCycles mostly
+            }
+
+
+        }
     }
 
 }

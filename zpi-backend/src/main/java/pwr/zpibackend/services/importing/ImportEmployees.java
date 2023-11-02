@@ -1,18 +1,32 @@
-package pwr.zpibackend.utils;
+package pwr.zpibackend.services.importing;
 
+import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.stereotype.Service;
+import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.university.Department;
+import pwr.zpibackend.repositories.EmployeeRepository;
+import pwr.zpibackend.repositories.RoleRepository;
+import pwr.zpibackend.repositories.university.DepartmentRepository;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
+@Service
+@AllArgsConstructor
 public class ImportEmployees{
 
-    public static void processFile(String file_path) throws IOException{
+    private final EmployeeRepository employeeRepository;
+    private final RoleRepository roleRepository;
+    private final DepartmentRepository departmentRepository;
+
+    public void processFile(String file_path) throws IOException{
 
         List<ObjectNode> validData = new ArrayList<>();
         List<ObjectNode> invalidIndexData = new ArrayList<>();
@@ -34,9 +48,11 @@ public class ImportEmployees{
                             invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
+
+        saveValidToDatabase(validData);
     }
 
-    public static void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
+    public void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
                                         List<ObjectNode> invalidAcademicTitleData, List<ObjectNode> invalidSurnameData,
                                         List<ObjectNode> invalidNameData, List<ObjectNode> invalidUnitData,
                                         List<ObjectNode> invalidSubunitData, List<ObjectNode> invalidPositionsData,
@@ -74,19 +90,57 @@ public class ImportEmployees{
                 String academicTitle = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Tytuł/stopień")))).toLowerCase();
                 String surname = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Nazwisko"))));
                 String name = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Imię"))));
+
                 String unit = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Jednostka")))).toUpperCase();
+                String modifiedUnit = "";
+                char[] unitCharArray = unit.toCharArray();
+                if (unitCharArray.length >= 3){
+                    if (Character.isDigit(unitCharArray[1])){
+                        if (!Character.isDigit(unitCharArray[2])){
+                            char[] modifiedUnitCharArray = new char[unitCharArray.length + 1];
+                            modifiedUnitCharArray[0] = unitCharArray[0];
+                            modifiedUnitCharArray[1] = '0';
+                            System.arraycopy(unitCharArray, 1, modifiedUnitCharArray, 2, unitCharArray.length-1);
+                            modifiedUnit = String.valueOf(modifiedUnitCharArray);
+                        }
+                    }
+                }
+                if (modifiedUnit.isEmpty()){
+                    modifiedUnit = unit;
+                }
+
                 String subunit = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Podjednostka")))).toUpperCase();
+                String modifiedSubunit = "";
+                char[] subunitCharArray = subunit.toCharArray();
+                if (subunitCharArray.length >= 3){
+                    if (subunitCharArray[0] == 'W'){
+                        if (Character.isDigit(subunitCharArray[1])){
+                            if (!Character.isDigit(subunitCharArray[2])){
+                                char[] modifiedSubunitCharArray = new char[subunitCharArray.length + 1];
+                                modifiedSubunitCharArray[0] = subunitCharArray[0];
+                                modifiedSubunitCharArray[1] = '0';
+                                System.arraycopy(subunitCharArray, 1, modifiedSubunitCharArray, 2, subunitCharArray.length-1);
+                                modifiedSubunit = String.valueOf(modifiedSubunitCharArray);
+                            }
+                        }
+                    }
+                }
+                if (modifiedSubunit.isEmpty()){
+                    modifiedSubunit = subunit;
+                }
+
+
                 String position = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Stanowisko"))));
                 String phoneNumber = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("Telefon"))));
                 String email = String.valueOf(ImportUtils.cellToObject(row.getCell(columns.get("E-mail")))).toLowerCase();
-                String role = "employee";
+                String role = "supervisor";
 
                 data.put("id", index);
                 data.put("title", academicTitle);
                 data.put("surname", surname);
                 data.put("name", name);
-                data.put("faculty", unit);
-                data.put("department", subunit);
+                data.put("faculty", modifiedUnit);
+                data.put("department", modifiedSubunit);
                 data.put("position", position);
                 data.put("phoneNumber", phoneNumber);
                 data.put("email", email);
@@ -142,7 +196,7 @@ public class ImportEmployees{
         excelFile.close();
     }
 
-    public static String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
+    public String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
                                           List<ObjectNode> invalidAcademicTitleData, List<ObjectNode> invalidSurnameData,
                                           List<ObjectNode> invalidNameData, List<ObjectNode> invalidUnitData,
                                           List<ObjectNode> invalidSubunitData, List<ObjectNode> invalidPositionsData,
@@ -164,4 +218,98 @@ public class ImportEmployees{
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(fullJson);
     }
 
+
+    public void saveValidToDatabase(List<ObjectNode> validData){
+        List<ObjectNode> invalidData = new ArrayList<>();
+
+        for (ObjectNode node : validData){
+            Optional<Employee> existingEmployee = employeeRepository.findByMail(node.get("email").asText());
+            Optional<Role> existingRole = roleRepository.findByName(node.get("role").asText());
+            Optional<Department> existingDepartment = departmentRepository.findByCode(node.get("department").asText());
+
+            if (existingRole.isEmpty() || existingDepartment.isEmpty()){
+                invalidData.add(node);
+                continue;
+            }
+
+            if (existingEmployee.isEmpty()){
+                //  save a new employee to the repository
+                Employee employee = new Employee();
+                employee.setName(node.get("name").asText());
+                employee.setSurname(node.get("surname").asText());
+                employee.setMail(node.get("email").asText());
+                employee.setTitle(node.get("title").asText());
+
+                //  append the role and department to the employee,
+                //  since they are empty, but necessary fields do exist
+                //  in the database already
+                employee.getRoles().add(existingRole.get());
+                employee.setDepartment(existingDepartment.get());
+
+                employeeRepository.save(employee);
+            }
+            else{
+                //  update the existing employee just by appending a new role to him
+                List<Role> existingRoles = existingEmployee.get().getRoles();
+                boolean roleIsPresent = false;
+                for (Role elem : existingRoles){
+                    if (elem.getName().equals(node.get("role").asText())){
+                        roleIsPresent = true;
+                        break;
+                    }
+                }
+                if (!roleIsPresent){
+                    existingEmployee.get().getRoles().add(roleRepository.findByName(node.get("role").asText()).get());
+                }
+            }
+
+        }
+
+        System.out.println("\nValid data:");
+        System.out.println(validData.size());
+
+        System.out.println("\nInvalid data:");
+        System.out.println(invalidData.size());
+
+        System.out.println("\nEntries added to database:");
+        System.out.println(validData.size() - invalidData.size());
+
+    }
+
 }
+
+/*
+// Assuming you have the necessary data in your JSON node
+JsonNode programsCyclesNode = node.get("programsCycles");
+
+if (programsCyclesNode.isArray()) {
+    Set<StudentProgramCycle> studentProgramCycles = new HashSet<>();
+
+    for (JsonNode programCycle : programsCyclesNode) {
+        StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
+
+        // Assuming you have the necessary data in your JSON node
+        String programName = programCycle.get(0).asText();
+        String cycleName = programCycle.get(1).asText();
+
+        // Create new instances for Program and StudyCycle
+        Program program = new Program();
+        program.setName(programName);
+        programRepository.save(program);
+
+        StudyCycle cycle = new StudyCycle();
+        cycle.setName(cycleName);
+        studyCycleRepository.save(cycle);
+
+        // Set the Program and StudyCycle in StudentProgramCycle
+        studentProgramCycle.setProgram(program);
+        studentProgramCycle.setCycle(cycle);
+
+        studentProgramCycles.add(studentProgramCycle);
+    }
+
+    // Now you can associate studentProgramCycles with your Student entity
+    student.setStudentProgramCycles(studentProgramCycles);
+}
+
+ */
