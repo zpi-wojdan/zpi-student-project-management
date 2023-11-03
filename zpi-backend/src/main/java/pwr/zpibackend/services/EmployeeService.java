@@ -14,6 +14,8 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
+    private final RoleService roleService;
+
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
@@ -30,6 +32,14 @@ public class EmployeeService {
 
     public Employee addEmployee(Employee employee)
     {
+        if(employee.getRoles() == null || employee.getRoles().isEmpty())
+        {
+            throw new IllegalArgumentException("Employee must have at least one role");
+        }
+        if(employee.getRoles().contains(roleService.getRoleByName("student")))
+        {
+            throw new IllegalArgumentException("Employee cannot have student role");
+        }
         employeeRepository.saveAndFlush(employee);
         return employee;
     }

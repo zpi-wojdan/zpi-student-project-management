@@ -48,7 +48,8 @@ public class RoleService {
     public Role deleteRole(Long roleId) {
         Role role = roleRepository.findById(roleId).orElse(null);
         if (role != null) {
-            if (role.getEmployees().isEmpty() && role.getStudents().isEmpty()) {
+            if ((role.getEmployees() == null || role.getEmployees().isEmpty()) &&
+                    (role.getStudents() == null || role.getStudents().isEmpty())) {
                 roleRepository.delete(role);
                 return role;
             } else {
