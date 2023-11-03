@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Faculty } from '../../../models/Faculty';
+import { StudyField } from '../../../models/StudyField';
 import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from '../../../auth/useAuth';
 
-const FacultyList: React.FC = () => {
+const StudyFieldList: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
-  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [studyFields, setStudyFields] = useState<StudyField[]>([]);
   const [refreshList, setRefreshList] = useState(false);
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
+    Axios.get('http://localhost:8080/studyfield', {
       headers: {
           'Authorization': `Bearer ${Cookies.get('google_token')}`
       }
   })
       .then((response) => {
-        const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
+        const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.abbreviation.localeCompare(b.abbreviation);
         });
-        setFaculties(sortedFaculties);
+        setStudyFields(sortedStudyFields);
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
             if (itemPerPage === 'All') {
               return true;
@@ -32,16 +36,24 @@ const FacultyList: React.FC = () => {
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => 
+      {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, [refreshList]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
-  const indexOfLastItem = itemsPerPage === 'All' ? faculties.length : currentPage * parseInt(itemsPerPage, 10);
+  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE[0]);
+  //(ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]
+  const indexOfLastItem = itemsPerPage === 'All' ? studyFields.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-  const currentFaculties = faculties.slice(indexOfFirstItem, indexOfLastItem);
+  const currentStudyFields = studyFields.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(faculties.length / parseInt(itemsPerPage, 10));
+  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(studyFields.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -65,26 +77,30 @@ const FacultyList: React.FC = () => {
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [facultyToDelete, setFacultyToDelete] = useState<string | null>(null);
+  const [studyFieldToDelete, setStudyFieldToDelete] = useState<string | null>(null);
 
-  const handleDeleteClick = (facultyAbbreviation: string) => {
+  const handleDeleteClick = (studyFieldAbbreviation: string) => {
     setShowDeleteConfirmation(true);
-    setFacultyToDelete(facultyAbbreviation);
+    setStudyFieldToDelete(studyFieldAbbreviation);
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/faculty/${facultyToDelete}`, {
+    Axios.delete(`http://localhost:8080/studyfield/${studyFieldToDelete}`, {
             headers: {
                 'Authorization': `Bearer ${Cookies.get('google_token')}`
             }
         })
         .then(() => {
-          toast.success("Wydział został usunięty");
+          toast.success("Kierunek został usunięty");
           setRefreshList(!refreshList);
         })
         .catch((error) => {
             console.error(error);
-            toast.error("Wydział nie może zostać usunięty!");
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
+            toast.error("Kierunek nie może zostać usunięty!");
           });
     setShowDeleteConfirmation(false);
   };
@@ -97,8 +113,8 @@ const FacultyList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
-          <button className="custom-button" onClick={() => {navigate('/faculties/add')}}>
-            Dodaj wydział
+          <button className="custom-button" onClick={() => {navigate('/fields/add')}}>
+            Dodaj kierunek
           </button>
         </div>
         <div >
@@ -130,17 +146,17 @@ const FacultyList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-  {currentFaculties.map((faculty, index) => (
-    <React.Fragment key={faculty.abbreviation}>
+  {currentStudyFields.map((studyField, index) => (
+    <React.Fragment key={studyField.abbreviation}>
       <tr>
         <td className="centered">{indexOfFirstItem + index + 1}</td>
-        <td className="centered">{faculty.abbreviation}</td>
-        <td>{faculty.name}</td>
+        <td className="centered">{studyField.abbreviation}</td>
+        <td>{studyField.name}</td>
         <td>
           <button
             className="custom-button coverall"
             onClick={() => {
-              navigate(`/faculties/edit/${faculty.abbreviation}`, { state: { faculty } });
+              navigate(`/fields/edit/${studyField.abbreviation}`, { state: { studyField } });
             }}
           >
             <i className="bi bi-arrow-right"></i>
@@ -149,13 +165,13 @@ const FacultyList: React.FC = () => {
         <td>
           <button
             className="custom-button coverall"
-            onClick={() => handleDeleteClick(faculty.abbreviation)}
+            onClick={() => handleDeleteClick(studyField.abbreviation)}
           >
             <i className="bi bi-trash"></i>
           </button>
         </td>
       </tr>
-      {facultyToDelete === faculty.abbreviation && showDeleteConfirmation && (
+      {studyFieldToDelete === studyField.abbreviation && showDeleteConfirmation && (
         <tr>
           <td colSpan={5}>
           <DeleteConfirmation
@@ -163,7 +179,7 @@ const FacultyList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąc ten wydział?'
+            questionText='Czy na pewno chcesz usunąć ten kierunek?'
           />
           </td>
         </tr>
@@ -194,4 +210,4 @@ const FacultyList: React.FC = () => {
   );
 };
 
-export default FacultyList;
+export default StudyFieldList;
