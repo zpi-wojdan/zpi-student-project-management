@@ -26,7 +26,7 @@ public class ImportEmployees{
     private final RoleRepository roleRepository;
     private final DepartmentRepository departmentRepository;
 
-    public void processFile(String file_path) throws IOException{
+    public String processFile(String file_path) throws IOException{
 
         List<ObjectNode> validData = new ArrayList<>();
         List<ObjectNode> invalidIndexData = new ArrayList<>();
@@ -43,6 +43,17 @@ public class ImportEmployees{
                         invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                         invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
 
+        ObjectNode invalidDataJson = new ObjectMapper().createObjectNode();
+        invalidDataJson.put("invalid_indices", invalidIndexData.size());
+        invalidDataJson.put("invalid_titles", invalidAcademicTitleData.size());
+        invalidDataJson.put("invalid_surnames", invalidSurnameData.size());
+        invalidDataJson.put("invalid_names", invalidNameData.size());
+        invalidDataJson.put("invalid_faculties", invalidUnitData.size());
+        invalidDataJson.put("invalid_departments", invalidSubunitData.size());
+        invalidDataJson.put("invalid_positions", invalidPositionsData.size());
+        invalidDataJson.put("invalid_phone_numbers", invalidPhoneNumberData.size());
+        invalidDataJson.put("invalid_mails", invalidEmailData.size());
+
         String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
                             invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                             invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
@@ -50,6 +61,7 @@ public class ImportEmployees{
         System.out.println(fullJson);
 
         saveValidToDatabase(validData);
+        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(invalidDataJson);
     }
 
     public void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,

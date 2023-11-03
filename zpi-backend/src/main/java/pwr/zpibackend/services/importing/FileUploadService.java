@@ -16,22 +16,22 @@ public class FileUploadService {
     private final ImportEmployees importEmployees;
     private final ImportStudents importStudents;
 
-    public void processStudentFile(MultipartFile file) throws IOException {
+    public String processStudentFile(MultipartFile file) throws IOException {
         if (file.isEmpty()){
             throw new IOException("File is empty");
         }
         File tempFile = File.createTempFile("temp", Objects.requireNonNull(file.getOriginalFilename()));
         file.transferTo(tempFile);
-        importStudents.processFile(tempFile.getAbsolutePath());
+        return importStudents.processFile(tempFile.getAbsolutePath());
     }
 
-    public void processEmployeeFile(MultipartFile file) throws IOException {
+    public String processEmployeeFile(MultipartFile file) throws IOException {
         if (file.isEmpty()){
             throw new IOException("File is empty");
         }
         File tempFile = File.createTempFile("temp", Objects.requireNonNull(file.getOriginalFilename()));
         file.transferTo(tempFile);
-        importEmployees.processFile(tempFile.getAbsolutePath());
+        return importEmployees.processFile(tempFile.getAbsolutePath());
     }
 
 }

@@ -1,6 +1,7 @@
 package pwr.zpibackend.services.importing;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,8 +34,7 @@ public class ImportStudents {
     private ProgramRepository programRepository;
     private StudyCycleRepository studyCycleRepository;
 
-    public void processFile(String file_path) throws IOException{
-
+    public String processFile(String file_path) throws IOException{
 //            String file_path = "C:\\zpi-student-project-management\\zpi-backend\\src\\test\\resources\\ZPI_dane.xlsx";
         List<ObjectNode> validData = new ArrayList<>();
         List<ObjectNode> invalidIndexData = new ArrayList<>();
@@ -55,6 +55,7 @@ public class ImportStudents {
         System.out.println(fullJson);
 
         saveValidToDatabase(validData);
+        return fullJson;
     }
 
     public void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
