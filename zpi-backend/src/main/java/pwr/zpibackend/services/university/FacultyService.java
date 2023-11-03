@@ -2,6 +2,7 @@ package pwr.zpibackend.services.university;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.repositories.university.FacultyRepository;
@@ -23,7 +24,10 @@ public class FacultyService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Faculty saveFaculty(Faculty faculty) {
+    public Faculty saveFaculty(Faculty faculty) throws AlreadyExistsException{
+        if (facultyRepository.existsById(faculty.getAbbreviation())) {
+            throw new AlreadyExistsException();
+        }
         return facultyRepository.save(faculty);
     }
 

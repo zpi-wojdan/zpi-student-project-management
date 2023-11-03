@@ -18,9 +18,11 @@ import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
 import StudentList from './pages/Admin/Student/List';
 // @ts-ignore
 import StudentDetails from './pages/Admin/Student/Details';
+import FacultyList from './pages/Admin/Faculty/List';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FacultyForm from './pages/Admin/Faculty/Form';
 import EmployeeList from './pages/Admin/Employee/List';
 import EmployeeDetails from './pages/Admin/Employee/Details';
 import RequireAuth from "./auth/RequireAuth";
@@ -64,7 +66,9 @@ export default function App(props: IAppProps) {
                 <Route path='students/:mail' element={<StudentDetails />} />
                 <Route path='employees' element={<EmployeeList />} />
               <Route path='employees/:mail' element={<EmployeeDetails />} />
-                <Route path='faculties' element={<HomePage />} />
+                <Route path='faculties' element={<FacultyList />} />
+              <Route path='faculties/add' element={<FacultyForm />} />
+              <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
                 <Route path='fields' element={<HomePage />} />
                 <Route path='specializations' element={<HomePage />} />
                 <Route path='programs' element={<HomePage />} />
