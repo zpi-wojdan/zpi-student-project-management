@@ -57,7 +57,7 @@ const StudentDetails: React.FC = () => {
   };
 
   return (
-    <>
+    <div className='page-margin'>
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; Powrót
@@ -109,7 +109,7 @@ const StudentDetails: React.FC = () => {
           <p>Błąd wczytywania danych</p>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

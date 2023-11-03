@@ -32,6 +32,11 @@ public class Role {
     @JsonIgnore
     private List<Employee> employees;
 
+    public Role(long id, String name) {
+        Id = id;
+        this.name = name;
+    }
+
     public Role(String name) {
         this.name = name;
     }
