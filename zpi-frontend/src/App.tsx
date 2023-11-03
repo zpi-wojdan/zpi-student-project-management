@@ -6,7 +6,6 @@ import ReservationPage from './pages/reservation/Reservation';
 import ThesesTable from './pages/Theses/Theses';
 import ThesisDetails from './pages/Theses/ThesisDetails';
 // @ts-ignore
-import StudentForm from './pages/StudentForm';
 import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/reservation/SingleReservation';
 import {AuthProvider} from "./auth/AuthProvider";
@@ -17,6 +16,7 @@ import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
 import StudentList from './pages/Admin/Student/List';
 import StudentDetails from './pages/Admin/Student/Details';
+import StudentForm from './pages/Admin/Student/Form';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

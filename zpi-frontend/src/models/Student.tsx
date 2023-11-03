@@ -17,5 +17,5 @@ export type StudentDTO = {
   surname: string;
   index: string;
   status: string;
-  studentProgramCycles: StudentProgramCycleDTO[];
+  programsCycles: StudentProgramCycleDTO[];
 }
