@@ -18,6 +18,7 @@ import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
 import StudentList from './pages/Admin/Student/List';
 // @ts-ignore
 import StudentDetails from './pages/Admin/Student/Details';
+import StudentForm from './pages/Admin/Student/Form';
 import FacultyList from './pages/Admin/Faculty/List';
 import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
@@ -64,7 +65,9 @@ export default function App(props: IAppProps) {
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:mail' element={<StudentDetails />} />
-                <Route path='employees' element={<EmployeeList />} />
+                <Route path='students/add' element={<StudentForm/>} />
+              <Route path='students/edit/:mail' element={<StudentForm/>} />
+              <Route path='employees' element={<EmployeeList />} />
               <Route path='employees/:mail' element={<EmployeeDetails />} />
                 <Route path='faculties' element={<FacultyList />} />
               <Route path='faculties/add' element={<FacultyForm />} />
@@ -79,7 +82,7 @@ export default function App(props: IAppProps) {
               </Route>
 
               <Route path="*" element={<Missing />} />
-            </Routes>
+        </Routes>
           </Navigation>
         </BrowserRouter>
         <ToastContainer />

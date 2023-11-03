@@ -14,3 +14,8 @@ export type StudentProgramCycle = {
     program: Program;
     cycle: StudyCycle;
 }
+
+export type StudentProgramCycleDTO = {
+  programId: number;
+  cycleId: number;
+}

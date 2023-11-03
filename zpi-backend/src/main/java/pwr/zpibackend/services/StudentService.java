@@ -53,7 +53,7 @@ public class StudentService {
         }
 
         Student newStudent = new Student();
-        newStudent.setMail(student.getMail());
+        newStudent.setMail(student.getIndex() + "@student.pwr.edu.pl");
         newStudent.setName(student.getName());
         newStudent.setSurname(student.getSurname());
         newStudent.setIndex(student.getIndex());

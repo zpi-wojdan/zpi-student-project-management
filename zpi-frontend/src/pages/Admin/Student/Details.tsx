@@ -7,6 +7,8 @@ import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
 import Cookies from "js-cookie";
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";
+import { toast } from 'react-toastify';
+import DeleteConfirmation from '../../../components/DeleteConfirmation';
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -24,7 +26,6 @@ const StudentDetails: React.FC = () => {
   })
       .then((response) => {
         setFaculties(response.data);
-        console.log(faculties);
       })
       .catch((error) => {
           console.error(error);
@@ -56,17 +57,59 @@ const StudentDetails: React.FC = () => {
     }
   };
 
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
+  const handleDeleteClick = (studentMail: string) => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    Axios.delete(`http://localhost:8080/student/${student.mail}`, {
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('google_token')}`
+            }
+        })
+        .then(() => {
+          toast.success("Student został usunięty");
+          navigate("/students");
+        })
+        .catch((error) => {
+            console.error(error);
+            toast.error("Student nie może zostać usunięty!");
+            navigate("/students");
+          });
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+  };
+
   return (
     <div className='page-margin'>
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; Powrót
         </button>
-        <button type="button" className="custom-button" onClick={() => {
-            // go to student edit
-            }}>
+        <button type="button" className="custom-button" onClick={() => {navigate(`/students/edit/${student.mail}`, {state: {student}})}}>
           Edytuj
         </button>
+        <button type="button" className="custom-button" onClick={() => handleDeleteClick(student.mail)}>
+          <i className="bi bi-trash"></i>
+        </button>
+        { showDeleteConfirmation && (
+        <tr>
+          <td colSpan={5}>
+          <DeleteConfirmation
+            isOpen={showDeleteConfirmation}
+            onClose={handleCancelDelete}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+            questionText='Czy na pewno chcesz usunąć tego studenta?'
+          />
+          </td>
+        </tr>
+      )}
       </div>
       <div>
         {student ? (
