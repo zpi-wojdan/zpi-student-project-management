@@ -20,14 +20,18 @@ const Navigation = ({ children }: NavigationProps) => {
     const signOut = () => handleSignOut(navigate);
     const isLoginPage = location.pathname === '/login';
 
-    const isManagementActive = location.pathname === '/students' ||
-    location.pathname === '/employees' ||
-    location.pathname === '/faculties' ||
-    location.pathname === '/fields' ||
-    location.pathname === '/specializations' ||
-    location.pathname === '/programs' ||
-    location.pathname === '/cycles' ||
-    location.pathname === '/departments';
+    const allowedPaths = [
+        '/students',
+        '/employees',
+        '/faculties',
+        '/fields',
+        '/specializations',
+        '/programs',
+        '/cycles',
+        '/departments'
+      ];
+      
+      const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
 
     return (
         <>
