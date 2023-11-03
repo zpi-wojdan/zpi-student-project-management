@@ -40,7 +40,6 @@ const StudentForm: React.FC = () => {
           })),
         };
       });
-      console.log("Student: ", formData.programsCycles);
     }
   }, [student]);
 
@@ -82,7 +81,6 @@ const StudentForm: React.FC = () => {
               console.error(error);
               navigate("/students");
               toast.error("Student nie został dodany");
-              console.log(formData)
             }
           })
       }
@@ -166,7 +164,6 @@ const StudentForm: React.FC = () => {
     })
       .then((response) => {
         setAvailablePrograms(response.data);
-        console.log("Programy: ", response.data);
       })
       .catch((error) => console.error(error));
   }, []);

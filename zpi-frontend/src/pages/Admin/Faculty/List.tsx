@@ -163,6 +163,7 @@ const FacultyList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
+            questionText='Czy na pewno chcesz usunąć ten wydział?'
           />
           </td>
         </tr>
