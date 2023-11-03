@@ -158,3 +158,13 @@ ul > li > ul {
   background-color: lightgray; 
   cursor: pointer; 
 }
+
+.lang-link {
+  text-decoration: none;
+  color: black;
+}
+
+.lang-link-active {
+  text-decoration: underline;
+  color: #9A342D !important;
+}

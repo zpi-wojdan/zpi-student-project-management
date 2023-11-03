@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
 import {Role} from "../models/Role";
+import {useTranslation} from "react-i18next";
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -12,6 +13,7 @@ type NavigationProps = {} & {
 
 const Navigation = ({ children }: NavigationProps) => {
     const [showNav, setShowNav] = useState(false);
+    const { i18n, t } = useTranslation();
     const isLoggedIn = Cookies.get('user') !== undefined;
     const user = Cookies.get('user') ? JSON.parse(Cookies.get('user') as string) : '';
 
@@ -20,7 +22,15 @@ const Navigation = ({ children }: NavigationProps) => {
     const signOut = () => handleSignOut(navigate);
     const isLoginPage = location.pathname === '/login';
 
+    const onChangeLang = (lang: string) => {
+        console.log(lang);
+        if (lang !== i18n.language) {
+            i18n.changeLanguage(lang);
+        }
+    };
 
+
+    // @ts-ignore
     return (
         <>
             <div className='container-fluid p-0'>
@@ -38,7 +48,25 @@ const Navigation = ({ children }: NavigationProps) => {
                                 <div className="nav-link">|</div>
                             </li>
                             <li className="nav-item">
-                                <div className="nav-link">PL</div>
+                                <Link
+                                    className={`nav-link ${i18n.language === 'pl' ? 'lang-link-active' : 'lang-link'}`}
+                                    onClick={() => onChangeLang('pl')}
+                                    to={location.pathname}
+                                >
+                                    PL
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <div className="nav-link">&bull;</div>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    className={`nav-link ${i18n.language === 'en' ? 'lang-link-active' : 'lang-link'}`}
+                                    onClick={() => onChangeLang('en')}
+                                    to={location.pathname}
+                                >
+                                    EN
+                                </Link>
                             </li>
                             <li className="nav-item">
                                 <div className="nav-link">|</div>
