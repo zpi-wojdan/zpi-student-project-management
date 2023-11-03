@@ -1,9 +1,11 @@
 package pwr.zpibackend.controllers.university;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.StudyField;
 import pwr.zpibackend.services.university.StudyFieldService;
@@ -36,7 +38,11 @@ public class StudyFieldController {
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudyField> createStudyField(@RequestBody StudyField studyField){
-        return ResponseEntity.ok(studyFieldService.saveStudyField(studyField));
+        try{
+            return ResponseEntity.ok(studyFieldService.saveStudyField(studyField));
+        } catch(AlreadyExistsException err) {
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }
     }
 
     @PutMapping("/{abbreviation}")
