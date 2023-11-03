@@ -22,7 +22,11 @@ const ThesisDetails: React.FC = () => {
   const [thesis, setThesis] = useState<ThesisFront>();
 
   useEffect(() => {
-    const response = Axios.get(`http://localhost:8080/thesis/${id}`)
+    const response = Axios.get(`http://localhost:8080/thesis/${id}`, {
+      headers: {
+          'Authorization': `Bearer ${Cookies.get('google_token')}`
+      }
+  })
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const thesis: ThesisFront = {
@@ -54,7 +58,11 @@ const ThesisDetails: React.FC = () => {
 
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty')
+    Axios.get('http://localhost:8080/faculty', {
+      headers: {
+          'Authorization': `Bearer ${Cookies.get('google_token')}`
+      }
+  })
       .then((response) => {
         setFaculties(response.data);
         console.log(faculties);

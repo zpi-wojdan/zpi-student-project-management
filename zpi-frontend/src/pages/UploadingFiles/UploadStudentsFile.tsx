@@ -69,7 +69,17 @@ function UploadStudentFilePage() {
             },
         })
         .then((response) => {
-          console.log('Przesłano plik:', response.data);
+          console.log('Przesłano plik:', response.data.message);
+          const jsonData = {
+            invalid_indices: response.data.invalid_indices,
+            invalid_surnames: response.data.invalid_surnames,
+            invalid_names: response.data.invalid_names,
+            invalid_programs: response.data.invalid_programs,
+            invalid_teaching_cycles: response.data.invalid_teaching_cycles,
+            invalid_statuses: response.data.invalid_statuses,
+        };
+
+          console.log('JSON Response:', jsonData);
         })
         .catch((error) => {
           setUploadError('Nie udało się przesłać plików');
@@ -88,7 +98,12 @@ function UploadStudentFilePage() {
   return (
     <div className="container d-flex justify-content-center mt-5">
       <div className="border p-4 rounded shadow-lg" style={{ width: '80%', maxWidth: '100%', overflow: 'hidden' }}>
-        <h2 className="mb-4">Załącz pliki</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Załącz pliki</h2>
+        <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+          &larr; Powrót
+        </button>
+      </div>
         <div {...getRootProps()} className="dropzone">
           <input {...getInputProps()} />
           <p>Przeciągnij i upuść, lub kliknij aby wybrać</p>

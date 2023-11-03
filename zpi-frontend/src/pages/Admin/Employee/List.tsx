@@ -70,6 +70,9 @@ const EmployeeList: React.FC = () => {
           }}>
             Dodaj pracownika
           </button>
+          <button className="custom-button" onClick={() => {navigate('/file/employee')}}>
+            Importuj pracowników
+          </button>
         </div>
         <div >
             <label style={{ marginRight: '10px' }}>Widok:</label>

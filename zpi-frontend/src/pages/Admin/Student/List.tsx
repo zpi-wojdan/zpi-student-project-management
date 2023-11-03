@@ -78,7 +78,12 @@ const StudentList: React.FC = () => {
           }}>
             Dodaj studenta
           </button>
+          <button className="custom-button" onClick={() => {navigate('/file/student')}}>
+            Importuj studentów
+          </button>
+          <div >
         </div>
+      </div>
         <div >
             <label style={{ marginRight: '10px' }}>Widok:</label>
             <select
