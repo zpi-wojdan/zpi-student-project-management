@@ -1,69 +1,50 @@
 package pwr.zpibackend.controllers;
 
-
-import org.apache.commons.collections4.IterableUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pwr.zpibackend.exceptions.EmptyFileException;
-import pwr.zpibackend.models.UploadedFile;
-import pwr.zpibackend.services.FileUploadService;
+import pwr.zpibackend.services.importing.FileUploadService;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/file")
+@AllArgsConstructor
 public class FileUploadController {
 
-    @Autowired
-    private FileUploadService service;
+    private final FileUploadService service;
 
-    public FileUploadController(FileUploadService fileUploadService) {
-    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/student")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> uploadStudentFile(@RequestParam("file") MultipartFile file){
         String mess = "";
-        try {
-            service.storeFile(file);
+        try{
+            service.processStudentFile(file);
             mess = "The file was uploaded successfully - " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(mess);
-        } catch (EmptyFileException err) {
+        }
+        catch(IOException err){
             mess = "Could not upload the file - " + file.getOriginalFilename();
+            err.printStackTrace();
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UploadedFile> getFile(@PathVariable Long id){
+    @PostMapping("/employee")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> uploadEmployeeFile(@RequestParam("file") MultipartFile file){
+        String mess = "";
         try{
-            UploadedFile file = service.getFile(id);
-            return ResponseEntity.ok().body(file);
+            service.processEmployeeFile(file);
+            mess = "The file was uploaded successfully - " + file.getOriginalFilename();
+            return ResponseEntity.status(HttpStatus.OK).body(mess);
         }
-        catch(Exception err){
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UploadedFile>> getAllFiles(){
-        try{
-            List<UploadedFile> files = IterableUtils.toList(service.getAllFiles());
-            return ResponseEntity.ok().body(files);
-        }
-        catch(Exception err){
-            return ResponseEntity.notFound().build();
+        catch (IOException err){
+            mess = "Could not upload the file - " + file.getOriginalFilename();
+            err.printStackTrace();
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
         }
     }
-
 }

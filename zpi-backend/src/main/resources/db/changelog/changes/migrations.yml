@@ -771,4 +771,12 @@ databaseChangeLog:
                     referencedColumnNames: role_id
                     nullable: false
 
+  - changeSet:
+      id: deleting-uploaded-files-table
+      author: Kuba
+      changes:
+        - dropTable:
+            tableName: uploaded_files
+
+
 
