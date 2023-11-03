@@ -19,6 +19,14 @@ const Navigation = ({ children }: NavigationProps) => {
     const signOut = () => handleSignOut(navigate);
     const isLoginPage = location.pathname === '/login';
 
+    const isManagementActive = location.pathname === '/students' ||
+    location.pathname === '/employees' ||
+    location.pathname === '/faculties' ||
+    location.pathname === '/fields' ||
+    location.pathname === '/specializations' ||
+    location.pathname === '/programs' ||
+    location.pathname === '/cycles' ||
+    location.pathname === '/departments';
 
     return (
         <>
@@ -81,34 +89,35 @@ const Navigation = ({ children }: NavigationProps) => {
                                 </li>
                                 <li className="nav-item">
                                 <Dropdown as={Nav.Item}>
-                                    <Dropdown.Toggle as={Nav.Link}>Zarządzaj</Dropdown.Toggle>
+                                    <Dropdown.Toggle as={Nav.Link} className={isManagementActive ? "active" : ""}>Zarządzaj</Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item as={Link} to="/students">
-                                            Studenci
+                                        <Dropdown.Item as={Link} to="/students" className={location.pathname === '/students' ? "active" : ""}>
+                                        Studenci
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/employees">
-                                            Pracownicy
+                                        <Dropdown.Item as={Link} to="/employees" className={location.pathname === '/employees' ? "active" : ""}>
+                                        Pracownicy
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/faculties">
-                                            Wydziały
+                                        <Dropdown.Item as={Link} to="/faculties" className={location.pathname === '/faculties' ? "active" : ""}>
+                                        Wydziały
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/fields">
-                                            Kierunki
+                                        <Dropdown.Item as={Link} to="/fields" className={location.pathname === '/fields' ? "active" : ""}>
+                                        Kierunki
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/specializations">
-                                            Specjalności
+                                        <Dropdown.Item as={Link} to="/specializations" className={location.pathname === '/specializations' ? "active" : ""}>
+                                        Specjalności
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/programs">
-                                            Programy studiów
+                                        <Dropdown.Item as={Link} to="/programs" className={location.pathname === '/programs' ? "active" : ""}>
+                                        Programy studiów
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/cycles">
-                                            Cykle nauczania
+                                        <Dropdown.Item as={Link} to="/cycles" className={location.pathname === '/cycles' ? "active" : ""}>
+                                        Cykle nauczania
                                         </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/departments">
-                                            Katedry
+                                        <Dropdown.Item as={Link} to="/departments" className={location.pathname === '/departments' ? "active" : ""}>
+                                        Katedry
                                         </Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
+
                                 </li>
                                 {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego kto zalogowany */}
                                 {isLoggedIn ? (
