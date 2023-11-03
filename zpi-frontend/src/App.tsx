@@ -26,7 +26,7 @@ import FacultyForm from './pages/Admin/Faculty/Form';
 import EmployeeList from './pages/Admin/Employee/List';
 import EmployeeDetails from './pages/Admin/Employee/Details';
 import RequireAuth from "./auth/RequireAuth";
-import Missing from "./Missing";
+import Missing from "./pages/Missing";
 
 
 export interface IAppProps {
