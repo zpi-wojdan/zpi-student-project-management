@@ -5,8 +5,12 @@ import { Student } from '../../../models/Student';
 import { Faculty } from '../../../models/Faculty';
 import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
 import Cookies from "js-cookie";
+import useAuth from "../../../auth/useAuth";
+import handleSignOut from "../../../auth/Logout";
 
 const StudentDetails: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student as Student;
@@ -22,7 +26,13 @@ const StudentDetails: React.FC = () => {
         setFaculties(response.data);
         console.log(faculties);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+          }
+      });
   }, []);
 
   function findFacultyNameByProgram(programId: number): string | null {

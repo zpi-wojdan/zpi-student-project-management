@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Alert, Col, Container, Row} from "react-bootstrap";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
 import useAuth from "../auth/useAuth";
@@ -11,13 +11,20 @@ const LoginPage = () => {
     // @ts-ignore
     const {auth, setAuth} = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        if(auth && auth.reasonOfLogout === 'token_expired') {
+        if(auth?.reasonOfLogout === 'token_expired') {
             setAlertMessage('Twoja sesja wygasła. Zaloguj się ponownie.')
+            setShowAlert(true)
+            setAuth(null);
+        }
+        if(auth?.reasonOfLogout === 'access_denied') {
+            setAlertMessage('Zaloguj sie, aby uzyskać dostęp do tej strony.')
             setShowAlert(true)
             setAuth(null);
         }
@@ -54,7 +61,7 @@ const LoginPage = () => {
                 Cookies.set('user', JSON.stringify(res.data));
                 setShowAlert(false)
                 setErrorMessage('')
-                navigate("/");
+                navigate(from, { replace: true });
             })
             .catch((error) => {
                 console.error(error);

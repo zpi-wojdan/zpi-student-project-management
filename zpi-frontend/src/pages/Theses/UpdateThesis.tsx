@@ -3,9 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { AddUpdateThesisProps, SupervisorData, StatusEnum } from '../../utils/types';
 import Cookies from "js-cookie";
+import useAuth from "../../auth/useAuth";
+import handleSignOut from "../../auth/Logout";
 
 
 function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -16,7 +21,6 @@ function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
   const { thesisId } = useParams();
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate();
 
   const [formState, setFormState] = useState({
     namePL: '',
@@ -58,8 +62,12 @@ function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
 
           return response.data.status;
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching thesis status:', error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
       }
       return null; 
     };
@@ -234,8 +242,12 @@ function UpdateThesisPage({ role, mail }: AddUpdateThesisProps) {
       } else {
         console.log('PUT request was not successful');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('An error occurred in PUT request:', error);
+      if (error.response.status === 401 || error.response.status === 403) {
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
     }
 };
 
