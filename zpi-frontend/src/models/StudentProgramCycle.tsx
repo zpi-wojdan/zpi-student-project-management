@@ -1,6 +1,6 @@
 import { Program } from "./Program";
 import { Student } from "./Student";
-import { StudyCycle } from "./StydyCycle";
+import { StudyCycle } from "./StudyCycle";
 
 export type StudentProgramCycleId = {
     studentMail: string;
