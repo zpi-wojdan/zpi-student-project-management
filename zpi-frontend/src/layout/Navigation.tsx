@@ -73,14 +73,20 @@ const Navigation = ({ children }: NavigationProps) => {
                             </li>
                             <li className="nav-item">
                                 {isLoggedIn ? (
-                                    <Link className="nav-link" to="login" onClick={signOut}>Wyloguj</Link>
+                                    <Link
+                                        className="nav-link"
+                                        to="login"
+                                        onClick={signOut}
+                                    >
+                                        {t('navigation.logout')}
+                                    </Link>
                                 ) : (
                                     <NavLink
                                         className={({ isActive }) => isActive ? "nav-link active" :
                                             "nav-link"}
                                         to="login"
                                     >
-                                        Logowanie
+                                        {t('navigation.login')}
                                     </NavLink>
                                 )}
                             </li>
@@ -90,7 +96,7 @@ const Navigation = ({ children }: NavigationProps) => {
             </div>
             <img
                 src="images/logo-pwr-2016/logo PWr kolor poziom ang  bez tla.png"
-                alt="Logo Politechniki Wrocławskiej"
+                alt={t('navigation.imageAlt')}
                 className='w-25 my-3 ps-4 pe-5'
             />
             <div className='container'>
@@ -105,42 +111,46 @@ const Navigation = ({ children }: NavigationProps) => {
                             <ul className="navbar-nav me-auto">
                                 <li className="nav-item">
                                     <NavLink className={({ isActive }) => isActive ?
-                                        "nav-link active" : "nav-link"} to="/">Strona główna</NavLink>
+                                        "nav-link active" : "nav-link"} to="/">{t('navigation.home')}</NavLink>
                                 </li>
                                 {isLoggedIn ? (
                                     <>
                                         <li className="nav-item">
                                             <NavLink className={({ isActive }) => isActive ?
-                                                "nav-link active" : "nav-link"} to="/theses" >Tematy</NavLink>
+                                                "nav-link active" : "nav-link"} to="/theses" >
+                                                {t('general.university.theses')}
+                                            </NavLink>
                                         </li>
                                         {user?.roles?.some((role: Role) => role.name === 'admin') ? (
                                             <li className="nav-item">
                                                 <Dropdown as={Nav.Item}>
-                                                    <Dropdown.Toggle as={Nav.Link}>Zarządzaj</Dropdown.Toggle>
+                                                    <Dropdown.Toggle as={Nav.Link}>
+                                                        {t('navigation.manage')}
+                                                    </Dropdown.Toggle>
                                                     <Dropdown.Menu>
                                                         <Dropdown.Item as={Link} to="/students">
-                                                            Studenci
+                                                            {t('general.people.students')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/employees">
-                                                            Pracownicy
+                                                            {t('general.people.employees')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/faculties">
-                                                            Wydziały
+                                                            {t('general.university.faculties')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/fields">
-                                                            Kierunki
+                                                            {t('general.university.fields')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/specializations">
-                                                            Specjalności
+                                                            {t('general.university.specializations')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/programs">
-                                                            Programy studiów
+                                                            {t('general.university.studyPrograms')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/cycles">
-                                                            Cykle nauczania
+                                                            {t('general.university.studyCycles')}
                                                         </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/departments">
-                                                            Katedry
+                                                            {t('general.university.departments')}
                                                         </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
@@ -149,7 +159,9 @@ const Navigation = ({ children }: NavigationProps) => {
                                         {user?.roles?.some((role: Role) => role.name === 'supervisor') ? (
                                             <li className="nav-item">
                                                 <NavLink className={({ isActive }) => isActive ?
-                                                    "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
+                                                    "nav-link active" : "nav-link"} to="/my">
+                                                    {t('navigation.myTheses')}
+                                                </NavLink>
                                             </li>
                                         ) : null}
                                     </>

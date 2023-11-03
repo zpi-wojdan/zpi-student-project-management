@@ -1,22 +1,36 @@
 {
   "general": {
+    "management": {
+      "add": "Add",
+      "delete": "Delete",
+      "details": "Details",
+      "edit": "Edit",
+      "errorOfLoading": "Error of loading data",
+      "goBack": "Go back",
+      "lack": "Lack",
+      "no": "No",
+      "reserve": "Reserve",
+      "save": "Save",
+      "view": "View",
+      "yes": "Yes"
+    },
+    "people": {
+      "adminLC": "administrator",
+      "approverLC": "approver",
+      "employees": "Employees",
+      "fullName": "Name and Surname",
+      "index": "Index",
+      "mail": "Mail",
+      "name": "Name",
+      "roles": "Roles",
+      "student": "Student",
+      "students": "Students",
+      "supervisorLC": "supervisor",
+      "supervisorV1": "Supervisor",
+      "supervisorV2": "Supervisor",
+      "surname": "Surname"
+    },
     "university": {
-      "people": {
-        "adminLC": "administrator",
-        "approverLC": "approver",
-        "employees": "Employees",
-        "fullName": "Name and Surname",
-        "index": "Index",
-        "mail": "Mail",
-        "name": "Name",
-        "roles": "Roles",
-        "student": "Student",
-        "students": "Students",
-        "supervisorLC": "supervisor",
-        "supervisorV1": "Supervisor",
-        "supervisorV2": "Supervisor",
-        "surname": "Surname"
-      },
       "abbreviation": "Abbreviation",
       "department": "Department",
       "departments": "Departments",
@@ -33,23 +47,9 @@
       "studyCycles": "Study cycles",
       "studyPrograms": "Study programs",
       "thesis": "Thesis",
-      "theses": "Theses",
-      "title": "Title"
+      "theses": "Theses"
     },
-    "management": {
-      "add": "Add",
-      "delete": "Delete",
-      "details": "Details",
-      "edit": "Edit",
-      "errorOfLoading": "Error of loading data",
-      "goBack": "Go back",
-      "lack": "Lack",
-      "no": "No",
-      "reserve": "Reserve",
-      "save": "Save",
-      "view": "View",
-      "yes": "Yes"
-    }
+    "title": "Title"
   },
   "deleteConfirmation": {
     "deleteFacultyConfirm": "Are you sure you want to delete this faculty?"

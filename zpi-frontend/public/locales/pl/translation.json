@@ -1,22 +1,36 @@
 {
   "general": {
+    "management": {
+      "add": "Dodaj",
+      "delete": "Usuń",
+      "details": "Szczegóły",
+      "edit": "Edytuj",
+      "errorOfLoading": "Błąd wczytywania danych",
+      "goBack": "Powrót",
+      "lack": "brak",
+      "no": "Nie",
+      "reserve": "Zarezerwuj",
+      "save": "Zapisz",
+      "view": "Widok",
+      "yes": "Tak"
+    },
+    "people": {
+      "adminLC": "administrator",
+      "approverLC": "zatwierdzający",
+      "employees": "Pracownicy",
+      "fullName": "Imię i Nazwisko",
+      "index": "Indeks",
+      "mail": "Mail",
+      "name": "Imię",
+      "roles": "Role",
+      "student": "Student",
+      "students": "Studenci",
+      "supervisorLC": "prowadzący",
+      "supervisorV1": "Prowadzący",
+      "supervisorV2": "Promotor",
+      "surname": "Nazwisko"
+    },
     "university": {
-      "people": {
-        "adminLC": "administrator",
-        "approverLC": "zatwierdzający",
-        "employees": "Pracownicy",
-        "fullName": "Imię i Nazwisko",
-        "index": "Indeks",
-        "mail": "Mail",
-        "name": "Imię",
-        "roles": "Role",
-        "student": "Student",
-        "students": "Studenci",
-        "supervisorLC": "prowadzący",
-        "supervisorV1": "Prowadzący",
-        "supervisorV2": "Promotor",
-        "surname": "Nazwisko"
-      },
       "abbreviation": "Skrót",
       "department": "Katedra",
       "departments": "Katedry",
@@ -33,23 +47,9 @@
       "studyCycles": "Cykle nauczania",
       "studyPrograms": "Programy studiów",
       "thesis": "Temat",
-      "theses": "Tematy",
-      "title": "Tytuł"
+      "theses": "Tematy"
     },
-    "management": {
-      "add": "Dodaj",
-      "delete": "Usuń",
-      "details": "Szczegóły",
-      "edit": "Edytuj",
-      "errorOfLoading": "Błąd wczytywania danych",
-      "goBack": "Powrót",
-      "lack": "brak",
-      "no": "Nie",
-      "reserve": "Zarezerwuj",
-      "save": "Zapisz",
-      "view": "Widok",
-      "yes": "Tak"
-    }
+    "title": "Tytuł"
   },
   "deleteConfirmation": {
     "deleteFacultyConfirm": "Czy na pewno chcesz usunąć ten wydział?"
