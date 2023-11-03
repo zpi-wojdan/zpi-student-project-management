@@ -7,8 +7,12 @@ import { toast } from 'react-toastify';
 import { StudyCycle } from '../../../models/StydyCycle';
 import Cookies from 'js-cookie';
 import { StudentProgramCycle, StudentProgramCycleDTO } from '../../../models/StudentProgramCycle';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 
 const StudentForm: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const [formData, setFormData] = useState<StudentDTO>({
     mail: '',
     name: '',
@@ -59,6 +63,10 @@ const StudentForm: React.FC = () => {
           })
           .catch((error) => {
             console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
             navigate("/students");
             toast.error("Student nie został zaktualizowany");
           });
@@ -79,6 +87,10 @@ const StudentForm: React.FC = () => {
               setErrors(newErrors);
             } else {
               console.error(error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
               navigate("/students");
               toast.error("Student nie został dodany");
             }
@@ -153,7 +165,14 @@ const StudentForm: React.FC = () => {
       .then((response) => {
         setAvailableCycles(response.data);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => 
+      {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -165,7 +184,13 @@ const StudentForm: React.FC = () => {
       .then((response) => {
         setAvailablePrograms(response.data);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error)
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, []);
 
   const handleCycleChange = (index: number, selectedCycleId: number) => {

@@ -5,8 +5,12 @@ import { Faculty } from '../../../models/Faculty';
 import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 
 const FacultyList: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [faculties, setFaculties] = useState<Faculty[]>([]);
@@ -32,7 +36,13 @@ const FacultyList: React.FC = () => {
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, [refreshList]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,6 +94,10 @@ const FacultyList: React.FC = () => {
         })
         .catch((error) => {
             console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
             toast.error("Wydział nie może zostać usunięty!");
           });
     setShowDeleteConfirmation(false);
