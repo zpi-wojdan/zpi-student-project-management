@@ -49,7 +49,7 @@ const Navigation = ({ children }: NavigationProps) => {
                             </li>
                             <li className="nav-item">
                                 <Link
-                                    className={`nav-link ${i18n.language === 'pl' ? 'lang-link-active' : 'lang-link'}`}
+                                    className={`nav-link ${i18n.language === 'pl' ? 'lang-link-active' : ''}`}
                                     onClick={() => onChangeLang('pl')}
                                     to={location.pathname}
                                 >
@@ -61,7 +61,7 @@ const Navigation = ({ children }: NavigationProps) => {
                             </li>
                             <li className="nav-item">
                                 <Link
-                                    className={`nav-link ${i18n.language === 'en' ? 'lang-link-active' : 'lang-link'}`}
+                                    className={`nav-link ${i18n.language === 'en' ? 'lang-link-active' : ''}`}
                                     onClick={() => onChangeLang('en')}
                                     to={location.pathname}
                                 >
