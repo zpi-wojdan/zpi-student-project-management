@@ -1,26 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Student } from '../../../models/Student';
+import { Employee } from '../../../models/Employee';
 import Cookies from "js-cookie";
-import handleSignOut from "../../../auth/Logout";
-import useAuth from "../../../auth/useAuth";
 
-const StudentList: React.FC = () => {
-  // @ts-ignore
-  const { auth, setAuth } = useAuth();
+const EmployeeList: React.FC = () => {
   const navigate = useNavigate();
-  const [students, setStudents] = useState<Student[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   useEffect(() => {
-    Axios.get('http://localhost:8080/student', {
+    Axios.get('http://localhost:8080/employee', {
       headers: {
           'Authorization': `Bearer ${Cookies.get('google_token')}`
       }
   })
       .then((response) => {
-        response.data.sort((a: Student, b: Student) => parseInt(a.index, 10) - parseInt(b.index, 10));
-        setStudents(response.data);
+        const sortedFaculties = response.data.sort((a: Employee, b: Employee) => {
+            return a.mail.localeCompare(b.mail);
+          });
+        setEmployees(sortedFaculties);
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
             if (itemPerPage === 'All') {
               return true;
@@ -31,22 +29,16 @@ const StudentList: React.FC = () => {
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-          }
-      });
+      .catch((error) => console.error(error));
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
-  const indexOfLastItem = itemsPerPage === 'All' ? students.length : currentPage * parseInt(itemsPerPage, 10);
+  const indexOfLastItem = itemsPerPage === 'All' ? employees.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-  const currentStudents = students.slice(indexOfFirstItem, indexOfLastItem);
+  const currentEmployees = employees.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(students.length / parseInt(itemsPerPage, 10));
+  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(employees.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -74,9 +66,9 @@ const StudentList: React.FC = () => {
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
           <button className="custom-button" onClick={() => {
-            // Obsługa dodawania nowego studenta
+            // go to add employee
           }}>
-            Dodaj studenta
+            Dodaj pracownika
           </button>
         </div>
         <div >
@@ -97,24 +89,22 @@ const StudentList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '17%' }}>Indeks</th>
-            <th style={{ width: '35%' }}>Imię</th>
-            <th style={{ width: '35%' }}>Nazwisko</th>
+            <th style={{ width: '44%' }}>Imię i nazwisko</th>
+            <th style={{ width: '43%' }}>Mail</th>
             <th style={{ width: '10%', textAlign: 'center' }}>Szczegóły</th>
           </tr>
         </thead>
         <tbody>
-          {currentStudents.map((student, index) => (
-            <tr key={student.mail}>
+          {currentEmployees.map((employee, index) => (
+            <tr key={employee.mail}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
-              <td>{student.index}</td>
-              <td>{student.name}</td>
-              <td>{student.surname}</td>
+              <td>{employee.title + " " + employee.name + " " + employee.surname}</td>
+              <td>{employee.mail}</td>
               <td>
                 <button
                   className="custom-button coverall"
                   onClick={() => {
-                    navigate(`/students/${student.mail}`, {state: {student}})
+                    navigate(`/employees/${employee.mail}`, {state: {employee}})
                   }}
                 >
                   <i className="bi bi-arrow-right"></i>
@@ -145,4 +135,4 @@ const StudentList: React.FC = () => {
   );
 };
 
-export default StudentList;
+export default EmployeeList;

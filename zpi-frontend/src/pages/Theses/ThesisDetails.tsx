@@ -10,8 +10,12 @@ import Cookies from 'js-cookie';
 import { spawn } from 'child_process';
 import { Employee } from '../../models/Employee';
 import { Student } from '../../models/Student';
+import useAuth from "../../auth/useAuth";
+import handleSignOut from "../../auth/Logout";
 
 const ThesisDetails: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
@@ -38,7 +42,13 @@ const ThesisDetails: React.FC = () => {
         };
         setThesis(thesis);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+          }
+      });
 
   }, [id]);
 
@@ -49,7 +59,13 @@ const ThesisDetails: React.FC = () => {
         setFaculties(response.data);
         console.log(faculties);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+          }
+      });
   }, []);
 
   function findFacultyNameByProgram(programId: number): string | null {

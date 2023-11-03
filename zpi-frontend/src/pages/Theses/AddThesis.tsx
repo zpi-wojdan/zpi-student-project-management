@@ -2,9 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import Axios from 'axios';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
 import Cookies from "js-cookie";
+import useAuth from "../../auth/useAuth";
+import {useNavigate} from "react-router-dom";
+import handleSignOut from "../../auth/Logout";
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -202,8 +208,12 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
       } else {
         console.log('POST request was not successful');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('An error occurred in POST request:', error);
+      if (error.response.status === 401 || error.response.status === 403) {
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
     }
   };
 

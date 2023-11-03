@@ -4,6 +4,7 @@ import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
+import {Role} from "../models/Role";
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -32,7 +33,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                 <li className="nav-item">
                                     <div className="nav-link">{user.name} {user.surname}</div>
                                 </li>
-                            ) : (<li></li>)}
+                            ) : null}
                             <li className="nav-item">
                                 <div className="nav-link">|</div>
                             </li>
@@ -47,7 +48,8 @@ const Navigation = ({ children }: NavigationProps) => {
                                     <Link className="nav-link" to="login" onClick={signOut}>Wyloguj</Link>
                                 ) : (
                                     <NavLink
-                                        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                                        className={({ isActive }) => isActive ? "nav-link active" :
+                                            "nav-link"}
                                         to="login"
                                     >
                                         Logowanie
@@ -74,48 +76,56 @@ const Navigation = ({ children }: NavigationProps) => {
                         <div className={`collapse navbar-collapse ${showNav ? 'show' : ''}`} id="navbarNav">
                             <ul className="navbar-nav me-auto">
                                 <li className="nav-item">
-                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/">Strona główna</NavLink>
+                                    <NavLink className={({ isActive }) => isActive ?
+                                        "nav-link active" : "nav-link"} to="/">Strona główna</NavLink>
                                 </li>
-                                <li className="nav-item">
-                                    <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/theses" >Tematy</NavLink>
-                                </li>
-                                <li className="nav-item">
-                                <Dropdown as={Nav.Item}>
-                                    <Dropdown.Toggle as={Nav.Link}>Zarządzaj</Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item as={Link} to="/students">
-                                            Studenci
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/employees">
-                                            Pracownicy
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/faculties">
-                                            Wydziały
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/fields">
-                                            Kierunki
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/specializations">
-                                            Specjalności
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/programs">
-                                            Programy studiów
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/cycles">
-                                            Cykle nauczania
-                                        </Dropdown.Item>
-                                        <Dropdown.Item as={Link} to="/departments">
-                                            Katedry
-                                        </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                                </li>
-                                {/* tu później zrobić wyświetlanie warunkowe w zalezności od tego kto zalogowany */}
                                 {isLoggedIn ? (
-                                    <li className="nav-item">
-                                        <NavLink className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
-                                    </li>
-                                ) : (<li></li>)}
+                                    <>
+                                        <li className="nav-item">
+                                            <NavLink className={({ isActive }) => isActive ?
+                                                "nav-link active" : "nav-link"} to="/theses" >Tematy</NavLink>
+                                        </li>
+                                        {user?.roles?.some((role: Role) => role.name === 'admin') ? (
+                                            <li className="nav-item">
+                                                <Dropdown as={Nav.Item}>
+                                                    <Dropdown.Toggle as={Nav.Link}>Zarządzaj</Dropdown.Toggle>
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item as={Link} to="/students">
+                                                            Studenci
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/employees">
+                                                            Pracownicy
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/faculties">
+                                                            Wydziały
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/fields">
+                                                            Kierunki
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/specializations">
+                                                            Specjalności
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/programs">
+                                                            Programy studiów
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/cycles">
+                                                            Cykle nauczania
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/departments">
+                                                            Katedry
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </li>
+                                        ) : null}
+                                        {user?.roles?.some((role: Role) => role.name === 'supervisor') ? (
+                                            <li className="nav-item">
+                                                <NavLink className={({ isActive }) => isActive ?
+                                                    "nav-link active" : "nav-link"} to="/my">Moje</NavLink>
+                                            </li>
+                                        ) : null}
+                                    </>
+                                ) : null}
                             </ul>
                         </div>
                     </div>

@@ -2,8 +2,14 @@ import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
 import Cookies from "js-cookie";
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
+import {useNavigate} from "react-router-dom";
 
 function UplaodEmployeeFilePage() {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -69,6 +75,10 @@ function UplaodEmployeeFilePage() {
           setUploadError('Nie udało się przesłać plików');
           setUploadErrorMessageVisible(true);
           console.error('Nie udało się przesłać plików', error);
+          if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
         });
     });
     setSelectedFiles([]);

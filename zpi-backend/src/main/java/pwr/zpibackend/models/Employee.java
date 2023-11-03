@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pwr.zpibackend.models.university.Department;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,7 +31,7 @@ public class Employee {
             name = "employee_role",
             joinColumns = @JoinColumn(name = "mail"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     @JoinColumn(name = "department_code", referencedColumnName = "code", nullable = false)
     @OneToOne(cascade = CascadeType.ALL)
