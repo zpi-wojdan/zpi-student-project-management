@@ -44,4 +44,11 @@ public class EmployeeController {
         return new ResponseEntity<>(matchingEmployees, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @RequestBody EmployeeDTO updatedEmployee)
+            throws NotFoundException {
+        return new ResponseEntity<>(employeeService.updateEmployee(id, updatedEmployee), HttpStatus.OK);
+    }
+
 }

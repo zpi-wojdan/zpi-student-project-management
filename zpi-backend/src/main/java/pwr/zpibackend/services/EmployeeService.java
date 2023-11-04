@@ -10,6 +10,7 @@ import pwr.zpibackend.models.Role;
 import pwr.zpibackend.repositories.EmployeeRepository;
 import pwr.zpibackend.services.university.DepartmentService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -48,20 +49,39 @@ public class EmployeeService {
         newEmployee.setName(employee.getName());
         newEmployee.setSurname(employee.getSurname());
         newEmployee.setTitle(employee.getTitle());
+        newEmployee.setRoles(validateRoles(employee.getRoles()));
+        newEmployee.setDepartment(departmentService.getDepartmentByCode(employee.getDepartmentCode()));
 
-        for (RoleDTO role : employee.getRoles()) {
+        return employeeRepository.save(newEmployee);
+    }
+
+    public Employee updateEmployee(String email, EmployeeDTO updatedEmployee) throws NotFoundException {
+        Employee existingEmployee = employeeRepository.findById(email)
+                .orElseThrow(() -> new NotFoundException("Employee with email " + email + " does not exist"));
+        if(!updatedEmployee.getMail().equals(email))
+            throw new IllegalArgumentException("Email cannot be changed");
+
+        existingEmployee.setName(updatedEmployee.getName());
+        existingEmployee.setSurname(updatedEmployee.getSurname());
+        existingEmployee.setTitle(updatedEmployee.getTitle());
+        existingEmployee.setDepartment(departmentService.getDepartmentByCode(updatedEmployee.getDepartmentCode()));
+        existingEmployee.getRoles().clear();
+        existingEmployee.getRoles().addAll(validateRoles(updatedEmployee.getRoles()));
+
+        return employeeRepository.save(existingEmployee);
+    }
+
+    private List<Role> validateRoles(List<RoleDTO> roles) {
+        List<Role> newRoles = new ArrayList<>();
+        for (RoleDTO role : roles) {
             Role newRole = roleService.getRoleByName(role.getName());
             if (newRole == null)
                 throw new NoSuchElementException("Role with name " + role.getName() + " does not exist");
             if(newRole.getName().equals("student"))
-                throw new IllegalArgumentException("Employee cannot have student role");
-            newEmployee.getRoles().add(newRole);
+                throw new IllegalArgumentException("Employee cannot have role 'student'");
+            newRoles.add(newRole);
         }
-
-        newEmployee.setDepartment(departmentService.getDepartmentByCode(employee.getDepartmentCode()));
-
-        employeeRepository.saveAndFlush(newEmployee);
-        return newEmployee;
+        return newRoles;
     }
 
     public List<Employee> getEmployeesByPrefix(String prefix) {
