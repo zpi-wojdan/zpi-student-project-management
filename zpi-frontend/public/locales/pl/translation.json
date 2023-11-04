@@ -1,0 +1,127 @@
+{
+  "general": {
+    "university": {
+      "people": {
+        "adminLC": "administrator",
+        "approverLC": "zatwierdzający",
+        "employees": "Pracownicy",
+        "fullName": "Imię i Nazwisko",
+        "index": "Indeks",
+        "mail": "Mail",
+        "name": "Imię",
+        "roles": "Role",
+        "student": "Student",
+        "students": "Studenci",
+        "supervisorLC": "prowadzący",
+        "supervisorV1": "Prowadzący",
+        "supervisorV2": "Promotor",
+        "surname": "Nazwisko"
+      },
+      "abbreviation": "Skrót",
+      "department": "Katedra",
+      "departments": "Katedry",
+      "description": "Opis",
+      "faculty": "Wydział",
+      "faculties": "Wydziały",
+      "field": "Kierunek",
+      "fields": "Kierunki",
+      "name": "Nazwa",
+      "status": "Status",
+      "specialization": "Specjalność",
+      "specializations": "Specjalności",
+      "studyCycle": "Cykl nauczania",
+      "studyCycles": "Cykle nauczania",
+      "studyPrograms": "Programy studiów",
+      "thesis": "Temat",
+      "theses": "Tematy",
+      "title": "Tytuł"
+    },
+    "management": {
+      "add": "Dodaj",
+      "delete": "Usuń",
+      "details": "Szczegóły",
+      "edit": "Edytuj",
+      "errorOfLoading": "Błąd wczytywania danych",
+      "goBack": "Powrót",
+      "lack": "brak",
+      "no": "Nie",
+      "reserve": "Zarezerwuj",
+      "save": "Zapisz",
+      "view": "Widok",
+      "yes": "Tak"
+    }
+  },
+  "deleteConfirmation": {
+    "deleteFacultyConfirm": "Czy na pewno chcesz usunąć ten wydział?"
+  },
+  "navigation": {
+    "logout": "Wyloguj",
+    "login": "Logowanie",
+    "home": "Strona główna",
+    "manage": "Zarządzaj",
+    "myTheses": "Moje tematy",
+    "imageAlt": "Logo Politechniki Wrocławskiej"
+  },
+  "employee": {
+    "add": "Dodaj pracownika"
+  },
+  "student": {
+    "add": "Dodaj studenta"
+  },
+  "faculty": {
+    "facultyUpdateSuccessful": "Wydział został zaktualizowany",
+    "facultyAddSuccessful": "Wydział został dodany",
+    "facultyDeleteSuccessful": "Wydział został usunięty",
+    "facultyDeleteError": "Wydział nie może zostać usunięty!",
+    "abbreviationExists": "Podany skrót już istnieje!",
+    "fieldIsRequired": "Pole jest wymagane.",
+    "add": "Dodaj wydział"
+  },
+  "reservation": {
+    "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",
+    "reservationError": "Rezerwacja nie powiodła się!",
+    "reservation": "Rezerwacja tematu",
+    "indexUsedInAnotherRow": "Indeks już wpisany w innym wierszu!",
+    "wrongIndex": "Indeks jest niepoprawny lub nie istnieje w systemie!",
+    "addPerson": "Dodaj osobę"
+  },
+  "thesis": {
+    "supervisorNotExist": "Prowadzący nie istnieje w systemie!",
+    "errorOfLoadingSupervisor": "Błąd wczytywania danych prowadzącego!",
+    "peopleLimit": "Limit osób",
+    "occupiedSeats": "Zajęte miejsca",
+    "signStudents": "Zapisz studentów",
+    "thesisName": "Nazwa tematu",
+    "signed": "Zapisani",
+    "add": "Dodaj temat",
+    "edit": "Edytuj temat",
+    "reportThesis": "Zgłoś temat",
+    "saveDraft": "Zapisz wersję roboczą",
+    "saveChanges": "Zapisz zmiany"
+  },
+  "uploadFiles": {
+    "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",
+    "tooBigFileError": "Zbyt duży rozmiar pliku {fileName} - jego rozmiar: {fileSize} MB",
+    "filesNotSentError": "Nie udało się przesłać plików",
+    "attach": "Załącz pliki",
+    "instruction": "Przeciągnij i upuść, lub kliknij aby wybrać",
+    "chosenFiles": "Wybrane pliki",
+    "sendFiles": "Prześlij pliki"
+  },
+  "login": {
+    "sessionEnded": "Twoja sesja wygasła. Zaloguj się ponownie.",
+    "accessDenied": "Zaloguj sie, aby uzyskać dostęp do tej strony.",
+    "loginError": "Wystąpił błąd logowania. Spróbuj ponownie.",
+    "welcome": "Witaj w systemie logowania",
+    "instruction": "Kliknij przycisk poniżej, aby zalogować się za pomocą uczelnianego adresu email.",
+    "imageAlt": "Budynek A1 z logo PWr"
+  },
+  "missingPage": {
+    "title": "Nie znaleziono strony",
+    "description": "Strona, której szukasz nie istnieje."
+  },
+  "unauthorizedPage": {
+    "title": "Brak dostępu",
+    "description": "Nie masz uprawnień do wyświetlenia tej strony."
+  }
+}
