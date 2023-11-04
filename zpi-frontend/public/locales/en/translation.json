@@ -26,8 +26,7 @@
       "student": "Student",
       "students": "Students",
       "supervisorLC": "supervisor",
-      "supervisorV1": "Supervisor",
-      "supervisorV2": "Supervisor",
+      "supervisor": "Supervisor",
       "surname": "Surname"
     },
     "university": {
@@ -86,13 +85,13 @@
     "addPerson": "Add person"
   },
   "thesis": {
-    "supervisorNotExist": "Supervisor does not exist!",
-    "errorOfLoadingSupervisor": "Error of loading supervisor data!",
+    "supervisorNotExists": "Supervisor does not exist!",
+    "errorOfLoadingSupervisorData": "Error of loading supervisor data!",
     "peopleLimit": "People limit",
     "occupiedSeats": "Occupied seats",
-    "signStudents": "Sign students",
+    "enrollStudents": "Enroll students",
     "thesisName": "Thesis name",
-    "signed": "Signed",
+    "enrolled": "Enrolled",
     "add": "Add thesis",
     "edit": "Edit thesis",
     "reportThesis": "Report thesis",

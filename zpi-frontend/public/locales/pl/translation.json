@@ -7,7 +7,7 @@
       "edit": "Edytuj",
       "errorOfLoading": "Błąd wczytywania danych",
       "goBack": "Powrót",
-      "lack": "brak",
+      "lack": "Brak",
       "no": "Nie",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
@@ -26,8 +26,7 @@
       "student": "Student",
       "students": "Studenci",
       "supervisorLC": "prowadzący",
-      "supervisorV1": "Prowadzący",
-      "supervisorV2": "Promotor",
+      "supervisor": "Prowadzący",
       "surname": "Nazwisko"
     },
     "university": {
@@ -86,13 +85,13 @@
     "addPerson": "Dodaj osobę"
   },
   "thesis": {
-    "supervisorNotExist": "Prowadzący nie istnieje w systemie!",
-    "errorOfLoadingSupervisor": "Błąd wczytywania danych prowadzącego!",
+    "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
+    "errorOfLoadingSupervisorData": "Błąd wczytywania danych prowadzącego!",
     "peopleLimit": "Limit osób",
     "occupiedSeats": "Zajęte miejsca",
-    "signStudents": "Zapisz studentów",
+    "enrollStudents": "Zapisz studentów",
     "thesisName": "Nazwa tematu",
-    "signed": "Zapisani",
+    "enrolled": "Zapisani",
     "add": "Dodaj temat",
     "edit": "Edytuj temat",
     "reportThesis": "Zgłoś temat",

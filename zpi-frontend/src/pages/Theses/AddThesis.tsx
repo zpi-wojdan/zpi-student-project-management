@@ -5,11 +5,13 @@ import Cookies from "js-cookie";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
 import handleSignOut from "../../auth/Logout";
+import {useTranslation} from "react-i18next";
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
@@ -131,12 +133,12 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           setSupervisorError(null);
         }
         else{
-          setSupervisorError("Supervisor does not exist in the database");
+          setSupervisorError(t('thesis.supervisorNotExists'));
         }
 
       }
       catch(error) {
-        setSupervisorError("Error fetching supervisor data");
+        setSupervisorError(t('thesis.errorOfLoadingSupervisorData'));
         console.log("Error fetching supervisor data: ", error);
       }
     }
@@ -219,11 +221,11 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
   return (
     <div className="container mt-5">
-      <h2>Dodaj temat</h2>
+      <h2>{t('thesis.add')}</h2>
       <form onSubmit={(event) => handleSubmit(event, formState.status)}>
 
       <div className="mb-3">
-        <label htmlFor="namePL">Tytuł (PL):</label>
+        <label htmlFor="namePL">{t('general.title')} (PL):</label>
         <textarea
           className="form-control resizable-input"
           id="namePL"
@@ -236,7 +238,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="nameEN">Tytuł (EN):</label>
+          <label htmlFor="nameEN">{t('general.title')} (EN):</label>
           <textarea
             className="form-control resizable-input"
             id="nameEN"
@@ -248,7 +250,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="description">Opis:</label>
+          <label htmlFor="description">{t('general.university.description')}:</label>
           <textarea
             className="form-control resizable-input"
             id="description"
@@ -261,7 +263,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="num_people">Limit osób:</label>
+          <label htmlFor="num_people">{t('thesis.peopleLimit')}:</label>
           <input
             type="number"
             className="form-control"
@@ -275,7 +277,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="supervisor">Prowadzący:</label>
+          <label htmlFor="supervisor">{t('general.people.supervisor')}:</label>
 
           {role == 'employee' && (
             <input
@@ -318,7 +320,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
         </div>
         <div className="mb-3">
-          <label htmlFor="faculty">Kierunki:</label>
+          <label htmlFor="faculty">{t('general.university.fields')}:</label>
           <input
             type="text"
             className="form-control"
@@ -329,7 +331,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="field">Specjalność:</label>
+          <label htmlFor="field">{t('general.university.specialization')}:</label>
           <input
             type="text"
             className="form-control"
@@ -340,7 +342,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="edu_cycle">Cykl edukacyjny:</label>
+          <label htmlFor="edu_cycle">{t('general.university.studyCycle')}:</label>
           <input
             type="text"
             className="form-control"
@@ -355,7 +357,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
         {role === 'admin' && (
           <div className="mb-3">
-            <label htmlFor="status">Status:</label>
+            <label htmlFor="status">{t('general.university.status')}:</label>
             <input
               type="text"
               id="status"
@@ -390,14 +392,14 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
               style={{ marginRight: '10px' }}
               onClick={(event) => handleSubmit(event, 'To be reviewed')}
             >
-              Zgłoś temat
+              {t('thesis.reportThesis')}
             </button>
             <button 
               type="submit" 
               className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
               onClick={(event) => handleSubmit(event, 'Draft')}
             >
-              Zapisz wersję roboczą
+              {t('thesis.saveDraft')}
             </button>
           </div>
         )}
@@ -409,7 +411,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           style={{ marginRight: '10px' }}
           onClick={(event) => handleSubmit(event, formState.status)}
       >
-          Zapisz
+            {t('general.management.save')}
       </button>
         )}
 

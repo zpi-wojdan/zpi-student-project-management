@@ -5,9 +5,11 @@ import { Faculty } from '../../../models/Faculty';
 import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import {useTranslation} from "react-i18next";
 
 const FacultyList: React.FC = () => {
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [refreshList, setRefreshList] = useState(false);
@@ -79,12 +81,12 @@ const FacultyList: React.FC = () => {
             }
         })
         .then(() => {
-          toast.success("Wydział został usunięty");
+          toast.success(t('faculty.facultyDeleteSuccessful'));
           setRefreshList(!refreshList);
         })
         .catch((error) => {
             console.error(error);
-            toast.error("Wydział nie może zostać usunięty!");
+            toast.error(t('faculty.facultyDeleteError'));
           });
     setShowDeleteConfirmation(false);
   };
@@ -98,13 +100,13 @@ const FacultyList: React.FC = () => {
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
           <button className="custom-button" onClick={() => {navigate('/faculties/add')}}>
-            Dodaj wydział
+              {t('faculty.add')}
           </button>
         </div>
         <div >
           {ITEMS_PER_PAGE.length > 10 && (
             <div>
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(e.target.value)}
@@ -123,10 +125,10 @@ const FacultyList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '15%', textAlign: 'center'   }}>Skrót</th>
-            <th style={{ width: '62%' }}>Nazwa</th>
-            <th style={{ width: '10%', textAlign: 'center'  }}>Edytuj</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>Usuń</th>
+            <th style={{ width: '15%', textAlign: 'center'   }}>{t('general.university.abbreviation')}</th>
+            <th style={{ width: '62%' }}>{t('general.university.name')}</th>
+            <th style={{ width: '10%', textAlign: 'center'  }}>{t('general.management.edit')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
           </tr>
         </thead>
         <tbody>

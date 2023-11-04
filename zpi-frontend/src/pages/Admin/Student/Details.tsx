@@ -7,10 +7,12 @@ import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
 import Cookies from "js-cookie";
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";
+import {useTranslation} from "react-i18next";
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student as Student;
@@ -60,24 +62,24 @@ const StudentDetails: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-          &larr; Powrót
+          &larr; {t('general.management.goBack')}
         </button>
         <button type="button" className="custom-button" onClick={() => {
             // go to student edit
             }}>
-          Edytuj
+            {t('general.management.edit')}
         </button>
       </div>
       <div>
         {student ? (
           <div>
-            <p><span className="bold">Imię:</span> <span>{student.name}</span></p>
-            <p><span className="bold">Nazwisko:</span> <span>{student.surname}</span></p>
-            <p><span className="bold">Indeks:</span> <span>{student.index}</span></p>
-            <p><span className="bold">Status:</span> <span>{student.status}</span></p>
+            <p><span className="bold">{t('general.people.name')}:</span> <span>{student.name}</span></p>
+            <p><span className="bold">{t('general.people.surname')}:</span> <span>{student.surname}</span></p>
+            <p><span className="bold">{t('general.people.index')}:</span> <span>{student.index}</span></p>
+            <p><span className="bold">{t('general.university.status')}:</span> <span>{student.status}</span></p>
             {student.studentProgramCycles.length > 0 && (
             <div>
-                <p className="bold">Programy:</p>
+                <p className="bold">{t('general.university.studyPrograms')}:</p>
                 <ul>
                     {student.studentProgramCycles.map((studentProgramCycle: StudentProgramCycle) => (
                     <li key={studentProgramCycle.program.id}>
@@ -88,16 +90,23 @@ const StudentDetails: React.FC = () => {
                         {expandedPrograms.includes(studentProgramCycle.program.id) && (
                         <ul>
                             <li>
-                                <p><span className="bold">Cykl - </span> <span>{studentProgramCycle.cycle.name}</span></p>
+                                <p><span className="bold">{t('general.university.studyCycle')} - </span>
+                                    <span>{studentProgramCycle.cycle.name}</span></p>
                             </li>
                             <li>
-                            <p><span className="bold">Wydział - </span> <span>{findFacultyNameByProgram(studentProgramCycle.program.id)}</span></p>
+                            <p><span className="bold">{t('general.university.faculty')} - </span>
+                                <span>{findFacultyNameByProgram(studentProgramCycle.program.id)}</span></p>
                             </li>
                             <li>
-                            <p><span className="bold">Kierunek - </span> <span>{studentProgramCycle.program.studyField.name}</span></p>
+                            <p><span className="bold">{t('general.university.field')} - </span>
+                                <span>{studentProgramCycle.program.studyField.name}</span></p>
                             </li>
                             <li>
-                            <p><span className="bold">Specjalność - </span> <span>{studentProgramCycle.program.specialization ? studentProgramCycle.program.specialization.name : "brak"}</span></p>
+                            <p><span className="bold">{t('general.university.specialization')} - </span>
+                                <span>{studentProgramCycle.program.specialization ?
+                                    studentProgramCycle.program.specialization.name : t('general.management.lack')}
+                                </span>
+                            </p>
                             </li>
                         </ul>
                         )}
@@ -108,7 +117,7 @@ const StudentDetails: React.FC = () => {
             )} 
           </div>
         ) : (
-          <p>Błąd wczytywania danych</p>
+          <p>{t('general.management.errorOfLoading')}</p>
         )}
       </div>
     </div>
