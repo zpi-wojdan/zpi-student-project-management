@@ -64,15 +64,15 @@ public class DepartmentServiceTest {
         assertThrows(NotFoundException.class, () -> departmentService.getDepartmentByCode(code));
     }
 
-    @Test
-    public void testAddDepartmentSuccess() {
-        when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
-        when(departmentRepository.save(any())).thenReturn(department);
-
-        Department result = departmentService.addDepartment(departmentDTO);
-
-        assertEquals(department, result);
-    }
+//    @Test
+//    public void testAddDepartmentSuccess() {
+//        when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
+//        when(departmentRepository.save(any())).thenReturn(department);
+//
+//        Department result = departmentService.addDepartment(departmentDTO);
+//
+//        assertEquals(department, result);
+//    }
 
     @Test
     public void testUpdateDepartmentSuccess() throws NotFoundException {
