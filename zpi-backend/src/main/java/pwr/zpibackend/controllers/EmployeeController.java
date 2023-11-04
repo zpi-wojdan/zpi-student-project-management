@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.EmployeeDTO;
+import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.services.EmployeeService;
@@ -18,12 +19,6 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-
-    @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) throws NotFoundException {
-        return new ResponseEntity<>(employeeService.addEmployee(employee), HttpStatus.CREATED);
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -44,11 +39,24 @@ public class EmployeeController {
         return new ResponseEntity<>(matchingEmployees, HttpStatus.OK);
     }
 
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) throws NotFoundException {
+        return new ResponseEntity<>(employeeService.addEmployee(employee), HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @RequestBody EmployeeDTO updatedEmployee)
             throws NotFoundException {
         return new ResponseEntity<>(employeeService.updateEmployee(id, updatedEmployee), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Employee> deleteEmployee(@PathVariable String id) throws NotFoundException,
+            CannotDeleteException {
+        return new ResponseEntity<>(employeeService.deleteEmployee(id), HttpStatus.OK);
     }
 
 }

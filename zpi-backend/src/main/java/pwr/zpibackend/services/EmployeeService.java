@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.EmployeeDTO;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
@@ -34,6 +35,10 @@ public class EmployeeService {
         );
     }
 
+    public List<Employee> getEmployeesByPrefix(String prefix) {
+        return employeeRepository.findAllByMailStartingWith(prefix);
+    }
+
     public boolean exists(String email) {
         return employeeRepository.existsById(email);
     }
@@ -43,6 +48,8 @@ public class EmployeeService {
             throw new IllegalArgumentException("Employee must have at least one role");
         if (exists(employee.getMail()))
             throw new IllegalArgumentException("Employee with email " + employee.getMail() + " already exists");
+        if(!employee.getMail().endsWith("pwr.edu.pl"))
+            throw new IllegalArgumentException("Email must be from pwr.edu.pl domain");
 
         Employee newEmployee = new Employee();
         newEmployee.setMail(employee.getMail());
@@ -84,7 +91,16 @@ public class EmployeeService {
         return newRoles;
     }
 
-    public List<Employee> getEmployeesByPrefix(String prefix) {
-        return employeeRepository.findAllByMailStartingWith(prefix);
+    public Employee deleteEmployee(String email) throws NotFoundException, CannotDeleteException {
+        Employee employee = employeeRepository.findById(email)
+                .orElseThrow(() -> new NotFoundException("Employee with email " + email + " does not exist"));
+
+        try {
+            employeeRepository.delete(employee);
+        } catch (Exception e) {
+            throw new CannotDeleteException("Employee with email " + email + " cannot be deleted");
+        }
+        return employee;
     }
+
 }

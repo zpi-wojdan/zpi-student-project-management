@@ -34,7 +34,7 @@ public class Employee {
     private List<Role> roles = new ArrayList<>();
 
     @JoinColumn(name = "department_code", referencedColumnName = "code", nullable = false)
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Department department;
     private String title;   //  change String to Title when table exist
 
