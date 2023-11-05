@@ -177,7 +177,7 @@ const SpecializationList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąć ten wydział?'
+            questionText='Czy na pewno chcesz usunąć ta specjalność?'
           />
           </td>
         </tr>

@@ -18,7 +18,10 @@ const SpecializationForm: React.FC = () => {
   const [formData, setFormData] = useState<Specialization>({
     abbreviation: '',
     name: '',
-    studyField: undefined,
+    studyField: {
+      abbreviation: '',
+      name: '',
+    },
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -34,11 +37,15 @@ const SpecializationForm: React.FC = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      setFormData({ ...formData, studyField: availableFields.find((studyField) => studyField.abbreviation === selectedFieldAbbr)})
-      console.log("Object",formData.studyField)
+      const requestData = {
+        abbreviation: formData.abbreviation,
+        name: formData.name,
+        studyField: availableFields.find((studyField) => studyField.abbreviation === selectedFieldAbbr)
+      };
+      console.log("Request",requestData)
       if (specialization) {
         console.log(formData)
-        Axios.put(`http://localhost:8080/specialization/${formData.abbreviation}`, formData, {
+        Axios.put(`http://localhost:8080/specialization/${formData.abbreviation}`, requestData, {
             headers: {
                 'Authorization': `Bearer ${Cookies.get('google_token')}`
             }
@@ -63,7 +70,7 @@ const SpecializationForm: React.FC = () => {
           });
       } else {
         console.log(formData)
-        Axios.post('http://localhost:8080/specialization', formData, {
+        Axios.post('http://localhost:8080/specialization', requestData, {
             headers: {
                 'Authorization': `Bearer ${Cookies.get('google_token')}`
             }
