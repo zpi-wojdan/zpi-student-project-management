@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.EmployeeDTO;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
@@ -43,13 +44,13 @@ public class EmployeeService {
         return employeeRepository.existsById(email);
     }
 
-    public Employee addEmployee(EmployeeDTO employee) throws NotFoundException {
+    public Employee addEmployee(EmployeeDTO employee) throws NotFoundException, AlreadyExistsException {
         if(employee.getRoles() == null || employee.getRoles().isEmpty())
             throw new IllegalArgumentException("Employee must have at least one role");
-        if (exists(employee.getMail()))
-            throw new IllegalArgumentException("Employee with email " + employee.getMail() + " already exists");
         if(!employee.getMail().endsWith("pwr.edu.pl"))
             throw new IllegalArgumentException("Email must be from pwr.edu.pl domain");
+        if (exists(employee.getMail()))
+            throw new AlreadyExistsException();
 
         Employee newEmployee = new Employee();
         newEmployee.setMail(employee.getMail());
