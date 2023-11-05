@@ -22,7 +22,9 @@ public class DepartmentService {
     }
 
     public Department getDepartmentByCode(String code) throws NotFoundException {
-        return departmentRepository.findById(code).orElseThrow(NotFoundException::new);
+        return departmentRepository.findById(code).orElseThrow(
+                () -> new NotFoundException("Department with code " + code + " does not exist")
+        );
     }
 
     public Department addDepartment(DepartmentDTO department) {
