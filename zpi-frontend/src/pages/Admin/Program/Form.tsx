@@ -8,6 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { StudyField } from '../../../models/StudyField';
 import { Faculty } from '../../../models/Faculty';
+import { StudyCycle } from '../../../models/StydyCycle';
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
@@ -112,6 +113,7 @@ const ProgramForm: React.FC = () => {
   const [availableFaculties, setAvailableFaculties] = useState<Faculty[]>([]);
   const [availableFields, setAvailableFields] = useState<StudyField[]>([]);
   const [availableSpecializations, setAvailableSpecializations] = useState<StudyField[]>([]);
+  const [availableStudyCycles, setAvailableStudyCycles] = useState<StudyCycle[]>([]);
   const [selectedFacultyAbbr, setSelectedFacultyAbbr] = useState<string>();
 
   useEffect(() => {
@@ -169,6 +171,37 @@ const ProgramForm: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    Axios.get('http://localhost:8080/studycycle', {
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('google_token')}`
+      }
+    })
+      .then((response) => {
+        setAvailableStudyCycles(response.data);
+      })
+      .catch((error) => {
+        console.error(error)
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+  }, []);
+
+  const handleStudyCycleSelection = (cycle: StudyCycle) => {
+  const updatedStudyCycles = formData.studyCyclesId.slice();
+  if (updatedStudyCycles.includes(cycle.id)) {
+    updatedStudyCycles.splice(updatedStudyCycles.indexOf(cycle.id), 1);
+  } else {
+    updatedStudyCycles.push(cycle.id);
+  }
+  setFormData({
+    ...formData,
+    studyCyclesId: updatedStudyCycles,
+  });
+};
+
   return (
     <div className='page-margin'>
         <form onSubmit={handleSubmit} className="form">
@@ -219,7 +252,7 @@ const ProgramForm: React.FC = () => {
                     });
                 }}
                 className="form-control"
-                disabled={selectedFacultyAbbr == ""}
+                disabled={!selectedFacultyAbbr}
                   >
                     <option value={""}>Wybierz</option>
                     {/* {selectedFacultyAbbr == "" &&
@@ -267,6 +300,21 @@ const ProgramForm: React.FC = () => {
                   </select>
               {errors.specialization && <div className="text-danger">{errors.specialization}</div>}
             </div>
+            <div className="mb-3">
+            <label className="bold">Cykle studiów:</label>
+            {availableStudyCycles.map((cycle) => (
+              <div key={cycle.id} className="mb-2">
+                <input
+                  type="checkbox"
+                  id={`cycle-${cycle.id}`}
+                  name={`cycle-${cycle.id}`}
+                  checked={formData.studyCyclesId.includes(cycle.id)}
+                  onChange={() => handleStudyCycleSelection(cycle)}
+                />
+                <label style={{ marginLeft: '5px' }} htmlFor={`cycle-${cycle.id}`}>{cycle.name}</label>
+              </div>
+            ))}
+          </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
                 Nazwa:
