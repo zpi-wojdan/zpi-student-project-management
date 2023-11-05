@@ -75,9 +75,7 @@ const EmployeeList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
-          <button className="custom-button" onClick={() => {
-            // go to add employee
-          }}>
+          <button className="custom-button" onClick={() =>{navigate('/employees/add')}}>
             Dodaj pracownika
           </button>
         </div>

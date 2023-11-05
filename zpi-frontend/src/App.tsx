@@ -28,6 +28,7 @@ import EmployeeList from './pages/Admin/Employee/List';
 import EmployeeDetails from './pages/Admin/Employee/Details';
 import RequireAuth from "./auth/RequireAuth";
 import Missing from "./pages/Missing";
+import EmployeeForm from './pages/Admin/Employee/Form';
 
 
 export interface IAppProps {
@@ -66,12 +67,14 @@ export default function App(props: IAppProps) {
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:mail' element={<StudentDetails />} />
                 <Route path='students/add' element={<StudentForm/>} />
-              <Route path='students/edit/:mail' element={<StudentForm/>} />
-              <Route path='employees' element={<EmployeeList />} />
-              <Route path='employees/:mail' element={<EmployeeDetails />} />
+                <Route path='students/edit/:mail' element={<StudentForm/>} />
+                <Route path='employees' element={<EmployeeList />} />
+                <Route path='employees/:mail' element={<EmployeeDetails />} />
+                <Route path='employees/add' element={<EmployeeForm/>} />
+                <Route path='employees/edit/:mail' element={<EmployeeForm/>} />
                 <Route path='faculties' element={<FacultyList />} />
-              <Route path='faculties/add' element={<FacultyForm />} />
-              <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
+                <Route path='faculties/add' element={<FacultyForm />} />
+                <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
                 <Route path='fields' element={<HomePage />} />
                 <Route path='specializations' element={<HomePage />} />
                 <Route path='programs' element={<HomePage />} />
