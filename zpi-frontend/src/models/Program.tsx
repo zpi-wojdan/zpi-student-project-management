@@ -9,3 +9,10 @@ export type Program = {
     specialization: Specialization;
     studyCycles: StudyCycle[];
   }
+
+export type ProgramDTO = {
+  name: string;
+  studyFieldAbbr: string;
+  specializationAbbr: string;
+  studyCyclesId: number[];
+}
