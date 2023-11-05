@@ -106,6 +106,11 @@ const ProgramForm: React.FC = () => {
       isValid = false;
     }
 
+    if (formData.studyCyclesId.length === 0) {
+      newErrors.cycles = 'Program musi mieć przypisany conajmniej jeden cykl.';
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -310,10 +315,12 @@ const ProgramForm: React.FC = () => {
                   name={`cycle-${cycle.id}`}
                   checked={formData.studyCyclesId.includes(cycle.id)}
                   onChange={() => handleStudyCycleSelection(cycle)}
+                  className="custom-checkbox"
                 />
                 <label style={{ marginLeft: '5px' }} htmlFor={`cycle-${cycle.id}`}>{cycle.name}</label>
               </div>
             ))}
+            {errors.cycles && <div className="text-danger">{errors.cycles}</div>}
           </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
