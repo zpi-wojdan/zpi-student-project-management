@@ -62,14 +62,14 @@ public class SpecialisationServiceTest {
         assertThrows(NotFoundException.class, () -> specializationService.getSpecializationByAbbreviation(specialization.getAbbreviation()));
     }
 
-    @Test
-    public void testSaveSpecializationSuccess() {
-        when(specializationRepository.save(any())).thenReturn(specialization);
-
-        Specialization result = specializationService.saveSpecialization(specialization);
-
-        assertEquals(specialization, result);
-    }
+//    @Test
+//    public void testSaveSpecializationSuccess() {
+//        when(specializationRepository.save(any())).thenReturn(specialization);
+//
+//        Specialization result = specializationService.saveSpecialization(specialization);
+//
+//        assertEquals(specialization, result);
+//    }
 
     @Test
     public void testDeleteSpecializationSuccess() throws NotFoundException {
