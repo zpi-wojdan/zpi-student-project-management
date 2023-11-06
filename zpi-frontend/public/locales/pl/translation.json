@@ -3,6 +3,7 @@
     "management": {
       "abbreviationExists": "Podany skrót już istnieje!",
       "add": "Dodaj",
+      "addNext": "Dodaj następny",
       "choose": "Wybierz",
       "delete": "Usuń",
       "details": "Szczegóły",
@@ -51,6 +52,7 @@
       "specializations": "Specjalności",
       "studyCycle": "Cykl nauczania",
       "studyCycles": "Cykle nauczania",
+      "studyProgram": "Program studiów",
       "studyPrograms": "Programy studiów",
       "thesis": "Temat",
       "theses": "Tematy"
@@ -98,7 +100,18 @@
     "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę."
   },
   "student": {
-    "add": "Dodaj studenta"
+    "add": "Dodaj studenta",
+    "addSuccessful": "Student został dodany",
+    "addError": "Student nie został dodany",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć tego studenta?",
+    "deleteError": "Student nie może zostać usunięty!",
+    "deleteSuccessful": "Student został usunięty",
+    "updateSuccessful": "Student został zaktualizowany",
+    "updateError": "Student nie został zaktualizowany",
+    "indexExists": "Podany indeks już istnieje!",
+    "indexLength": "Indeks musi składać się z 6 cyfr.",
+    "cycleProgramRequired": "Wybierz cykl i program dla wszystkich wpisów.",
+    "duplicatedPrograms": "Lista programów posiada duplikaty."
   },
   "faculty": {
     "updateSuccessful": "Wydział został zaktualizowany",

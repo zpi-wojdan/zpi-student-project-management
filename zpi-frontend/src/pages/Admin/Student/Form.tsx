@@ -9,10 +9,12 @@ import Cookies from 'js-cookie';
 import { StudentProgramCycle, StudentProgramCycleDTO } from '../../../models/StudentProgramCycle';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const StudentForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const [formData, setFormData] = useState<StudentDTO>({
     mail: '',
     name: '',
@@ -25,8 +27,17 @@ const StudentForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student;
+  const statusOptions = ['STU', 'Inny/Other'];
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const statusOptions = ['STU', 'Inny'];
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+      newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (student) {
@@ -59,7 +70,7 @@ const StudentForm: React.FC = () => {
         })
           .then(() => {
             navigate("/students");
-            toast.success("Student został zaktualizowany");
+            toast.success(t("student.updateSuccessful"));
           })
           .catch((error) => {
             console.error(error);
@@ -68,7 +79,7 @@ const StudentForm: React.FC = () => {
               handleSignOut(navigate);
             }
             navigate("/students");
-            toast.error("Student nie został zaktualizowany");
+            toast.error(t("student.updateError"));
           });
       } else {
         Axios.post('http://localhost:8080/student', formData, {
@@ -78,13 +89,16 @@ const StudentForm: React.FC = () => {
         })
           .then(() => {
             navigate("/students");
-            toast.success("Student został dodany");
+            toast.success(t("student.addSuccessful"));
           })
           .catch((error) => {
             if (error.response && error.response.status === 409) {
               const newErrors: Record<string, string> = {};
-              newErrors.index = 'Podany indeks już istnieje!';
+              newErrors.index = t("student.indexExists")
               setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.index = "student.indexExists"
+              setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
@@ -92,7 +106,7 @@ const StudentForm: React.FC = () => {
                 handleSignOut(navigate);
               }
               navigate("/students");
-              toast.error("Student nie został dodany");
+              toast.error(t("student.addError"));
             }
           })
       }
@@ -101,43 +115,52 @@ const StudentForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+      newErrorsKeys.name = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     if (!formData.surname) {
       newErrors.surname = errorRequireText;
+      newErrorsKeys.surname = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     if (!formData.index) {
       newErrors.index = errorRequireText;
+      newErrorsKeys.index = 'general.management.fieldIsRequired';
       isValid = false;
     } else if (!/^\d{6}$/.test(formData.index)) {
-      newErrors.index = 'Indeks musi składać się z 6 cyfr.';
+      newErrors.index = t('student.indexLength');
+      newErrorsKeys.index = 'student.indexLength';
       isValid = false;
     }
 
     if (formData.programsCycles.some((programCycle) => programCycle.cycleId === -1 || programCycle.programId === -1)) {
-      newErrors.studentProgramCycles = 'Wybierz cykl i program dla wszystkich wpisów.';
+      newErrors.studentProgramCycles = t('student.cycleProgramRequired');
+      newErrorsKeys.studentProgramCycles = 'student.cycleProgramRequired';
       isValid = false;
     }
 
     if (hasDuplicateProgramCycle(formData.programsCycles)) {
-      newErrors.studentProgramCycles = 'Lista programów posiada duplikaty..';
+      newErrors.studentProgramCycles = t('student.duplicatedPrograms');
+      newErrorsKeys.studentProgramCycles = 'student.duplicatedPrograms';
       isValid = false;
     }
 
     if (!formData.status) {
       newErrors.status = errorRequireText;
+      newErrorsKeys.status = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
@@ -225,15 +248,15 @@ const StudentForm: React.FC = () => {
       <form onSubmit={handleSubmit} className="form">
         <div className='d-flex justify-content-begin align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-            &larr; Powrót
+            &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {student ? 'Zapisz' : 'Dodaj'}
+            {student ? t('general.management.save') : t('general.management.add')}
           </button>
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="name">
-            Imię:
+            {t('general.people.name')}:
           </label>
           <input
             type="text"
@@ -247,7 +270,7 @@ const StudentForm: React.FC = () => {
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="surname">
-            Nazwisko:
+            {t('general.people.surname')}:
           </label>
           <input
             type="text"
@@ -261,7 +284,7 @@ const StudentForm: React.FC = () => {
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="index">
-            Indeks:
+            {t('general.people.index')}:
           </label>
           <input
             type="text"
@@ -275,7 +298,7 @@ const StudentForm: React.FC = () => {
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="status">
-            Status:
+            {t('general.university.status')}:
           </label>
           <select
             id="status"
@@ -284,7 +307,7 @@ const StudentForm: React.FC = () => {
             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
             className="form-control"
           >
-            <option value="">Wybierz</option>
+            <option value="">{t('general.management.choose')}</option>
             {statusOptions.map((status, index) => (
               <option key={index} value={status}>
                 {status}
@@ -294,13 +317,13 @@ const StudentForm: React.FC = () => {
           {errors.status && <div className="text-danger">{errors.status}</div>}
         </div>
         <div>
-          <label className="bold">Programy:</label>
+          <label className="bold">{t('general.university.studyPrograms')}:</label>
           <ul>
             {formData.programsCycles.map((programCycle, index) => (
               <li key={index}>
                 <div className="mb-3">
                   <label className="bold" htmlFor={`cycle${index}`}>
-                    Cykl:
+                    {t('general.university.studyCycle')}:
                   </label>
                   <select
                     id={`cycle${index}`}
@@ -312,7 +335,7 @@ const StudentForm: React.FC = () => {
                     }}
                     className="form-control"
                   >
-                    <option value={-1}>Wybierz</option>
+                    <option value={-1}>{t('general.management.choose')}</option>
                     {availableCycles.map((c, cIndex) => (
                       <option key={cIndex} value={c.id}>
                         {c.name}
@@ -322,7 +345,7 @@ const StudentForm: React.FC = () => {
                 </div>
                 <div className="mb-3">
                   <label className="bold" htmlFor={`program${index}`}>
-                    Program:
+                    {t('general.university.studyProgram')}:
                   </label>
                   <select
                     id={`program${index}`}
@@ -335,7 +358,7 @@ const StudentForm: React.FC = () => {
                     className="form-control"
                     disabled={programCycle.cycleId == -1}
                   >
-                    <option value={-1}>Wybierz</option>
+                    <option value={-1}>{t('general.management.choose')}</option>
                     {programCycle.cycleId !== -1 &&
                       availablePrograms
                         .filter((p) => p.studyCycles.some((c) => c.id === programCycle.cycleId))
@@ -352,7 +375,7 @@ const StudentForm: React.FC = () => {
                     className="custom-button another-color"
                     onClick={() => handleRemove(index)}
                   >
-                    Usuń
+                    {t('general.management.delete')}
                   </button>
                 )}
               </li>
@@ -364,7 +387,7 @@ const StudentForm: React.FC = () => {
                 className="custom-button"
                 onClick={handleAddNext}
               >
-                Dodaj następny
+                {t('general.management.addNext')}
               </button>
             </li>
           </ul>

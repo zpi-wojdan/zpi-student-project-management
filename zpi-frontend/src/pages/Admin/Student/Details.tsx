@@ -72,12 +72,12 @@ const StudentDetails: React.FC = () => {
             }
         })
         .then(() => {
-          toast.success("Student został usunięty");
+          toast.success(t('student.deleteSuccessful'));
           navigate("/students");
         })
         .catch((error) => {
             console.error(error);
-            toast.error("Student nie może zostać usunięty!");
+            toast.error(t('student.deleteError'));
             navigate("/students");
           });
     setShowDeleteConfirmation(false);
@@ -107,7 +107,7 @@ const StudentDetails: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąć tego studenta?'
+            questionText={t('student.deleteConfirmation')}
           />
           </td>
         </tr>
