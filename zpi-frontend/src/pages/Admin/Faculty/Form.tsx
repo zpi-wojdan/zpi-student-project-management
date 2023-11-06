@@ -20,6 +20,7 @@ const FacultyForm: React.FC = () => {
     departments: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (faculty) {
@@ -27,6 +28,14 @@ const FacultyForm: React.FC = () => {
       setOldAbbr(faculty.abbreviation);
     }
   }, [faculty]);
+
+    useEffect(() => {
+        const newErrors: Record<string, string> = {};
+        Object.keys(errorsKeys).forEach((key) => {
+            newErrors[key] = t(errorsKeys[key]);
+        });
+        setErrors(newErrors);
+    }, [i18n.language]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,6 +56,9 @@ const FacultyForm: React.FC = () => {
                 const newErrors: Record<string, string> = {};
                 newErrors.abbreviation = t("faculty.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.abbreviation = "faculty.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
             }
@@ -66,6 +78,9 @@ const FacultyForm: React.FC = () => {
                 const newErrors: Record<string, string> = {};
                 newErrors.abbreviation = t("faculty.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.abbreviation = "faculty.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
             }
@@ -76,21 +91,25 @@ const FacultyForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
     const errorRequireText = t("faculty.fieldIsRequired")
 
     if (!formData.abbreviation) {
       newErrors.abbreviation = errorRequireText;
+      newErrorsKeys.abbreviation = "faculty.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+        newErrorsKeys.name = "faculty.fieldIsRequired"
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
