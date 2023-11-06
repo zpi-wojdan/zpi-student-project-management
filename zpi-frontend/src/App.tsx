@@ -31,6 +31,8 @@ import Missing from "./pages/Missing";
 import EmployeeForm from './pages/Admin/Employee/Form';
 import SpecializationForm from './pages/Admin/Specialization/Form';
 import SpecializationList from './pages/Admin/Specialization/List';
+import ProgramForm from './pages/Admin/Program/Form';
+import ProgramList from './pages/Admin/Program/List';
 
 
 export interface IAppProps {
@@ -69,9 +71,9 @@ export default function App(props: IAppProps) {
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:mail' element={<StudentDetails />} />
                 <Route path='students/add' element={<StudentForm/>} />
-                  <Route path='students/edit/:mail' element={<StudentForm/>} />
-                  <Route path='employees' element={<EmployeeList />} />
-                  <Route path='employees/:mail' element={<EmployeeDetails />} />
+                    <Route path='students/edit/:mail' element={<StudentForm/>} />
+                    <Route path='employees' element={<EmployeeList />} />
+                    <Route path='employees/:mail' element={<EmployeeDetails />} />
                 <Route path='employees/add' element={<EmployeeForm/>} />
                 <Route path='employees/edit/:mail' element={<EmployeeForm/>} />
                 <Route path='faculties' element={<FacultyList />} />
@@ -81,7 +83,9 @@ export default function App(props: IAppProps) {
                 <Route path='specializations' element={<SpecializationList />} />
                 <Route path='specializations/add' element={<SpecializationForm />} />
                 <Route path='specializations/edit/:abbr' element={<SpecializationForm />} />
-                <Route path='programs' element={<HomePage />} />
+                <Route path='programs' element={<ProgramList />} />
+                <Route path='programs/add' element={<ProgramForm />} />
+                <Route path='programs/edit/:id' element={<ProgramForm />} />
                 <Route path='cycles' element={<HomePage />} />
                 <Route path='departments' element={<HomePage />} />
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
