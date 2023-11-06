@@ -172,7 +172,8 @@
     "edit": "Edit thesis",
     "reportThesis": "Report thesis",
     "saveDraft": "Save draft",
-    "saveChanges": "Save changes"
+    "saveChanges": "Save changes",
+    "readyForApproval": "Send for approval"
   },
   "uploadFiles": {
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",

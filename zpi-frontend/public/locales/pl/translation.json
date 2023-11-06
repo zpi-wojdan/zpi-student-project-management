@@ -172,7 +172,8 @@
     "edit": "Edytuj temat",
     "reportThesis": "Zgłoś temat",
     "saveDraft": "Zapisz wersję roboczą",
-    "saveChanges": "Zapisz zmiany"
+    "saveChanges": "Zapisz zmiany",
+    "readyForApproval": "Prześlij do akceptacji"
   },
   "uploadFiles": {
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",

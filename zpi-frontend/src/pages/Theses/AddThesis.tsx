@@ -19,6 +19,11 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   
   const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
   const [supervisorError, setSupervisorError] = useState<string | null>(null);
+  const [supervisorErrorKey, setSupervisorErrorKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSupervisorError(t(supervisorErrorKey));
+  }, [i18n.language]);
 
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -132,14 +137,18 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             supervisor: supervisorData,
           });
           setSupervisorError(null);
+          setSupervisorErrorKey(null);
+
         }
         else{
           setSupervisorError(t('thesis.supervisorNotExists'));
+          setSupervisorErrorKey('thesis.supervisorNotExists')
         }
 
       }
       catch(error) {
         setSupervisorError(t('thesis.errorOfLoadingSupervisorData'));
+        setSupervisorErrorKey('thesis.errorOfLoadingSupervisorData')
         console.log("Error fetching supervisor data: ", error);
       }
     }

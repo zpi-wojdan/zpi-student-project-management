@@ -213,7 +213,7 @@ const ThesisDetails: React.FC = () => {
                   className="col-sm-2 btn btn-primary m-3"
                   onClick={handleReadyForApproval}
                 >
-                  Prześlij do akceptacji
+                    {t('thesis.readyForApproval')}
                 </button>
               )}
 
