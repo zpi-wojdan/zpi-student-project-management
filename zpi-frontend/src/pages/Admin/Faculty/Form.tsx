@@ -58,10 +58,10 @@ const FacultyForm: React.FC = () => {
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = t("faculty.abbreviationExists")
+                newErrors.abbreviation = t("general.management.abbreviationExists")
                 setErrors(newErrors);
                 const newErrorsKeys: Record<string, string> = {};
-                newErrorsKeys.abbreviation = "faculty.abbreviationExists"
+                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
                 setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
@@ -84,10 +84,10 @@ const FacultyForm: React.FC = () => {
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = t("faculty.abbreviationExists")
+                newErrors.abbreviation = t("general.management.abbreviationExists")
                 setErrors(newErrors);
                 const newErrorsKeys: Record<string, string> = {};
-                newErrorsKeys.abbreviation = "faculty.abbreviationExists"
+                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
                 setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);

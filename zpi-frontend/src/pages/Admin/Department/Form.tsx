@@ -7,12 +7,14 @@ import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { Faculty } from '../../../models/Faculty';
+import {useTranslation} from "react-i18next";
 
 const DepartmentForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { i18n, t } = useTranslation();
   const department = location.state?.department as Department;
   const [formData, setFormData] = useState<DepartmentDTO>({
     code: '',
@@ -20,6 +22,15 @@ const DepartmentForm: React.FC = () => {
     facultyAbbreviation: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+        newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (department) {
@@ -66,20 +77,23 @@ const DepartmentForm: React.FC = () => {
         })
         .then(() => {
           navigate("/departments")
-          toast.success("Katedra została zaktualizowana");
+          toast.success(t("department.updateSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.code = 'Podany skrót już istnieje!';
+                newErrors.code = t("general.management.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.code = "general.management.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error("Katedra nie została zaktualizowana");
+              toast.error(t("department.updateError"));
             }
           });
       } else {
@@ -90,20 +104,23 @@ const DepartmentForm: React.FC = () => {
         })
         .then(() => {
           navigate("/departments")
-          toast.success("Katedra została dodana");
+          toast.success(t("department.addSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.code = 'Podany skrót już istnieje!';
+                newErrors.code = t("general.management.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.code = "general.management.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error("Katedra nie została dodana");
+              toast.error(t("department.addError"));
             }
           });
       }
@@ -112,26 +129,31 @@ const DepartmentForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!formData.facultyAbbreviation) {
       newErrors.faculty = errorRequireText;
+      newErrorsKeys.faculty = 'general.management.fieldIsRequired';
       isValid = false;
     }
     
     if (!formData.code) {
       newErrors.code = errorRequireText;
+      newErrorsKeys.code = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+      newErrorsKeys.name = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
@@ -140,15 +162,15 @@ const DepartmentForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="form">
             <div className='d-flex justify-content-begin  align-items-center mb-3'>
                 <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
                 </button>
                 <button type="submit" className="custom-button">
-                {department ? 'Zapisz' : 'Dodaj'}
+                {department ? t('general.management.save') : t('general.management.add')}
                 </button>
             </div>
             <div className="mb-3">
               <label className="bold" htmlFor="faculty">
-                Wydział:
+                  {t('general.university.faculty')}:
               </label>
               <select
                 id="faculty"
@@ -157,7 +179,7 @@ const DepartmentForm: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, facultyAbbreviation: e.target.value })}
                 className="form-control"
               >
-                <option value="">Wybierz</option>
+                <option value="">{t('general.management.choose')}</option>
                 {faculties.map((faculty) => (
                   <option key={faculty.abbreviation} value={faculty.abbreviation}>
                     {faculty.name}
@@ -168,7 +190,7 @@ const DepartmentForm: React.FC = () => {
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="code">
-                Kod:
+                    {t('general.university.code')}:
                 </label>
                 <input
                 type="text"
@@ -183,7 +205,7 @@ const DepartmentForm: React.FC = () => {
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
-                Nazwa:
+                    {t('general.university.name')}:
                 </label>
                 <input
                 type="text"

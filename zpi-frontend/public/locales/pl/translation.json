@@ -1,7 +1,9 @@
 {
   "general": {
     "management": {
+      "abbreviationExists": "Podany skrót już istnieje!",
       "add": "Dodaj",
+      "choose": "Wybierz",
       "delete": "Usuń",
       "details": "Szczegóły",
       "edit": "Edytuj",
@@ -33,6 +35,7 @@
     },
     "university": {
       "abbreviation": "Skrót",
+      "code": "Kod",
       "department": "Katedra",
       "departments": "Katedry",
       "description": "Opis",
@@ -71,6 +74,16 @@
     "updateError": "Cykl nie został zaktualizowany",
     "goodFormat": "Poprawny format: \"xxxx/xx-XYZ\", gdzie \"xxxx\" to 4 cyfry, \"xx\" to 2 cyfry, a \"XYZ\" to od 1 do 3 dużych liter alfabetu."
   },
+  "department": {
+    "deleteSuccessful": "Katedra została usunięta",
+    "deleteError": "Katedra nie może zostać usunięta!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć tę katedrę?",
+    "add": "Dodaj katedrę",
+    "addSuccessful": "Katedra została dodana",
+    "addError": "Katedra nie została dodana",
+    "updateSuccessful": "Katedra została zaktualizowana",
+    "updateError": "Katedra nie została zaktualizowana"
+  },
   "employee": {
     "add": "Dodaj pracownika"
   },
@@ -82,7 +95,6 @@
     "facultyAddSuccessful": "Wydział został dodany",
     "facultyDeleteSuccessful": "Wydział został usunięty",
     "facultyDeleteError": "Wydział nie może zostać usunięty!",
-    "abbreviationExists": "Podany skrót już istnieje!",
     "add": "Dodaj wydział"
   },
   "reservation": {
