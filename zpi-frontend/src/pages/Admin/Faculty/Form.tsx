@@ -27,19 +27,19 @@ const FacultyForm: React.FC = () => {
   const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+        newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
+
+  useEffect(() => {
     if (faculty) {
       setFormData(faculty);
       setOldAbbr(faculty.abbreviation);
     }
   }, [faculty]);
-
-    useEffect(() => {
-        const newErrors: Record<string, string> = {};
-        Object.keys(errorsKeys).forEach((key) => {
-            newErrors[key] = t(errorsKeys[key]);
-        });
-        setErrors(newErrors);
-    }, [i18n.language]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

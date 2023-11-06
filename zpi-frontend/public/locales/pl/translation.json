@@ -11,6 +11,8 @@
       "fieldIsRequired": "Pole jest wymagane.",
       "goBack": "Powrót",
       "lack": "Brak",
+      "mailExists": "Podany mail już istnieje!",
+      "mailMustBePwr": "Mail musi być z domeny pwr.edu.pl",
       "no": "Nie",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
@@ -85,7 +87,15 @@
     "updateError": "Katedra nie została zaktualizowana"
   },
   "employee": {
-    "add": "Dodaj pracownika"
+    "add": "Dodaj pracownika",
+    "addSuccessful": "Pracownik został dodany",
+    "addError": "Pracownik nie został dodany",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć tego pracownika?",
+    "deleteError": "Pracownik nie może zostać usunięty!",
+    "deleteSuccessful": "Pracownik został usunięty",
+    "updateSuccessful": "Pracownik został zaktualizowany",
+    "updateError": "Pracownik nie został zaktualizowany",
+    "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę."
   },
   "student": {
     "add": "Dodaj studenta"

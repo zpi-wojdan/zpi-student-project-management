@@ -14,9 +14,9 @@ const EmployeeDetails: React.FC = () => {
   const location = useLocation();
   const employee = location.state?.employee as Employee;
   const roleLabels: { [key: string]: string } = {
-    supervisor: 'prowadzący',
-    approver: 'zatwierdzający',
-    admin: 'administrator',
+    supervisor: t('general.people.supervisorLC'),
+    approver: t('general.people.approverLC'),
+    admin: t('general.people.adminLC'),
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -32,12 +32,12 @@ const EmployeeDetails: React.FC = () => {
             }
         })
         .then(() => {
-          toast.success("Pracownik został usunięty");
+          toast.success(t("employee.deleteSuccessful"));
           navigate("/employees");
         })
         .catch((error) => {
             console.error(error);
-            toast.error("Pracownik nie może zostać usunięty!");
+            toast.error(t("employee.deleteError"));
             navigate("/employees");
           });
     setShowDeleteConfirmation(false);
@@ -67,7 +67,7 @@ const EmployeeDetails: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąć tego pracownika?'
+            questionText={t('employee.deleteConfirmation')}
           />
           </td>
         </tr>
