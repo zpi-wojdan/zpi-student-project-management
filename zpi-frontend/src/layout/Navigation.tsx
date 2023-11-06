@@ -26,6 +26,7 @@ const Navigation = ({ children }: NavigationProps) => {
         console.log(lang);
         if (lang !== i18n.language) {
             i18n.changeLanguage(lang);
+            Cookies.set('lang', lang);
         }
     };
 
