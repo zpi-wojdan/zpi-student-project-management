@@ -37,6 +37,8 @@ import StudyCycleList from './pages/Admin/Cycle/List';
 import StudyCycleForm from './pages/Admin/Cycle/Form';
 import DepartmentForm from './pages/Admin/Department/Form';
 import DepartmentList from './pages/Admin/Department/List';
+import StudyFieldForm from './pages/Admin/Field/Form';
+import StudyFieldList from './pages/Admin/Field/List';
 
 
 export interface IAppProps {
@@ -75,15 +77,17 @@ export default function App(props: IAppProps) {
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:mail' element={<StudentDetails />} />
                 <Route path='students/add' element={<StudentForm/>} />
-                  <Route path='students/edit/:mail' element={<StudentForm/>} />
-                  <Route path='employees' element={<EmployeeList />} />
-                  <Route path='employees/:mail' element={<EmployeeDetails />} />
+                <Route path='students/edit/:mail' element={<StudentForm/>} />
+                <Route path='employees' element={<EmployeeList />} />
+                <Route path='employees/:mail' element={<EmployeeDetails />} />
                 <Route path='employees/add' element={<EmployeeForm/>} />
                 <Route path='employees/edit/:mail' element={<EmployeeForm/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
-                <Route path='fields' element={<HomePage />} />
+                <Route path='fields' element={<StudyFieldList />} />
+                <Route path='fields/add' element={<StudyFieldForm />} />
+                <Route path='fields/edit/:abbr' element={<StudyFieldForm />} />
                 <Route path='specializations' element={<SpecializationList />} />
                 <Route path='specializations/add' element={<SpecializationForm />} />
                 <Route path='specializations/edit/:abbr' element={<SpecializationForm />} />

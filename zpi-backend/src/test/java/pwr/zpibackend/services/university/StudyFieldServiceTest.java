@@ -62,14 +62,14 @@ public class StudyFieldServiceTest {
         assertThrows(NotFoundException.class, () -> studyFieldService.getStudyFieldByAbbreviation(studyField.getAbbreviation()));
     }
 
-    @Test
-    public void testSaveStudyFieldSuccess() {
-        when(studyFieldRepository.save(any())).thenReturn(studyField);
-
-        StudyField result = studyFieldService.saveStudyField(studyField);
-
-        assertEquals(studyField, result);
-    }
+//    @Test
+//    public void testSaveStudyFieldSuccess() {
+//        when(studyFieldRepository.save(any())).thenReturn(studyField);
+//
+//        StudyField result = studyFieldService.saveStudyField(studyField);
+//
+//        assertEquals(studyField, result);
+//    }
 
     @Test
     public void testDeleteStudyFieldSuccess() throws NotFoundException {

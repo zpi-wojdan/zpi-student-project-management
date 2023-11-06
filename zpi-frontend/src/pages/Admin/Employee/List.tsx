@@ -28,7 +28,7 @@ const EmployeeList: React.FC = () => {
               return true;
             } else {
               const perPageValue = parseInt(itemPerPage, 10);
-              return perPageValue <= response.data.length;
+              return perPageValue < response.data.length;
             }
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
