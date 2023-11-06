@@ -118,6 +118,17 @@
     "updateSuccessful": "Field has been updated",
     "updateError": "Field has not been updated"
   },
+  "program": {
+    "deleteSuccessful": "Study program has been deleted",
+    "deleteError": "Study program cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this study program?",
+    "add": "Add study program",
+    "addSuccessful": "Study program has been added",
+    "addError": "Study program has not been added",
+    "updateSuccessful": "Study program has been updated",
+    "updateError": "Study program has not been updated",
+    "cycleRequired": "Study program must have assigned at least one study cycle."
+  },
   "reservation": {
     "reservationSuccessful": "Reservation completed successfully!",
     "reservationError": "Reservation failed!",

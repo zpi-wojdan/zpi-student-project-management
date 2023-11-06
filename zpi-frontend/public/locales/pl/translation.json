@@ -118,6 +118,17 @@
     "updateSuccessful": "Kierunek został zaktualizowany",
     "updateError": "Kierunek nie został zaktualizowany"
   },
+  "program": {
+    "deleteSuccessful": "Program studiów został usunięty",
+    "deleteError": "Program studiów nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten program studiów?",
+    "add": "Dodaj program studiów",
+    "addSuccessful": "Program studiów został dodany",
+    "addError": "Program studiów nie został dodany",
+    "updateSuccessful": "Program studiów został zaktualizowany",
+    "updateError": "Program studiów nie został zaktualizowany",
+    "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania."
+  },
   "reservation": {
     "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",
     "reservationError": "Rezerwacja nie powiodła się!",
