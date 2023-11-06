@@ -108,7 +108,7 @@
     "sendFiles": "Prześlij pliki"
   },
   "login": {
-    "sessionEnded": "Twoja sesja wygasła. Zaloguj się ponownie.",
+    "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
     "accessDenied": "Zaloguj sie, aby uzyskać dostęp do tej strony.",
     "loginError": "Wystąpił błąd logowania. Spróbuj ponownie.",
     "welcome": "Witaj w systemie logowania",

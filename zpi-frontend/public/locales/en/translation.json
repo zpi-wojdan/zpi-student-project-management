@@ -108,7 +108,7 @@
     "sendFiles": "Send files"
   },
   "login": {
-    "sessionEnded": "Your session has ended. Please log in again.",
+    "sessionExpired": "Your session has ended. Please log in again.",
     "accessDenied": "Log in to access this page.",
     "loginError": "Login error occurred. Please try again.",
     "welcome": "Welcome to the login system",

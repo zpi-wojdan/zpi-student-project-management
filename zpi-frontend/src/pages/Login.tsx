@@ -18,17 +18,24 @@ const LoginPage = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [alertMessageKey, setAlertMessageKey] = useState('');
+
+    useEffect(() => {
+        setAlertMessage(t(alertMessageKey));
+    }, [i18n.language]);
 
     useEffect(() => {
         if(auth?.reasonOfLogout === 'token_expired') {
-            setAlertMessage(t('login.sessionEnded'))
+            setAlertMessage(t('login.sessionExpired'))
+            setAlertMessageKey('login.sessionExpired')
             setShowAlert(true)
-            setAuth(null);
+            setAuth(null)
         }
         if(auth?.reasonOfLogout === 'access_denied') {
             setAlertMessage(t('login.accessDenied'))
+            setAlertMessageKey('login.accessDenied')
             setShowAlert(true)
-            setAuth(null);
+            setAuth(null)
         }
 
         // @ts-ignore
@@ -44,9 +51,10 @@ const LoginPage = () => {
                 theme: "filled_black",
                 size: "large",
                 width: document.getElementById("sign-in-button")?.offsetWidth,
+                locale: i18n.language,
             }
         )
-    }, []);
+    }, [i18n.language, auth]);
 
     function handleGoogleCallbackResponse(response: any) {
         console.log("Encoded JWT ID token: " + response.credential);
@@ -70,6 +78,7 @@ const LoginPage = () => {
                 Cookies.remove('google_token');
                 setErrorMessage(error.response.data.message)
                 setAlertMessage(t('login.loginError'))
+                setAlertMessageKey('login.loginError')
                 setShowAlert(true)
             })
     }
