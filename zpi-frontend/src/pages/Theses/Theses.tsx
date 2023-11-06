@@ -4,9 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { ThesisFront, Thesis } from '../../models/Thesis';
 import Cookies from "js-cookie";
 import api from '../../utils/api';
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
 
 
 const ThesesTable: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const [theses, setTheses] = useState<ThesisFront[]>([]);
   
@@ -46,7 +50,13 @@ const ThesesTable: React.FC = () => {
         });
         setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+          }
+      });
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
