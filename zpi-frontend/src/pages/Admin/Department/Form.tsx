@@ -28,7 +28,7 @@ const DepartmentForm: React.FC = () => {
           ...prevFormData,
           code: department.code,
           name: department.name,
-          facultyAbbr: department.faculty.abbreviation,
+          facultyAbbr: department.faculty?.abbreviation,
         };
       });
     }

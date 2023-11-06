@@ -8,7 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { StudyField } from '../../../models/StudyField';
 import { Faculty } from '../../../models/Faculty';
-import { StudyCycle } from '../../../models/StydyCycle';
+import { StudyCycle } from '../../../models/StudyCycle';
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
