@@ -129,6 +129,16 @@
     "updateError": "Program studiów nie został zaktualizowany",
     "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania."
   },
+  "specialization": {
+    "deleteSuccessful": "Specjalność została usunięta",
+    "deleteError": "Specjalność nie może zostać usunięta!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć tę specjalność?",
+    "add": "Dodaj specjalność",
+    "addSuccessful": "Specjalność została dodana",
+    "addError": "Specjalność nie została dodana",
+    "updateSuccessful": "Specjalność została zaktualizowana",
+    "updateError": "Specjalność nie została zaktualizowana"
+  },
   "reservation": {
     "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",
     "reservationError": "Rezerwacja nie powiodła się!",

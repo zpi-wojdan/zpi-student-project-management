@@ -129,6 +129,16 @@
     "updateError": "Study program has not been updated",
     "cycleRequired": "Study program must have assigned at least one study cycle."
   },
+  "specialization": {
+    "deleteSuccessful": "Specialization has been deleted",
+    "deleteError": "Specialization cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this specialization?",
+    "add": "Add specialization",
+    "addSuccessful": "Specialization has been added",
+    "addError": "Specialization has not been added",
+    "updateSuccessful": "Specialization has been updated",
+    "updateError": "Specialization has not been updated"
+  },
   "reservation": {
     "reservationSuccessful": "Reservation completed successfully!",
     "reservationError": "Reservation failed!",
