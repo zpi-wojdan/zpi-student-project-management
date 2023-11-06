@@ -91,7 +91,7 @@ const FacultyList: React.FC = () => {
             }
         })
         .then(() => {
-          toast.success(t('faculty.facultyDeleteSuccessful'));
+          toast.success(t('faculty.deleteSuccessful'));
           setRefreshList(!refreshList);
         })
         .catch((error) => {
@@ -100,7 +100,7 @@ const FacultyList: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error(t('faculty.facultyDeleteError'));
+            toast.error(t('faculty.deleteError'));
           });
     setShowDeleteConfirmation(false);
   };
@@ -179,7 +179,7 @@ const FacultyList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąć ten wydział?'
+            questionText={t('faculty.deleteConfirmation')}
           />
           </td>
         </tr>

@@ -101,11 +101,22 @@
     "add": "Dodaj studenta"
   },
   "faculty": {
-    "facultyUpdateSuccessful": "Wydział został zaktualizowany",
-    "facultyAddSuccessful": "Wydział został dodany",
-    "facultyDeleteSuccessful": "Wydział został usunięty",
-    "facultyDeleteError": "Wydział nie może zostać usunięty!",
-    "add": "Dodaj wydział"
+    "updateSuccessful": "Wydział został zaktualizowany",
+    "addSuccessful": "Wydział został dodany",
+    "deleteSuccessful": "Wydział został usunięty",
+    "deleteError": "Wydział nie może zostać usunięty!",
+    "add": "Dodaj wydział",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten wydział?"
+  },
+  "field": {
+    "deleteSuccessful": "Kierunek został usunięty",
+    "deleteError": "Kierunek nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten kierunek?",
+    "add": "Dodaj kierunek",
+    "addSuccessful": "Kierunek został dodany",
+    "addError": "Kierunek nie został dodany",
+    "updateSuccessful": "Kierunek został zaktualizowany",
+    "updateError": "Kierunek nie został zaktualizowany"
   },
   "reservation": {
     "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",

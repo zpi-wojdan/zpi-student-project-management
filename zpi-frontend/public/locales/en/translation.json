@@ -105,7 +105,18 @@
     "facultyAddSuccessful": "Faculty has been added",
     "facultyDeleteSuccessful": "Faculty has been deleted",
     "facultyDeleteError": "Faculty cannot be deleted!",
-    "add": "Add faculty"
+    "add": "Add faculty",
+    "deleteConfirmation": "Are you sure you want to delete this faculty?"
+  },
+  "field": {
+    "deleteSuccessful": "Field has been deleted",
+    "deleteError": "Field cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this field?",
+    "add": "Add field",
+    "addSuccessful": "Field has been added",
+    "addError": "Field has not been added",
+    "updateSuccessful": "Field has been updated",
+    "updateError": "Field has not been updated"
   },
   "reservation": {
     "reservationSuccessful": "Reservation completed successfully!",

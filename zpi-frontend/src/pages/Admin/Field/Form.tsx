@@ -7,12 +7,14 @@ import { toast } from 'react-toastify';
 import { Faculty } from '../../../models/Faculty';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
+import {useTranslation} from "react-i18next";
 
 const StudyFieldForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { i18n, t } = useTranslation();
   const studyField = location.state?.studyField as StudyField;
   const [oldAbbr, setOldAbbr] = useState<String>();
   const [formData, setFormData] = useState<StudyFieldDTO>({
@@ -20,8 +22,17 @@ const StudyFieldForm: React.FC = () => {
     name: '',
     facultyAbbr: '',
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+        newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     Axios.get('http://localhost:8080/faculty', {
@@ -71,20 +82,23 @@ const StudyFieldForm: React.FC = () => {
         })
         .then(() => {
           navigate("/fields")
-          toast.success("Kierunek został zaktualizowany");
+          toast.success(t("field.updateSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = 'Podany skrót już istnieje!';
+                newErrors.abbreviation = t("general.management.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error("Kierunek nie został zaktualizowany");
+              toast.error(t("field.updateError"));
             }
           });
       } else {
@@ -95,20 +109,23 @@ const StudyFieldForm: React.FC = () => {
         })
         .then(() => {
           navigate("/fields")
-          toast.success("Kierunek został dodany");
+          toast.success(t("field.addSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = 'Podany skrót już istnieje!';
+                newErrors.abbreviation = t("general.management.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error("Kierunek nie został dodany");
+              toast.error(t("field.addError"));
             }
           });
       }
@@ -117,26 +134,31 @@ const StudyFieldForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!formData.abbreviation) {
       newErrors.abbreviation = errorRequireText;
+      newErrorsKeys.abbreviation = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+      newErrorsKeys.name = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.facultyAbbr) {
       newErrors.faculty = errorRequireText;
+      newErrorsKeys.faculty = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
@@ -145,15 +167,15 @@ const StudyFieldForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="form">
             <div className='d-flex justify-content-begin  align-items-center mb-3'>
                 <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
                 </button>
                 <button type="submit" className="custom-button">
-                {studyField ? 'Zapisz' : 'Dodaj'}
+                {studyField ? t('general.management.save') : t('general.management.add')}
                 </button>
             </div>
             <div className="mb-3">
               <label className="bold" htmlFor="faculty">
-                Wydział:
+                  {t('general.university.faculty')}:
               </label>
               <select
                 id="faculty"
@@ -162,7 +184,7 @@ const StudyFieldForm: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, facultyAbbr: e.target.value })}
                 className="form-control"
               >
-                <option value="">Wybierz</option>
+                <option value="">{t('general.management.choose')}</option>
                 {faculties.map((faculty) => (
                   <option key={faculty.abbreviation} value={faculty.abbreviation}>
                     {faculty.name}
@@ -173,7 +195,7 @@ const StudyFieldForm: React.FC = () => {
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="abbreviation">
-                Skrót:
+                    {t('general.university.abbreviation')}:
                 </label>
                 <input
                 type="text"
@@ -188,7 +210,7 @@ const StudyFieldForm: React.FC = () => {
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
-                Nazwa:
+                    {t('general.university.name')}:
                 </label>
                 <input
                 type="text"

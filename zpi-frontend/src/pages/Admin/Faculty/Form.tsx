@@ -53,7 +53,7 @@ const FacultyForm: React.FC = () => {
         })
         .then(() => {
           navigate("/faculties")
-          toast.success(t("faculty.facultyUpdateSuccessful"));
+          toast.success(t("faculty.updateSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
@@ -79,7 +79,7 @@ const FacultyForm: React.FC = () => {
         })
         .then(() => {
           navigate("/faculties")
-          toast.success(t("faculty.facultyAddSuccessful"));
+          toast.success(t("faculty.addSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
