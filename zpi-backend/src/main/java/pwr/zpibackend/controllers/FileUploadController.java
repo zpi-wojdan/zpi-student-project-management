@@ -1,7 +1,9 @@
 package pwr.zpibackend.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +33,15 @@ public class FileUploadController {
             responseJson.put("message", mess);
             responseJson.put("invalidData", invalidData);
 
-            return ResponseEntity.status(HttpStatus.OK).body(responseJson.toString());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            return new ResponseEntity<>(responseJson.toString(), headers, HttpStatus.OK);
         }
         catch(IOException err){
             mess = "Could not upload the file - " + file.getOriginalFilename();
             err.printStackTrace();
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
+            return new ResponseEntity<>(mess, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -52,12 +57,15 @@ public class FileUploadController {
             responseJson.put("message", mess);
             responseJson.put("invalidData", invalidData);
 
-            return ResponseEntity.status(HttpStatus.OK).body(responseJson.toString());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            return new ResponseEntity<>(responseJson.toString(), headers, HttpStatus.OK);
         }
         catch (IOException err){
             mess = "Could not upload the file - " + file.getOriginalFilename();
             err.printStackTrace();
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
+            return new ResponseEntity<>(mess, HttpStatus.EXPECTATION_FAILED);
         }
     }
 }

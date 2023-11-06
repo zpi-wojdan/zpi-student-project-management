@@ -39,29 +39,22 @@ public class ImportEmployees{
         List<ObjectNode> invalidPhoneNumberData = new ArrayList<>();
         List<ObjectNode> invalidEmailData = new ArrayList<>();
 
+        List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
+
         readEmployeeFile(file_path, validData, invalidIndexData, invalidAcademicTitleData,
                         invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                         invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
 
-        ObjectNode invalidDataJson = new ObjectMapper().createObjectNode();
-        invalidDataJson.put("invalid_indices", invalidIndexData.size());
-        invalidDataJson.put("invalid_titles", invalidAcademicTitleData.size());
-        invalidDataJson.put("invalid_surnames", invalidSurnameData.size());
-        invalidDataJson.put("invalid_names", invalidNameData.size());
-        invalidDataJson.put("invalid_faculties", invalidUnitData.size());
-        invalidDataJson.put("invalid_departments", invalidSubunitData.size());
-        invalidDataJson.put("invalid_positions", invalidPositionsData.size());
-        invalidDataJson.put("invalid_phone_numbers", invalidPhoneNumberData.size());
-        invalidDataJson.put("invalid_mails", invalidEmailData.size());
+        invalidDatabaseRepetitions = saveValidToDatabase(validData);
 
         String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
                             invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
-                            invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
+                            invalidPositionsData, invalidPhoneNumberData,
+                            invalidEmailData, invalidDatabaseRepetitions);
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
 
-        saveValidToDatabase(validData);
-        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(invalidDataJson);
+        return fullJson;
     }
 
     public void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
@@ -212,7 +205,8 @@ public class ImportEmployees{
                                           List<ObjectNode> invalidAcademicTitleData, List<ObjectNode> invalidSurnameData,
                                           List<ObjectNode> invalidNameData, List<ObjectNode> invalidUnitData,
                                           List<ObjectNode> invalidSubunitData, List<ObjectNode> invalidPositionsData,
-                                          List<ObjectNode> invalidPhoneNumberData, List<ObjectNode> invalidEmailData) throws IOException{
+                                          List<ObjectNode> invalidPhoneNumberData, List<ObjectNode> invalidEmailData,
+                                          List<ObjectNode> invalidDatabaseRepetitions) throws IOException{
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, List<ObjectNode>> fullJson = new HashMap<>();
@@ -231,8 +225,8 @@ public class ImportEmployees{
     }
 
 
-    public void saveValidToDatabase(List<ObjectNode> validData){
-        List<ObjectNode> invalidData = new ArrayList<>();
+    public List<ObjectNode> saveValidToDatabase(List<ObjectNode> validData){
+        List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
 
         for (ObjectNode node : validData){
             Optional<Employee> existingEmployee = employeeRepository.findByMail(node.get("email").asText());
@@ -240,7 +234,7 @@ public class ImportEmployees{
             Optional<Department> existingDepartment = departmentRepository.findByCode(node.get("department").asText());
 
             if (existingRole.isEmpty() || existingDepartment.isEmpty()){
-                invalidData.add(node);
+                invalidDatabaseRepetitions.add(node);
                 continue;
             }
 
@@ -277,6 +271,7 @@ public class ImportEmployees{
             }
 
         }
+        return invalidDatabaseRepetitions;
     }
 
 }

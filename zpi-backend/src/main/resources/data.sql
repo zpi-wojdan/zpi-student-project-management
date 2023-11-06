@@ -326,3 +326,11 @@ VALUES
     ('260466@student.pwr.edu.pl', '4'),
     ('260464@student.pwr.edu.pl', '4'),
     ('255356@student.pwr.edu.pl', '4');
+
+INSERT INTO employee_role(mail, role_id)
+VALUES
+    ('260452@student.pwr.edu.pl', '2'),
+    ('260466@student.pwr.edu.pl', '2'),
+    ('260464@student.pwr.edu.pl', '2'),
+    ('255356@student.pwr.edu.pl', '2');
+
