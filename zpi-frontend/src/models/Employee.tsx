@@ -1,5 +1,5 @@
 import { Department } from "./Department";
-import { Role } from "./Role";
+import { Role, RoleDTO } from "./Role";
 
 export type Employee = {
     mail: string;
@@ -9,3 +9,12 @@ export type Employee = {
     department: Department;
     title: string;
   }
+
+  export type EmployeeDTO = {
+  mail: string;
+  name: string;
+  surname: string;
+  roles: RoleDTO[];
+  departmentCode: string;
+  title: string;
+}

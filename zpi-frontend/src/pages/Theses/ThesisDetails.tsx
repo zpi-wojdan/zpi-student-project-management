@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import { spawn } from 'child_process';
 import { Employee } from '../../models/Employee';
 import { Student } from '../../models/Student';
+import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
 import handleSignOut from "../../auth/Logout";
 import {useTranslation} from "react-i18next";
@@ -24,11 +25,7 @@ const ThesisDetails: React.FC = () => {
   const [thesis, setThesis] = useState<ThesisFront>();
 
   useEffect(() => {
-    const response = Axios.get(`http://localhost:8080/thesis/${id}`, {
-        headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-        }
-    })
+    const response = api.get(`http://localhost:8080/thesis/${id}`)
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const thesis: ThesisFront = {
@@ -48,6 +45,7 @@ const ThesisDetails: React.FC = () => {
           reservations: thesisDb.reservations,
         };
         setThesis(thesis);
+        console.log(thesis);
       })
       .catch((error) => {
           console.error(error);
@@ -61,11 +59,7 @@ const ThesisDetails: React.FC = () => {
 
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-        headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-        }
-    })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setFaculties(response.data);
         console.log(faculties);
@@ -81,14 +75,14 @@ const ThesisDetails: React.FC = () => {
 
   function findFacultyNameByProgram(programId: number): string | null {
     for (const faculty of faculties) {
-        for (const program of faculty.programs) {
-            if (program.id === programId) {
-                return faculty.name;
-            }
+      for (const program of faculty.programs) {
+        if (program.id === programId) {
+          return faculty.name;
         }
+      }
     }
     return null;
-}
+  }
 
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
@@ -98,11 +92,32 @@ const ThesisDetails: React.FC = () => {
     } else {
       setExpandedPrograms([...expandedPrograms, programId]);
     }
-  };  const [user, setUser] = useState<Student & Employee>();
+  }; const [user, setUser] = useState<Student & Employee>();
 
   useEffect(() => {
     setUser(JSON.parse(Cookies.get("user") || "{}"));
+    console.log(user);
   }, []);
+
+  const handleReadyForApproval = async () => {
+    if (thesis?.reservations) {
+      for (const reservation of thesis.reservations) {
+        try {
+          reservation.readyForApproval = true;
+          reservation.sentForApprovalDate = new Date();
+          const response = await api.put('http://localhost:8080/reservation/' + reservation.id,
+            JSON.stringify(reservation)
+          );
+
+          if (response.status === 200) {
+            console.log('All users reservations sent for approval successfully');
+          }
+        } catch (error) {
+          console.error(`Failed to update reservations for reservation: ${reservation}`, error);
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -111,31 +126,31 @@ const ThesisDetails: React.FC = () => {
           &larr; {t('general.management.goBack')}
         </button>
         {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
-            user?.mail === thesis?.supervisor.mail) ?
+          user?.mail === thesis?.supervisor.mail) ?
           (
-          <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
-            if (user?.role?.name === 'student') {
-              if (thesis?.reservations.length === 0) {
-                navigate('/reservation', { state: { thesis: thesis } })
+            <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
+              if (user?.role?.name === 'student') {
+                if (thesis?.reservations.length === 0) {
+                  navigate('/reservation', { state: { thesis: thesis } })
+                } else {
+                  navigate('/single-reservation', { state: { thesis: thesis } })
+                }
               } else {
-                navigate('/single-reservation', { state: { thesis: thesis } })
+                navigate('/supervisor-reservation', { state: { thesis: thesis } })
               }
-            } else {
-              navigate('/supervisor-reservation', { state: { thesis: thesis } })
             }
-          }
-          }>
-            {user?.role?.name === 'student' ? (
-              <span>{t('general.management.reserve')}</span>
-            ) : (
-              user?.mail === thesis?.supervisor.mail ?
-                (
-                  <span>{t('thesis.enrollStudents')}</span>
-                ) : (
-                  <></>
-                )
-            )}
-          </button>
+            }>
+              {user?.role?.name === 'student' ? (
+                <span>{t('general.management.reserve')}</span>
+              ) : (
+                user?.mail === thesis?.supervisor.mail ?
+                  (
+                    <span>{t('thesis.enrollStudents')}</span>
+                  ) : (
+                    <></>
+                  )
+              )}
+            </button>
           ) : (
             <span></span>
           )
@@ -162,32 +177,28 @@ const ThesisDetails: React.FC = () => {
                 thesis.studyCycle.name : 'N/A'}</span></p>
             <p className="bold">{t('general.university.studyPrograms')}:</p>
             <ul>
-            {thesis.programs.map((program: Program) => (
-              <li key={program.id}>
-                {program.name}
-                <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
-                  {expandedPrograms.includes(program.id) ? '▼' : '▶'} 
-                </button>
-                {expandedPrograms.includes(program.id) && (
-                  <ul>
-                    <li>
-                      <p><span className="bold">{t('general.university.faculty')} - </span>
-                          <span>{findFacultyNameByProgram(program.id)}</span></p>
-                    </li>
-                    <li>
-                      <p><span className="bold">{t('general.university.field')} - </span>
-                          <span>{program.studyField.name}</span></p>
-                    </li>
-                    <li>
-                      <p><span className="bold">{t('general.university.specialization')} - </span>
-                          <span>{program.specialization ? program.specialization.name :
-                              t('general.management.lack')}</span></p>
-                    </li>
-                </ul>
-                )}
-              </li>
-            ))}
-          </ul>
+              {thesis.programs.map((program: Program) => (
+                <li key={program.id}>
+                  {program.name}
+                  <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
+                    {expandedPrograms.includes(program.id) ? '▼' : '▶'}
+                  </button>
+                  {expandedPrograms.includes(program.id) && (
+                    <ul>
+                      <li>
+                        <p><span className="bold">{t('general.university.faculty')} - </span> <span>{findFacultyNameByProgram(program.id)}</span></p>
+                      </li>
+                      <li>
+                        <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
+                      </li>
+                      <li>
+                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.lack')}</span></p>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
             <div>
               <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
                   {thesis.occupied + "/" + thesis.num_people}</span></p>
@@ -196,6 +207,16 @@ const ThesisDetails: React.FC = () => {
               ) : (
                 <></>
               )}
+              {thesis?.leader?.mail === user?.mail && thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) && (
+                <button
+                  type="button"
+                  className="col-sm-2 btn btn-primary m-3"
+                  onClick={handleReadyForApproval}
+                >
+                  Prześlij do akceptacji
+                </button>
+              )}
+
             </div>
           </div>
         ) : (

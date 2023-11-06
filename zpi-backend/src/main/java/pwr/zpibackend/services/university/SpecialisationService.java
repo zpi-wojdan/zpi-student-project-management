@@ -2,6 +2,7 @@ package pwr.zpibackend.services.university;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.models.university.Specialization;
 import pwr.zpibackend.repositories.university.SpecializationRepository;
 import pwr.zpibackend.exceptions.NotFoundException;
@@ -23,7 +24,10 @@ public class SpecialisationService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Specialization saveSpecialization(Specialization specialization) {
+    public Specialization saveSpecialization(Specialization specialization) throws AlreadyExistsException {
+        if (specializationRepository.existsById(specialization.getAbbreviation())) {
+            throw new AlreadyExistsException();
+        }
         return specializationRepository.save(specialization);
     }
 

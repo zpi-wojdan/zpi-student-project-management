@@ -5,9 +5,13 @@ import { Faculty } from '../../../models/Faculty';
 import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
 
 const FacultyList: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
@@ -29,12 +33,18 @@ const FacultyList: React.FC = () => {
               return true;
             } else {
               const perPageValue = parseInt(itemPerPage, 10);
-              return perPageValue <= response.data.length;
+              return perPageValue < response.data.length;
             }
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, [refreshList]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -86,6 +96,10 @@ const FacultyList: React.FC = () => {
         })
         .catch((error) => {
             console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
             toast.error(t('faculty.facultyDeleteError'));
           });
     setShowDeleteConfirmation(false);
@@ -104,7 +118,7 @@ const FacultyList: React.FC = () => {
           </button>
         </div>
         <div >
-          {ITEMS_PER_PAGE.length > 10 && (
+          {ITEMS_PER_PAGE.length > 1 && (
             <div>
             <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
@@ -165,6 +179,7 @@ const FacultyList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
+            questionText='Czy na pewno chcesz usunąć ten wydział?'
           />
           </td>
         </tr>
@@ -174,7 +189,7 @@ const FacultyList: React.FC = () => {
 </tbody>
 
       </table>
-      {ITEMS_PER_PAGE.length > 10 && itemsPerPage !== 'All' && (
+      {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
             onClick={() => handlePageChange(Math.max(1, currentPage - 1))}

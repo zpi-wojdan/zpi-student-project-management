@@ -50,6 +50,10 @@ public class ImportUtils {
     }
 
     public static Object cellToObject(Cell cell){
+        if (cell == null){
+            return "";
+        }
+
         CellType type = cell.getCellType();
 
         if (type == CellType.STRING){

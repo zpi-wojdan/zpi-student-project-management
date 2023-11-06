@@ -3,6 +3,8 @@ package pwr.zpibackend.services.university;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import pwr.zpibackend.exceptions.AlreadyExistsException;
+import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.models.university.StudyField;
 import pwr.zpibackend.repositories.university.StudyFieldRepository;
 import pwr.zpibackend.exceptions.NotFoundException;
@@ -24,7 +26,10 @@ public class StudyFieldService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public StudyField saveStudyField(StudyField studyField) {
+    public StudyField saveStudyField(StudyField studyField) throws AlreadyExistsException {
+        if (studyFieldRepository.existsById(studyField.getAbbreviation())) {
+            throw new AlreadyExistsException();
+        }
         return studyFieldRepository.save(studyField);
     }
 

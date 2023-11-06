@@ -18,13 +18,13 @@ public class StudyCycleController {
     private final StudyCycleService studyCycleService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<StudyCycle>> getAllStudyCycles(){
         return ResponseEntity.ok(studyCycleService.getAllStudyCycles());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<StudyCycle> getStudyCycleById(@PathVariable Long id){
         try {
             return ResponseEntity.ok(studyCycleService.getStudyCycleById(id));

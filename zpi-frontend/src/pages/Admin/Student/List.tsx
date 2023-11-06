@@ -28,7 +28,7 @@ const StudentList: React.FC = () => {
               return true;
             } else {
               const perPageValue = parseInt(itemPerPage, 10);
-              return perPageValue <= response.data.length;
+              return perPageValue < response.data.length;
             }
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
@@ -75,9 +75,7 @@ const StudentList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
-          <button className="custom-button" onClick={() => {
-            // Obsługa dodawania nowego studenta
-          }}>
+          <button className="custom-button" onClick={() =>{navigate('/students/add')}}>
               {t('student.add')}
           </button>
         </div>

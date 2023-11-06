@@ -3,9 +3,13 @@ import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Employee } from '../../../models/Employee';
 import Cookies from "js-cookie";
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
 
 const EmployeeList: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -26,12 +30,18 @@ const EmployeeList: React.FC = () => {
               return true;
             } else {
               const perPageValue = parseInt(itemPerPage, 10);
-              return perPageValue <= response.data.length;
+              return perPageValue < response.data.length;
             }
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,9 +77,7 @@ const EmployeeList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
-          <button className="custom-button" onClick={() => {
-            // go to add employee
-          }}>
+          <button className="custom-button" onClick={() =>{navigate('/employees/add')}}>
               {t('employee.add')}
           </button>
         </div>

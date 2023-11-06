@@ -3,6 +3,7 @@ import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ThesisFront, Thesis } from '../../models/Thesis';
 import Cookies from "js-cookie";
+import api from '../../utils/api';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import {useTranslation} from "react-i18next";
@@ -18,11 +19,7 @@ const ThesesTable: React.FC = () => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/thesis', {
-        headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-        }
-    })
+    api.get('http://localhost:8080/thesis')
       .then((response) => {
         console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {

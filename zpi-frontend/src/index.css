@@ -18,6 +18,10 @@ code {
   border-color: #9A342D !important;
 }
 
+.custom-checkbox:checked {
+  accent-color: #9A342D;
+}
+
 #sign-in-button {
   width: 20%;
 }

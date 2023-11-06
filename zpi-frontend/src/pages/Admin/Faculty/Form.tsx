@@ -4,9 +4,13 @@ import Axios from 'axios';
 import { Faculty } from '../../../models/Faculty';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
 
 const FacultyForm: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
   const location = useLocation();
@@ -61,6 +65,10 @@ const FacultyForm: React.FC = () => {
                 setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
             }
           });
       } else {
@@ -83,6 +91,10 @@ const FacultyForm: React.FC = () => {
                 setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
             }
           });
       }

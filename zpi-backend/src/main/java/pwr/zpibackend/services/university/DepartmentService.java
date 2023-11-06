@@ -2,9 +2,11 @@ package pwr.zpibackend.services.university;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.dto.DepartmentDTO;
+import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.repositories.university.DepartmentRepository;
 import pwr.zpibackend.repositories.university.FacultyRepository;
 
@@ -22,10 +24,15 @@ public class DepartmentService {
     }
 
     public Department getDepartmentByCode(String code) throws NotFoundException {
-        return departmentRepository.findById(code).orElseThrow(NotFoundException::new);
+        return departmentRepository.findById(code).orElseThrow(
+                () -> new NotFoundException("Department with code " + code + " does not exist")
+        );
     }
 
-    public Department addDepartment(DepartmentDTO department) {
+    public Department addDepartment(DepartmentDTO department) throws AlreadyExistsException {
+        if (departmentRepository.existsById(department.getCode())) {
+            throw new AlreadyExistsException();
+        }
         System.out.println(department.getFacultyAbbreviation());
         Department newDepartment = new Department();
         newDepartment.setCode(department.getCode());

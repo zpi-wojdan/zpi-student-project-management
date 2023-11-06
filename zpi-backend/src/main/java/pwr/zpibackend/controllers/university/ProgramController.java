@@ -18,13 +18,13 @@ public class ProgramController {
     private final ProgramService programService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Program>> getAllPrograms() {
         return ResponseEntity.ok(programService.getAllPrograms());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Program> getProgramById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(programService.getProgramById(id));
