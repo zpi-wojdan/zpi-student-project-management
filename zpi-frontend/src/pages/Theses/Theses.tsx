@@ -30,7 +30,8 @@ const ThesesTable: React.FC = () => {
             id: thesisDb.id,
             namePL: thesisDb.namePL,
             nameEN: thesisDb.nameEN,
-            description: thesisDb.description,
+            descriptionPL: thesisDb.descriptionPL,
+            descriptionEN: thesisDb.descriptionEN,
             programs: thesisDb.programs,
             studyCycle: thesisDb.studyCycle,
             num_people: thesisDb.num_people,
@@ -124,7 +125,13 @@ const ThesesTable: React.FC = () => {
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
               <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}}
-                          className="link-style btn">{thesis.namePL}</button></td>
+                          className="link-style btn">
+                  {i18n.language === 'pl' ? (
+                      thesis.namePL
+                  ) : (
+                      thesis.nameEN
+                  )}
+              </button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>

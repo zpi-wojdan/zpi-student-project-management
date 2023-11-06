@@ -35,7 +35,8 @@ const ThesisDetails: React.FC = () => {
           id: thesisDb.id,
           namePL: thesisDb.namePL,
           nameEN: thesisDb.nameEN,
-          description: thesisDb.description,
+          descriptionPL: thesisDb.descriptionPL,
+          descriptionEN: thesisDb.descriptionEN,
           programs: thesisDb.programs,
           studyCycle: thesisDb.studyCycle,
           num_people: thesisDb.num_people,
@@ -144,9 +145,17 @@ const ThesisDetails: React.FC = () => {
         {thesis ? (
           <div>
             <p className="bold">{t('thesis.thesisName')}:</p>
-            <p>{thesis.namePL}</p>
+              {i18n.language === 'pl' ? (
+                <p>{thesis.namePL}</p>
+              ) : (
+                <p>{thesis.nameEN}</p>
+              )}
             <p className="bold">{t('general.university.description')}:</p>
-            <p>{thesis.description}</p>
+              {i18n.language === 'pl' ? (
+                <p>{thesis.descriptionPL}</p>
+                ) : (
+                <p>{thesis.descriptionEN}</p>
+                )}
             <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title +
                 " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
             <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?

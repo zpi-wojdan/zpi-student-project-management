@@ -25,7 +25,8 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   const [formState, setFormState] = useState({
     namePL: '',
     nameEN: '',
-    description: '',
+    descriptionPL: '',
+    descriptionEN: '',
     num_people: '4',
     supervisorMail: '',
     supervisor: {} as SupervisorData,
@@ -179,7 +180,8 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     const formData = {
       namePL: formState.namePL,
       nameEN: formState.nameEN,
-      description: formState.description,
+      descriptionPL: formState.descriptionPL,
+      descriptionEN: formState.descriptionEN,
       num_people: parseInt(formState.num_people, 10),
       supervisor: {
         mail: formState.supervisorMail,
@@ -249,16 +251,30 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             ref={nameENRef}
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="description">{t('general.university.description')}:</label>
+          <label htmlFor="descriptionPL">{t('general.university.description')} (PL):</label>
           <textarea
             className="form-control resizable-input"
-            id="description"
-            name="description"
-            value={formState.description}
+            id="descriptionPL"
+            name="descriptionPL"
+            value={formState.descriptionPL}
             onChange={(event) => handleTextAreaChange(event, descriptionRef)}
             maxLength={1000}
             ref={descriptionRef}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="descriptionEN">{t('general.university.description')} (EN):</label>
+          <textarea
+              className="form-control resizable-input"
+              id="descriptionEN"
+              name="descriptionEN"
+              value={formState.descriptionEN}
+              onChange={(event) => handleTextAreaChange(event, descriptionRef)}
+              maxLength={1000}
+              ref={descriptionRef}
           />
         </div>
 

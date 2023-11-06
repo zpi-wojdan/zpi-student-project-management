@@ -8,7 +8,8 @@ export type Thesis = {
     id: number;
     namePL: string;
     nameEN: string;
-    description: string;
+    descriptionPL: string;
+    descriptionEN: string;
     num_people: number;
     supervisor: Employee;
     leader: Student | null;
@@ -23,7 +24,8 @@ export type ThesisFront = {
     id: number;
     namePL: string;
     nameEN: string;
-    description: string;
+    descriptionPL: string;
+    descriptionEN: string;
     num_people: number;
     supervisor: Employee;
     leader: Student | null;
