@@ -20,13 +20,13 @@ public class FacultyController {
     private final FacultyService facultyService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Faculty>> getAllFaculties() {
         return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 
     @GetMapping("/{abbreviation}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Faculty> getFacultyById(@PathVariable String abbreviation) {
         try {
             return ResponseEntity.ok(facultyService.getFacultyByAbbreviation(abbreviation));

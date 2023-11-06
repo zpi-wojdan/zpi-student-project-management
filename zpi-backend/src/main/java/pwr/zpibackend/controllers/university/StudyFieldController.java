@@ -18,13 +18,13 @@ public class StudyFieldController {
     private final StudyFieldService studyFieldService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<StudyField>> getAllStudyFields(){
         return ResponseEntity.ok(studyFieldService.getAllStudyFields());
     }
 
     @GetMapping("/{abbreviation}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<StudyField> getStudyFieldByAbbreviation(@PathVariable String abbreviation){
         try {
             return ResponseEntity.ok(studyFieldService.getStudyFieldByAbbreviation(abbreviation));

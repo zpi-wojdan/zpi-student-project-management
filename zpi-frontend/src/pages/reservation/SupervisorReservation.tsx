@@ -108,6 +108,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                     thesisId: thesis.id,
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
+                    readyForApproval: true,
                     confirmedByLeader: true,
                     confirmedBySupervisor: true,
                     confirmedByStudent: true,
