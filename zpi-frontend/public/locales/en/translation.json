@@ -6,12 +6,14 @@
       "details": "Details",
       "edit": "Edit",
       "errorOfLoading": "Error of loading data",
+      "fieldIsRequired": "This field is required.",
       "goBack": "Go back",
       "lack": "Lack",
       "no": "No",
       "reserve": "Reserve",
       "save": "Save",
       "view": "View",
+      "wrongFormat": "Wrong format",
       "yes": "Yes"
     },
     "people": {
@@ -50,9 +52,6 @@
     },
     "title": "Title"
   },
-  "deleteConfirmation": {
-    "deleteFacultyConfirm": "Are you sure you want to delete this faculty?"
-  },
   "navigation": {
     "logout": "Log out",
     "login": "Log in",
@@ -60,6 +59,17 @@
     "manage": "Manage",
     "myTheses": "My theses",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology"
+  },
+  "cycle": {
+    "deleteSuccess": "Study cycle has been deleted",
+    "deleteError": "Study cycle cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this study cycle?",
+    "add": "Add study cycle",
+    "addSuccessful": "Study cycle has been added",
+    "addError": "Study cycle has not been added",
+    "updateSuccessful": "Study cycle has been updated",
+    "updateError": "Study cycle has not been updated",
+    "goodFormat": "Correct format: \"xxxx/xx-XYZ\", where \"xxxx\" are 4 digits, \"xx\" are 2 digits, \"XYZ\" are from 1 to 3 capital letters."
   },
   "employee": {
     "add": "Add employee"
@@ -73,7 +83,6 @@
     "facultyDeleteSuccessful": "Faculty has been deleted",
     "facultyDeleteError": "Faculty cannot be deleted!",
     "abbreviationExists": "Given abbreviation already exists!",
-    "fieldIsRequired": "This field is required!",
     "add": "Add faculty"
   },
   "reservation": {

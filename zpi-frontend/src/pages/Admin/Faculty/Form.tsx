@@ -106,17 +106,17 @@ const FacultyForm: React.FC = () => {
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
-    const errorRequireText = t("faculty.fieldIsRequired")
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!formData.abbreviation) {
       newErrors.abbreviation = errorRequireText;
-      newErrorsKeys.abbreviation = "faculty.fieldIsRequired"
+      newErrorsKeys.abbreviation = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
-        newErrorsKeys.name = "faculty.fieldIsRequired"
+        newErrorsKeys.name = "general.management.fieldIsRequired"
       isValid = false;
     }
 

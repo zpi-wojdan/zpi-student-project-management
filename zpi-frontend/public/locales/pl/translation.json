@@ -6,12 +6,14 @@
       "details": "Szczegóły",
       "edit": "Edytuj",
       "errorOfLoading": "Błąd wczytywania danych",
+      "fieldIsRequired": "Pole jest wymagane.",
       "goBack": "Powrót",
       "lack": "Brak",
       "no": "Nie",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
       "view": "Widok",
+      "wrongFormat": "Zły format",
       "yes": "Tak"
     },
     "people": {
@@ -50,9 +52,6 @@
     },
     "title": "Tytuł"
   },
-  "deleteConfirmation": {
-    "deleteFacultyConfirm": "Czy na pewno chcesz usunąć ten wydział?"
-  },
   "navigation": {
     "logout": "Wyloguj",
     "login": "Logowanie",
@@ -60,6 +59,17 @@
     "manage": "Zarządzaj",
     "myTheses": "Moje tematy",
     "imageAlt": "Logo Politechniki Wrocławskiej"
+  },
+  "cycle": {
+    "deleteSuccessful": "Cykl został usunięty",
+    "deleteError": "Cykl nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten cykl nauczania?",
+    "add": "Dodaj cykl",
+    "addSuccessful": "Cykl został dodany",
+    "addError": "Cykl nie został dodany",
+    "updateSuccessful": "Cykl został zaktualizowany",
+    "updateError": "Cykl nie został zaktualizowany",
+    "goodFormat": "Poprawny format: \"xxxx/xx-XYZ\", gdzie \"xxxx\" to 4 cyfry, \"xx\" to 2 cyfry, a \"XYZ\" to od 1 do 3 dużych liter alfabetu."
   },
   "employee": {
     "add": "Dodaj pracownika"
@@ -73,7 +83,6 @@
     "facultyDeleteSuccessful": "Wydział został usunięty",
     "facultyDeleteError": "Wydział nie może zostać usunięty!",
     "abbreviationExists": "Podany skrót już istnieje!",
-    "fieldIsRequired": "Pole jest wymagane.",
     "add": "Dodaj wydział"
   },
   "reservation": {
