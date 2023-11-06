@@ -27,6 +27,7 @@ import EmployeeList from './pages/Admin/Employee/List';
 import EmployeeDetails from './pages/Admin/Employee/Details';
 import RequireAuth from "./auth/RequireAuth";
 import Missing from "./pages/Missing";
+import {Suspense} from "react";
 
 
 export interface IAppProps {
@@ -35,54 +36,56 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
 
   return (
-      <AuthProvider>
-        <BrowserRouter>
-          <Navigation>
-            <Routes>
-              <Route path='/' element={<HomePage />} />
-              <Route path='login' element={<LoginPage />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
+      <Suspense fallback="loading">
+        <AuthProvider>
+          <BrowserRouter>
+            <Navigation>
+              <Routes>
+                <Route path='/' element={<HomePage />} />
+                <Route path='login' element={<LoginPage />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-              <Route element={<RequireAuth allowedRoles={['student']} />}>
-                <Route path='reservation' element={<ReservationPage />} />
-                <Route path='single-reservation' element={<SingleReservationPage />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                  <Route path='reservation' element={<ReservationPage />} />
+                  <Route path='single-reservation' element={<SingleReservationPage />} />
+                </Route>
 
-              <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
-                <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
-                <Route path='my' element={<ReservationPage />} />
-                <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
-                <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'}
-                                                                                mail={'john.doe@pwr.edu.pl'} />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
+                  <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
+                  <Route path='my' element={<ReservationPage />} />
+                  <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
+                  <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'}
+                                                                                  mail={'john.doe@pwr.edu.pl'} />} />
+                </Route>
 
-              <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
-                <Route path='theses' element={<ThesesTable />} />
-                <Route path='theses/:id' element={<ThesisDetails />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
+                  <Route path='theses' element={<ThesesTable />} />
+                  <Route path='theses/:id' element={<ThesisDetails />} />
+                </Route>
 
-              <Route element={<RequireAuth allowedRoles={['admin']} />}>
-                <Route path='students' element={<StudentList />} />
-                <Route path='students/:mail' element={<StudentDetails />} />
-                <Route path='employees' element={<EmployeeList />} />
-              <Route path='employees/:mail' element={<EmployeeDetails />} />
-                <Route path='faculties' element={<FacultyList />} />
-              <Route path='faculties/add' element={<FacultyForm />} />
-              <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
-                <Route path='fields' element={<HomePage />} />
-                <Route path='specializations' element={<HomePage />} />
-                <Route path='programs' element={<HomePage />} />
-                <Route path='cycles' element={<HomePage />} />
-                <Route path='departments' element={<HomePage />} />
-                <Route path="/file/student" element={<UploadStudentFilePage />} />
-                <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['admin']} />}>
+                  <Route path='students' element={<StudentList />} />
+                  <Route path='students/:mail' element={<StudentDetails />} />
+                  <Route path='employees' element={<EmployeeList />} />
+                  <Route path='employees/:mail' element={<EmployeeDetails />} />
+                  <Route path='faculties' element={<FacultyList />} />
+                  <Route path='faculties/add' element={<FacultyForm />} />
+                  <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
+                  <Route path='fields' element={<HomePage />} />
+                  <Route path='specializations' element={<HomePage />} />
+                  <Route path='programs' element={<HomePage />} />
+                  <Route path='cycles' element={<HomePage />} />
+                  <Route path='departments' element={<HomePage />} />
+                  <Route path="/file/student" element={<UploadStudentFilePage />} />
+                  <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                </Route>
 
-              <Route path="*" element={<Missing />} />
-            </Routes>
-          </Navigation>
-        </BrowserRouter>
-        <ToastContainer />
-      </AuthProvider>
+                <Route path="*" element={<Missing />} />
+              </Routes>
+            </Navigation>
+          </BrowserRouter>
+          <ToastContainer />
+        </AuthProvider>
+      </Suspense>
   );
 }
