@@ -42,8 +42,7 @@ public class EmployeeController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) throws NotFoundException,
-            AlreadyExistsException {
+    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) throws NotFoundException {
         try {
             return new ResponseEntity<>(employeeService.addEmployee(employee), HttpStatus.CREATED);
         } catch (AlreadyExistsException e) {

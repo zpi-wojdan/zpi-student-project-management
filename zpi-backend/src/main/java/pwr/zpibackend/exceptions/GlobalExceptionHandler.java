@@ -38,7 +38,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         return new ResponseEntity<>("A data integrity violation occurred.", HttpStatus.METHOD_NOT_ALLOWED);
     }
