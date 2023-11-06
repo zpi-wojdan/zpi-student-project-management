@@ -4,7 +4,7 @@ import Axios from 'axios';
 import { StudentDTO } from '../../../models/Student';
 import { Program } from '../../../models/Program';
 import { toast } from 'react-toastify';
-import { StudyCycle } from '../../../models/StydyCycle';
+import { StudyCycle } from '../../../models/StudyCycle';
 import Cookies from 'js-cookie';
 import { StudentProgramCycle, StudentProgramCycleDTO } from '../../../models/StudentProgramCycle';
 import handleSignOut from "../../../auth/Logout";
