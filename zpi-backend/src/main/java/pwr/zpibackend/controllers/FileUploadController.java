@@ -1,13 +1,18 @@
 package pwr.zpibackend.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pwr.zpibackend.services.importing.FileUploadService;
 
 import java.io.IOException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/file")
@@ -17,34 +22,50 @@ public class FileUploadController {
     private final FileUploadService service;
 
     @PostMapping("/student")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadStudentFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         try{
-            service.processStudentFile(file);
+            String invalidData = service.processStudentFile(file);
+
             mess = "The file was uploaded successfully - " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.OK).body(mess);
+            ObjectNode responseJson = new ObjectMapper().createObjectNode();
+            responseJson.put("message", mess);
+            responseJson.put("invalidData", invalidData);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            return new ResponseEntity<>(responseJson.toString(), headers, HttpStatus.OK);
         }
         catch(IOException err){
             mess = "Could not upload the file - " + file.getOriginalFilename();
             err.printStackTrace();
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
+            return new ResponseEntity<>(mess, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
     @PostMapping("/employee")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadEmployeeFile(@RequestParam("file") MultipartFile file){
         String mess = "";
         try{
-            service.processEmployeeFile(file);
+            String invalidData = service.processEmployeeFile(file);
+
             mess = "The file was uploaded successfully - " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.OK).body(mess);
+            ObjectNode responseJson = new ObjectMapper().createObjectNode();
+            responseJson.put("message", mess);
+            responseJson.put("invalidData", invalidData);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            return new ResponseEntity<>(responseJson.toString(), headers, HttpStatus.OK);
         }
         catch (IOException err){
             mess = "Could not upload the file - " + file.getOriginalFilename();
             err.printStackTrace();
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(mess);
+            return new ResponseEntity<>(mess, HttpStatus.EXPECTATION_FAILED);
         }
     }
 }

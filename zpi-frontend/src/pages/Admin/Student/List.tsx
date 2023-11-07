@@ -78,7 +78,12 @@ const StudentList: React.FC = () => {
           <button className="custom-button" onClick={() =>{navigate('/students/add')}}>
               {t('student.add')}
           </button>
+          <button className="custom-button" onClick={() => {navigate('/file/student')}}>
+            Importuj studentów
+          </button>
+          <div >
         </div>
+      </div>
         <div >
             <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
