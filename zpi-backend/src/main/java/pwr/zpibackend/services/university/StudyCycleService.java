@@ -2,6 +2,7 @@ package pwr.zpibackend.services.university;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pwr.zpibackend.dto.university.StudyCycleDTO;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.exceptions.NotFoundException;
@@ -23,8 +24,10 @@ public class StudyCycleService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public StudyCycle saveStudyCycle(StudyCycle studyCycle) {
-        return studyCycleRepository.save(studyCycle);
+    public StudyCycle saveStudyCycle(StudyCycleDTO studyCycle) {
+        StudyCycle newStudyCycle = new StudyCycle();
+        newStudyCycle.setName(studyCycle.getName());
+        return studyCycleRepository.save(newStudyCycle);
     }
 
 
@@ -35,7 +38,7 @@ public class StudyCycleService {
         return studyCycle;
     }
 
-    public StudyCycle updateStudyCycle(Long id, StudyCycle updatedStudyCycle) throws NotFoundException {
+    public StudyCycle updateStudyCycle(Long id, StudyCycleDTO updatedStudyCycle) throws NotFoundException {
         StudyCycle existingStudyCycle = studyCycleRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         existingStudyCycle.setName(updatedStudyCycle.getName());

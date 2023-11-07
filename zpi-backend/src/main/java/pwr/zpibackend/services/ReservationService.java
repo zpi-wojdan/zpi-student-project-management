@@ -39,13 +39,13 @@ public class ReservationService {
         newReservation.setReadyForApproval(reservation.isReadyForApproval());
         newReservation.setReservationDate(reservation.getReservationDate());
         newReservation.setSentForApprovalDate(reservation.getSentForApprovalDate());
-        Student student = studentRepository.findById(reservation.getStudent().getMail()).get();
+        Student student = studentRepository.findById(reservation.getStudent().getId()).get();
         newReservation.setStudent(student);
 
         Optional<Thesis> thesisOptional = thesisRepository.findById(reservation.getThesisId());
         if (thesisOptional.isPresent()) {
             Thesis thesis = thesisOptional.get();
-            if (Objects.equals(thesis.getOccupied(), thesis.getNum_people())) {
+            if (Objects.equals(thesis.getOccupied(), thesis.getNumPeople())) {
                 throw new ThesisOccupancyFullException();
             } else {
                 if (thesis.getOccupied() == 0) {

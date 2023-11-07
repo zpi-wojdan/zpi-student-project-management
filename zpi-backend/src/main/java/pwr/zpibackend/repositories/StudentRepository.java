@@ -8,7 +8,11 @@ import java.util.Optional;
 
 
 @RepositoryRestResource
-public interface StudentRepository extends JpaRepository<Student, String>{
+public interface StudentRepository extends JpaRepository<Student, Long>{
     Optional<Student> findByMail(String mail);
     Optional<Student> findByIndex(String index);
+
+    boolean existsByMail(String mail);
+
+    boolean existsByIndex(String index);
 }

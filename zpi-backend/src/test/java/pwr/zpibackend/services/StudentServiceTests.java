@@ -21,7 +21,7 @@ public class StudentServiceTests {
     @Test
     public void testStudentExists() {
         String email = "123456@pwr.edu.pl";
-        when(studentRepository.existsById(email)).thenReturn(true);
+        when(studentRepository.existsByMail(email)).thenReturn(true);
 
         boolean result = studentService.exists(email);
 
@@ -31,7 +31,7 @@ public class StudentServiceTests {
     @Test
     public void testStudentDoesNotExist() {
         String email = "123456@pwr.edu.pl";
-        when(studentRepository.existsById(email)).thenReturn(false);
+        when(studentRepository.existsByMail(email)).thenReturn(false);
 
         boolean result = studentService.exists(email);
 

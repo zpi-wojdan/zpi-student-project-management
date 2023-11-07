@@ -22,7 +22,7 @@ const EmployeeForm: React.FC = () => {
     mail: '',
     name: '',
     surname: '',
-    title: '',
+    title: { name: '' },
     roles: [],
     departmentCode: '',
   });
@@ -283,8 +283,8 @@ const handleRolesSelection = (role: Role) => {
             <select
                 id="title"
                 name="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                value={formData.title.name}
+                onChange={(e) => setFormData({ ...formData, title: {name: e.target.value} })}
                 className="form-control"
             >
                 <option value="">{t('general.management.choose')}</option>

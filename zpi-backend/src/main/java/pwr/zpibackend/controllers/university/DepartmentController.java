@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
-import pwr.zpibackend.dto.DepartmentDTO;
+import pwr.zpibackend.dto.university.DepartmentDTO;
 import pwr.zpibackend.services.university.DepartmentService;
 
 import java.util.List;
@@ -46,21 +46,21 @@ public class DepartmentController {
         }
     }
 
-    @PutMapping("/{code}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Department> updateDepartment(@PathVariable String code, @RequestBody DepartmentDTO department) {
+    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody DepartmentDTO department) {
         try {
-            return ResponseEntity.ok(departmentService.updateDepartment(code, department));
+            return ResponseEntity.ok(departmentService.updateDepartment(id, department));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{code}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Department> deleteDepartment(@PathVariable String code) {
+    public ResponseEntity<Department> deleteDepartment(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(departmentService.deleteDepartment(code));
+            return ResponseEntity.ok(departmentService.deleteDepartment(id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

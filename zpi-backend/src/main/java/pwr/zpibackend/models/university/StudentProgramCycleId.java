@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Embeddable
 public class StudentProgramCycleId implements Serializable {
 
-    private String studentMail;
+    private Long studentId;
     private Long programId;
     private Long cycleId;
 }

@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.EmployeeDTO;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.university.Title;
 import pwr.zpibackend.repositories.EmployeeRepository;
+import pwr.zpibackend.repositories.university.TitleRepository;
 import pwr.zpibackend.services.university.DepartmentService;
 
 import java.util.ArrayList;
@@ -26,13 +29,21 @@ public class EmployeeService {
 
     private final DepartmentService departmentService;
 
+    private final TitleRepository titleRepository;
+
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployee(String email) {
-        return employeeRepository.findById(email).orElseThrow(
-                () -> new NoSuchElementException("Employee with email " + email + " does not exist")
+    public Employee getEmployee(Long id) {
+        return employeeRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Employee with id " + id + " does not exist")
+        );
+    }
+
+    public Employee getEmployee(String mail) {
+        return employeeRepository.findByMail(mail).orElseThrow(
+                () -> new NoSuchElementException("Employee with mail " + mail + " does not exist")
         );
     }
 
@@ -40,8 +51,8 @@ public class EmployeeService {
         return employeeRepository.findAllByMailStartingWith(prefix);
     }
 
-    public boolean exists(String email) {
-        return employeeRepository.existsById(email);
+    public boolean exists(String mail) {
+        return employeeRepository.existsByMail(mail);
     }
 
     public Employee addEmployee(EmployeeDTO employee) throws NotFoundException, AlreadyExistsException {
@@ -56,27 +67,37 @@ public class EmployeeService {
         newEmployee.setMail(employee.getMail());
         newEmployee.setName(employee.getName());
         newEmployee.setSurname(employee.getSurname());
-        newEmployee.setTitle(employee.getTitle());
+        newEmployee.setTitle(validateTitle(employee.getTitle()));
         newEmployee.setRoles(validateRoles(employee.getRoles()));
         newEmployee.setDepartment(departmentService.getDepartmentByCode(employee.getDepartmentCode()));
 
         return employeeRepository.save(newEmployee);
     }
 
-    public Employee updateEmployee(String email, EmployeeDTO updatedEmployee) throws NotFoundException {
-        Employee existingEmployee = employeeRepository.findById(email)
-                .orElseThrow(() -> new NotFoundException("Employee with email " + email + " does not exist"));
-        if(!updatedEmployee.getMail().equals(email))
-            throw new IllegalArgumentException("Email cannot be changed");
+    public Employee updateEmployee(Long id, EmployeeDTO updatedEmployee) throws NotFoundException {
+        Employee existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Employee with id " + id + " does not exist"));
 
+        existingEmployee.setMail(updatedEmployee.getMail());
         existingEmployee.setName(updatedEmployee.getName());
         existingEmployee.setSurname(updatedEmployee.getSurname());
-        existingEmployee.setTitle(updatedEmployee.getTitle());
+        existingEmployee.setTitle(validateTitle(updatedEmployee.getTitle()));
         existingEmployee.setDepartment(departmentService.getDepartmentByCode(updatedEmployee.getDepartmentCode()));
         existingEmployee.getRoles().clear();
         existingEmployee.getRoles().addAll(validateRoles(updatedEmployee.getRoles()));
 
         return employeeRepository.save(existingEmployee);
+    }
+
+    private Title validateTitle(TitleDTO titleDTO) {
+        if (titleDTO == null)
+            throw new IllegalArgumentException("Title cannot be null");
+        if (titleDTO.getName() == null)
+            throw new IllegalArgumentException("Title name cannot be null");
+        Title title = titleRepository.findByName(titleDTO.getName()).orElse(null);
+        if (title == null)
+            throw new NoSuchElementException("Title with name " + titleDTO.getName() + " does not exist");
+        return title;
     }
 
     private List<Role> validateRoles(List<RoleDTO> roles) {
@@ -92,14 +113,14 @@ public class EmployeeService {
         return newRoles;
     }
 
-    public Employee deleteEmployee(String email) throws NotFoundException, CannotDeleteException {
-        Employee employee = employeeRepository.findById(email)
-                .orElseThrow(() -> new NotFoundException("Employee with email " + email + " does not exist"));
+    public Employee deleteEmployee(Long id) throws NotFoundException, CannotDeleteException {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
 
         try {
             employeeRepository.delete(employee);
         } catch (Exception e) {
-            throw new CannotDeleteException("Employee with email " + email + " cannot be deleted");
+            throw new CannotDeleteException("Employee with email " + employee.getMail() + " cannot be deleted");
         }
         return employee;
     }

@@ -18,11 +18,19 @@ const SpecializationForm: React.FC = () => {
   const { i18n, t } = useTranslation();
   const specialization = location.state?.specialization as Specialization;
   const [formData, setFormData] = useState<Specialization>({
+    id: 0,
     abbreviation: '',
     name: '',
     studyField: {
+      id: 0,
       abbreviation: '',
       name: '',
+      faculty: {
+        id: 0,
+        abbreviation: '',
+        name: '',
+        departments: [],
+      }
     },
   });
   const [errors, setErrors] = useState<Record<string, string>>({});

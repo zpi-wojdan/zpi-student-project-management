@@ -27,11 +27,11 @@ public class StudentController {
         return new ResponseEntity<>(studentService.getAllStudents(), HttpStatus.OK);
     }
 
-    @GetMapping("/{mail}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_SUPERVISOR')")
-    public ResponseEntity<Student> getStudentById(@PathVariable String mail) {
+    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
         try{
-            return new ResponseEntity<>(studentService.getStudent(mail), HttpStatus.OK);
+            return new ResponseEntity<>(studentService.getStudent(id), HttpStatus.OK);
         }
         catch(NotFoundException err){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -57,22 +57,22 @@ public class StudentController {
 
     }
 
-    @PutMapping("/{mail}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Student> updateStudent(@PathVariable String mail, @RequestBody StudentDTO updatedStudent) {
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody StudentDTO updatedStudent) {
         try{
-            return new ResponseEntity<>(studentService.updateStudent(mail, updatedStudent), HttpStatus.OK);
+            return new ResponseEntity<>(studentService.updateStudent(id, updatedStudent), HttpStatus.OK);
         }
         catch(NotFoundException err){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/{mail}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Student> deleteStudent(@PathVariable String mail) {
+    public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
         try{
-            return new ResponseEntity<>(studentService.deleteStudent(mail), HttpStatus.OK);
+            return new ResponseEntity<>(studentService.deleteStudent(id), HttpStatus.OK);
         }
         catch(NotFoundException err){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

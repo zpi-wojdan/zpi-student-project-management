@@ -12,11 +12,13 @@ import javax.persistence.*;
 @Entity(name = "specialization")
 public class Specialization {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, unique = true)
     private String abbreviation;
     @Column(nullable = false)
     private String name;
-
-    @JoinColumn(name = "study_field_abbreviation")
+    @JoinColumn(name = "study_field_id")
     @ManyToOne(cascade = CascadeType.ALL)
     private StudyField studyField;
 }

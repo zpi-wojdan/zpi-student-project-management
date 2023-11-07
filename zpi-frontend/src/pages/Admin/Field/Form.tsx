@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { Faculty } from '../../../models/Faculty';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
+import api from '../../../utils/api';
 import {useTranslation} from "react-i18next";
 
 const StudyFieldForm: React.FC = () => {
@@ -35,17 +36,13 @@ const StudyFieldForm: React.FC = () => {
   }, [i18n.language]);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setFaculties(response.data);
         if (studyField) {
           formData.abbreviation = studyField.abbreviation;
           formData.name = studyField.name;
-          formData.facultyAbbr = findFacultyAbbrByField(studyField.abbreviation);
+          formData.facultyAbbr = faculties.find((faculty) => faculty.id === studyField.faculty.id)?.abbreviation || '';
           setOldAbbr(studyField.abbreviation);
         }
       })
@@ -57,17 +54,6 @@ const StudyFieldForm: React.FC = () => {
         }
       });
   }, []);
-
-  function findFacultyAbbrByField(fieldAbbr: string): string {
-    for (const faculty of faculties) {
-        for (const field of faculty.studyFields) {
-            if (field.abbreviation === fieldAbbr) {
-                return faculty.abbreviation;
-            }
-        }
-    }
-    return "";
-  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

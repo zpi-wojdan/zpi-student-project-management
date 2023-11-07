@@ -13,11 +13,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.dto.EmployeeDTO;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.university.Title;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.StudentService;
 
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,11 +60,12 @@ public class EmployeeControllerTests {
     @BeforeEach
     public void setUp() {
         employee = new Employee();
+        employee.setId(1L);
         employee.setMail("123456@pwr.edu.pl");
         employee.setName("John");
         employee.setSurname("Doe");
         employee.setDepartment(null);
-        employee.setTitle("mgr");
+        employee.setTitle(new Title("mgr inż."));
 
         Role role = new Role("admin");
         List<Role> roles = new ArrayList<>();
@@ -69,11 +73,12 @@ public class EmployeeControllerTests {
         employee.setRoles(roles);
 
         Employee employee2 = new Employee();
+        employee2.setId(2L);
         employee2.setMail("121212@pwr.edu.pl");
         employee2.setName("Jane");
         employee2.setSurname("Doe");
         employee2.setDepartment(null);
-        employee2.setTitle("dr");
+        employee2.setTitle(new Title("mgr inż."));
         employee2.setRoles(roles);
 
         employeeDTO = new EmployeeDTO();
@@ -81,7 +86,7 @@ public class EmployeeControllerTests {
         employeeDTO.setName("John");
         employeeDTO.setSurname("Doe");
         employeeDTO.setDepartmentCode(null);
-        employeeDTO.setTitle("mgr");
+        employeeDTO.setTitle(new TitleDTO("mgr inż."));
         List<RoleDTO> roleDTOS = new ArrayList<>();
         roleDTOS.add(new RoleDTO("admin"));
         employeeDTO.setRoles(roleDTOS);
@@ -106,27 +111,27 @@ public class EmployeeControllerTests {
 
     @Test
     public void testGetEmployeeById() throws Exception {
-        String mail = "123456@pwr.edu.pl";
-        Mockito.when(employeeService.getEmployee(mail)).thenReturn(employee);
+        Long id = 1L;
+        Mockito.when(employeeService.getEmployee(id)).thenReturn(employee);
 
         String returnedJson = objectMapper.writeValueAsString(employee);
 
-        mockMvc.perform(get(BASE_URL + "/{id}", mail).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(returnedJson));
 
-        verify(employeeService).getEmployee(mail);
+        verify(employeeService).getEmployee(id);
     }
 
     @Test
     public void testGetEmployeeByIdNotFound() throws Exception {
-        String mail = "123456@pwr.edu.pl";
-        Mockito.when(employeeService.getEmployee(mail)).thenThrow(new NoSuchElementException());
+        Long id = 1L;
+        Mockito.when(employeeService.getEmployee(id)).thenThrow(new NoSuchElementException());
 
-        mockMvc.perform(get(BASE_URL + "/{id}", mail).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isNotFound());
 
-        verify(employeeService).getEmployee(mail);
+        verify(employeeService).getEmployee(id);
     }
 
     @Test
@@ -205,90 +210,90 @@ public class EmployeeControllerTests {
 
     @Test
     public void testUpdateEmployee() throws Exception {
-        String mail = "123456@pwr.edu.pl";
+        Long id = 1L;
         employeeDTO.setName("Updated");
         employee.setName("Updated");
 
-        Mockito.when(employeeService.updateEmployee(mail, employeeDTO)).thenReturn(employee);
+        Mockito.when(employeeService.updateEmployee(id, employeeDTO)).thenReturn(employee);
 
         String requestBody = objectMapper.writeValueAsString(employeeDTO);
 
-        mockMvc.perform(put(BASE_URL + "/{id}", mail)
+        mockMvc.perform(put(BASE_URL + "/{id}", id)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isOk());
 
-        verify(employeeService).updateEmployee(mail, employeeDTO);
+        verify(employeeService).updateEmployee(id, employeeDTO);
     }
 
     @Test
     public void testUpdateEmployeeNotFound() throws Exception {
-        String mail = "123456@pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(employeeService.updateEmployee(mail, employeeDTO)).thenThrow(new NotFoundException());
+        Mockito.when(employeeService.updateEmployee(id, employeeDTO)).thenThrow(new NotFoundException());
 
         String requestBody = objectMapper.writeValueAsString(employeeDTO);
 
-        mockMvc.perform(put(BASE_URL + "/{id}", mail)
+        mockMvc.perform(put(BASE_URL + "/{id}", id)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isNotFound());
 
-        verify(employeeService).updateEmployee(mail, employeeDTO);
+        verify(employeeService).updateEmployee(id, employeeDTO);
     }
 
     @Test
     public void testUpdateEmployeeMail() throws Exception {
-        String mail = "123456@pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(employeeService.updateEmployee(mail, employeeDTO)).thenThrow(new IllegalArgumentException());
+        Mockito.when(employeeService.updateEmployee(id, employeeDTO)).thenThrow(new IllegalArgumentException());
 
         String requestBody = objectMapper.writeValueAsString(employeeDTO);
 
-        mockMvc.perform(put(BASE_URL + "/{id}", mail)
+        mockMvc.perform(put(BASE_URL + "/{id}", id)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
 
-        verify(employeeService).updateEmployee(mail, employeeDTO);
+        verify(employeeService).updateEmployee(id, employeeDTO);
     }
 
     @Test
     public void testDeleteEmployee() throws Exception {
-        String mail = "123456@pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(employeeService.deleteEmployee(mail)).thenReturn(employee);
+        Mockito.when(employeeService.deleteEmployee(id)).thenReturn(employee);
 
         String returnedJson = objectMapper.writeValueAsString(employee);
 
-        mockMvc.perform(delete(BASE_URL + "/{id}", mail).contentType("application/json"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(returnedJson));
 
-        verify(employeeService).deleteEmployee(mail);
+        verify(employeeService).deleteEmployee(id);
     }
 
     @Test
     public void testDeleteEmployeeNotFound() throws Exception {
-        String mail = "123456@pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(employeeService.deleteEmployee(mail)).thenThrow(new NotFoundException());
+        Mockito.when(employeeService.deleteEmployee(id)).thenThrow(new NotFoundException());
 
-        mockMvc.perform(delete(BASE_URL + "/{id}", mail).contentType("application/json"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isNotFound());
 
-        verify(employeeService).deleteEmployee(mail);
+        verify(employeeService).deleteEmployee(id);
     }
 
     @Test
     public void testDeleteEmployeeWhoCannotBeDeleted() throws Exception {
-        String mail = "123456@pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(employeeService.deleteEmployee(mail)).thenThrow(new CannotDeleteException());
+        Mockito.when(employeeService.deleteEmployee(id)).thenThrow(new CannotDeleteException());
 
-        mockMvc.perform(delete(BASE_URL + "/{id}", mail).contentType("application/json"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isMethodNotAllowed());
 
-        verify(employeeService).deleteEmployee(mail);
+        verify(employeeService).deleteEmployee(id);
     }
 }

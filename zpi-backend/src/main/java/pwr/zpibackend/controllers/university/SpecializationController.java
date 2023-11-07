@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.dto.university.SpecializationDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Specialization;
@@ -37,29 +38,31 @@ public class SpecializationController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Specialization> addSpecialization(@RequestBody Specialization specialization) {
+    public ResponseEntity<Specialization> addSpecialization(@RequestBody SpecializationDTO specialization) {
         try{
             return ResponseEntity.ok(specialisationService.saveSpecialization(specialization));
         } catch(AlreadyExistsException err) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        }
-    }
-
-    @PutMapping("/{abbreviation}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Specialization> updateSpecialization(@PathVariable String abbreviation, @RequestBody Specialization specialization) {
-        try {
-            return ResponseEntity.ok(specialisationService.updateSpecialization(abbreviation, specialization));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{abbreviation}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Specialization> deleteSpecialization(@PathVariable String abbreviation) {
+    public ResponseEntity<Specialization> updateSpecialization(@PathVariable Long id, @RequestBody SpecializationDTO specialization) {
         try {
-            return ResponseEntity.ok(specialisationService.deleteSpecialization(abbreviation));
+            return ResponseEntity.ok(specialisationService.updateSpecialization(id, specialization));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Specialization> deleteSpecialization(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(specialisationService.deleteSpecialization(id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

@@ -1,455 +1,188 @@
 databaseChangeLog:
   - changeSet:
       id: create_table_student_and_employee
-      author: Kuba
+      author: ALL
       changes:
         - createTable:
-            tableName: student
-            columns:
-              - column:
-                  name: mail
-                  type: VARCHAR(50)
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: name
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: surname
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: index
-                  type: CHAR(6)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: program
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: teaching_cycle
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: stage
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: admission_date
-                  type: DATE
-                  constraints:
-                    nullable: true
-              - column:
-                  name: role
-                  type: VARCHAR(30)
-
-        - createTable:
-            tableName: employee
-            columns:
-              - column:
-                  name: mail
-                  type: VARCHAR(50)
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: name
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: surname
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: title
-                  type: VARCHAR(30)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: role
-                  type: VARCHAR(30)
-              - column:
-                  name: department_symbol
-                  type: VARCHAR(10)
-                  constraints:
-                    nullable: true
-
-  - changeSet:
-      id: alter_table_student_add_status
-      author: Kuba
-      changes:
-        - addColumn:
-            tableName: student
-            columns:
-              - column:
-                  name: status
-                  type: VARCHAR(5)
-                  constraints:
-                    nullable: false
-
-  - changeSet:
-      id: alter_table_employee_and_student_and_create_table_thesis
-      author: Kuba
-      changes:
-        - addNotNullConstraint:
-            tableName: employee
-            columnDataType: VARCHAR(50)
-            columnName: name
-        - addNotNullConstraint:
-            tableName: employee
-            columnDataType: VARCHAR(50)
-            columnName: surname
-
-        - addNotNullConstraint:
-            tableName: student
-            columnDataType: VARCHAR(50)
-            columnName: name
-        - addNotNullConstraint:
-            tableName: student
-            columnDataType: VARCHAR(50)
-            columnName: surname
-        - addNotNullConstraint:
-            tableName: student
-            columnDataType: CHAR(6)
-            columnName: index
-        - addNotNullConstraint:
-            tableName: student
-            columnDataType: VARCHAR(50)
-            columnName: program
-        - addNotNullConstraint:
-            tableName: student
-            columnDataType: VARCHAR(50)
-            columnName: teaching_cycle
-        - addNotNullConstraint:
-            tableName: student
-            columnDataType: VARCHAR(30)
-            columnName: role
-
-        - createTable:
-            tableName: thesis
-            columns:
-              - column:
-                    name: thesis_id
-                    type: BIGINT
-                    constraints:
-                      primaryKey: true
-                      nullable: false
-              - column:
-                  name: name_pl
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: name_en
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-              - column:
-                    name: description_pl
-                    type: VARCHAR(1000)
-                    constraints:
-                        nullable: false
-              - column:
-                  name: num_people
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: status
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-              - column:
-                    name: faculty
-                    type: VARCHAR(50)
-                    constraints:
-                        nullable: false
-              - column:
-                    name: field
-                    type: VARCHAR(50)
-                    constraints:
-                        nullable: false
-              - column:
-                  name: edu_cycle
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: supervisor
-                  type: VARCHAR(50)
-                  constraints:
-                      nullable: false
-                      foreignKeyName: supervisor_fk
-                      referencedTableName: employee
-                      referencedColumnNames: mail
-  - changeSet:
-      id: 4
-      author: Kuba
-      changes:
-        - createTable:
-            tableName: uploaded_files
+            tableName: role
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: BIGSERIAL
                   autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: file_name
-                  type: VARCHAR(50)
+                  name: name
+                  type: varchar(50)
                   constraints:
                     nullable: false
-              - column:
-                  name: file_data
-                  type: BYTEA
-                  constraints:
-                    nullable: false
+                    unique: true
 
-  - changeSet:
-      id: create_sequence_files
-      author: Kuba
-      changes:
-        - createSequence:
-            sequenceName: file_seq
-            incrementBy: 1
-            startValue: 1
-            minValue: 1
-            maxValue: 2147483647
-            cycle: false
-            dataType: bigint
-            ownedByTable: uploaded_files
-            
-  - changeSet:
-      id: create_table_reservation
-      author: Piotr
-      changes:
         - createTable:
-            tableName: reservation
+            tableName: title
             columns:
               - column:
                   name: id
-                  type: integer(10)
+                  type: BIGSERIAL
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: mail
-                  type: varchar(255)
-                  constraints:
-                    foreignKeyName: fk_reservations_students
-                    referencedTableName: student
-                    referencedColumnNames: mail
-                    nullable: false
-              - column:
-                  name: thesis_id
-                  type: bigint
-                  constraints:
-                    foreignKeyName: fk_reservations_thesis
-                    referencedTableName: thesis
-                    referencedColumnNames: thesis_id
-                    nullable: false
-              - column:
-                  name: is_confirmed_by_leader
-                  type: boolean
-                  defaultValue: false
-              - column:
-                  name: is_confirmed_by_supervisor
-                  type: boolean
-                  defaultValue: false
-              - column:
-                  name: is_ready_for_approval
-                  type: boolean
-                  defaultValue: false
-              - column:
-                  name: reservation_date
-                  type: date
-
-  - changeSet:
-      id: create_sequence_reservation
-      author: Piotr
-      changes:
-        - createSequence:
-            sequenceName: reservation_seq
-            incrementBy: 1
-            startValue: 1
-            minValue: 1
-            maxValue: 2147483647
-            cycle: false
-            dataType: bigint
-            ownedByTable: reservation
-            
-  - changeSet:
-      id: alter_table_thesis_name_length
-      author: Marta
-      changes:
-          - modifyDataType:
-              tableName: thesis
-              columnName: name_pl
-              newDataType: VARCHAR(200)
-          - modifyDataType:
-              tableName: thesis
-              columnName: name_en
-              newDataType: VARCHAR(200)
-
-  - changeSet:
-      id: add_occupied_to_thesis
-      author: Marta
-      changes:
-        - addColumn:
-            tableName: thesis
-            columns:
-              - column:
-                  name: occupied
-                  type: INT
-                  defaultValue: 0
-
-  - changeSet:
-      id: create_sequence_thesis
-      author: Kuba
-      changes:
-        - createSequence:
-            sequenceName: thesis_seq
-            incrementBy: 1
-            startValue: 1
-            minValue: 1
-            maxValue: 2147483647
-            cycle: false
-            dataType: bigint
-            ownedByTable: thesis
-
-  - changeSet:
-      id: add_is_confirmed_by_student_to_reservation_and_leader_to_thesis
-      author: Piotr
-      changes:
-        - addColumn:
-            tableName: reservation
-            columns:
-              - column:
-                  name: is_confirmed_by_student
-                  type: boolean
-                  defaultValue: false
-        - addColumn:
-            tableName: thesis
-            columns:
-              - column:
-                  name: leader
+                  name: name
                   type: varchar(50)
                   constraints:
-                    foreignKeyName: fk_thesis_leader
-                    referencedTableName: student
-                    referencedColumnNames: mail
-                    nullable: true
+                    nullable: false
+                    unique: true
 
-  - changeSet:
-      id: add_university_tables
-      author: Piotr
-      changes:
+        - createTable:
+            tableName: status
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
         - createTable:
             tableName: faculty
             columns:
               - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+              - column:
                   name: abbreviation
                   type: varchar(5)
                   constraints:
-                    primaryKey: true
                     nullable: false
+                    unique: true
               - column:
                   name: name
                   type: varchar(100)
                   constraints:
                     nullable: false
+
         - createTable:
             tableName: department
             columns:
               - column:
-                  name: code
-                  type: varchar(15)
+                  name: id
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
+              - column:
+                  name: code
+                  type: varchar(15)
+                  constraints:
+                    nullable: false
+                    unique: true
               - column:
                   name: name
                   type: varchar(100)
                   constraints:
                     nullable: false
               - column:
-                  name: faculty_abbreviation
-                  type: varchar(5)
+                  name: faculty_id
+                  type: BIGINT
                   constraints:
                     foreignKeyName: fk_department_faculty
                     referencedTableName: faculty
-                    referencedColumnNames: abbreviation
+                    referencedColumnNames: id
                     nullable: false
         - createTable:
             tableName: study_field
             columns:
               - column:
-                  name: abbreviation
-                  type: varchar(5)
+                  name: id
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+                    unique: true
               - column:
                   name: name
                   type: varchar(100)
                   constraints:
                     nullable: false
+              - column:
+                    name: faculty_id
+                    type: BIGINT
+                    constraints:
+                        foreignKeyName: fk_study_field_faculty
+                        referencedTableName: faculty
+                        referencedColumnNames: id
+                        nullable: false
+
         - createTable:
             tableName: specialization
             columns:
               - column:
-                  name: abbreviation
-                  type: varchar(5)
+                  name: id
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
+              - column:
+                  name: abbreviation
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+                    unique: true
               - column:
                   name: name
                   type: varchar(100)
                   constraints:
                     nullable: false
               - column:
-                  name: study_field_abbreviation
-                  type: varchar(5)
+                  name: study_field_id
+                  type: bigint
                   constraints:
                     foreignKeyName: fk_specialization_study_field
                     referencedTableName: study_field
-                    referencedColumnNames: abbreviation
+                    referencedColumnNames: id
                     nullable: false
         - createTable:
             tableName: study_cycle
             columns:
               - column:
                   name: id
-                  type: bigint
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
-                    autoIncrement: true
                     nullable: false
               - column:
                   name: name
                   type: varchar(15)
                   constraints:
                     nullable: false
+                    unique: true
         - createTable:
             tableName: program
             columns:
               - column:
                   name: id
-                  type: bigint
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
-                    autoIncrement: true
                     nullable: false
               - column:
                   name: name
@@ -457,63 +190,30 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: study_field_abbreviation
-                  type: varchar(5)
+                  name: study_field_id
+                  type: BIGINT
                   constraints:
                     foreignKeyName: fk_program_study_field
                     referencedTableName: study_field
-                    referencedColumnNames: abbreviation
+                    referencedColumnNames: id
                     nullable: true
               - column:
-                  name: specialization_abbreviation
-                  type: varchar(5)
+                  name: specialization_id
+                  type: BIGINT
                   constraints:
                     foreignKeyName: fk_program_specialization
                     referencedTableName: specialization
-                    referencedColumnNames: abbreviation
+                    referencedColumnNames: id
                     nullable: true
-        - createTable:
-            tableName: student_program
-            columns:
               - column:
-                  name: student_mail
-                  type: varchar(50)
-                  constraints:
-                    primaryKey: true
-                    foreignKeyName: fk_student_program_student
-                    referencedTableName: student
-                    referencedColumnNames: mail
-                    nullable: false
-              - column:
-                  name: program_id
+                  name: faculty_id
                   type: BIGINT
                   constraints:
-                    primaryKey: true
-                    foreignKeyName: fk_student_program_program
-                    referencedTableName: program
+                    foreignKeyName: fk_program_faculty
+                    referencedTableName: faculty
                     referencedColumnNames: id
                     nullable: false
-        - createTable:
-            tableName: student_cycle
-            columns:
-              - column:
-                  name: student_mail
-                  type: varchar(50)
-                  constraints:
-                    primaryKey: true
-                    foreignKeyName: fk_student_cycle_student
-                    referencedTableName: student
-                    referencedColumnNames: mail
-                    nullable: false
-              - column:
-                  name: cycle_id
-                  type: BIGINT
-                  constraints:
-                    primaryKey: true
-                    foreignKeyName: fk_student_cycle_cycle
-                    referencedTableName: study_cycle
-                    referencedColumnNames: id
-                    nullable: false
+
         - createTable:
             tableName: program_cycle
             columns:
@@ -536,49 +236,131 @@ databaseChangeLog:
                     referencedColumnNames: id
                     nullable: false
 
-  - changeSet:
-      id: add_department_to_employee
-      author: Piotr
-      changes:
-        - addColumn:
+        - createTable:
+            tableName: student
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+              - column:
+                  name: mail
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: index
+                  type: CHAR(6)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: status
+                  type: VARCHAR(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_student_role
+                    referencedTableName: role
+                    referencedColumnNames: id
+                    nullable: false
+
+        - createTable:
             tableName: employee
             columns:
               - column:
-                  name: department_code
-                  type: varchar(15)
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: mail
+                  type: VARCHAR(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_employee_title
+                    referencedTableName: title
+                    referencedColumnNames: id
+              - column:
+                  name: department_id
+                  type: BIGINT
                   constraints:
                     foreignKeyName: fk_employee_department
                     referencedTableName: department
-                    referencedColumnNames: code
+                    referencedColumnNames: id
                     nullable: false
-        - dropColumn:
-            tableName: employee
-            columnName: department_symbol
 
-  - changeSet:
-      id: remove_stage_and_admission_date_from_student
-      author: Piotr
-      changes:
-        - dropColumn:
-            tableName: student
-            columnName: stage
-        - dropColumn:
-            tableName: student
-            columnName: admission_date
-        - dropColumn:
-            tableName: student
-            columnName: program
-
-  - changeSet:
-      id: add_table_thesis_program
-      author: Piotr
-      changes:
-        - dropColumn:
-            tableName: thesis
-            columnName: edu_cycle
-        - addColumn:
+        - createTable:
             tableName: thesis
             columns:
+              - column:
+                    name: id
+                    type: BIGSERIAL
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+              - column:
+                  name: name_pl
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name_en
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                    name: description_pl
+                    type: VARCHAR(1000)
+                    constraints:
+                        nullable: false
+              - column:
+                  name: description_en
+                  type: varchar(1000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: num_people
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: occupied
+                  type: INT
+                  defaultValue: 0
               - column:
                   name: cycle_id
                   type: BIGINT
@@ -587,6 +369,81 @@ databaseChangeLog:
                     referencedTableName: study_cycle
                     referencedColumnNames: id
                     nullable: false
+              - column:
+                  name: status
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_thesis_status
+                    referencedTableName: status
+                    referencedColumnNames: id
+              - column:
+                  name: supervisor
+                  type: BIGINT
+                  constraints:
+                      nullable: false
+                      foreignKeyName: supervisor_fk
+                      referencedTableName: employee
+                      referencedColumnNames: id
+              - column:
+                  name: leader
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_thesis_leader
+                    referencedTableName: student
+                    referencedColumnNames: id
+                    nullable: true
+
+        - createTable:
+            tableName: reservation
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: student_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_reservations_students
+                    referencedTableName: student
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: thesis_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_reservations_thesis
+                    referencedTableName: thesis
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: is_confirmed_by_leader
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_confirmed_by_supervisor
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_confirmed_by_student
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: is_ready_for_approval
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: reservation_date
+                  type: timestamp
+              - column:
+                  name: sent_for_approval_date
+                  type: timestamp
+                  constraints:
+                    nullable: true
+
         - createTable:
             tableName: program_thesis
             columns:
@@ -606,87 +463,20 @@ databaseChangeLog:
                     primaryKey: true
                     foreignKeyName: fk_program_thesis_thesis
                     referencedTableName: thesis
-                    referencedColumnNames: thesis_id
+                    referencedColumnNames: id
                     nullable: false
 
-  - changeSet:
-      id: remove_faculty_and_field_from_thesis
-      author: Piotr
-      changes:
-        - dropColumn:
-            tableName: thesis
-            columnName: faculty
-        - dropColumn:
-            tableName: thesis
-            columnName: field
-
-  - changeSet:
-      id: create_sequence_hibernate
-      author: Piotr
-      changes:
-        - createSequence:
-            sequenceName: hibernate_sequence
-
-  - changeSet:
-      id: add_faculty_abbreviation_to_program
-      author: Piotr
-      changes:
-        - addColumn:
-            tableName: program
-            columns:
-              - column:
-                  name: faculty_abbreviation
-                  type: varchar(5)
-                  constraints:
-                    nullable: false
-
-  - changeSet:
-      id: remove_teaching_cycle_from_student_and_modify_reservations_and_thesis
-      author: Piotr
-      changes:
-        - dropColumn:
-            tableName: student
-            columnName: teaching_cycle
-        - addColumn:
-            tableName: reservation
-            columns:
-              - column:
-                  name: sent_for_approval_date
-                  type: timestamp
-                  constraints:
-                      nullable: true
-        - modifyDataType:
-            tableName: reservation
-            columnName: reservation_date
-            newDataType: timestamp
-        - addColumn:
-            tableName: thesis
-            columns:
-              - column:
-                  name: description_en
-                  type: varchar(1000)
-                  constraints:
-                      nullable: true
-
-  - changeSet:
-      id: merge_student_program_and_student_cycle_to_one_table
-      author: Piotr
-      changes:
-        - dropTable:
-            tableName: student_cycle
-        - dropTable:
-            tableName: student_program
         - createTable:
             tableName: student_program_cycle
             columns:
               - column:
-                  name: student_mail
-                  type: varchar(50)
+                  name: student_id
+                  type: bigint
                   constraints:
                     primaryKey: true
                     foreignKeyName: fk_student_program_student
                     referencedTableName: student
-                    referencedColumnNames: mail
+                    referencedColumnNames: id
                     nullable: false
               - column:
                   name: program_id
@@ -707,59 +497,17 @@ databaseChangeLog:
                     referencedColumnNames: id
                     nullable: false
 
-  - changeSet:
-      id: create-table-roles
-      author: Zuzia
-      changes:
-        - createTable:
-            tableName: role
-            columns:
-              - column:
-                  name: role_id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
-                    unique: true
-
-  - changeSet:
-      id: change-roles-to-enum
-      author: Zuzia
-      changes:
-        - dropColumn:
-            tableName: employee
-            columnName: role
-        - dropColumn:
-            tableName: student
-            columnName: role
-        - addColumn:
-            tableName: student
-            columns:
-              - column:
-                  name: role_id
-                  type: BIGINT
-                  constraints:
-                    foreignKeyName: fk_student_role
-                    referencedTableName: role
-                    referencedColumnNames: role_id
-                    nullable: false
         - createTable:
             tableName: employee_role
             columns:
               - column:
-                  name: mail
-                  type: varchar(50)
+                  name: employee_id
+                  type: BIGINT
                   constraints:
                     primaryKey: true
                     foreignKeyName: fk_employee
                     referencedTableName: employee
-                    referencedColumnNames: mail
+                    referencedColumnNames: id
                     nullable: false
               - column:
                   name: role_id
@@ -768,15 +516,5 @@ databaseChangeLog:
                     primaryKey: true
                     foreignKeyName: fk_role
                     referencedTableName: role
-                    referencedColumnNames: role_id
+                    referencedColumnNames: id
                     nullable: false
-
-  - changeSet:
-      id: deleting-uploaded-files-table
-      author: Kuba
-      changes:
-        - dropTable:
-            tableName: uploaded_files
-
-
-

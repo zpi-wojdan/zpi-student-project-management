@@ -29,7 +29,7 @@ public class ThesisService {
 
     public Thesis addThesis(Thesis thesis) throws NotFoundException {
         Employee supervisor = employeeRepository
-                .findById(thesis.getSupervisor().getMail())
+                .findById(thesis.getSupervisor().getId())
                 .orElseThrow(NotFoundException::new);
 
         Thesis newThesis = new Thesis();
@@ -37,7 +37,7 @@ public class ThesisService {
         newThesis.setNameEN(thesis.getNameEN());
         newThesis.setDescriptionPL(thesis.getDescriptionPL());
         newThesis.setDescriptionEN(thesis.getDescriptionEN());
-        newThesis.setNum_people(thesis.getNum_people());
+        newThesis.setNumPeople(thesis.getNumPeople());
         newThesis.setSupervisor(supervisor);
         newThesis.setPrograms(thesis.getPrograms());
         newThesis.setStudyCycle(thesis.getStudyCycle());
@@ -56,10 +56,10 @@ public class ThesisService {
             updated.setNameEN(param.getNameEN());
             updated.setDescriptionPL(param.getDescriptionPL());
             updated.setDescriptionEN(param.getDescriptionEN());
-            updated.setNum_people(param.getNum_people());
+            updated.setNumPeople(param.getNumPeople());
 
-            if (employeeRepository.existsById(param.getSupervisor().getMail())) {
-                Employee supervisor = employeeRepository.findById(param.getSupervisor().getMail()).get();
+            if (employeeRepository.existsById(param.getSupervisor().getId())) {
+                Employee supervisor = employeeRepository.findById(param.getSupervisor().getId()).get();
                 updated.setSupervisor(supervisor);
             }
             else{

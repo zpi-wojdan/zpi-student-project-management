@@ -17,10 +17,9 @@ const FacultyForm: React.FC = () => {
   const faculty = location.state?.faculty as Faculty;
   const [oldAbbr, setOldAbbr] = useState<String>();
   const [formData, setFormData] = useState<Faculty>({
+    id: 0,
     abbreviation: '',
     name: '',
-    studyFields: [],
-    programs: [],
     departments: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});

@@ -283,7 +283,7 @@ public class ImportStudents {
                                 break;
                             }
                             else{
-                                studentProgramCycleId.setStudentMail(student.getMail());
+                                studentProgramCycleId.setStudentId(student.getId());
                                 studentProgramCycleId.setProgramId(existingProgram.get().getId());
                                 studentProgramCycleId.setCycleId(existingStudyCycle.get().getId());
 
@@ -336,7 +336,7 @@ public class ImportStudents {
                         StudentProgramCycle newStudProgCyc = new StudentProgramCycle();
                         StudentProgramCycleId id = new StudentProgramCycleId();
 
-                        id.setStudentMail(existingStudent.get().getMail());
+                        id.setStudentId(existingStudent.get().getId());
                         id.setProgramId(existingProgram.get().getId());
                         id.setCycleId(existingCycle.get().getId());
 

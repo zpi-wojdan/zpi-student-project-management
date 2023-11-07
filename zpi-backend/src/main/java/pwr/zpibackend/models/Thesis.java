@@ -16,11 +16,9 @@ import java.util.List;
 @Entity
 @Table(name = "thesis")
 public class Thesis {
-
     @Id
-    @GeneratedValue(generator = "thesis_seq", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "thesis_seq", sequenceName = "thesis_seq", allocationSize = 1)
-    @Column(name = "thesis_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long Id;
     @Column(name = "name_pl", nullable = false)
     private String namePL;
@@ -30,18 +28,16 @@ public class Thesis {
     private String descriptionPL;
     @Column(name = "description_en", nullable = false)
     private String descriptionEN;
-    @Column(nullable = false)
-    private Integer num_people;
-
-    @JoinColumn(name = "supervisor" , referencedColumnName = "mail", nullable = false)
+    @Column(name ="num_people", nullable = false)
+    private Integer numPeople;
+    @JoinColumn(name = "supervisor" , referencedColumnName = "id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Employee supervisor;
-    @JoinColumn(name = "leader", referencedColumnName = "mail")
+    @JoinColumn(name = "leader", referencedColumnName = "id")
     @OneToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Student leader;
-    @JoinColumn(name = "program_code", referencedColumnName = "code" )
     @ManyToMany
     @JoinTable(
             name = "program_thesis",
@@ -51,8 +47,9 @@ public class Thesis {
     @JoinColumn(name = "cycle_id", referencedColumnName = "id")
     @ManyToOne
     private StudyCycle studyCycle;
-    @Column(nullable = false)
-    private String status; //change String to Status when table exist
+    @JoinColumn(name = "status", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Status status;
     @Column(nullable = false)
     private Integer occupied = 0;
     @JoinColumn(name = "thesis_id")

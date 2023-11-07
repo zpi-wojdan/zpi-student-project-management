@@ -76,7 +76,7 @@ const EmployeeDetails: React.FC = () => {
       <div>
         {employee ? (
         <div>
-            <p><span className="bold">{t('general.title')}:</span> <span>{employee.title}</span></p>
+            <p><span className="bold">{t('general.title')}:</span> <span>{employee.title.name}</span></p>
             <p><span className="bold">{t('general.people.name')}:</span> <span>{employee.name}</span></p>
             <p><span className="bold">{t('general.people.surname')}:</span> <span>{employee.surname}</span></p>
             <p><span className="bold">{t('general.people.mail')}:</span> <span>{employee.mail}</span></p>

@@ -23,6 +23,7 @@ import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.ThesisController;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.Status;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.models.university.Program;
@@ -71,9 +72,9 @@ class ThesisControllerTests {
         thesis.setId(1L);
         thesis.setNamePL("Thesis 1 PL");
         thesis.setNameEN("Thesis 1 EN");
-        thesis.setDescriptionPL("Description PL");
-        thesis.setDescriptionEN("Description EN");
-        thesis.setNum_people(4);
+        thesis.setDescriptionPL("Opis 1");
+        thesis.setDescriptionEN("Description 1");
+        thesis.setNumPeople(4);
         thesis.setSupervisor(new Employee());
         thesis.setPrograms(List.of(new Program()));
 
@@ -136,12 +137,12 @@ class ThesisControllerTests {
         thesisToAdd.setNameEN("Test Thesis EN");
         thesisToAdd.setDescriptionPL("Test Description PL");
         thesisToAdd.setDescriptionEN("Test Description EN");
-        thesisToAdd.setNum_people(5);
+        thesisToAdd.setNumPeople(5);
         thesisToAdd.setSupervisor(supervisor);
         thesisToAdd.setLeader(leader);
         thesisToAdd.setPrograms(List.of(new Program()));
         thesisToAdd.setStudyCycle(new StudyCycle());
-        thesisToAdd.setStatus("Test Status");
+        thesisToAdd.setStatus(new Status("TEST STATUS"));
         thesisToAdd.setOccupied(3);
         return thesisToAdd;
     }
@@ -151,12 +152,12 @@ class ThesisControllerTests {
         assertThat(addedThesis.getNameEN()).isEqualTo("Test Thesis EN");
         assertThat(addedThesis.getDescriptionPL()).isEqualTo("Test Description PL");
         assertThat(addedThesis.getDescriptionEN()).isEqualTo("Test Description EN");
-        assertThat(addedThesis.getNum_people()).isEqualTo(5);
+        assertThat(addedThesis.getNumPeople()).isEqualTo(5);
         assertThat(addedThesis.getSupervisor()).isEqualTo(supervisor);
         assertThat(addedThesis.getLeader()).isEqualTo(leader);
         assertThat(addedThesis.getPrograms()).isEqualTo(List.of(new Program()));
         assertThat(addedThesis.getStudyCycle()).isEqualTo(new StudyCycle());
-        assertThat(addedThesis.getStatus()).isEqualTo("Test Status");
+        assertThat(addedThesis.getStatus().getName()).isEqualTo("TEST STATUS");
         assertThat(addedThesis.getOccupied()).isEqualTo(3);
     }
     @Test
