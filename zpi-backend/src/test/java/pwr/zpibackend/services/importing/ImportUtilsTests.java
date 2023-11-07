@@ -256,7 +256,7 @@ public class ImportUtilsTests {
     }
 
     @Test
-    public void testCleanStrin() {
+    public void testCleanString() {
         String clean = ImportUtils.cleanString("Hello World");
         assertEquals("Hello World", clean);
 
