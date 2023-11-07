@@ -6,11 +6,13 @@ import Cookies from "js-cookie";
 import api from '../../utils/api';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 
 const ThesesTable: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [theses, setTheses] = useState<ThesisFront[]>([]);
   
@@ -25,7 +27,8 @@ const ThesesTable: React.FC = () => {
             id: thesisDb.id,
             namePL: thesisDb.namePL,
             nameEN: thesisDb.nameEN,
-            description: thesisDb.description,
+            descriptionPL: thesisDb.descriptionPL,
+            descriptionEN: thesisDb.descriptionEN,
             programs: thesisDb.programs,
             studyCycle: thesisDb.studyCycle,
             num_people: thesisDb.num_people,
@@ -92,7 +95,7 @@ const ThesesTable: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-end  align-items-center mb-3'>
         <div >
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(e.target.value)}
@@ -109,16 +112,23 @@ const ThesesTable: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center'}}>#</th>
-            <th style={{ width: '70%' }}>Temat</th>
-            <th style={{ width: '17%' }}>Promotor</th>
-            <th style={{ width: '10%', textAlign: 'center'}}>Zajęte miejsca</th>
+            <th style={{ width: '70%' }}>{t('general.university.thesis')}</th>
+            <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+            <th style={{ width: '10%', textAlign: 'center'}}>{t('thesis.occupiedSeats')}</th>
           </tr>
         </thead>
         <tbody>
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
-              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}} className="link-style btn">{thesis.namePL}</button></td>
+              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}}
+                          className="link-style btn">
+                  {i18n.language === 'pl' ? (
+                      thesis.namePL
+                  ) : (
+                      thesis.nameEN
+                  )}
+              </button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>

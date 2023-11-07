@@ -6,11 +6,13 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const FacultyForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const location = useLocation();
   const faculty = location.state?.faculty as Faculty;
   const [oldAbbr, setOldAbbr] = useState<String>();
@@ -22,6 +24,15 @@ const FacultyForm: React.FC = () => {
     departments: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+        newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (faculty) {
@@ -42,13 +53,16 @@ const FacultyForm: React.FC = () => {
         })
         .then(() => {
           navigate("/faculties")
-          toast.success("Wydział został zaktualizowany");
+          toast.success(t("faculty.updateSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = 'Podany skrót już istnieje!';
+                newErrors.abbreviation = t("general.management.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
@@ -65,13 +79,16 @@ const FacultyForm: React.FC = () => {
         })
         .then(() => {
           navigate("/faculties")
-          toast.success("Wydział został dodany");
+          toast.success(t("faculty.addSuccessful"));
         })
         .catch((error) => {
             if (error.response && error.response.status === 409) {
                 const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = 'Podany skrót już istnieje!';
+                newErrors.abbreviation = t("general.management.abbreviationExists")
                 setErrors(newErrors);
+                const newErrorsKeys: Record<string, string> = {};
+                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
+                setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
@@ -86,21 +103,25 @@ const FacultyForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!formData.abbreviation) {
       newErrors.abbreviation = errorRequireText;
+      newErrorsKeys.abbreviation = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+        newErrorsKeys.name = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
@@ -109,15 +130,15 @@ const FacultyForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="form">
             <div className='d-flex justify-content-begin  align-items-center mb-3'>
                 <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
                 </button>
                 <button type="submit" className="custom-button">
-                {faculty ? 'Zapisz' : 'Dodaj'}
+                {faculty ? t('general.management.save') : t('general.management.add')}
                 </button>
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="abbreviation">
-                Skrót:
+                    {t('general.university.abbreviation')}:
                 </label>
                 <input
                 type="text"
@@ -132,7 +153,7 @@ const FacultyForm: React.FC = () => {
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
-                Nazwa:
+                    {t('general.university.name')}:
                 </label>
                 <input
                 type="text"

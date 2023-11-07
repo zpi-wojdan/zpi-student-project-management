@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { Student } from '../../models/Student';
 import { Thesis } from '../../models/Thesis';
+import {useTranslation} from "react-i18next";
 
 type SupervisorReservationProps = {
 }
@@ -14,6 +15,7 @@ type SupervisorReservationProps = {
 function SupervisorReservationPage({ }: SupervisorReservationProps) {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
+    const { i18n, t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
@@ -138,10 +140,10 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
             }
 
             if (allReservationsSuccessful) {
-                toast.success("Rezerwacja zakończona pomyślnie!");
+                toast.success(t('reservation.reservationSuccessful'));
                 navigate("/theses/" + thesis.id)
             } else {
-                toast.error("Rezerwacja nie powiodła się!");
+                toast.error(t('reservation.reservationError'));
             }
         } else {
             for (const reservation of reservations) {
@@ -154,14 +156,15 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
     return (
         <div className="container">
             <button type="button" className="btn btn-secondary m-2" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
             </button>
-            <h1>Rezerwacja tematu:</h1>
-            <h3>Temat: {thesis?.namePL}</h3>
+            <h1>{t('reservation.reservation')}:</h1>
+            <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
                 {reservations.map((reservation, index) => (
                     <div key={index} className="form-group row justify-content-center">
-                        <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">Student {index + 1}:</label>
+                        <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">
+                            {t('general.people.student')} {index + 1}:</label>
                         <div className="col-sm-4 d-flex">
                             <input
                                 id={`reservation-${index}`}
@@ -178,7 +181,8 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                                 {students[index] && students[index].name !== undefined ?
                                     students[index].name + ' ' + students[index].surname
                                     : (errors[index] ?
-                                        (doubles[index] ? 'Indeks juz wpisany w innym wierszu!' : 'Indeks jest niepoprawny lub nie istnieje w systemie!'
+                                        (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
+                                                t('reservation.wrongIndex')
                                         ) : ''
                                     )}
                             </p>
@@ -191,7 +195,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                         <div className="form-group row justify-content-center">
                             <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
                                 {/* zrobić inactive gdy l. indeksow mniejsza niz 2 */}
-                                Zarezerwuj
+                                {t('general.management.reserve')}
                             </button>
                         </div>
                     </div>

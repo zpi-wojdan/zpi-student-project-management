@@ -26,8 +26,10 @@ public class Thesis {
     private String namePL;
     @Column(name = "name_en", nullable = false)
     private String nameEN;
-    @Column(nullable = false)
-    private String description;
+    @Column(name = "description_pl", nullable = false)
+    private String descriptionPL;
+    @Column(name = "description_en", nullable = false)
+    private String descriptionEN;
     @Column(nullable = false)
     private Integer num_people;
 

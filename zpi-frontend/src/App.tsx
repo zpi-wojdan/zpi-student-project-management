@@ -39,6 +39,7 @@ import DepartmentForm from './pages/Admin/Department/Form';
 import DepartmentList from './pages/Admin/Department/List';
 import StudyFieldForm from './pages/Admin/Field/Form';
 import StudyFieldList from './pages/Admin/Field/List';
+import {Suspense} from "react";
 
 
 export interface IAppProps {
@@ -47,31 +48,32 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
 
   return (
-      <AuthProvider>
-        <BrowserRouter>
-          <Navigation>
-            <Routes>
-              <Route path='/' element={<HomePage />} />
-              <Route path='login' element={<LoginPage />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
+      <Suspense fallback="loading">
+        <AuthProvider>
+          <BrowserRouter>
+            <Navigation>
+              <Routes>
+                <Route path='/' element={<HomePage />} />
+                <Route path='login' element={<LoginPage />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-              <Route element={<RequireAuth allowedRoles={['student']} />}>
-                <Route path='reservation' element={<ReservationPage />} />
-                <Route path='single-reservation' element={<SingleReservationPage />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                  <Route path='reservation' element={<ReservationPage />} />
+                  <Route path='single-reservation' element={<SingleReservationPage />} />
+                </Route>
 
-              <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
-                <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
-                <Route path='my' element={<ReservationPage />} />
-                <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
-                <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'}
-                                                                                mail={'john.doe@pwr.edu.pl'} />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
+                  <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
+                  <Route path='my' element={<ReservationPage />} />
+                  <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
+                  <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'}
+                                                                                  mail={'john.doe@pwr.edu.pl'} />} />
+                </Route>
 
-              <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
-                <Route path='theses' element={<ThesesTable />} />
-                <Route path='theses/:id' element={<ThesisDetails />} />
-              </Route>
+                <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
+                  <Route path='theses' element={<ThesesTable />} />
+                  <Route path='theses/:id' element={<ThesisDetails />} />
+                </Route>
 
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
@@ -110,5 +112,6 @@ export default function App(props: IAppProps) {
         </BrowserRouter>
         <ToastContainer />
       </AuthProvider>
+      </Suspense>
   );
 }

@@ -35,7 +35,8 @@ public class ThesisService {
         Thesis newThesis = new Thesis();
         newThesis.setNamePL(thesis.getNamePL());
         newThesis.setNameEN(thesis.getNameEN());
-        newThesis.setDescription(thesis.getDescription());
+        newThesis.setDescriptionPL(thesis.getDescriptionPL());
+        newThesis.setDescriptionEN(thesis.getDescriptionEN());
         newThesis.setNum_people(thesis.getNum_people());
         newThesis.setSupervisor(supervisor);
         newThesis.setPrograms(thesis.getPrograms());
@@ -53,7 +54,8 @@ public class ThesisService {
             Thesis updated = thesisRepository.findById(id).get();
             updated.setNamePL(param.getNamePL());
             updated.setNameEN(param.getNameEN());
-            updated.setDescription(param.getDescription());
+            updated.setDescriptionPL(param.getDescriptionPL());
+            updated.setDescriptionEN(param.getDescriptionEN());
             updated.setNum_people(param.getNum_people());
 
             if (employeeRepository.existsById(param.getSupervisor().getMail())) {

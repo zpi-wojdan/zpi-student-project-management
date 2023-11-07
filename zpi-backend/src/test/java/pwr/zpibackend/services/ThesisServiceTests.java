@@ -44,7 +44,8 @@ public class ThesisServiceTests {
         thesis.setId(1L);
         thesis.setNamePL("Thesis 1 PL");
         thesis.setNameEN("Thesis 1 EN");
-        thesis.setDescription("Description 1");
+        thesis.setDescriptionPL("Description PL");
+        thesis.setDescriptionEN("Description EN");
         thesis.setNum_people(4);
         thesis.setSupervisor(mock(Employee.class));
         thesis.setPrograms(List.of(mock(Program.class)));

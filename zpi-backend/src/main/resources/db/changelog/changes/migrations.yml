@@ -153,7 +153,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                    name: description
+                    name: description_pl
                     type: VARCHAR(1000)
                     constraints:
                         nullable: false

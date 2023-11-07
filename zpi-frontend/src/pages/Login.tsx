@@ -7,27 +7,36 @@ import {useLocation, useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 import useAuth from "../auth/useAuth";
 import api from "../utils/api";
+import {useTranslation} from "react-i18next";
 
 const LoginPage = () => {
     // @ts-ignore
     const {auth, setAuth} = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const { i18n, t } = useTranslation();
     const from = location.state?.from?.pathname || "/";
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [alertMessageKey, setAlertMessageKey] = useState('');
+
+    useEffect(() => {
+        setAlertMessage(t(alertMessageKey));
+    }, [i18n.language]);
 
     useEffect(() => {
         if(auth?.reasonOfLogout === 'token_expired') {
-            setAlertMessage('Twoja sesja wygasła. Zaloguj się ponownie.')
+            setAlertMessage(t('login.sessionExpired'))
+            setAlertMessageKey('login.sessionExpired')
             setShowAlert(true)
-            setAuth(null);
+            setAuth(null)
         }
         if(auth?.reasonOfLogout === 'access_denied') {
-            setAlertMessage('Zaloguj sie, aby uzyskać dostęp do tej strony.')
+            setAlertMessage(t('login.accessDenied'))
+            setAlertMessageKey('login.accessDenied')
             setShowAlert(true)
-            setAuth(null);
+            setAuth(null)
         }
 
         // @ts-ignore
@@ -43,9 +52,10 @@ const LoginPage = () => {
                 theme: "filled_black",
                 size: "large",
                 width: document.getElementById("sign-in-button")?.offsetWidth,
+                locale: i18n.language,
             }
         )
-    }, []);
+    }, [i18n.language, auth]);
 
     function handleGoogleCallbackResponse(response: any) {
         console.log("Encoded JWT ID token: " + response.credential);
@@ -64,7 +74,8 @@ const LoginPage = () => {
                 console.error(error);
                 Cookies.remove('google_token');
                 setErrorMessage(error.response.data.message)
-                setAlertMessage('Wystąpił błąd logowania!')
+                setAlertMessage(t('login.loginError'))
+                setAlertMessageKey('login.loginError')
                 setShowAlert(true)
             })
     }
@@ -79,9 +90,9 @@ const LoginPage = () => {
                             {errorMessage}
                         </Alert>
                         <div className="container">
-                            <h2>Witaj w systemie logowania</h2>
+                            <h2>{t('login.welcome')}</h2>
                             <div id="sign-in-prompt">
-                                <p>Kliknij przycisk poniżej, aby zalogować się za pomocą uczelnianego adresu email.</p>
+                                <p>{t('login.instruction')}</p>
                             </div>
                             <div id="sign-in-button"></div>
                         </div>
@@ -90,7 +101,7 @@ const LoginPage = () => {
                         <div className="login-image">
                             <img
                                 src="images/login-img.JPG"
-                                alt="Budynek A1 z logo PWr"
+                                alt={t('login.imageAlt')}
                             />
                         </div>
                     </Col>

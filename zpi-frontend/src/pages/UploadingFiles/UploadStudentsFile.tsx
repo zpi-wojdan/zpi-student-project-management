@@ -7,10 +7,12 @@ import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
 import { InvalidStudentData } from '../../models/ImportedData';
 
+import {useTranslation} from "react-i18next";
 
 function UploadStudentFilePage() {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -18,7 +20,7 @@ function UploadStudentFilePage() {
   const [duplicateFilesError, setDuplicateFilesError] = useState<string | null>(null);
   const [duplicateErrorMessageVisible, setDuplicateErrorMessageVisible] = useState(false);
   const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
- 
+
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidStudentData | null>(null);
   const [sentData, setSentData] = useState(false);
 
@@ -32,46 +34,46 @@ function UploadStudentFilePage() {
 
   const invalidDataList = [
     {
-      title: 'Rekordy, które znajdowały się już w bazie danych',
+      title: t('uploadFiles.databaseRepetitions'),
       data: invalidJsonData?.database_repetitions,
       isOpen: databaseRepetitions,
-      toggleOpen: () => setDatabaseRepetitions(!databaseRepetitions)  
+      toggleOpen: () => setDatabaseRepetitions(!databaseRepetitions)
     },
-    { 
-      title: 'Niepoprawne indeksy',
+    {
+      title: t('uploadFiles.wrongIndexes'),
       data: invalidJsonData?.invalid_indices,
       isOpen: invalidIndicesOpen,
-      toggleOpen: () => setInvalidIndicesOpen(!invalidIndicesOpen)  
+      toggleOpen: () => setInvalidIndicesOpen(!invalidIndicesOpen)
     },
-    { 
-      title: 'Niepoprawne nazwiska',
+    {
+      title: t('uploadFiles.wrongSurnames'),
       data: invalidJsonData?.invalid_surnames,
       isOpen: invalidSurnamesOpen,
-      toggleOpen: () => setInvalidSurnamesOpen(!invalidSurnamesOpen)  
+      toggleOpen: () => setInvalidSurnamesOpen(!invalidSurnamesOpen)
     },
-    { 
-      title: 'Niepoprawne imiona',
+    {
+      title: t('uploadFiles.wrongNames'),
       data: invalidJsonData?.invalid_names,
       isOpen: invalidNamesOpen,
-      toggleOpen: () => setInvalidNamesOpen(!invalidNamesOpen)  
+      toggleOpen: () => setInvalidNamesOpen(!invalidNamesOpen)
     },
-    { 
-      title: 'Niepoprawne programy',
+    {
+      title: t('uploadFiles.wrongPrograms'),
       data: invalidJsonData?.invalid_programs,
       isOpen: invalidProgramsOpen,
-      toggleOpen: () => setInvalidProgramsOpen(!invalidProgramsOpen)  
+      toggleOpen: () => setInvalidProgramsOpen(!invalidProgramsOpen)
     },
-    { 
-      title: 'Niepoprawne cykle nauczania',
+    {
+      title: t('uploadFiles.wrongCycles'),
       data: invalidJsonData?.invalid_cycles,
       isOpen: invalidCyclesOpen,
-      toggleOpen: () => setInvalidCyclesOpen(!invalidCyclesOpen)  
+      toggleOpen: () => setInvalidCyclesOpen(!invalidCyclesOpen)
     },
-    { 
-      title: 'Niepoprawne statusy',
+    {
+      title: t('uploadFiles.wrongStatuses'),
       data: invalidJsonData?.invalid_statuses,
       isOpen: invalidStatusesOpen,
-      toggleOpen: () => setInvalidStatusesOpen(!invalidStatusesOpen)  
+      toggleOpen: () => setInvalidStatusesOpen(!invalidStatusesOpen)
     }
   ]
 
@@ -90,7 +92,7 @@ function UploadStudentFilePage() {
       (file) => !selectedFiles.some((existingFile) => (existingFile.name === file.name))
     );
     if (newFiles.length != acceptedFiles.length){
-      setDuplicateFilesError("Ładowanie duplikatów plików nie jest dozwolone");
+      setDuplicateFilesError(t('uploadFiles.duplicatedFileError'));
       setDuplicateErrorMessageVisible(true);
     }
     setSelectedFiles([...selectedFiles, ...newFiles]);
@@ -112,7 +114,7 @@ function UploadStudentFilePage() {
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
-        const errorMessage = 'Zbyt duży rozmiar pliku ' + file.name + ' - jego rozmiar: ' + size + ' MB';
+        const errorMessage = t('uploadFiles.tooBigFileError', {fileName: file.name, size: size});
         console.log(errorMessage);
         setUploadError(errorMessage);
         setUploadErrorMessageVisible(true);
@@ -134,7 +136,7 @@ function UploadStudentFilePage() {
           setSentData(true);
         })
         .catch((error) => {
-          setUploadError('Nie udało się przesłać plików');
+          setUploadError(t('uploadFiles.filesNotSentError'));
           setUploadErrorMessageVisible(true);
           setSentData(false);
           console.error('Nie udało się przesłać plików', error);
@@ -150,29 +152,29 @@ function UploadStudentFilePage() {
 
   return (
     <div className="container d-flex justify-content-center mt-5 mb-5">
-      <div 
+      <div
         className="border p-4 rounded shadow-lg"
-        style={{ 
-          width: '80%', 
-          maxWidth: '100%', 
-          height: '70%', 
-          maxHeight: '100%', 
-          overflowX: 'hidden', 
+        style={{
+          width: '80%',
+          maxWidth: '100%',
+          height: '70%',
+          maxHeight: '100%',
+          overflowX: 'hidden',
           overflowY: 'hidden',
           display: 'flex',
           flexDirection: 'column'
         }}>
-        
+
         <div>
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Załącz pliki</h2>
+            <h2>{t('uploadFiles.attach')}</h2>
             <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-              &larr; Powrót
+              &larr; {t('general.management.goBack')}
             </button>
           </div>
             <div {...getRootProps()} className="dropzone">
               <input {...getInputProps()} />
-              <p>Przeciągnij i upuść, lub kliknij aby wybrać</p>
+              <p>{t('uploadFiles.instruction')}</p>
             </div>
             {duplicateFilesError && duplicateErrorMessageVisible && (
               <div className="alert alert-danger mt-3" role="alert">
@@ -181,7 +183,7 @@ function UploadStudentFilePage() {
             )}
           {selectedFiles.length > 0 && (
             <section style={{maxHeight: '40%', overflow: 'auto'}}>
-              <h4>Wybrane pliki:</h4>
+              <h4>{t('uploadFiles.chosenFiles')}:</h4>
               <ul className="list-group mb-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
                 {selectedFiles.map((file, index) => (
                   <li key={index} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
@@ -192,7 +194,7 @@ function UploadStudentFilePage() {
                       className="btn btn-danger btn-sm custom-pwr-button"
                       onClick={() => deleteFile(file)}
                     >
-                      Usuń
+                        {t('general.management.delete')}
                     </button>
                   </li>
                 ))}
@@ -206,27 +208,27 @@ function UploadStudentFilePage() {
             </div>
           )}
           <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
-            Prześlij pliki
+              {t('uploadFiles.sendFiles')}
           </button>
         </div>
 
     {sentData && (
-      <div 
+      <div
         className="container d-flex justify-content-center mt-5"
       >
-      <div 
+      <div
         className="border p-4 rounded shadow-lg"
-        style={{ 
-          width: '90%', 
-          maxWidth: '100%', 
-          height: '60%', 
-          maxHeight: '100%', 
-          overflowX: 'hidden', 
+        style={{
+          width: '90%',
+          maxWidth: '100%',
+          height: '60%',
+          maxHeight: '100%',
+          overflowX: 'hidden',
           overflowY: 'hidden',
           marginBottom: '10px',
           display: 'block'
           }}>
-        <h4>Niepoprawne dane:</h4>
+        <h4>{t('general.management.wrongData')}:</h4>
         <div style={{ overflow: 'auto', height: '100%', maxHeight: '100%' }}>
           <ul className="list-group">
             {invalidDataList.map((item, index) => (
@@ -243,9 +245,9 @@ function UploadStudentFilePage() {
                     <table className="custom-table">
                       <thead>
                         <tr>
-                          <th style={{ width: '4%' }}>Indeks</th>
-                          <th style={{ width: '48%' }}>Nazwisko</th>
-                          <th style={{ width: '48%' }}>Imię</th>
+                          <th style={{ width: '4%' }}>{t('general.people.index')}</th>
+                          <th style={{ width: '48%' }}>{t('general.people.surname')}</th>
+                          <th style={{ width: '48%' }}>{t('general.people.name')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -267,10 +269,10 @@ function UploadStudentFilePage() {
 
         </div>
       </div>
-    </div>
+      </div>
     )}
+      </div>
     </div>
-  </div>
   );
 }
 

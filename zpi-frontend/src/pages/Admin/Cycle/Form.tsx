@@ -6,18 +6,29 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const StudyCycleForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { i18n, t } = useTranslation();
   const studyCycle = location.state?.studyCycle as StudyCycle;
   const [formData, setFormData] = useState<StudyCycle>({
     id: 4,
     name: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+      newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (studyCycle) {
@@ -37,7 +48,7 @@ const StudyCycleForm: React.FC = () => {
         })
         .then(() => {
           navigate("/cycles")
-          toast.success("Cykl został zaktualizowany");
+          toast.success(t("studyCycle.updateSuccessful"));
         })
         .catch((error) => {
             console.error(error);
@@ -45,7 +56,7 @@ const StudyCycleForm: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error("Cykl nie został zaktualizowany");
+            toast.error(t("studyCycle.updateError"));
           });
       } else {
         Axios.post('http://localhost:8080/studycycle', formData, {
@@ -55,7 +66,7 @@ const StudyCycleForm: React.FC = () => {
         })
         .then(() => {
           navigate("/cycles")
-          toast.success("Cykl został dodany");
+          toast.success(t("studyCycle.addSuccessful"));
         })
         .catch((error) => {
             console.error(error);
@@ -63,7 +74,7 @@ const StudyCycleForm: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error("Cykl nie został dodany");
+            toast.error(t("studyCycle.addError"));
           });
       }
     }
@@ -71,20 +82,24 @@ const StudyCycleForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
     const regexPattern = /^\d{4}\/\d{2}-[A-Z]{1,3}$/;
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+      newErrorsKeys.name = "general.management.fieldIsRequired"
       isValid = false;
     } else if (!regexPattern.test(formData.name)) {
-      newErrors.name = 'Zły format';
+      newErrors.name = t("general.management.wrongFormat")
+      newErrorsKeys.name = "general.management.wrongFormat"
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
@@ -93,15 +108,15 @@ const StudyCycleForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="form">
             <div className='d-flex justify-content-begin  align-items-center mb-3'>
                 <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
                 </button>
                 <button type="submit" className="custom-button">
-                {studyCycle ? 'Zapisz' : 'Dodaj'}
+                {studyCycle ? t('general.management.save') : t('general.management.add')}
                 </button>
             </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
-                Nazwa:
+                    {t('general.university.name')}:
                 </label>
                 <input
                 type="text"
@@ -112,7 +127,7 @@ const StudyCycleForm: React.FC = () => {
                 className="form-control"
                 />
                 <div className="text-info">
-                  Poprawny format: "xxxx/xx-XYZ", gdzie "xxxx" to 4 cyfry, "xx" to 2 cyfry, a "XYZ" to od 1 do 3 dużych liter alfabetu.
+                    {t('cycle.goodFormat')}
                 </div>
                 {errors.name && <div className="text-danger">{errors.name}</div>}
             </div>
