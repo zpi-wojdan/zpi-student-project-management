@@ -331,24 +331,24 @@ VALUES
 
 INSERT INTO employee(mail, name, surname, title, department_code)
 VALUES
-    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', 'dr', 'K34W04ND03'),
-    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', 'dr', 'K34W04ND03'),
-    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', 'dr', 'K34W04ND03'),
-    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', 'dr', 'K34W04ND03');
+    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
 
 INSERT INTO employee_role(mail, role_id)
 VALUES
-    ('260452@student.pwr.edu.pl', '4'),
-    ('260466@student.pwr.edu.pl', '4'),
-    ('260464@student.pwr.edu.pl', '4'),
-    ('255356@student.pwr.edu.pl', '4');
+    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
+    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
+    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
+    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
 
 INSERT INTO employee_role(mail, role_id)
 VALUES
-    ('260452@student.pwr.edu.pl', '2'),
-    ('260466@student.pwr.edu.pl', '2'),
-    ('260464@student.pwr.edu.pl', '2'),
-    ('255356@student.pwr.edu.pl', '2');
+    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
+    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
+    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
+    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor'));
 
 
 

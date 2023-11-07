@@ -67,7 +67,6 @@ class StudentControllerTests {
         student.setRole(role);
 
         studentDTO = new StudentDTO();
-        studentDTO.setMail("123456@student.pwr.edu.pl");
         studentDTO.setName("John");
         studentDTO.setSurname("Doe");
         studentDTO.setIndex("123456");

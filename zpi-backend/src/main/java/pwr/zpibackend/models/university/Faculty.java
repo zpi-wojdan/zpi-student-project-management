@@ -30,5 +30,6 @@ public class Faculty {
     private List<Program> programs;
     @JoinColumn(name = "faculty_id")
     @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Department> departments;
 }

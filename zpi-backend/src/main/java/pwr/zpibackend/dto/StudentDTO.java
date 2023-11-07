@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentDTO {
-    private String mail;
     private String name;
     private String surname;
     private String index;

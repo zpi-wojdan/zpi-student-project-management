@@ -38,16 +38,18 @@ public class ProgramService {
         }
         Program newProgram = new Program();
         newProgram.setName(program.getName());
-        if (program.getStudyFieldAbbr() != null && !program.getStudyFieldAbbr().equals("")) {
-            StudyField studyField = studyFieldRepository.findByAbbreviation(program.getStudyFieldAbbr())
-                    .orElseThrow(NotFoundException::new);
-            newProgram.setStudyField(studyField);
-        } else if (program.getSpecializationAbbr() != null && !program.getSpecializationAbbr().equals("")) {
+        if (program.getSpecializationAbbr() != null && !program.getSpecializationAbbr().equals("")) {
             Specialization specialization = specializationRepository.findByAbbreviation(program.getSpecializationAbbr())
                     .orElseThrow(NotFoundException::new);
             newProgram.setSpecialization(specialization);
         } else {
-            throw new IllegalArgumentException("Program must have either study field or specialization");
+            if (program.getStudyFieldAbbr() != null && !program.getStudyFieldAbbr().equals("")) {
+                StudyField studyField = studyFieldRepository.findByAbbreviation(program.getStudyFieldAbbr())
+                        .orElseThrow(NotFoundException::new);
+                newProgram.setStudyField(studyField);
+            } else {
+                throw new IllegalArgumentException("Program must have either study field or specialization");
+            }
         }
         newProgram.setStudyCycles(studyCycleRepository.findAllById(program.getStudyCycleIds()));
         newProgram.setFaculty(facultyRepository.findById(program.getFacultyId()).orElseThrow(NotFoundException::new));
@@ -68,16 +70,18 @@ public class ProgramService {
         Program existingProgram = programRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         existingProgram.setName(updatedProgram.getName());
-        if (updatedProgram.getStudyFieldAbbr() != null && !updatedProgram.getStudyFieldAbbr().equals("")) {
-            StudyField studyField = studyFieldRepository.findByAbbreviation(updatedProgram.getStudyFieldAbbr())
-                    .orElseThrow(NotFoundException::new);
-            existingProgram.setStudyField(studyField);
-        } else if (updatedProgram.getSpecializationAbbr() != null && !updatedProgram.getSpecializationAbbr().equals("")) {
+        if (updatedProgram.getSpecializationAbbr() != null && !updatedProgram.getSpecializationAbbr().equals("")) {
             Specialization specialization = specializationRepository.findByAbbreviation(updatedProgram.getSpecializationAbbr())
                     .orElseThrow(NotFoundException::new);
             existingProgram.setSpecialization(specialization);
         } else {
-            throw new IllegalArgumentException("Program must have either study field or specialization");
+            if (updatedProgram.getStudyFieldAbbr() != null && !updatedProgram.getStudyFieldAbbr().equals("")) {
+                StudyField studyField = studyFieldRepository.findByAbbreviation(updatedProgram.getStudyFieldAbbr())
+                        .orElseThrow(NotFoundException::new);
+                existingProgram.setStudyField(studyField);
+            } else {
+                throw new IllegalArgumentException("Program must have either study field or specialization");
+            }
         }
         existingProgram.setStudyCycles(studyCycleRepository.findAllById(updatedProgram.getStudyCycleIds()));
         existingProgram.setFaculty(facultyRepository.findById(updatedProgram.getFacultyId()).orElseThrow(NotFoundException::new));

@@ -54,7 +54,7 @@ public class StudentService {
     }
 
     public Student addStudent(StudentDTO student) throws AlreadyExistsException, NotFoundException {
-        if (studentRepository.existsByMail(student.getMail())) {
+        if (studentRepository.existsByIndex(student.getIndex())) {
             throw new AlreadyExistsException();
         }
 
@@ -76,7 +76,7 @@ public class StudentService {
     public Student updateStudent(Long id, StudentDTO updatedStudent) throws NotFoundException {
         Student student = studentRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        student.setMail(updatedStudent.getMail());
+        student.setMail(updatedStudent.getIndex() + "@student.pwr.edu.pl");
         student.setName(updatedStudent.getName());
         student.setSurname(updatedStudent.getSurname());
         student.setIndex(updatedStudent.getIndex());
@@ -117,7 +117,7 @@ public class StudentService {
         for (int i = 0; i < studentDTO.getProgramsCycles().size(); i++) {
             StudentProgramCycleDTO spcDTO = studentDTO.getProgramsCycles().get(i);
 
-            Student student = studentRepository.findByMail(studentDTO.getMail()).orElseThrow(NotFoundException::new);
+            Student student = studentRepository.findByIndex(studentDTO.getIndex()).orElseThrow(NotFoundException::new);
             Program program = programRepository.findById(spcDTO.getProgramId()).orElseThrow(NotFoundException::new);
             StudyCycle cycle = studyCycleRepository.findById(spcDTO.getCycleId()).orElseThrow(NotFoundException::new);
 

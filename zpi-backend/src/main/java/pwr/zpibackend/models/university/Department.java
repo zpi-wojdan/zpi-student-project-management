@@ -21,6 +21,5 @@ public class Department {
     private String name;
     @JoinColumn(name = "faculty_id", nullable = false)
     @ManyToOne
-    @JsonIgnore
     private Faculty faculty;
 }
