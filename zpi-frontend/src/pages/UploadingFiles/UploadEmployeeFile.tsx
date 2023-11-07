@@ -37,61 +37,61 @@ function UplaodEmployeeFilePage() {
 
   const invalidDataList = [
     {
-      title: 'Rekordy, które znajdowały się już w bazie danych',
+      title: t('uploadFiles.databaseRepetitions'),
       data: invalidJsonData?.database_repetitions,
       isOpen: databaseRepetitions,
       toggleOpen: () => setDatabaseRepetitions(!databaseRepetitions)
     },
     {
-      title: 'Niepoprawne indeksy',
+      title: t('uploadFiles.wrongIndexes'),
       data: invalidJsonData?.invalid_indices,
       isOpen: invalidIndicesOpen,
       toggleOpen: () => setInvalidIndicesOpen(!invalidIndicesOpen)
     },
     {
-      title: 'Niepoprawne tytuły akademickie',
+      title: t('uploadFiles.wrongAcademicTitles'),
       data: invalidJsonData?.invalid_academic_titles,
       isOpen: invalidAcademicTitlesOpen,
       toggleOpen: () => setInvalidAcademicTitlesOpen(!invalidAcademicTitlesOpen)
     },
     {
-      title: 'Niepoprawne nazwiska',
+      title: t('uploadFiles.wrongSurnames'),
       data: invalidJsonData?.invalid_surnames,
       isOpen: invalidSurnamesOpen,
       toggleOpen: () => setInvalidSurnamesOpen(!invalidSurnamesOpen)
     },
     {
-      title: 'Niepoprawne imiona',
+      title: t('uploadFiles.wrongNames'),
       data: invalidJsonData?.invalid_names,
       isOpen: invalidNamesOpen,
       toggleOpen: () => setInvalidNamesOpen(!invalidNamesOpen)
     },
     {
-      title: 'Niepoprawne jednostki',
+      title: t('uploadFiles.wrongUnits'),
       data: invalidJsonData?.invalid_units,
       isOpen: invalidUnitsOpen,
       toggleOpen: () => setInvalidUnitsOpen(!invalidUnitsOpen)
     },
     {
-      title: 'Niepoprawne podjednostki',
+      title: t('uploadFiles.wrongSubunits'),
       data: invalidJsonData?.invalid_subunits,
       isOpen: invalidSubunitsOpen,
       toggleOpen: () => setInvalidSubunitsOpen(!invalidSubunitsOpen)
     },
     {
-      title: 'Niepoprawne stanowiska',
+      title: t('uploadFiles.wrongPositions'),
       data: invalidJsonData?.invalid_positions,
       isOpen: invalidPositionsOpen,
       toggleOpen: () => setInvalidPositionsOpen(!invalidPositionsOpen)
     },
     {
-      title: 'Niepoprawne numery telefonów',
+      title: t('uploadFiles.wrongPhoneNumbers'),
       data: invalidJsonData?.invalid_phone_numbers,
       isOpen: invalidPhoneNumbersOpen,
       toggleOpen: () => setInvalidPhoneNumbersOpen(!invalidPhoneNumbersOpen)
     },
     {
-      title: 'Niepoprawne adresy email',
+      title: t('uploadFiles.wrongEmails'),
       data: invalidJsonData?.invalid_emails,
       isOpen: invalidEmailsOpen,
       toggleOpen: () => setInvalidEmailsOpen(!invalidEmailsOpen)
@@ -250,7 +250,7 @@ function UplaodEmployeeFilePage() {
             marginBottom: '10px',
             display: 'block'
             }}>
-          <h4>Niepoprawne dane:</h4>
+          <h4>{t('general.management.wrongData')}:</h4>
           <div style={{ overflow: 'auto', height: '100%', maxHeight: '100%' }}>
             <ul className="list-group">
               {invalidDataList.map((item, index) => (
@@ -267,11 +267,11 @@ function UplaodEmployeeFilePage() {
                       <table className="custom-table">
                         <thead>
                           <tr>
-                            <th style={{ width: '8%' }}>Tytuł</th>
-                            <th style={{ width: '23%' }}>Nazwisko</th>
-                            <th style={{ width: '23%' }}>Imię</th>
-                            <th style={{ width: '23%' }}>Jednostka</th>
-                            <th style={{ width: '23%' }}>Podjednostka</th>
+                            <th style={{ width: '8%' }}>{t('general.title')}</th>
+                            <th style={{ width: '23%' }}>{t('general.people.surname')}</th>
+                            <th style={{ width: '23%' }}>{t('general.people.name')}</th>
+                            <th style={{ width: '23%' }}>{t('uploadFiles.unit')}</th>
+                            <th style={{ width: '23%' }}>{t('uploadFiles.subunit')}</th>
                           </tr>
                         </thead>
                         <tbody>

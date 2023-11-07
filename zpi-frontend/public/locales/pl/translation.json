@@ -18,6 +18,7 @@
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
       "view": "Widok",
+      "wrongData": "Niepoprawne dane",
       "wrongFormat": "Zły format",
       "yes": "Tak"
     },
@@ -182,7 +183,22 @@
     "attach": "Załącz pliki",
     "instruction": "Przeciągnij i upuść, lub kliknij aby wybrać",
     "chosenFiles": "Wybrane pliki",
-    "sendFiles": "Prześlij pliki"
+    "sendFiles": "Prześlij pliki",
+    "unit": "Jednostka",
+    "subunit": "Podjednostka",
+    "databaseRepetitions": "Rekordy, które znajdowały się już w bazie danych",
+    "wrongIndexes": "Niepoprawne indeksy",
+    "wrongSurnames": "Niepoprawne nazwiska",
+    "wrongNames": "Niepoprawne imiona",
+    "wrongPrograms": "Niepoprawne programy",
+    "wrongCycles": "Niepoprawne cykle nauczania",
+    "wrongStatuses": "Niepoprawne statusy",
+    "wrongAcademicTitles": "Niepoprawne tytuły akademickie",
+    "wrongUnits": "Niepoprawne jednostki",
+    "wrongSubunits": "Niepoprawne podjednostki",
+    "wrongPositions": "Niepoprawne stanowiska",
+    "wrongPhoneNumbers": "Niepoprawne numery telefonów",
+    "wrongEmails": "Niepoprawne adresy email"
   },
   "login": {
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",

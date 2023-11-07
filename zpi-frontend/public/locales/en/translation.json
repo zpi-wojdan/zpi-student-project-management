@@ -18,6 +18,7 @@
       "reserve": "Reserve",
       "save": "Save",
       "view": "View",
+      "wrongData": "Wrong data",
       "wrongFormat": "Wrong format",
       "yes": "Yes"
     },
@@ -182,7 +183,22 @@
     "attach": "Attach files",
     "instruction": "Drag and drop files here or click to select files",
     "chosenFiles": "Chosen files",
-    "sendFiles": "Send files"
+    "sendFiles": "Send files",
+    "unit": "Unit",
+    "subunit": "Subunit",
+    "databaseRepetitions": "Records which are already in the database",
+    "wrongIndexes": "Wrong indexes",
+    "wrongSurnames": "Wrong surnames",
+    "wrongNames": "Wrong names",
+    "wrongPrograms": "Wrong programs",
+    "wrongCycles": "Wrong study cycles",
+    "wrongStatuses": "Wrong statuses",
+    "wrongAcademicTitles": "Wrong academic titles",
+    "wrongUnits": "Wrong units",
+    "wrongSubunits": "Wrong subunits",
+    "wrongPositions": "Wrong positions",
+    "wrongPhoneNumbers": "Wrong phone numbers",
+    "wrongEmails": "Wrong emails"
   },
   "login": {
     "sessionExpired": "Your session has ended. Please log in again.",

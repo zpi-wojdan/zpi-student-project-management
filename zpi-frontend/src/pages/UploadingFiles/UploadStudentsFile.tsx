@@ -34,43 +34,43 @@ function UploadStudentFilePage() {
 
   const invalidDataList = [
     {
-      title: 'Rekordy, które znajdowały się już w bazie danych',
+      title: t('uploadFiles.databaseRepetitions'),
       data: invalidJsonData?.database_repetitions,
       isOpen: databaseRepetitions,
       toggleOpen: () => setDatabaseRepetitions(!databaseRepetitions)
     },
     {
-      title: 'Niepoprawne indeksy',
+      title: t('uploadFiles.wrongIndexes'),
       data: invalidJsonData?.invalid_indices,
       isOpen: invalidIndicesOpen,
       toggleOpen: () => setInvalidIndicesOpen(!invalidIndicesOpen)
     },
     {
-      title: 'Niepoprawne nazwiska',
+      title: t('uploadFiles.wrongSurnames'),
       data: invalidJsonData?.invalid_surnames,
       isOpen: invalidSurnamesOpen,
       toggleOpen: () => setInvalidSurnamesOpen(!invalidSurnamesOpen)
     },
     {
-      title: 'Niepoprawne imiona',
+      title: t('uploadFiles.wrongNames'),
       data: invalidJsonData?.invalid_names,
       isOpen: invalidNamesOpen,
       toggleOpen: () => setInvalidNamesOpen(!invalidNamesOpen)
     },
     {
-      title: 'Niepoprawne programy',
+      title: t('uploadFiles.wrongPrograms'),
       data: invalidJsonData?.invalid_programs,
       isOpen: invalidProgramsOpen,
       toggleOpen: () => setInvalidProgramsOpen(!invalidProgramsOpen)
     },
     {
-      title: 'Niepoprawne cykle nauczania',
+      title: t('uploadFiles.wrongCycles'),
       data: invalidJsonData?.invalid_cycles,
       isOpen: invalidCyclesOpen,
       toggleOpen: () => setInvalidCyclesOpen(!invalidCyclesOpen)
     },
     {
-      title: 'Niepoprawne statusy',
+      title: t('uploadFiles.wrongStatuses'),
       data: invalidJsonData?.invalid_statuses,
       isOpen: invalidStatusesOpen,
       toggleOpen: () => setInvalidStatusesOpen(!invalidStatusesOpen)
@@ -228,7 +228,7 @@ function UploadStudentFilePage() {
           marginBottom: '10px',
           display: 'block'
           }}>
-        <h4>Niepoprawne dane:</h4>
+        <h4>{t('general.management.wrongData')}:</h4>
         <div style={{ overflow: 'auto', height: '100%', maxHeight: '100%' }}>
           <ul className="list-group">
             {invalidDataList.map((item, index) => (
@@ -245,9 +245,9 @@ function UploadStudentFilePage() {
                     <table className="custom-table">
                       <thead>
                         <tr>
-                          <th style={{ width: '4%' }}>Indeks</th>
-                          <th style={{ width: '48%' }}>Nazwisko</th>
-                          <th style={{ width: '48%' }}>Imię</th>
+                          <th style={{ width: '4%' }}>{t('general.people.index')}</th>
+                          <th style={{ width: '48%' }}>{t('general.people.surname')}</th>
+                          <th style={{ width: '48%' }}>{t('general.people.name')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -269,8 +269,10 @@ function UploadStudentFilePage() {
 
         </div>
       </div>
+      </div>
+    )}
+      </div>
     </div>
-
   );
 }
 
