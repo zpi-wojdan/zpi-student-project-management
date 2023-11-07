@@ -329,7 +329,7 @@ VALUES
     ((SELECT id FROM thesis WHERE description_pl = 'Opis42'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7')),
     ((SELECT id FROM thesis WHERE description_pl = 'Opis43'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'));
 
-INSERT INTO employee(mail, name, surname, title, department_code)
+INSERT INTO employee(mail, name, surname, title, department_id)
 VALUES
     ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
     ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
@@ -354,6 +354,6 @@ VALUES
 
 INSERT INTO student_program_cycle (student_id, program_id, cycle_id)
 VALUES
-    ((SELECT id FROM student WHERE mail = '012345@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '012345@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '099809@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'));
+    ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '998090@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'));
