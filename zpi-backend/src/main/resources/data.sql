@@ -135,43 +135,43 @@ VALUES
 
 INSERT INTO student (mail, name, surname, index, role_id, status)
 VALUES
-    ('123456@student.pwr.edu.pl', 'John', 'Doe', '123456', 1, 'STU'),
-    ('234567@student.pwr.edu.pl', 'Alice', 'Smith', '234567', 1, 'STU'),
-    ('345678@student.pwr.edu.pl', 'Michael', 'Johnson', '345678', 1, 'STU'),
-    ('456789@student.pwr.edu.pl', 'Sarah', 'Williams', '456789', 1, 'STU'),
-    ('567890@student.pwr.edu.pl', 'David', 'Brown', '567890', 1, 'STU'),
-    ('678901@student.pwr.edu.pl', 'Jennifer', 'Lee', '678901', 1, 'STU'),
-    ('789012@student.pwr.edu.pl', 'Christopher', 'Taylor', '789012', 1, 'STU'),
-    ('890123@student.pwr.edu.pl', 'Jessica', 'Harris', '890123', 1, 'STU'),
-    ('901234@student.pwr.edu.pl', 'Matthew', 'Clark', '901234', 1, 'STU'),
-    ('123450@student.pwr.edu.pl', 'Emily', 'Anderson', '012345', 1, 'STU'),
-    ('987654@student.pwr.edu.pl', 'Daniel', 'Lewis', '987654', 1, 'STU'),
-    ('876543@student.pwr.edu.pl', 'Olivia', 'Ward', '876543', 1, 'STU'),
-    ('765432@student.pwr.edu.pl', 'Andrew', 'Scott', '765432', 1, 'STU'),
-    ('654321@student.pwr.edu.pl', 'Sophia', 'Baker', '654321', 1, 'STU'),
-    ('543210@student.pwr.edu.pl', 'William', 'Taylor', '543210', 1, 'STU'),
-    ('432109@student.pwr.edu.pl', 'Ava', 'Green', '432109', 1, 'STU'),
-    ('321098@student.pwr.edu.pl', 'Michael', 'Wright', '321098', 1, 'STU'),
-    ('210987@student.pwr.edu.pl', 'Olivia', 'Young', '210987', 1, 'STU'),
-    ('109876@student.pwr.edu.pl', 'Daniel', 'King', '109876', 1, 'STU'),
-    ('987601@student.pwr.edu.pl', 'Sophia', 'Cooper', '987601', 1, 'STU'),
-    ('876502@student.pwr.edu.pl', 'William', 'Khan', '876502', 1, 'STU'),
-    ('765403@student.pwr.edu.pl', 'Ava', 'Bryant', '765403', 1, 'STU'),
-    ('654304@student.pwr.edu.pl', 'Michael', 'Evans', '654304', 1, 'STU'),
-    ('543205@student.pwr.edu.pl', 'Olivia', 'Fisher', '543205', 1, 'STU'),
-    ('432106@student.pwr.edu.pl', 'Daniel', 'Nelson', '432106', 1, 'STU'),
-    ('321007@student.pwr.edu.pl', 'Sophia', 'Wells', '321007', 1, 'STU'),
-    ('210908@student.pwr.edu.pl', 'William', 'Rose', '210908', 1, 'STU'),
-    ('998090@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', 1, 'STU'),
-    ('988710@student.pwr.edu.pl', 'Michael', 'Gilbert', '988710', 1, 'STU'),
-    ('877611@student.pwr.edu.pl', 'Olivia', 'Thornton', '877611', 1, 'STU'),
-    ('766512@student.pwr.edu.pl', 'Daniel', 'Malone', '766512', 1, 'STU'),
-    ('655413@student.pwr.edu.pl', 'Sophia', 'Saunders', '655413', 1, 'STU'),
-    ('544314@student.pwr.edu.pl', 'William', 'Vargas', '544314', 1, 'STU'),
-    ('433215@student.pwr.edu.pl', 'Ava', 'Maldonado', '433215', 1, 'STU'),
-    ('322116@student.pwr.edu.pl', 'Michael', 'Santos', '322116', 1, ''),
-    ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', 1, ''),
-    ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', 1, 'STU');
+    ('123456@student.pwr.edu.pl', 'John', 'Doe', '123456', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('234567@student.pwr.edu.pl', 'Alice', 'Smith', '234567', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('345678@student.pwr.edu.pl', 'Michael', 'Johnson', '345678', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('456789@student.pwr.edu.pl', 'Sarah', 'Williams', '456789', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('567890@student.pwr.edu.pl', 'David', 'Brown', '567890', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('678901@student.pwr.edu.pl', 'Jennifer', 'Lee', '678901', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('789012@student.pwr.edu.pl', 'Christopher', 'Taylor', '789012', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('890123@student.pwr.edu.pl', 'Jessica', 'Harris', '890123', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('901234@student.pwr.edu.pl', 'Matthew', 'Clark', '901234', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('123450@student.pwr.edu.pl', 'Emily', 'Anderson', '012345', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('987654@student.pwr.edu.pl', 'Daniel', 'Lewis', '987654', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('876543@student.pwr.edu.pl', 'Olivia', 'Ward', '876543', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('765432@student.pwr.edu.pl', 'Andrew', 'Scott', '765432', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('654321@student.pwr.edu.pl', 'Sophia', 'Baker', '654321', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('543210@student.pwr.edu.pl', 'William', 'Taylor', '543210', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('432109@student.pwr.edu.pl', 'Ava', 'Green', '432109', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('321098@student.pwr.edu.pl', 'Michael', 'Wright', '321098', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('210987@student.pwr.edu.pl', 'Olivia', 'Young', '210987', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('109876@student.pwr.edu.pl', 'Daniel', 'King', '109876', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('987601@student.pwr.edu.pl', 'Sophia', 'Cooper', '987601', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('876502@student.pwr.edu.pl', 'William', 'Khan', '876502', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('765403@student.pwr.edu.pl', 'Ava', 'Bryant', '765403', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('654304@student.pwr.edu.pl', 'Michael', 'Evans', '654304', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('543205@student.pwr.edu.pl', 'Olivia', 'Fisher', '543205', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('432106@student.pwr.edu.pl', 'Daniel', 'Nelson', '432106', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('321007@student.pwr.edu.pl', 'Sophia', 'Wells', '321007', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('210908@student.pwr.edu.pl', 'William', 'Rose', '210908', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('998090@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('988710@student.pwr.edu.pl', 'Michael', 'Gilbert', '988710', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('877611@student.pwr.edu.pl', 'Olivia', 'Thornton', '877611', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('766512@student.pwr.edu.pl', 'Daniel', 'Malone', '766512', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('655413@student.pwr.edu.pl', 'Sophia', 'Saunders', '655413', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('544314@student.pwr.edu.pl', 'William', 'Vargas', '544314', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('433215@student.pwr.edu.pl', 'Ava', 'Maldonado', '433215', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('322116@student.pwr.edu.pl', 'Michael', 'Santos', '322116', (SELECT id FROM role WHERE name = 'student'), ''),
+    ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', (SELECT id FROM role WHERE name = 'student'), ''),
+    ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', (SELECT id FROM role WHERE name = 'student'), 'STU');
 
 INSERT INTO employee (mail, name, surname, title, department_id)
 VALUES
@@ -336,14 +336,14 @@ VALUES
     ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
     ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
 
-INSERT INTO employee_role(mail, role_id)
+INSERT INTO employee_role(employee_id, role_id)
 VALUES
     ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
     ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
     ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
     ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
 
-INSERT INTO employee_role(mail, role_id)
+INSERT INTO employee_role(employee_id, role_id)
 VALUES
     ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
     ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
