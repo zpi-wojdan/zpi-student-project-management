@@ -54,12 +54,12 @@ const ThesisDetails: React.FC = () => {
 
   }, [id]);
 
-  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get('http://localhost:8080/program')
       .then((response) => {
-        setFaculties(response.data);
-        console.log(faculties);
+        setPrograms(response.data);
+        console.log(programs);
       })
       .catch((error) => {
           console.error(error);
@@ -69,17 +69,6 @@ const ThesisDetails: React.FC = () => {
           }
       });
   }, []);
-
-  function findFacultyNameByProgram(programId: number): string | null {
-    for (const faculty of faculties) {
-      for (const program of faculty.programs) {
-        if (program.id === programId) {
-          return faculty.name;
-        }
-      }
-    }
-    return null;
-  }
 
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
@@ -173,7 +162,7 @@ const ThesisDetails: React.FC = () => {
                   {expandedPrograms.includes(program.id) && (
                     <ul>
                       <li>
-                        <p><span className="bold">Wydział - </span> <span>{findFacultyNameByProgram(program.id)}</span></p>
+                        <p><span className="bold">Wydział - </span> <span>{program.studyField.faculty.name}</span></p>
                       </li>
                       <li>
                         <p><span className="bold">Kierunek - </span> <span>{program.studyField.name}</span></p>

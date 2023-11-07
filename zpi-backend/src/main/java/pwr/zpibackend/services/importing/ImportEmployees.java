@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
 import pwr.zpibackend.models.university.Department;
+import pwr.zpibackend.models.university.Title;
 import pwr.zpibackend.repositories.EmployeeRepository;
 import pwr.zpibackend.repositories.RoleRepository;
 import pwr.zpibackend.repositories.university.DepartmentRepository;
+import pwr.zpibackend.repositories.university.TitleRepository;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,6 +27,7 @@ public class ImportEmployees{
     private final EmployeeRepository employeeRepository;
     private final RoleRepository roleRepository;
     private final DepartmentRepository departmentRepository;
+    private final TitleRepository titleRepository;
 
     public void processFile(String file_path) throws IOException{
 
@@ -226,8 +229,9 @@ public class ImportEmployees{
             Optional<Employee> existingEmployee = employeeRepository.findByMail(node.get("email").asText());
             Optional<Role> existingRole = roleRepository.findByName(node.get("role").asText());
             Optional<Department> existingDepartment = departmentRepository.findByCode(node.get("department").asText());
+            Optional<Title> existingTitle = titleRepository.findByName(node.get("title").asText());
 
-            if (existingRole.isEmpty() || existingDepartment.isEmpty()){
+            if (existingRole.isEmpty() || existingDepartment.isEmpty() || existingTitle.isEmpty()){
                 invalidData.add(node);
                 continue;
             }
@@ -238,11 +242,11 @@ public class ImportEmployees{
                 employee.setName(node.get("name").asText());
                 employee.setSurname(node.get("surname").asText());
                 employee.setMail(node.get("email").asText());
-                employee.setTitle(node.get("title").asText());
 
                 //  append the role and department to the employee,
                 //  since they are empty, but necessary fields do exist
                 //  in the database already
+                employee.setTitle(existingTitle.get());
                 employee.getRoles().add(existingRole.get());
                 employee.setDepartment(existingDepartment.get());
 

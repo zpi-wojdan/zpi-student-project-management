@@ -1,9 +1,11 @@
 import { Faculty } from "./Faculty";
 
 export type StudyField = {
-    abbreviation: string;
-    name: string;
-  }
+  id: number;
+  abbreviation: string;
+  name: string;
+  faculty: Faculty;
+}
 
 export type StudyFieldDTO = {
   abbreviation: string;

@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Reservation {
     @Id
-    @GeneratedValue(generator = "reservation_seq", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "reservation_seq", sequenceName = "reservation_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
     @Column(name = "is_confirmed_by_leader")
     private boolean isConfirmedByLeader;
@@ -34,11 +33,11 @@ public class Reservation {
     @Column(name = "sent_for_approval_date")
     @NotNull(message = "Reservation date cannot be null")
     private LocalDateTime sentForApprovalDate;
-    @JoinColumn(name = "mail", referencedColumnName = "mail", nullable = false)
+    @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
     @OneToOne
     @NotNull(message = "Student cannot be null")
     private Student student;
-    @JoinColumn(name = "thesis_id", referencedColumnName = "thesis_id", nullable = false)
+    @JoinColumn(name = "thesis_id", referencedColumnName = "id", nullable = false)
     @ManyToOne
     @NotNull(message = "Thesis cannot be null")
     @JsonIgnore

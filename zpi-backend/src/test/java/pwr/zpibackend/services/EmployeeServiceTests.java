@@ -8,12 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import pwr.zpibackend.dto.EmployeeDTO;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
+import pwr.zpibackend.models.university.Title;
 import pwr.zpibackend.repositories.EmployeeRepository;
+import pwr.zpibackend.repositories.university.TitleRepository;
 import pwr.zpibackend.services.university.DepartmentService;
 
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ public class EmployeeServiceTests {
 
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private TitleRepository titleRepository;
 
     @InjectMocks
     private EmployeeService employeeService;
@@ -51,7 +56,7 @@ public class EmployeeServiceTests {
         employee.setName("John");
         employee.setSurname("Doe");
         employee.setDepartment(null);
-        employee.setTitle("mgr");
+        employee.setTitle(new Title("mgr"));
 
         Role role = new Role("admin");
         List<Role> roles = new ArrayList<>();
@@ -63,7 +68,7 @@ public class EmployeeServiceTests {
         employee2.setName("Jane");
         employee2.setSurname("Doe");
         employee2.setDepartment(null);
-        employee2.setTitle("dr");
+        employee2.setTitle(new Title("dr"));
         employee2.setRoles(roles);
 
         employeeDTO = new EmployeeDTO();
@@ -71,7 +76,7 @@ public class EmployeeServiceTests {
         employeeDTO.setName("Jo");
         employeeDTO.setSurname("Smith");
         employeeDTO.setDepartmentCode(null);
-        employeeDTO.setTitle("dr");
+        employeeDTO.setTitle(new TitleDTO("dr"));
         List<RoleDTO> roleDTOS = new ArrayList<>();
         roleDTOS.add(new RoleDTO("supervisor"));
         employeeDTO.setRoles(roleDTOS);
@@ -92,9 +97,9 @@ public class EmployeeServiceTests {
     }
 
     @Test
-    public void testGetEmployeeById() {
+    public void testGetEmployeeByMail() {
         String email = "123456@pwr.edu.pl";
-        when(employeeRepository.findById(email)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByMail(email)).thenReturn(Optional.of(employee));
 
         Employee result = employeeService.getEmployee(email);
 
@@ -102,9 +107,9 @@ public class EmployeeServiceTests {
     }
 
     @Test
-    public void testGetEmployeeByIdNotFound() {
+    public void testGetEmployeeByMailNotFound() {
         String email = "123456@pwr.edu.pl";
-        when(employeeRepository.findById(email)).thenReturn(Optional.empty());
+        when(employeeRepository.findByMail(email)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> employeeService.getEmployee(email));
     }
@@ -123,7 +128,7 @@ public class EmployeeServiceTests {
     @Test
     public void testEmployeeExists() {
         String email = "123456@pwr.edu.pl";
-        when(employeeRepository.existsById(email)).thenReturn(true);
+        when(employeeRepository.existsByMail(email)).thenReturn(true);
 
         boolean result = employeeService.exists(email);
 
@@ -133,7 +138,7 @@ public class EmployeeServiceTests {
     @Test
     public void testEmployeeDoesNotExist() {
         String email = "123456@pwr.edu.pl";
-        when(employeeRepository.existsById(email)).thenReturn(false);
+        when(employeeRepository.existsByMail(email)).thenReturn(false);
 
         boolean result = employeeService.exists(email);
 
@@ -146,14 +151,15 @@ public class EmployeeServiceTests {
         newEmployee.setMail(employeeDTO.getMail());
         newEmployee.setName(employeeDTO.getName());
         newEmployee.setSurname(employeeDTO.getSurname());
-        newEmployee.setTitle(employeeDTO.getTitle());
+        newEmployee.setTitle(new Title(employeeDTO.getTitle().getName()));
         newEmployee.setRoles(List.of(new Role("supervisor")));
         newEmployee.setDepartment(null);
 
-        when(employeeRepository.existsById(employeeDTO.getMail())).thenReturn(false);
+        when(employeeRepository.existsByMail(employeeDTO.getMail())).thenReturn(false);
         when(roleService.getRoleByName("supervisor")).thenReturn(new Role("supervisor"));
         when(departmentService.getDepartmentByCode(employeeDTO.getDepartmentCode())).thenReturn(null);
         when(employeeRepository.save(newEmployee)).thenReturn(newEmployee);
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
 
         Employee result = employeeService.addEmployee(employeeDTO);
 
@@ -176,7 +182,7 @@ public class EmployeeServiceTests {
 
     @Test
     public void testAddEmployeeAlreadyExists() {
-        when(employeeRepository.existsById(employeeDTO.getMail())).thenReturn(true);
+        when(employeeRepository.existsByMail(employeeDTO.getMail())).thenReturn(true);
 
         assertThrows(AlreadyExistsException.class, () -> employeeService.addEmployee(employeeDTO));
     }
@@ -186,7 +192,7 @@ public class EmployeeServiceTests {
         employeeDTO.getRoles().clear();
         employeeDTO.getRoles().add(new RoleDTO("tester"));
 
-        when(employeeRepository.existsById(employeeDTO.getMail())).thenReturn(false);
+        when(employeeRepository.existsByMail(employeeDTO.getMail())).thenReturn(false);
         when(roleService.getRoleByName("tester")).thenReturn(null);
 
         assertThrows(NoSuchElementException.class, () -> employeeService.addEmployee(employeeDTO));
@@ -197,8 +203,9 @@ public class EmployeeServiceTests {
         employeeDTO.getRoles().clear();
         employeeDTO.getRoles().add(new RoleDTO("student"));
 
-        when(employeeRepository.existsById(employeeDTO.getMail())).thenReturn(false);
+        when(employeeRepository.existsByMail(employeeDTO.getMail())).thenReturn(false);
         when(roleService.getRoleByName("student")).thenReturn(new Role("student"));
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
 
         assertThrows(IllegalArgumentException.class, () -> employeeService.addEmployee(employeeDTO));
     }
@@ -206,37 +213,30 @@ public class EmployeeServiceTests {
     @Test
     public void testUpdateEmployee() throws NotFoundException {
         Employee updatedEmployee = new Employee();
+        updatedEmployee.setId(1L);
         updatedEmployee.setMail(employeeDTO.getMail());
         updatedEmployee.setName(employeeDTO.getName());
         updatedEmployee.setSurname(employeeDTO.getSurname());
-        updatedEmployee.setTitle(employeeDTO.getTitle());
+        updatedEmployee.setTitle(new Title(employeeDTO.getTitle().getName()));
         updatedEmployee.setRoles(List.of(new Role("supervisor")));
         updatedEmployee.setDepartment(null);
 
-        when(employeeRepository.findById(employeeDTO.getMail())).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(updatedEmployee.getId())).thenReturn(Optional.of(employee));
         when(roleService.getRoleByName("supervisor")).thenReturn(new Role("supervisor"));
         when(departmentService.getDepartmentByCode(employeeDTO.getDepartmentCode())).thenReturn(null);
-        when(employeeRepository.save(updatedEmployee)).thenReturn(updatedEmployee);
+        when(employeeRepository.save(any())).thenReturn(updatedEmployee);
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
 
-        Employee result = employeeService.updateEmployee(employeeDTO.getMail(), employeeDTO);
+        Employee result = employeeService.updateEmployee(1L, employeeDTO);
 
         assertSame(updatedEmployee, result);
     }
 
     @Test
     public void testUpdateEmployeeNotFound() {
-        when(employeeRepository.findById(employeeDTO.getMail())).thenReturn(Optional.empty());
+        when(employeeRepository.findByMail(employeeDTO.getMail())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> employeeService.updateEmployee(employeeDTO.getMail(), employeeDTO));
-    }
-
-    @Test
-    public void testUpdateEmployeeWithDifferentEmail() {
-        employeeDTO.setMail("111111@pwr.edu.pl");
-        when(employeeRepository.findById(employee.getMail())).thenReturn(Optional.of(employee));
-
-        assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee(employee.getMail(),
-                employeeDTO));
+        assertThrows(NotFoundException.class, () -> employeeService.updateEmployee(1L, employeeDTO));
     }
 
     @Test
@@ -244,10 +244,10 @@ public class EmployeeServiceTests {
         employeeDTO.getRoles().clear();
         employeeDTO.getRoles().add(new RoleDTO("tester"));
 
-        when(employeeRepository.findById(employeeDTO.getMail())).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
         when(roleService.getRoleByName("tester")).thenReturn(null);
 
-        assertThrows(NoSuchElementException.class, () -> employeeService.updateEmployee(employeeDTO.getMail(),
+        assertThrows(NoSuchElementException.class, () -> employeeService.updateEmployee(1L,
                 employeeDTO));
     }
 
@@ -256,34 +256,35 @@ public class EmployeeServiceTests {
         employeeDTO.getRoles().clear();
         employeeDTO.getRoles().add(new RoleDTO("student"));
 
-        when(employeeRepository.findById(employeeDTO.getMail())).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
         when(roleService.getRoleByName("student")).thenReturn(new Role("student"));
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
 
-        assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee(employeeDTO.getMail(),
+        assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee(1L,
                 employeeDTO));
     }
 
     @Test
     public void testDeleteEmployee() throws CannotDeleteException, NotFoundException {
-        when(employeeRepository.findById(employee.getMail())).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
-        Employee result = employeeService.deleteEmployee(employee.getMail());
+        Employee result = employeeService.deleteEmployee(1L);
 
         assertSame(employee, result);
     }
 
     @Test
     public void testDeleteEmployeeNotFound() {
-        when(employeeRepository.findById(employee.getMail())).thenReturn(Optional.empty());
+        when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> employeeService.deleteEmployee(employee.getMail()));
+        assertThrows(NotFoundException.class, () -> employeeService.deleteEmployee(1L));
     }
 
     @Test
     public void testDeleteEmployeeInUse() {
-        when(employeeRepository.findById(employee.getMail())).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
         doThrow(new DataIntegrityViolationException("")).when(employeeRepository).delete(employee);
 
-        assertThrows(CannotDeleteException.class, () -> employeeService.deleteEmployee(employee.getMail()));
+        assertThrows(CannotDeleteException.class, () -> employeeService.deleteEmployee(1L));
     }
 }

@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import pwr.zpibackend.dto.university.SpecializationDTO;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Specialization;
+import pwr.zpibackend.models.university.StudyField;
 import pwr.zpibackend.repositories.university.SpecializationRepository;
+import pwr.zpibackend.repositories.university.StudyFieldRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,16 +28,25 @@ public class SpecialisationServiceTest {
     @MockBean
     private SpecializationRepository specializationRepository;
 
+    @MockBean
+    private StudyFieldRepository studyFieldRepository;
+
     @Autowired
     private SpecialisationService specializationService;
 
     private Specialization specialization;
+    private SpecializationDTO specializationDTO;
 
     @BeforeEach
     public void setup() {
         specialization = new Specialization();
+        specialization.setId(1L);
         specialization.setAbbreviation("TST");
         specialization.setName("Test Specialization");
+
+        specializationDTO = new SpecializationDTO();
+        specializationDTO.setAbbreviation("TST");
+        specializationDTO.setName("Test Specialization");
     }
 
     @Test
@@ -48,7 +61,7 @@ public class SpecialisationServiceTest {
 
     @Test
     public void testGetSpecializationByAbbreviationSuccess() throws NotFoundException {
-        when(specializationRepository.findById(specialization.getAbbreviation())).thenReturn(Optional.of(specialization));
+        when(specializationRepository.findByAbbreviation(specialization.getAbbreviation())).thenReturn(Optional.of(specialization));
 
         Specialization result = specializationService.getSpecializationByAbbreviation(specialization.getAbbreviation());
 
@@ -57,34 +70,35 @@ public class SpecialisationServiceTest {
 
     @Test
     public void testGetSpecializationByAbbreviationNotFound() {
-        when(specializationRepository.findById(specialization.getAbbreviation())).thenReturn(Optional.empty());
+        when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> specializationService.getSpecializationByAbbreviation(specialization.getAbbreviation()));
     }
 
-//    @Test
-//    public void testSaveSpecializationSuccess() {
-//        when(specializationRepository.save(any())).thenReturn(specialization);
-//
-//        Specialization result = specializationService.saveSpecialization(specialization);
-//
-//        assertEquals(specialization, result);
-//    }
+    @Test
+    public void testSaveSpecializationSuccess() throws AlreadyExistsException, NotFoundException {
+        when(specializationRepository.save(any())).thenReturn(specialization);
+        when(studyFieldRepository.findByAbbreviation(any())).thenReturn(Optional.of(new StudyField()));
+
+        Specialization result = specializationService.saveSpecialization(specializationDTO);
+
+        assertEquals(specialization, result);
+    }
 
     @Test
     public void testDeleteSpecializationSuccess() throws NotFoundException {
-        when(specializationRepository.findById(specialization.getAbbreviation())).thenReturn(Optional.of(specialization));
+        when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.of(specialization));
 
-        Specialization result = specializationService.deleteSpecialization(specialization.getAbbreviation());
+        Specialization result = specializationService.deleteSpecialization(specialization.getId());
 
         assertEquals(specialization, result);
     }
 
     @Test
     public void testDeleteSpecializationNotFound() {
-        when(specializationRepository.findById(specialization.getAbbreviation())).thenReturn(Optional.empty());
+        when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> specializationService.deleteSpecialization(specialization.getAbbreviation()));
+        assertThrows(NotFoundException.class, () -> specializationService.deleteSpecialization(specialization.getId()));
     }
 
     @Test
@@ -93,22 +107,27 @@ public class SpecialisationServiceTest {
         updatedSpecialization.setAbbreviation(specialization.getAbbreviation());
         updatedSpecialization.setName("Updated Test Specialization");
 
-        when(specializationRepository.findById(specialization.getAbbreviation())).thenReturn(Optional.of(specialization));
-        when(specializationRepository.save(any())).thenReturn(updatedSpecialization);
+        SpecializationDTO updatedSpecializationDTO = new SpecializationDTO();
+        updatedSpecializationDTO.setAbbreviation(specialization.getAbbreviation());
+        updatedSpecializationDTO.setName("Updated Test Specialization");
 
-        Specialization result = specializationService.updateSpecialization(specialization.getAbbreviation(), updatedSpecialization);
+        when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.of(specialization));
+        when(specializationRepository.save(any())).thenReturn(updatedSpecialization);
+        when(studyFieldRepository.findByAbbreviation(any())).thenReturn(Optional.of(new StudyField()));
+
+        Specialization result = specializationService.updateSpecialization(specialization.getId(), updatedSpecializationDTO);
 
         assertEquals(updatedSpecialization, result);
     }
 
     @Test
     public void testUpdateSpecializationNotFound() {
-        Specialization updatedSpecialization = new Specialization();
-        updatedSpecialization.setAbbreviation(specialization.getAbbreviation());
-        updatedSpecialization.setName("Updated Test Specialization");
+        SpecializationDTO updatedSpecializationDTO = new SpecializationDTO();
+        updatedSpecializationDTO.setAbbreviation(specialization.getAbbreviation());
+        updatedSpecializationDTO.setName("Updated Test Specialization");
 
-        when(specializationRepository.findById(specialization.getAbbreviation())).thenReturn(Optional.empty());
+        when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> specializationService.updateSpecialization(specialization.getAbbreviation(), updatedSpecialization));
+        assertThrows(NotFoundException.class, () -> specializationService.updateSpecialization(specialization.getId(), updatedSpecializationDTO));
     }
 }

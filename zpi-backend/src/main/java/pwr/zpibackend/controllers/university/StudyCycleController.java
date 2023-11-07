@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.dto.university.StudyCycleDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.services.university.StudyCycleService;
@@ -35,13 +36,13 @@ public class StudyCycleController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<StudyCycle> createStudyCycle(@RequestBody StudyCycle studyCycle){
+    public ResponseEntity<StudyCycle> createStudyCycle(@RequestBody StudyCycleDTO studyCycle){
         return ResponseEntity.ok(studyCycleService.saveStudyCycle(studyCycle));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<StudyCycle> updateStudyCycle(@RequestBody StudyCycle studyCycle, @PathVariable Long id){
+    public ResponseEntity<StudyCycle> updateStudyCycle(@RequestBody StudyCycleDTO studyCycle, @PathVariable Long id){
         try {
             return ResponseEntity.ok(studyCycleService.updateStudyCycle(id, studyCycle));
         } catch (NotFoundException e) {

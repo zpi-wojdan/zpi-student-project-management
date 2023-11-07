@@ -74,7 +74,7 @@ const EmployeeDetails: React.FC = () => {
       <div>
         {employee ? (
         <div>
-            <p><span className="bold">Tytuł:</span> <span>{employee.title}</span></p>
+            <p><span className="bold">Tytuł:</span> <span>{employee.title.name}</span></p>
             <p><span className="bold">Imię:</span> <span>{employee.name}</span></p>
             <p><span className="bold">Nazwisko:</span> <span>{employee.surname}</span></p>
             <p><span className="bold">Mail:</span> <span>{employee.mail}</span></p>

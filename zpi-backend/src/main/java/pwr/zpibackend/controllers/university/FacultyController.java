@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.dto.university.FacultyDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Faculty;
@@ -37,7 +38,7 @@ public class FacultyController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Faculty> addFaculty(@RequestBody Faculty faculty) {
+    public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyDTO faculty) {
         try{
             return ResponseEntity.ok(facultyService.saveFaculty(faculty));
         } catch(AlreadyExistsException err) {
@@ -45,21 +46,21 @@ public class FacultyController {
         }
     }
 
-    @PutMapping("/{abbreviation}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable String abbreviation, @RequestBody Faculty faculty) {
+    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody FacultyDTO faculty) {
         try {
-            return ResponseEntity.ok(facultyService.updateFaculty(abbreviation, faculty));
+            return ResponseEntity.ok(facultyService.updateFaculty(id, faculty));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{abbreviation}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable String abbreviation) {
+    public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(facultyService.deleteFaculty(abbreviation));
+            return ResponseEntity.ok(facultyService.deleteFaculty(id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

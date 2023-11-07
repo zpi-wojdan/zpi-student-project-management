@@ -23,7 +23,7 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
         return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
     }
 
@@ -52,14 +52,14 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @RequestBody EmployeeDTO updatedEmployee)
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployee)
             throws NotFoundException {
         return new ResponseEntity<>(employeeService.updateEmployee(id, updatedEmployee), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> deleteEmployee(@PathVariable String id) throws NotFoundException,
+    public ResponseEntity<Employee> deleteEmployee(@PathVariable Long id) throws NotFoundException,
             CannotDeleteException {
         return new ResponseEntity<>(employeeService.deleteEmployee(id), HttpStatus.OK);
     }

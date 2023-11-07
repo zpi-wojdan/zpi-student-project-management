@@ -4,9 +4,8 @@ import { Program } from "./Program";
 import { StudyField } from "./StudyField";
 
 export type Faculty = {
-    abbreviation: string;
-    name: string;
-    studyFields: StudyField[];
-    programs: Program[];
-    departments: Department[];
-  }
+  id: number;
+  abbreviation: string;
+  name: string;
+  departments: Department[];
+}

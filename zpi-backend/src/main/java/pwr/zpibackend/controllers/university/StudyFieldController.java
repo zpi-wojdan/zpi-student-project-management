@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.dto.university.StudyFieldDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.StudyField;
@@ -37,29 +38,31 @@ public class StudyFieldController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<StudyField> createStudyField(@RequestBody StudyField studyField){
+    public ResponseEntity<StudyField> createStudyField(@RequestBody StudyFieldDTO studyField){
         try{
             return ResponseEntity.ok(studyFieldService.saveStudyField(studyField));
         } catch(AlreadyExistsException err) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        }
-    }
-
-    @PutMapping("/{abbreviation}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<StudyField> updateStudyField(@RequestBody StudyField studyField, @PathVariable String abbreviation){
-        try {
-            return ResponseEntity.ok(studyFieldService.updateStudyField(abbreviation, studyField));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{abbreviation}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<StudyField> deleteStudyField(@PathVariable String abbreviation){
+    public ResponseEntity<StudyField> updateStudyField(@RequestBody StudyFieldDTO studyField, @PathVariable Long id){
         try {
-            return ResponseEntity.ok(studyFieldService.deleteStudyField(abbreviation));
+            return ResponseEntity.ok(studyFieldService.updateStudyField(id, studyField));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<StudyField> deleteStudyField(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(studyFieldService.deleteStudyField(id));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

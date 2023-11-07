@@ -17,8 +17,8 @@ public class StudentProgramCycle {
     private StudentProgramCycleId id;
 
     @ManyToOne
-    @MapsId("studentMail")
-    @JoinColumn(name = "student_mail")
+    @MapsId("studentId")
+    @JoinColumn(name = "student_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @JsonBackReference

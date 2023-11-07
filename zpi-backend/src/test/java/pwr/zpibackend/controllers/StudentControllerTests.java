@@ -59,6 +59,7 @@ class StudentControllerTests {
         Role role = new Role("student");
 
         student = new Student();
+        student.setId(1L);
         student.setMail("123456@student.pwr.edu.pl");
         student.setName("John");
         student.setSurname("Doe");
@@ -72,6 +73,7 @@ class StudentControllerTests {
         studentDTO.setIndex("123456");
 
         Student student2 = new Student();
+        student2.setId(2L);
         student2.setMail("456789@student.pwr.edu.pl");
         student2.setName("John");
         student2.setSurname("Doe");
@@ -95,27 +97,27 @@ class StudentControllerTests {
 
     @Test
     void getStudentById() throws Exception {
-        String studentMail = "123456@student.pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(studentService.getStudent(studentMail)).thenReturn(student);
+        Mockito.when(studentService.getStudent(id)).thenReturn(student);
 
-        mockMvc.perform(get(BASE_URL + "/{mail}", studentMail).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.mail").value(studentMail));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.mail").value(student.getMail()));
 
-        verify(studentService).getStudent(studentMail);
+        verify(studentService).getStudent(id);
     }
 
     @Test
     void getStudentByIdNotFound() throws Exception {
-        String nonExistingMail = "000000@student.pwr.edu.pl";
+        Long nonExistingId = 0L;
 
-        Mockito.when(studentService.getStudent(nonExistingMail)).thenThrow(NotFoundException.class);
+        Mockito.when(studentService.getStudent(nonExistingId)).thenThrow(NotFoundException.class);
 
-        mockMvc.perform(get(BASE_URL + "/{mail}", nonExistingMail).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/{id}", nonExistingId).contentType("application/json"))
                 .andExpect(status().isNotFound());
 
-        verify(studentService).getStudent(nonExistingMail);
+        verify(studentService).getStudent(nonExistingId);
     }
 
     @Test
@@ -146,62 +148,62 @@ class StudentControllerTests {
 
     @Test
     void updateStudent() throws Exception {
-        String studentMail = "123456@student.pwr.edu.pl";
+        Long id = 1L;
         studentDTO.setName("Updated");
         student.setName("Updated");
 
-        Mockito.when(studentService.updateStudent(studentMail, studentDTO)).thenReturn(student);
+        Mockito.when(studentService.updateStudent(id, studentDTO)).thenReturn(student);
 
         String requestBody = objectMapper.writeValueAsString(studentDTO);
         String responseBody = objectMapper.writeValueAsString(student);
 
-        mockMvc.perform(put(BASE_URL + "/{mail}", studentMail)
+        mockMvc.perform(put(BASE_URL + "/{id}", id)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().json(responseBody));
 
-        verify(studentService).updateStudent(studentMail, studentDTO);
+        verify(studentService).updateStudent(id, studentDTO);
     }
 
     @Test
     void updateStudentNotFound() throws Exception {
-        String nonExistingMail = "000000@student.pwr.edu.pl";
+        Long nonExistingId = 0L;
 
-        Mockito.when(studentService.updateStudent(nonExistingMail, studentDTO)).thenThrow(NotFoundException.class);
+        Mockito.when(studentService.updateStudent(nonExistingId, studentDTO)).thenThrow(NotFoundException.class);
 
         String requestBody = objectMapper.writeValueAsString(studentDTO);
 
-        mockMvc.perform(put(BASE_URL + "/{mail}", nonExistingMail)
+        mockMvc.perform(put(BASE_URL + "/{id}", nonExistingId)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isNotFound());
 
-        verify(studentService).updateStudent(nonExistingMail, studentDTO);
+        verify(studentService).updateStudent(nonExistingId, studentDTO);
     }
 
     @Test
     void deleteStudent() throws Exception {
-        String studentMail = "123456@student.pwr.edu.pl";
+        Long id = 1L;
 
-        Mockito.when(studentService.deleteStudent(studentMail)).thenReturn(student);
+        Mockito.when(studentService.deleteStudent(id)).thenReturn(student);
 
-        mockMvc.perform(delete(BASE_URL + "/{mail}", studentMail).contentType("application/json"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.mail").value(studentMail));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.mail").value(student.getMail()));
 
-        verify(studentService).deleteStudent(studentMail);
+        verify(studentService).deleteStudent(id);
     }
 
     @Test
     void deleteStudentNotFound() throws Exception {
-        String nonExistingMail = "000000@student.pwr.edu.pl";
+        Long nonExistingId = 0L;
 
-        Mockito.when(studentService.deleteStudent(nonExistingMail)).thenThrow(NotFoundException.class);
+        Mockito.when(studentService.deleteStudent(nonExistingId)).thenThrow(NotFoundException.class);
 
-        mockMvc.perform(delete(BASE_URL + "/{mail}", nonExistingMail).contentType("application/json"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", nonExistingId).contentType("application/json"))
                 .andExpect(status().isNotFound());
 
-        verify(studentService).deleteStudent(nonExistingMail);
+        verify(studentService).deleteStudent(nonExistingId);
     }
 }

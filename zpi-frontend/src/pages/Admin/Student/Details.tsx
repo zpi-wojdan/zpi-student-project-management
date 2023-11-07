@@ -9,6 +9,7 @@ import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import api from '../../../utils/api';
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -19,11 +20,7 @@ const StudentDetails: React.FC = () => {
     
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setFaculties(response.data);
       })
@@ -35,17 +32,6 @@ const StudentDetails: React.FC = () => {
           }
       });
   }, []);
-
-  function findFacultyNameByProgram(programId: number): string | null {
-    for (const faculty of faculties) {
-        for (const program of faculty.programs) {
-            if (program.id === programId) {
-                return faculty.name;
-            }
-        }
-    }
-    return null;
-}
 
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
@@ -64,11 +50,7 @@ const StudentDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/student/${student.mail}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/student/${student.mail}`)
         .then(() => {
           toast.success("Student został usunięty");
           navigate("/students");
@@ -134,7 +116,7 @@ const StudentDetails: React.FC = () => {
                                 <p><span className="bold">Cykl - </span> <span>{studentProgramCycle.cycle.name}</span></p>
                             </li>
                             <li>
-                            <p><span className="bold">Wydział - </span> <span>{findFacultyNameByProgram(studentProgramCycle.program.id)}</span></p>
+                            <p><span className="bold">Wydział - </span> <span>{studentProgramCycle.program.id}</span></p>
                             </li>
                             <li>
                             <p><span className="bold">Kierunek - </span> <span>{studentProgramCycle.program.studyField.name}</span></p>

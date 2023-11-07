@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
-import pwr.zpibackend.dto.DepartmentDTO;
+import pwr.zpibackend.dto.university.DepartmentDTO;
 import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.repositories.university.DepartmentRepository;
 import pwr.zpibackend.repositories.university.FacultyRepository;
@@ -33,24 +34,26 @@ public class DepartmentServiceTest {
 
     private Department department;
     private DepartmentDTO departmentDTO;
-    private final String code = "123";
+    private final Long id = 1L;
+    private final String code = "W4";
     private final String name = "Test Department";
 
     @BeforeEach
     public void setUp() {
         departmentDTO = new DepartmentDTO();
-        departmentDTO.setCode(code);
+        departmentDTO.setCode("W4");
         departmentDTO.setName(name);
         departmentDTO.setFacultyAbbreviation("ABC");
 
         department = new Department();
-        department.setCode(code);
+        department.setId(id);
+        department.setCode("W4");
         department.setName(name);
     }
 
     @Test
     public void testGetDepartmentByCodeSuccess() throws NotFoundException {
-        when(departmentRepository.findById(code)).thenReturn(Optional.of(department));
+        when(departmentRepository.findByCode(code)).thenReturn(Optional.of(department));
 
         Department result = departmentService.getDepartmentByCode(code);
 
@@ -59,20 +62,20 @@ public class DepartmentServiceTest {
 
     @Test
     public void testGetDepartmentByCodeNotFound() {
-        when(departmentRepository.findById(code)).thenReturn(Optional.empty());
+        when(departmentRepository.findByCode(code)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> departmentService.getDepartmentByCode(code));
     }
 
-//    @Test
-//    public void testAddDepartmentSuccess() {
-//        when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
-//        when(departmentRepository.save(any())).thenReturn(department);
-//
-//        Department result = departmentService.addDepartment(departmentDTO);
-//
-//        assertEquals(department, result);
-//    }
+    @Test
+    public void testAddDepartmentSuccess() throws AlreadyExistsException {
+        when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
+        when(departmentRepository.saveAndFlush(any())).thenReturn(department);
+
+        Department result = departmentService.addDepartment(departmentDTO);
+
+        assertEquals(department, result);
+    }
 
     @Test
     public void testUpdateDepartmentSuccess() throws NotFoundException {
@@ -85,11 +88,11 @@ public class DepartmentServiceTest {
         updatedDepartment.setCode(code);
         updatedDepartment.setName(newDepartmentDTO.getName());
 
-        when(departmentRepository.findById(code)).thenReturn(Optional.of(department));
+        when(departmentRepository.findById(id)).thenReturn(Optional.of(department));
         when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
-        when(departmentRepository.save(any())).thenReturn(updatedDepartment);
+        when(departmentRepository.saveAndFlush(any())).thenReturn(updatedDepartment);
 
-        Department result = departmentService.updateDepartment(code, departmentDTO);
+        Department result = departmentService.updateDepartment(id, departmentDTO);
 
         assertEquals(updatedDepartment, result);
     }
@@ -101,24 +104,24 @@ public class DepartmentServiceTest {
         newDepartmentDTO.setName("Updated " + name);
         newDepartmentDTO.setFacultyAbbreviation("ABC");
 
-        when(departmentRepository.findById(code)).thenReturn(Optional.empty());
+        when(departmentRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> departmentService.updateDepartment(code, departmentDTO));
+        assertThrows(NotFoundException.class, () -> departmentService.updateDepartment(id, departmentDTO));
     }
 
     @Test
     public void testDeleteDepartmentSuccess() throws NotFoundException {
-        when(departmentRepository.findById(code)).thenReturn(Optional.of(department));
+        when(departmentRepository.findById(id)).thenReturn(Optional.of(department));
 
-        Department result = departmentService.deleteDepartment(code);
+        Department result = departmentService.deleteDepartment(id);
 
         assertEquals(department, result);
     }
 
     @Test
     public void testDeleteDepartmentNotFound() {
-        when(departmentRepository.findById(code)).thenReturn(Optional.empty());
+        when(departmentRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> departmentService.deleteDepartment(code));
+        assertThrows(NotFoundException.class, () -> departmentService.deleteDepartment(id));
     }
 }

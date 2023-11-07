@@ -3,6 +3,7 @@ import { Reservation } from "./Reservation";
 import { Program } from "./Program";
 import { Student } from "./Student";
 import { StudyCycle } from "./StudyCycle";
+import { Status, StatusDTO } from "./Status";
 
 export type Thesis = {
     id: number;
@@ -14,7 +15,7 @@ export type Thesis = {
     leader: Student | null;
     programs: Program[];
     studyCycle: StudyCycle | null;
-    status: string;
+    status: Status;
     occupied: number;
     reservations: Reservation[];
   }
@@ -29,7 +30,7 @@ export type ThesisFront = {
     leader: Student | null;
     programs: Program[];
     studyCycle: StudyCycle | null;
-    status: string;
+    status: StatusDTO;
     occupied: number;
     students: Student[];
     reservations: Reservation[];
