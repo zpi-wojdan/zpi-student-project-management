@@ -1,6 +1,7 @@
 package pwr.zpibackend.services.importing;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,8 +34,7 @@ public class ImportStudents {
     private ProgramRepository programRepository;
     private StudyCycleRepository studyCycleRepository;
 
-    public void processFile(String file_path) throws IOException{
-
+    public String processFile(String file_path) throws IOException{
 //            String file_path = "C:\\zpi-student-project-management\\zpi-backend\\src\\test\\resources\\ZPI_dane.xlsx";
         List<ObjectNode> validData = new ArrayList<>();
         List<ObjectNode> invalidIndexData = new ArrayList<>();
@@ -44,17 +44,21 @@ public class ImportStudents {
         List<ObjectNode> invalidTeachingCycleData = new ArrayList<>();
         List<ObjectNode> invalidStatusData = new ArrayList<>();
 
+        List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
+
         readStudentFile(file_path, validData, invalidIndexData, invalidSurnameData,
                         invalidNameData, invalidProgramData, invalidTeachingCycleData,
                         invalidStatusData);
 
+        invalidDatabaseRepetitions = saveValidToDatabase(validData);
+
         String fullJson = dataframesToJson(validData, invalidIndexData,
                             invalidSurnameData, invalidNameData, invalidProgramData,
-                            invalidTeachingCycleData, invalidStatusData);
+                            invalidTeachingCycleData, invalidStatusData, invalidDatabaseRepetitions);
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
 
-        saveValidToDatabase(validData);
+        return fullJson;
     }
 
     public void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
@@ -156,7 +160,7 @@ public class ImportStudents {
     public String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
                                           List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
                                           List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
-                                          List<ObjectNode> invalidStatusData) throws IOException{
+                                          List<ObjectNode> invalidStatusData, List<ObjectNode> invalidDatabaseRepetitions) throws IOException{
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, List<ObjectNode>> fullJson = new HashMap<>();
@@ -167,6 +171,7 @@ public class ImportStudents {
         fullJson.put("invalid_programs", invalidProgramData);
         fullJson.put("invalid_teaching_cycles", invalidTeachingCycleData);
         fullJson.put("invalid_statuses", invalidStatusData);
+        fullJson.put("database_repetitions", invalidDatabaseRepetitions);
 
         fullJson = mergeFullJson(fullJson);
 
@@ -231,7 +236,7 @@ public class ImportStudents {
         return false;
     }
 
-    private void saveValidToDatabase(List<ObjectNode> validData){
+    private List<ObjectNode> saveValidToDatabase(List<ObjectNode> validData){
         List<ObjectNode> invalidData = new ArrayList<>();
 
         for (ObjectNode node : validData) {
@@ -349,6 +354,7 @@ public class ImportStudents {
                 }
             }
         }
+        return invalidData;
     }
 
 }

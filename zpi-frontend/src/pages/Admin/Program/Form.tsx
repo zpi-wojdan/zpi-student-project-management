@@ -9,12 +9,14 @@ import useAuth from "../../../auth/useAuth";
 import { StudyField } from '../../../models/StudyField';
 import { Faculty } from '../../../models/Faculty';
 import { StudyCycle } from '../../../models/StudyCycle';
+import {useTranslation} from "react-i18next";
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { i18n, t } = useTranslation();
   const program = location.state?.program as Program;
   const [oldId, setOldId] = useState<number>();
   const [formData, setFormData] = useState<ProgramDTO>({
@@ -24,6 +26,15 @@ const ProgramForm: React.FC = () => {
     studyCyclesId: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+        newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (program) {
@@ -53,7 +64,7 @@ const ProgramForm: React.FC = () => {
         })
         .then(() => {
           navigate("/programs")
-          toast.success("Program został zaktualizowany");
+          toast.success(t("program.updateSuccessful"));
         })
         .catch((error) => {
             console.error(error);
@@ -61,7 +72,7 @@ const ProgramForm: React.FC = () => {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
             }
-            toast.error("Program nie został zaktualizowany");
+            toast.error(t("program.updateError"));
           });
       } else {
         Axios.post('http://localhost:8080/program', formData, {
@@ -71,7 +82,7 @@ const ProgramForm: React.FC = () => {
         })
         .then(() => {
           navigate("/programs")
-          toast.success("Program został dodany");
+          toast.success(t("program.addSuccessful"));
         })
         .catch((error) => {
             console.error(error);
@@ -79,7 +90,7 @@ const ProgramForm: React.FC = () => {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
             }
-            toast.error("Program nie został dodany");
+            toast.error(t("program.addError"));
           });
       }
     }
@@ -87,31 +98,37 @@ const ProgramForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!selectedFacultyAbbr) {
       newErrors.faculty = errorRequireText;
+      newErrorsKeys.faculty = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     if (!formData.studyFieldAbbr) {
         newErrors.studyField = errorRequireText;
+        newErrorsKeys.studyField = 'general.management.fieldIsRequired';
         isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+      newErrorsKeys.name = 'general.management.fieldIsRequired';
       isValid = false;
     }
 
     if (formData.studyCyclesId.length === 0) {
-      newErrors.cycles = 'Program musi mieć przypisany conajmniej jeden cykl.';
+      newErrors.cycles = t('program.cycleRequired');
+      newErrorsKeys.cycles = 'program.cycleRequired';
       isValid = false;
     }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
@@ -212,15 +229,15 @@ const ProgramForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="form">
             <div className='d-flex justify-content-begin  align-items-center mb-3'>
                 <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
                 </button>
                 <button type="submit" className="custom-button">
-                {program ? 'Zapisz' : 'Dodaj'}
+                {program ? t('general.management.save') : t('general.management.add')}
                 </button>
             </div>
             <div className="mb-3">
               <label className="bold" htmlFor="faculty">
-                Wydział:
+                  {t('general.university.faculty')}:
               </label>
               <select
                 id="faculty"
@@ -232,7 +249,7 @@ const ProgramForm: React.FC = () => {
                 }}
                 className="form-control"
                 >
-                <option value="">Wybierz</option>
+                <option value="">{t('general.management.choose')}</option>
                 {availableFaculties.map((faculty) => (
                   <option key={faculty.abbreviation} value={faculty.abbreviation}>
                     {faculty.name}
@@ -243,7 +260,7 @@ const ProgramForm: React.FC = () => {
             </div>
             <div className="mb-3">
               <label className="bold" htmlFor="studyField">
-                Kierunek:
+                  {t('general.university.field')}:
               </label>
               <select
                 id="studyField"
@@ -259,7 +276,7 @@ const ProgramForm: React.FC = () => {
                 className="form-control"
                 disabled={!selectedFacultyAbbr}
                   >
-                    <option value={""}>Wybierz</option>
+                    <option value={""}>{t('general.management.choose')}</option>
                     {/* {selectedFacultyAbbr == "" &&
                       availableFields
                         .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbr))
@@ -277,7 +294,7 @@ const ProgramForm: React.FC = () => {
             </div>
             <div className="mb-3">
               <label className="bold" htmlFor="specialization">
-                Specjalność:
+                  {t('general.university.specialization')}:
               </label>
               <select
                 id="specialization"
@@ -289,7 +306,7 @@ const ProgramForm: React.FC = () => {
                 className="form-control"
                 disabled={formData.studyFieldAbbr == ""}
                   >
-                    <option value={""}>Wybierz</option>
+                    <option value={""}>{t('general.management.choose')}</option>
                     {/* {formData.studyFieldAbbr == "" &&
                       availableSpecializations
                         .filter((s) => s.studyField.abbreviation === formData.studyFieldAbbr))
@@ -306,7 +323,7 @@ const ProgramForm: React.FC = () => {
               {errors.specialization && <div className="text-danger">{errors.specialization}</div>}
             </div>
             <div className="mb-3">
-            <label className="bold">Cykle studiów:</label>
+            <label className="bold">{t('general.university.studyCycles')}:</label>
             {availableStudyCycles.map((cycle) => (
               <div key={cycle.id} className="mb-2">
                 <input
@@ -324,7 +341,7 @@ const ProgramForm: React.FC = () => {
           </div>
             <div className="mb-3">
                 <label className="bold" htmlFor="name">
-                Nazwa:
+                    {t('general.university.name')}:
                 </label>
                 <input
                 type="text"

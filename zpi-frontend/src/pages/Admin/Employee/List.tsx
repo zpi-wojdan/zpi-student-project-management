@@ -5,11 +5,13 @@ import { Employee } from '../../../models/Employee';
 import Cookies from "js-cookie";
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   useEffect(() => {
@@ -76,11 +78,14 @@ const EmployeeList: React.FC = () => {
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
           <button className="custom-button" onClick={() =>{navigate('/employees/add')}}>
-            Dodaj pracownika
+              {t('employee.add')}
+          </button>
+          <button className="custom-button" onClick={() => {navigate('/file/employee')}}>
+            Importuj pracowników
           </button>
         </div>
         <div >
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(e.target.value)}
@@ -97,9 +102,9 @@ const EmployeeList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '44%' }}>Imię i nazwisko</th>
-            <th style={{ width: '43%' }}>Mail</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>Szczegóły</th>
+            <th style={{ width: '44%' }}>{t('general.people.fullName')}</th>
+            <th style={{ width: '43%' }}>{t('general.people.mail')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
           </tr>
         </thead>
         <tbody>

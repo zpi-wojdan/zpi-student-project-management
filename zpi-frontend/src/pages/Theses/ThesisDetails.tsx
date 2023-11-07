@@ -13,10 +13,12 @@ import { Student } from '../../models/Student';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
 import handleSignOut from "../../auth/Logout";
+import {useTranslation} from "react-i18next";
 
 const ThesisDetails: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
@@ -30,7 +32,8 @@ const ThesisDetails: React.FC = () => {
           id: thesisDb.id,
           namePL: thesisDb.namePL,
           nameEN: thesisDb.nameEN,
-          description: thesisDb.description,
+          descriptionPL: thesisDb.descriptionPL,
+          descriptionEN: thesisDb.descriptionEN,
           programs: thesisDb.programs,
           studyCycle: thesisDb.studyCycle,
           num_people: thesisDb.num_people,
@@ -109,7 +112,7 @@ const ThesisDetails: React.FC = () => {
     <>
       <div className='row d-flex justify-content-between'>
         <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
-          &larr; Powrót
+          &larr; {t('general.management.goBack')}
         </button>
         {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
           user?.mail === thesis?.supervisor.mail) ?
@@ -127,11 +130,11 @@ const ThesisDetails: React.FC = () => {
             }
             }>
               {user?.role?.name === 'student' ? (
-                <span>Zarezerwuj</span>
+                <span>{t('general.management.reserve')}</span>
               ) : (
                 user?.mail === thesis?.supervisor.mail ?
                   (
-                    <span>Zapisz studentów</span>
+                    <span>{t('thesis.enrollStudents')}</span>
                   ) : (
                     <></>
                   )
@@ -145,13 +148,23 @@ const ThesisDetails: React.FC = () => {
       <div>
         {thesis ? (
           <div>
-            <p className="bold">Nazwa tematu:</p>
-            <p>{thesis.namePL}</p>
-            <p className="bold">Opis:</p>
-            <p>{thesis.description}</p>
-            <p><span className="bold">Promotor:</span> <span>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
-            <p><span className="bold">Cykl:</span> <span>{thesis.studyCycle ? thesis.studyCycle.name : 'N/A'}</span></p>
-            <p className="bold">Programy:</p>
+            <p className="bold">{t('thesis.thesisName')}:</p>
+              {i18n.language === 'pl' ? (
+                <p>{thesis.namePL}</p>
+              ) : (
+                <p>{thesis.nameEN}</p>
+              )}
+            <p className="bold">{t('general.university.description')}:</p>
+              {i18n.language === 'pl' ? (
+                <p>{thesis.descriptionPL}</p>
+                ) : (
+                <p>{thesis.descriptionEN}</p>
+                )}
+            <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title +
+                " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
+            <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
+                thesis.studyCycle.name : 'N/A'}</span></p>
+            <p className="bold">{t('general.university.studyPrograms')}:</p>
             <ul>
               {thesis.programs.map((program: Program) => (
                 <li key={program.id}>
@@ -162,13 +175,13 @@ const ThesisDetails: React.FC = () => {
                   {expandedPrograms.includes(program.id) && (
                     <ul>
                       <li>
-                        <p><span className="bold">Wydział - </span> <span>{program.studyField.faculty.name}</span></p>
+                        <p><span className="bold">{t('general.university.faculty')} - </span> <span>{program.studyField.faculty.name}</span></p>
                       </li>
                       <li>
-                        <p><span className="bold">Kierunek - </span> <span>{program.studyField.name}</span></p>
+                        <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
                       </li>
                       <li>
-                        <p><span className="bold">Specjalność - </span> <span>{program.specialization ? program.specialization.name : "brak"}</span></p>
+                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.lack')}</span></p>
                       </li>
                     </ul>
                   )}
@@ -176,7 +189,8 @@ const ThesisDetails: React.FC = () => {
               ))}
             </ul>
             <div>
-              <p><span className="bold">Zapisani:</span> <span>{thesis.occupied + "/" + thesis.num_people}</span></p>
+              <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
+                  {thesis.occupied + "/" + thesis.num_people}</span></p>
               {thesis.students.length > 0 ? (
                 <StudentTable students={thesis.students} thesis={thesis} role={"student"} />
               ) : (
@@ -188,14 +202,14 @@ const ThesisDetails: React.FC = () => {
                   className="col-sm-2 btn btn-primary m-3"
                   onClick={handleReadyForApproval}
                 >
-                  Prześlij do akceptacji
+                    {t('thesis.readyForApproval')}
                 </button>
               )}
 
             </div>
           </div>
         ) : (
-          <p>Błąd wczytywania danych {id}</p>
+          <p>{t('general.management.errorOfLoading')} {id}</p>
         )}
       </div>
     </>

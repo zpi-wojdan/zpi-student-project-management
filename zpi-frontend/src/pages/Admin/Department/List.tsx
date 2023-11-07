@@ -7,11 +7,13 @@ import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const DepartmentList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [refreshList, setRefreshList] = useState(false);
@@ -90,7 +92,7 @@ const DepartmentList: React.FC = () => {
             }
         })
         .then(() => {
-          toast.success("Katedra została usunięta");
+          toast.success(t('department.deleteSuccessful'));
           setRefreshList(!refreshList);
         })
         .catch((error) => {
@@ -99,7 +101,7 @@ const DepartmentList: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error("Katedra nie może zostać usunięta!");
+            toast.error(t('department.deleteError'));
           });
     setShowDeleteConfirmation(false);
   };
@@ -113,13 +115,13 @@ const DepartmentList: React.FC = () => {
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
           <button className="custom-button" onClick={() => {navigate('/departments/add')}}>
-            Dodaj katedrę
+              {t('department.add')}
           </button>
         </div>
         <div >
           {ITEMS_PER_PAGE.length > 1 && (
             <div>
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(e.target.value)}
@@ -138,10 +140,10 @@ const DepartmentList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '15%', textAlign: 'center'   }}>Skrót</th>
-            <th style={{ width: '62%' }}>Nazwa</th>
-            <th style={{ width: '10%', textAlign: 'center'  }}>Edytuj</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>Usuń</th>
+            <th style={{ width: '15%', textAlign: 'center'   }}>{t('general.university.abbreviation')}</th>
+            <th style={{ width: '62%' }}>{t('general.university.name')}</th>
+            <th style={{ width: '10%', textAlign: 'center'  }}>{t('general.management.edit')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
           </tr>
         </thead>
         <tbody>
@@ -178,7 +180,7 @@ const DepartmentList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąć ten wydział?'
+            questionText={t('department.deleteConfirmation')}
           />
           </td>
         </tr>

@@ -7,11 +7,13 @@ import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const StudyCycleList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [cycles, setCycles] = useState<StudyCycle[]>([]);
   const [refreshList, setRefreshList] = useState(false);
@@ -87,7 +89,7 @@ const StudyCycleList: React.FC = () => {
             }
         })
         .then(() => {
-          toast.success("Cykl został usunięty");
+          toast.success(t('cycle.deleteSuccessful'));
           setRefreshList(!refreshList);
         })
         .catch((error) => {
@@ -96,7 +98,7 @@ const StudyCycleList: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error("Cykl nie może zostać usunięty!");
+            toast.error(t('cycle.deleteError'));
           });
     setShowDeleteConfirmation(false);
   };
@@ -110,13 +112,13 @@ const StudyCycleList: React.FC = () => {
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
           <button className="custom-button" onClick={() => {navigate('/cycles/add')}}>
-            Dodaj cykl
+              {t('cycle.add')}
           </button>
         </div>
         <div >
           {ITEMS_PER_PAGE.length > 1 && (
             <div>
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(e.target.value)}
@@ -135,9 +137,9 @@ const StudyCycleList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '77%' }}>Nazwa</th>
-            <th style={{ width: '10%', textAlign: 'center'  }}>Edytuj</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>Usuń</th>
+            <th style={{ width: '77%' }}>{t('general.university.name')}</th>
+            <th style={{ width: '10%', textAlign: 'center'  }}>{t('general.management.edit')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
           </tr>
         </thead>
         <tbody>
@@ -173,7 +175,7 @@ const StudyCycleList: React.FC = () => {
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            questionText='Czy na pewno chcesz usunąć ten cykl edykacyjny?'
+            questionText={t('cycle.deleteConfirmation')}
           />
           </td>
         </tr>

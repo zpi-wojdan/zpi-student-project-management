@@ -5,10 +5,12 @@ import { Student } from '../../../models/Student';
 import Cookies from "js-cookie";
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 const StudentList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
@@ -74,11 +76,16 @@ const StudentList: React.FC = () => {
       <div className='d-flex justify-content-between  align-items-center mb-3'>
         <div >
           <button className="custom-button" onClick={() =>{navigate('/students/add')}}>
-            Dodaj studenta
+              {t('student.add')}
           </button>
+          <button className="custom-button" onClick={() => {navigate('/file/student')}}>
+            Importuj studentów
+          </button>
+          <div >
         </div>
+      </div>
         <div >
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(e.target.value)}
@@ -95,10 +102,10 @@ const StudentList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '17%' }}>Indeks</th>
-            <th style={{ width: '35%' }}>Imię</th>
-            <th style={{ width: '35%' }}>Nazwisko</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>Szczegóły</th>
+            <th style={{ width: '17%' }}>{t('general.people.index')}</th>
+            <th style={{ width: '35%' }}>{t('general.people.name')}</th>
+            <th style={{ width: '35%' }}>{t('general.people.surname')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
           </tr>
         </thead>
         <tbody>

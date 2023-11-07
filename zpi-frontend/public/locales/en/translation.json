@@ -1,23 +1,45 @@
 {
   "general": {
+    "management": {
+      "abbreviationExists": "Given abbreviation already exists!",
+      "add": "Add",
+      "addNext": "Add next",
+      "choose": "Choose",
+      "delete": "Delete",
+      "details": "Details",
+      "edit": "Edit",
+      "errorOfLoading": "Error of loading data",
+      "fieldIsRequired": "This field is required.",
+      "goBack": "Go back",
+      "lack": "Lack",
+      "mailExists": "Given mail already exists!",
+      "mailMustBePwr": "Mail must be from the pwr.edu.pl domain",
+      "no": "No",
+      "reserve": "Reserve",
+      "save": "Save",
+      "view": "View",
+      "wrongData": "Wrong data",
+      "wrongFormat": "Wrong format",
+      "yes": "Yes"
+    },
+    "people": {
+      "adminLC": "administrator",
+      "approverLC": "approver",
+      "employees": "Employees",
+      "fullName": "Name and Surname",
+      "index": "Index",
+      "mail": "Mail",
+      "name": "Name",
+      "roles": "Roles",
+      "student": "Student",
+      "students": "Students",
+      "supervisorLC": "supervisor",
+      "supervisor": "Supervisor",
+      "surname": "Surname"
+    },
     "university": {
-      "people": {
-        "adminLC": "administrator",
-        "approverLC": "approver",
-        "employees": "Employees",
-        "fullName": "Name and Surname",
-        "index": "Index",
-        "mail": "Mail",
-        "name": "Name",
-        "roles": "Roles",
-        "student": "Student",
-        "students": "Students",
-        "supervisorLC": "supervisor",
-        "supervisorV1": "Supervisor",
-        "supervisorV2": "Supervisor",
-        "surname": "Surname"
-      },
       "abbreviation": "Abbreviation",
+      "code": "Code",
       "department": "Department",
       "departments": "Departments",
       "description": "Description",
@@ -31,28 +53,12 @@
       "specializations": "Specializations",
       "studyCycle": "Study cycle",
       "studyCycles": "Study cycles",
+      "studyProgram": "Study program",
       "studyPrograms": "Study programs",
       "thesis": "Thesis",
-      "theses": "Theses",
-      "title": "Title"
+      "theses": "Theses"
     },
-    "management": {
-      "add": "Add",
-      "delete": "Delete",
-      "details": "Details",
-      "edit": "Edit",
-      "errorOfLoading": "Error of loading data",
-      "goBack": "Go back",
-      "lack": "Lack",
-      "no": "No",
-      "reserve": "Reserve",
-      "save": "Save",
-      "view": "View",
-      "yes": "Yes"
-    }
-  },
-  "deleteConfirmation": {
-    "deleteFacultyConfirm": "Are you sure you want to delete this faculty?"
+    "title": "Title"
   },
   "navigation": {
     "logout": "Log out",
@@ -62,20 +68,90 @@
     "myTheses": "My theses",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology"
   },
+  "cycle": {
+    "deleteSuccessful": "Study cycle has been deleted",
+    "deleteError": "Study cycle cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this study cycle?",
+    "add": "Add study cycle",
+    "addSuccessful": "Study cycle has been added",
+    "addError": "Study cycle has not been added",
+    "updateSuccessful": "Study cycle has been updated",
+    "updateError": "Study cycle has not been updated",
+    "goodFormat": "Correct format: \"xxxx/xx-XYZ\", where \"xxxx\" are 4 digits, \"xx\" are 2 digits, \"XYZ\" are from 1 to 3 capital letters."
+  },
+  "department": {
+    "deleteSuccessful": "Department has been deleted",
+    "deleteError": "Department cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this department?",
+    "add": "Add department",
+    "addSuccessful": "Department has been added",
+    "addError": "Department has not been added",
+    "updateSuccessful": "Department has been updated",
+    "updateError": "Department has not been updated"
+  },
   "employee": {
-    "add": "Add employee"
+    "add": "Add employee",
+    "addSuccessful": "Employee has been added",
+    "addError": "Employee has not been added",
+    "deleteSuccessful": "Employee has been deleted",
+    "deleteError": "Employee cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this employee?",
+    "updateSuccessful": "Employee has been updated",
+    "updateError": "Employee has not been updated",
+    "rolesRequired": "Employee must have at least one role."
   },
   "student": {
-    "add": "Add student"
+    "add": "Add student",
+    "addSuccessful": "Student has been added",
+    "addError": "Student has not been added",
+    "deleteSuccessful": "Student has been deleted",
+    "deleteError": "Student cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this student?",
+    "updateSuccessful": "Student has been updated",
+    "updateError": "Student has not been updated",
+    "indexExists": "Given index already exists!",
+    "indexLength": "Index must have 6 digits!",
+    "cycleProgramRequired": "Choose study cycle and study program for all entries.",
+    "duplicatedPrograms": "List of programs contains duplicates!"
   },
   "faculty": {
     "facultyUpdateSuccessful": "Faculty has been updated",
     "facultyAddSuccessful": "Faculty has been added",
     "facultyDeleteSuccessful": "Faculty has been deleted",
     "facultyDeleteError": "Faculty cannot be deleted!",
-    "abbreviationExists": "Given abbreviation already exists!",
-    "fieldIsRequired": "This field is required!",
-    "add": "Add faculty"
+    "add": "Add faculty",
+    "deleteConfirmation": "Are you sure you want to delete this faculty?"
+  },
+  "field": {
+    "deleteSuccessful": "Field has been deleted",
+    "deleteError": "Field cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this field?",
+    "add": "Add field",
+    "addSuccessful": "Field has been added",
+    "addError": "Field has not been added",
+    "updateSuccessful": "Field has been updated",
+    "updateError": "Field has not been updated"
+  },
+  "program": {
+    "deleteSuccessful": "Study program has been deleted",
+    "deleteError": "Study program cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this study program?",
+    "add": "Add study program",
+    "addSuccessful": "Study program has been added",
+    "addError": "Study program has not been added",
+    "updateSuccessful": "Study program has been updated",
+    "updateError": "Study program has not been updated",
+    "cycleRequired": "Study program must have assigned at least one study cycle."
+  },
+  "specialization": {
+    "deleteSuccessful": "Specialization has been deleted",
+    "deleteError": "Specialization cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this specialization?",
+    "add": "Add specialization",
+    "addSuccessful": "Specialization has been added",
+    "addError": "Specialization has not been added",
+    "updateSuccessful": "Specialization has been updated",
+    "updateError": "Specialization has not been updated"
   },
   "reservation": {
     "reservationSuccessful": "Reservation completed successfully!",
@@ -86,18 +162,19 @@
     "addPerson": "Add person"
   },
   "thesis": {
-    "supervisorNotExist": "Supervisor does not exist!",
-    "errorOfLoadingSupervisor": "Error of loading supervisor data!",
+    "supervisorNotExists": "Supervisor does not exist!",
+    "errorOfLoadingSupervisorData": "Error of loading supervisor data!",
     "peopleLimit": "People limit",
     "occupiedSeats": "Occupied seats",
-    "signStudents": "Sign students",
+    "enrollStudents": "Enroll students",
     "thesisName": "Thesis name",
-    "signed": "Signed",
+    "enrolled": "Enrolled",
     "add": "Add thesis",
     "edit": "Edit thesis",
     "reportThesis": "Report thesis",
     "saveDraft": "Save draft",
-    "saveChanges": "Save changes"
+    "saveChanges": "Save changes",
+    "readyForApproval": "Send for approval"
   },
   "uploadFiles": {
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",
@@ -106,10 +183,25 @@
     "attach": "Attach files",
     "instruction": "Drag and drop files here or click to select files",
     "chosenFiles": "Chosen files",
-    "sendFiles": "Send files"
+    "sendFiles": "Send files",
+    "unit": "Unit",
+    "subunit": "Subunit",
+    "databaseRepetitions": "Records which are already in the database",
+    "wrongIndexes": "Wrong indexes",
+    "wrongSurnames": "Wrong surnames",
+    "wrongNames": "Wrong names",
+    "wrongPrograms": "Wrong programs",
+    "wrongCycles": "Wrong study cycles",
+    "wrongStatuses": "Wrong statuses",
+    "wrongAcademicTitles": "Wrong academic titles",
+    "wrongUnits": "Wrong units",
+    "wrongSubunits": "Wrong subunits",
+    "wrongPositions": "Wrong positions",
+    "wrongPhoneNumbers": "Wrong phone numbers",
+    "wrongEmails": "Wrong emails"
   },
   "login": {
-    "sessionEnded": "Your session has ended. Please log in again.",
+    "sessionExpired": "Your session has ended. Please log in again.",
     "accessDenied": "Log in to access this page.",
     "loginError": "Login error occurred. Please try again.",
     "welcome": "Welcome to the login system",

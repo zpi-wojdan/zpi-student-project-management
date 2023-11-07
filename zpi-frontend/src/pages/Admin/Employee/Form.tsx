@@ -8,6 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { Role, RoleDTO } from '../../../models/Role';
 import { Department } from '../../../models/Department';
+import {useTranslation} from "react-i18next";
 
 export type  Title = {
     name: string;
@@ -16,6 +17,7 @@ export type  Title = {
 const EmployeeForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const [formData, setFormData] = useState<EmployeeDTO>({
     mail: '',
     name: '',
@@ -29,6 +31,15 @@ const EmployeeForm: React.FC = () => {
   const location = useLocation();
   const employee = location.state?.employee;
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorsKeys).forEach((key) => {
+      newErrors[key] = t(errorsKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (employee) {
@@ -55,7 +66,7 @@ const EmployeeForm: React.FC = () => {
         })
           .then(() => {
             navigate("/employees");
-            toast.success("Pracownik został zaktualizowany");
+            toast.success(t("employee.updateSuccessful"));
           })
           .catch((error) => {
             console.error(error);
@@ -64,7 +75,7 @@ const EmployeeForm: React.FC = () => {
               handleSignOut(navigate);
             }
             navigate("/employees");
-            toast.error("Pracownik nie został zaktualizowany");
+            toast.error(t("employee.updateError"));
           });
       } else {
         Axios.post('http://localhost:8080/employee', formData, {
@@ -74,13 +85,16 @@ const EmployeeForm: React.FC = () => {
         })
           .then(() => {
             navigate("/employees");
-            toast.success("Pracownik został dodany");
+            toast.success(t("employee.addSuccessful"));
           })
           .catch((error) => {
             if (error.response && error.response.status === 409) {
               const newErrors: Record<string, string> = {};
-              newErrors.mail = 'Podany mail już istnieje!';
+              newErrors.mail = t("general.management.mailExists")
               setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.mail = "general.management.mailExists"
+              setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
@@ -88,7 +102,7 @@ const EmployeeForm: React.FC = () => {
                 handleSignOut(navigate);
               }
               navigate("/employees");
-              toast.error("Pracownik nie został dodany");
+              toast.error(t("employee.addError"));
             }
           })
       }
@@ -97,52 +111,61 @@ const EmployeeForm: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
-    const errorRequireText = 'Pole jest wymagane.';
+    const errorRequireText = t('general.management.fieldIsRequired');
 
     if (!formData.mail) {
         newErrors.mail = errorRequireText;
+        newErrorsKeys.mail = "general.management.fieldIsRequired"
         isValid = false;
       } else if (!/.+@pwr\.edu\.pl$/.test(formData.mail)) {
-        newErrors.mail = 'Mail musi być z domeny pwr.edu.pl';
+        newErrors.mail = t('general.management.mailMustBePwr');
+        newErrorsKeys.mail = "general.management.mailMustBePwr"
         isValid = false;
       }
 
     if (!formData.title) {
         newErrors.title = errorRequireText;
+        newErrorsKeys.title = "general.management.fieldIsRequired"
         isValid = false;
     }
 
     if (!formData.name) {
       newErrors.name = errorRequireText;
+      newErrorsKeys.name = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.surname) {
       newErrors.surname = errorRequireText;
+      newErrorsKeys.surname = "general.management.fieldIsRequired"
       isValid = false;
     }
 
     if (!formData.departmentCode) {
         newErrors.department = errorRequireText;
+        newErrorsKeys.department = "general.management.fieldIsRequired"
         isValid = false;
     }
 
     if (formData.roles.length === 0) {
-        newErrors.roles = 'Pracownik musi mieć przypisaną conajmniej jedną rolę.';
+        newErrors.roles = t('employee.rolesRequired');
+        newErrorsKeys.roles = "employee.rolesRequired"
         isValid = false;
       }
 
     setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
     return isValid;
   };
 
   const [availableDepartments, setAvailableDepartments] = useState<Department[]>([]);
   const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
   const roleLabels: { [key: string]: string } = {
-    supervisor: 'prowadzący',
-    approver: 'zatwierdzający',
-    admin: 'administrator',
+    supervisor: t('general.people.supervisorLC'),
+    approver: t('general.people.approverLC'),
+    admin: t('general.people.adminLC'),
   };
   const [availableTitles, setAvailableTitles] = useState<Title[]>([
     { name: 'mgr' },
@@ -233,15 +256,15 @@ const handleRolesSelection = (role: Role) => {
       <form onSubmit={handleSubmit} className="form">
         <div className='d-flex justify-content-begin align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-            &larr; Powrót
+            &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {employee ? 'Zapisz' : 'Dodaj'}
+            {employee ? t('general.management.save') : t('general.management.add')}
           </button>
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="mail">
-            Mail:
+            {t('general.people.mail')}:
           </label>
           <input
             type="text"
@@ -255,7 +278,7 @@ const handleRolesSelection = (role: Role) => {
         </div>
         <div className="mb-3">
             <label className="bold" htmlFor="title">
-                Tytuł:
+              {t('general.title')}:
             </label>
             <select
                 id="title"
@@ -264,7 +287,7 @@ const handleRolesSelection = (role: Role) => {
                 onChange={(e) => setFormData({ ...formData, title: {name: e.target.value} })}
                 className="form-control"
             >
-                <option value="">Wybierz</option>
+                <option value="">{t('general.management.choose')}</option>
                 {availableTitles.map((title) => (
                 <option key={title.name} value={title.name}>
                     {title.name}
@@ -275,7 +298,7 @@ const handleRolesSelection = (role: Role) => {
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="name">
-            Imię:
+            {t('general.people.name')}:
           </label>
           <input
             type="text"
@@ -289,7 +312,7 @@ const handleRolesSelection = (role: Role) => {
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="surname">
-            Nazwisko:
+            {t('general.people.surname')}:
           </label>
           <input
             type="text"
@@ -303,7 +326,7 @@ const handleRolesSelection = (role: Role) => {
         </div>
         <div className="mb-3">
             <label className="bold" htmlFor="department">
-            Katedra:
+              {t('general.university.department')}:
             </label>
             <select
             id="department"
@@ -312,7 +335,7 @@ const handleRolesSelection = (role: Role) => {
             onChange={(e) => {setFormData({ ...formData, departmentCode: e.target.value });}}
             className="form-control"
             >
-            <option value="">Wybierz</option>
+            <option value="">{t('general.management.choose')}</option>
             {availableDepartments.map((department) => (
                 <option key={department.code} value={department.code}>
                 {department.name}
@@ -322,7 +345,7 @@ const handleRolesSelection = (role: Role) => {
             {errors.department && <div className="text-danger">{errors.department}</div>}
         </div>
         <div className="mb-3">
-        <label className="bold">Role:</label>
+        <label className="bold">{t('general.people.roles')}:</label>
             {availableRoles.map((role) => (
                 <div key={role.id} className="mb-2">
                 <input

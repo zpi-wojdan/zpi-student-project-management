@@ -29,7 +29,7 @@ public class ImportEmployees{
     private final DepartmentRepository departmentRepository;
     private final TitleRepository titleRepository;
 
-    public void processFile(String file_path) throws IOException{
+    public String processFile(String file_path) throws IOException{
 
         List<ObjectNode> validData = new ArrayList<>();
         List<ObjectNode> invalidIndexData = new ArrayList<>();
@@ -42,17 +42,22 @@ public class ImportEmployees{
         List<ObjectNode> invalidPhoneNumberData = new ArrayList<>();
         List<ObjectNode> invalidEmailData = new ArrayList<>();
 
+        List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
+
         readEmployeeFile(file_path, validData, invalidIndexData, invalidAcademicTitleData,
                         invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                         invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
 
+        invalidDatabaseRepetitions = saveValidToDatabase(validData);
+
         String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
                             invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
-                            invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
+                            invalidPositionsData, invalidPhoneNumberData,
+                            invalidEmailData, invalidDatabaseRepetitions);
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
 
-        saveValidToDatabase(validData);
+        return fullJson;
     }
 
     public void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
@@ -203,7 +208,8 @@ public class ImportEmployees{
                                           List<ObjectNode> invalidAcademicTitleData, List<ObjectNode> invalidSurnameData,
                                           List<ObjectNode> invalidNameData, List<ObjectNode> invalidUnitData,
                                           List<ObjectNode> invalidSubunitData, List<ObjectNode> invalidPositionsData,
-                                          List<ObjectNode> invalidPhoneNumberData, List<ObjectNode> invalidEmailData) throws IOException{
+                                          List<ObjectNode> invalidPhoneNumberData, List<ObjectNode> invalidEmailData,
+                                          List<ObjectNode> invalidDatabaseRepetitions) throws IOException{
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, List<ObjectNode>> fullJson = new HashMap<>();
@@ -222,8 +228,8 @@ public class ImportEmployees{
     }
 
 
-    public void saveValidToDatabase(List<ObjectNode> validData){
-        List<ObjectNode> invalidData = new ArrayList<>();
+    public List<ObjectNode> saveValidToDatabase(List<ObjectNode> validData){
+        List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
 
         for (ObjectNode node : validData){
             Optional<Employee> existingEmployee = employeeRepository.findByMail(node.get("email").asText());
@@ -232,7 +238,7 @@ public class ImportEmployees{
             Optional<Title> existingTitle = titleRepository.findByName(node.get("title").asText());
 
             if (existingRole.isEmpty() || existingDepartment.isEmpty() || existingTitle.isEmpty()){
-                invalidData.add(node);
+                invalidDatabaseRepetitions.add(node);
                 continue;
             }
 
@@ -269,6 +275,7 @@ public class ImportEmployees{
             }
 
         }
+        return invalidDatabaseRepetitions;
     }
 
 }

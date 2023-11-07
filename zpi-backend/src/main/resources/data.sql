@@ -144,7 +144,7 @@ VALUES
     ('789012@student.pwr.edu.pl', 'Christopher', 'Taylor', '789012', 1, 'STU'),
     ('890123@student.pwr.edu.pl', 'Jessica', 'Harris', '890123', 1, 'STU'),
     ('901234@student.pwr.edu.pl', 'Matthew', 'Clark', '901234', 1, 'STU'),
-    ('012345@student.pwr.edu.pl', 'Emily', 'Anderson', '012345', 1, 'STU'),
+    ('123450@student.pwr.edu.pl', 'Emily', 'Anderson', '012345', 1, 'STU'),
     ('987654@student.pwr.edu.pl', 'Daniel', 'Lewis', '987654', 1, 'STU'),
     ('876543@student.pwr.edu.pl', 'Olivia', 'Ward', '876543', 1, 'STU'),
     ('765432@student.pwr.edu.pl', 'Andrew', 'Scott', '765432', 1, 'STU'),
@@ -162,7 +162,7 @@ VALUES
     ('432106@student.pwr.edu.pl', 'Daniel', 'Nelson', '432106', 1, 'STU'),
     ('321007@student.pwr.edu.pl', 'Sophia', 'Wells', '321007', 1, 'STU'),
     ('210908@student.pwr.edu.pl', 'William', 'Rose', '210908', 1, 'STU'),
-    ('099809@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', 1, 'STU'),
+    ('998090@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', 1, 'STU'),
     ('988710@student.pwr.edu.pl', 'Michael', 'Gilbert', '988710', 1, 'STU'),
     ('877611@student.pwr.edu.pl', 'Olivia', 'Thornton', '877611', 1, 'STU'),
     ('766512@student.pwr.edu.pl', 'Daniel', 'Malone', '766512', 1, 'STU'),
@@ -328,6 +328,27 @@ VALUES
     ((SELECT id FROM thesis WHERE description_pl = 'Opis41'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7')),
     ((SELECT id FROM thesis WHERE description_pl = 'Opis42'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7')),
     ((SELECT id FROM thesis WHERE description_pl = 'Opis43'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'));
+
+INSERT INTO employee(mail, name, surname, title, department_code)
+VALUES
+    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', 'dr', 'K34W04ND03'),
+    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', 'dr', 'K34W04ND03'),
+    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', 'dr', 'K34W04ND03'),
+    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', 'dr', 'K34W04ND03');
+
+INSERT INTO employee_role(mail, role_id)
+VALUES
+    ('260452@student.pwr.edu.pl', '4'),
+    ('260466@student.pwr.edu.pl', '4'),
+    ('260464@student.pwr.edu.pl', '4'),
+    ('255356@student.pwr.edu.pl', '4');
+
+INSERT INTO employee_role(mail, role_id)
+VALUES
+    ('260452@student.pwr.edu.pl', '2'),
+    ('260466@student.pwr.edu.pl', '2'),
+    ('260464@student.pwr.edu.pl', '2'),
+    ('255356@student.pwr.edu.pl', '2');
 
 
 

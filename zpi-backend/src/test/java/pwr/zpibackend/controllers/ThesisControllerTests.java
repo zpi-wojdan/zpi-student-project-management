@@ -135,7 +135,8 @@ class ThesisControllerTests {
         Thesis thesisToAdd = new Thesis();
         thesisToAdd.setNamePL("Test Thesis PL");
         thesisToAdd.setNameEN("Test Thesis EN");
-        thesisToAdd.setDescriptionEN("Test Description");
+        thesisToAdd.setDescriptionPL("Test Description PL");
+        thesisToAdd.setDescriptionEN("Test Description EN");
         thesisToAdd.setNumPeople(5);
         thesisToAdd.setSupervisor(supervisor);
         thesisToAdd.setLeader(leader);
@@ -149,7 +150,8 @@ class ThesisControllerTests {
     public static void assertTestData(Thesis addedThesis, Employee supervisor, Student leader){
         assertThat(addedThesis.getNamePL()).isEqualTo("Test Thesis PL");
         assertThat(addedThesis.getNameEN()).isEqualTo("Test Thesis EN");
-        assertThat(addedThesis.getDescriptionEN()).isEqualTo("Test Description");
+        assertThat(addedThesis.getDescriptionPL()).isEqualTo("Test Description PL");
+        assertThat(addedThesis.getDescriptionEN()).isEqualTo("Test Description EN");
         assertThat(addedThesis.getNumPeople()).isEqualTo(5);
         assertThat(addedThesis.getSupervisor()).isEqualTo(supervisor);
         assertThat(addedThesis.getLeader()).isEqualTo(leader);

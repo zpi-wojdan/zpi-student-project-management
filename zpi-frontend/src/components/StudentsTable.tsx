@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { Employee } from '../models/Employee';
 import { Student } from '../models/Student';
 import { ThesisFront } from '../models/Thesis';
+import {useTranslation} from "react-i18next";
 
 type StudentTableProps = {
   students: Student[];
@@ -13,6 +14,7 @@ type StudentTableProps = {
 function StudentTable({ students, thesis, role }: StudentTableProps) {
   const [user, setUser] = useState<Student & Employee>();
   const [showButtons, setShowButtons] = useState<boolean[]>(students.map((s) => false));
+  const { i18n, t } = useTranslation();
 
   const handleClick = () => {
     console.log("clicked")
@@ -47,8 +49,8 @@ function StudentTable({ students, thesis, role }: StudentTableProps) {
       <thead>
         <tr>
           <th scope="col">#</th>
-          <th scope="col">Imię i Nazwisko</th>
-          <th scope="col">Indeks</th>
+          <th scope="col">{t('general.people.fullName')}</th>
+          <th scope="col">{t('general.people.index')}</th>
           <th scope="col"></th>
         </tr>
       </thead>
