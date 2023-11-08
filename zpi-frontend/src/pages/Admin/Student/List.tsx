@@ -79,7 +79,7 @@ const StudentList: React.FC = () => {
               {t('student.add')}
           </button>
           <button className="custom-button" onClick={() => {navigate('/file/student')}}>
-            Importuj studentów
+              {t('student.import')}
           </button>
           <div >
         </div>
