@@ -31,6 +31,7 @@ code {
   width: 100%;
   border-collapse: separate;
   border-spacing: 2px;
+  margin: 10px 0px;
 }
 
 .custom-table tbody tr:nth-child(odd) {
@@ -60,13 +61,17 @@ code {
   display: flex;
   float:right;
   justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 .pagination button {
   padding: 5px 15px;
   margin: 10px 5px;
+}
+
+.pagination input{
+  max-width: 40px;
+  appearance: textfield;
+  text-align: center;
 }
 
 .pagination .text {
