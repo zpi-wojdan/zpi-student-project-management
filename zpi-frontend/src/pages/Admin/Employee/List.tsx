@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Employee } from '../../../models/Employee';
-import Cookies from "js-cookie";
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
@@ -14,12 +13,9 @@ const EmployeeList: React.FC = () => {
   const { i18n, t } = useTranslation();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/employee', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/employee')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Employee, b: Employee) => {
             return a.mail.localeCompare(b.mail);
@@ -77,7 +73,7 @@ const EmployeeList: React.FC = () => {
               {t('employee.add')}
           </button>
           <button className="custom-button" onClick={() => {navigate('/file/employee')}}>
-            Importuj pracowników
+              {t('employee.import')}
           </button>
         </div>
         {ITEMS_PER_PAGE.length > 1 && (

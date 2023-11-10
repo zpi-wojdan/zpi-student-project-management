@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 import { Specialization } from '../../../models/Specialization';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { StudyField } from '../../../models/StudyField';
 import { Faculty } from '../../../models/Faculty';
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const SpecializationForm: React.FC = () => {
   // @ts-ignore
@@ -64,11 +63,7 @@ const SpecializationForm: React.FC = () => {
       console.log("Request",requestData)
       if (specialization) {
         console.log(formData)
-        Axios.put(`http://localhost:8080/specialization/${formData.abbreviation}`, requestData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.put(`http://localhost:8080/specialization/${formData.abbreviation}`, requestData)
         .then(() => {
           navigate("/specializations")
           toast.success(t("specialization.updateSuccessful"));
@@ -92,11 +87,7 @@ const SpecializationForm: React.FC = () => {
           });
       } else {
         console.log(formData)
-        Axios.post('http://localhost:8080/specialization', requestData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.post('http://localhost:8080/specialization', requestData)
         .then(() => {
           navigate("/specializations")
           toast.success(t("specialization.addSuccessful"));
@@ -164,11 +155,7 @@ const SpecializationForm: React.FC = () => {
   const [selectedFieldAbbr, setSelectedFieldAbbr] = useState<string>();
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setAvailableFaculties(response.data);
       })
@@ -183,11 +170,7 @@ const SpecializationForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/studyfield', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/studyfield')
       .then((response) => {
         setAvailableFields(response.data);
       })

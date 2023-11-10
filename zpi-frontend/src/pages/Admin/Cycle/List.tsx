@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { StudyCycle } from '../../../models/StudyCycle';
-import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const StudyCycleList: React.FC = () => {
   // @ts-ignore
@@ -17,12 +16,9 @@ const StudyCycleList: React.FC = () => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [cycles, setCycles] = useState<StudyCycle[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/studycycle', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/studycycle')
       .then((response) => {
         const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => a.id - b.id);
         setCycles(sortedCycles);
@@ -79,11 +75,7 @@ const StudyCycleList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/studycycle/${studyCycleToDelete}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/studycycle/${studyCycleToDelete}`)
         .then(() => {
           toast.success(t('cycle.deleteSuccessful'));
           setRefreshList(!refreshList);

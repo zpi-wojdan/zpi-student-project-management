@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Axios from 'axios';
 import { Employee } from '../../../models/Employee';
-import { Department } from '../../../models/Department';
-import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const EmployeeDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -26,11 +24,7 @@ const EmployeeDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/employee/${employee.mail}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/employee/${employee.mail}`)
         .then(() => {
           toast.success(t("employee.deleteSuccessful"));
           navigate("/employees");

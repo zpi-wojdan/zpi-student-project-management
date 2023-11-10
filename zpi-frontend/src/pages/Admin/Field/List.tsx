@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { StudyField } from '../../../models/StudyField';
-import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const StudyFieldList: React.FC = () => {
   // @ts-ignore
@@ -17,12 +16,9 @@ const StudyFieldList: React.FC = () => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [studyFields, setStudyFields] = useState<StudyField[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/studyfield', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/studyfield')
       .then((response) => {
         const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.abbreviation.localeCompare(b.abbreviation);
@@ -83,11 +79,7 @@ const StudyFieldList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/studyfield/${studyFieldToDelete}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/studyfield/${studyFieldToDelete}`)
         .then(() => {
           toast.success(t('field.deleteSuccessful'));
           setRefreshList(!refreshList);

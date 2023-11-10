@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Faculty } from '../../../models/Faculty';
-import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const FacultyList: React.FC = () => {
   // @ts-ignore
@@ -17,12 +16,9 @@ const FacultyList: React.FC = () => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
           return a.abbreviation.localeCompare(b.abbreviation);
@@ -81,11 +77,7 @@ const FacultyList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/faculty/${facultyToDelete}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/faculty/${facultyToDelete}`)
         .then(() => {
           toast.success(t('faculty.deleteSuccessful'));
           setRefreshList(!refreshList);

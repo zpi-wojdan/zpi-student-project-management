@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 import { StudyField, StudyFieldDTO } from '../../../models/StudyField';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { Faculty } from '../../../models/Faculty';
 import handleSignOut from "../../../auth/Logout";
@@ -61,11 +59,7 @@ const StudyFieldForm: React.FC = () => {
     if (validateForm()) {
       console.log(formData);
       if (studyField) {
-        Axios.put(`http://localhost:8080/studyfield/${oldAbbr}`, formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.put(`http://localhost:8080/studyfield/${oldAbbr}`, formData)
         .then(() => {
           navigate("/fields")
           toast.success(t("field.updateSuccessful"));
@@ -88,11 +82,7 @@ const StudyFieldForm: React.FC = () => {
             }
           });
       } else {
-        Axios.post('http://localhost:8080/studyfield', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.post('http://localhost:8080/studyfield', formData)
         .then(() => {
           navigate("/fields")
           toast.success(t("field.addSuccessful"));

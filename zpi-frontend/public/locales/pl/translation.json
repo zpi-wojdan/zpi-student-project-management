@@ -98,7 +98,8 @@
     "deleteSuccessful": "Pracownik został usunięty",
     "updateSuccessful": "Pracownik został zaktualizowany",
     "updateError": "Pracownik nie został zaktualizowany",
-    "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę."
+    "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę.",
+    "import": "Importuj pracowników"
   },
   "student": {
     "add": "Dodaj studenta",
@@ -112,7 +113,8 @@
     "indexExists": "Podany indeks już istnieje!",
     "indexLength": "Indeks musi składać się z 6 cyfr.",
     "cycleProgramRequired": "Wybierz cykl i program dla wszystkich wpisów.",
-    "duplicatedPrograms": "Lista programów posiada duplikaty."
+    "duplicatedPrograms": "Lista programów posiada duplikaty.",
+    "import": "Importuj studentów"
   },
   "faculty": {
     "updateSuccessful": "Wydział został zaktualizowany",
