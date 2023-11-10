@@ -49,33 +49,29 @@ const StudyFieldList: React.FC = () => {
   }, [refreshList]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setInputValue] = useState(currentPage);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE[0]);
   //(ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]
   const indexOfLastItem = itemsPerPage === 'All' ? studyFields.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
   const currentStudyFields = studyFields.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(studyFields.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = Math.max(1, currentPage - 2); i <= Math.min(currentPage + 2, totalPages); i++) {
-      pageNumbers.push(i);
+    if(!newPage || newPage<1){
+      setCurrentPage(1);
+      setInputValue(1);
     }
-
-    return pageNumbers.map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={currentPage === pageNumber ? 'active' : ''}
-      >
-        {pageNumber}
-      </button>
-    ));
+    else {
+      if(newPage>totalPages){
+        setCurrentPage(totalPages);
+        setInputValue(totalPages);
+      }
+      else{
+        setCurrentPage(newPage);
+        setInputValue(newPage);
+      }
+    }
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -113,19 +109,22 @@ const StudyFieldList: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-between  align-items-center mb-3'>
+      <div className='d-flex justify-content-between  align-items-center'>
         <div >
           <button className="custom-button" onClick={() => {navigate('/fields/add')}}>
               {t('field.add')}
           </button>
         </div>
-        <div >
-          {ITEMS_PER_PAGE.length > 1 && (
-            <div>
+        {ITEMS_PER_PAGE.length > 1 && (
+        <div className="d-flex justify-content-between">
+          <div className="d-flex align-items-center">
             <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(e.target.value)}
+            onChange={(e) => {
+              setItemsPerPage(e.target.value);
+              handlePageChange(1);
+            }}
             >
             {ITEMS_PER_PAGE.map((value) => (
                 <option key={value} value={value}>
@@ -133,9 +132,49 @@ const StudyFieldList: React.FC = () => {
                 </option>
             ))}
             </select>
+          </div>
+          <div style={{ marginLeft: '30px' }}>
+            {itemsPerPage !== 'All' && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='custom-button'
+              >
+                &lt;
+              </button>
+
+              <input
+                type="number"
+                value={inputValue}
+                onChange={(e) => {
+                  const newPage = parseInt(e.target.value, 10);
+                  setInputValue(newPage);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePageChange(inputValue);
+                  }
+                }}
+                onBlur={() => {
+                  handlePageChange(inputValue);
+                }}
+                className='text'
+              />
+              
+            <span className='text'> z {totalPages}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='custom-button'
+              >
+                &gt;
+              </button>
             </div>
-          )}
+            )}
+          </div>
         </div>
+        )}
       </div>
       <table className="custom-table">
         <thead>
@@ -148,61 +187,81 @@ const StudyFieldList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-  {currentStudyFields.map((studyField, index) => (
-    <React.Fragment key={studyField.abbreviation}>
-      <tr>
-        <td className="centered">{indexOfFirstItem + index + 1}</td>
-        <td className="centered">{studyField.abbreviation}</td>
-        <td>{studyField.name}</td>
-        <td>
-          <button
-            className="custom-button coverall"
-            onClick={() => {
-              navigate(`/fields/edit/${studyField.abbreviation}`, { state: { studyField } });
-            }}
-          >
-            <i className="bi bi-arrow-right"></i>
-          </button>
-        </td>
-        <td>
-          <button
-            className="custom-button coverall"
-            onClick={() => handleDeleteClick(studyField.abbreviation)}
-          >
-            <i className="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-      {studyFieldToDelete === studyField.abbreviation && showDeleteConfirmation && (
-        <tr>
-          <td colSpan={5}>
-          <DeleteConfirmation
-            isOpen={showDeleteConfirmation}
-            onClose={handleCancelDelete}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-            questionText={t('field.deleteConfirmation')}
-          />
-          </td>
-        </tr>
-      )}
-    </React.Fragment>
-  ))}
-</tbody>
-
+          {currentStudyFields.map((studyField, index) => (
+            <React.Fragment key={studyField.abbreviation}>
+              <tr>
+                <td className="centered">{indexOfFirstItem + index + 1}</td>
+                <td className="centered">{studyField.abbreviation}</td>
+                <td>{studyField.name}</td>
+                <td>
+                  <button
+                    className="custom-button coverall"
+                    onClick={() => {
+                      navigate(`/fields/edit/${studyField.abbreviation}`, { state: { studyField } });
+                    }}
+                  >
+                    <i className="bi bi-arrow-right"></i>
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="custom-button coverall"
+                    onClick={() => handleDeleteClick(studyField.abbreviation)}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {studyFieldToDelete === studyField.abbreviation && showDeleteConfirmation && (
+                <tr>
+                  <td colSpan={5}>
+                  <DeleteConfirmation
+                    isOpen={showDeleteConfirmation}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                    questionText={t('field.deleteConfirmation')}
+                  />
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
       </table>
       {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            className='custom-button'
           >
             &lt;
           </button>
-          {renderPageNumbers()}
+
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => {
+              const newPage = parseInt(e.target.value, 10);
+              setInputValue(newPage);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handlePageChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              handlePageChange(inputValue);
+            }}
+            className='text'
+          />
+          
+        <span className='text'> z {totalPages}</span>
           <button
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className='custom-button'
           >
             &gt;
           </button>
