@@ -45,32 +45,28 @@ const EmployeeList: React.FC = () => {
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setInputValue] = useState(currentPage);
   const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
   const indexOfLastItem = itemsPerPage === 'All' ? employees.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
   const currentEmployees = employees.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(employees.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = Math.max(1, currentPage - 2); i <= Math.min(currentPage + 2, totalPages); i++) {
-      pageNumbers.push(i);
+    if(newPage<1){
+      setCurrentPage(1);
+      setInputValue(1);
     }
-
-    return pageNumbers.map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={currentPage === pageNumber ? 'active' : ''}
-      >
-        {pageNumber}
-      </button>
-    ));
+    else {
+      if(newPage>totalPages){
+        setCurrentPage(totalPages);
+        setInputValue(totalPages);
+      }
+      else{
+        setCurrentPage(newPage);
+        setInputValue(newPage);
+      }
+    }
   };
 
   return (
@@ -88,7 +84,10 @@ const EmployeeList: React.FC = () => {
             <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(e.target.value)}
+            onChange={(e) => {
+              setItemsPerPage(e.target.value);
+              handlePageChange(1);
+            }}
             >
             {ITEMS_PER_PAGE.map((value) => (
                 <option key={value} value={value}>
@@ -111,7 +110,7 @@ const EmployeeList: React.FC = () => {
           {currentEmployees.map((employee, index) => (
             <tr key={employee.mail}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
-              <td>{employee.title + " " + employee.name + " " + employee.surname}</td>
+              <td>{employee.title.name + " " + employee.name + " " + employee.surname}</td>
               <td>{employee.mail}</td>
               <td>
                 <button
@@ -130,15 +129,40 @@ const EmployeeList: React.FC = () => {
       {itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            className='custom-button'
           >
             &lt;
           </button>
-          {renderPageNumbers()}
+
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => {
+              const newPage = parseInt(e.target.value, 10);
+              setInputValue(newPage);
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handlePageChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              handlePageChange(inputValue);
+            }}
+            style={{
+              width: '40px',
+              appearance: 'textfield',
+            }}
+            className='text'
+          />
+          
+        <span className='text'> z {totalPages}</span>
           <button
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className='custom-button'
           >
             &gt;
           </button>

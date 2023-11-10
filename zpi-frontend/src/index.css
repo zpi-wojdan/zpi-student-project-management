@@ -65,14 +65,14 @@ code {
 }
 
 .pagination button {
-  background-color: #f2f2f2;
-  border: 1px solid grey;
-  padding: 5px 10px;
-  cursor: pointer;
+  padding: 5px 15px;
+  margin: 10px 5px;
 }
 
-.pagination button:hover {
-  background-color: #ddd;
+.pagination .text {
+  padding: 5px 5px;
+  margin: 10px 0px;
+  margin-left: 5px;
 }
 
 .link-style {
@@ -83,7 +83,7 @@ code {
 
 .page-margin {
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 120px;
 }
 
 .bold {
