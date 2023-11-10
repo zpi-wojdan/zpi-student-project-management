@@ -35,7 +35,6 @@ public class ImportStudents {
     private StudyCycleRepository studyCycleRepository;
 
     public String processFile(String file_path) throws IOException{
-//            String file_path = "C:\\zpi-student-project-management\\zpi-backend\\src\\test\\resources\\ZPI_dane.xlsx";
         List<ObjectNode> validData = new ArrayList<>();
         List<ObjectNode> invalidIndexData = new ArrayList<>();
         List<ObjectNode> invalidSurnameData = new ArrayList<>();
