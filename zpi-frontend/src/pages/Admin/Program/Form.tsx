@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 import { Program, ProgramDTO } from '../../../models/Program';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
@@ -10,6 +8,7 @@ import { StudyField } from '../../../models/StudyField';
 import { Faculty } from '../../../models/Faculty';
 import { StudyCycle } from '../../../models/StudyCycle';
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
@@ -57,11 +56,7 @@ const ProgramForm: React.FC = () => {
 
     if (validateForm()) {
       if (program) {
-        Axios.put(`http://localhost:8080/program/${oldId}`, formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.put(`http://localhost:8080/program/${oldId}`, formData)
         .then(() => {
           navigate("/programs")
           toast.success(t("program.updateSuccessful"));
@@ -75,11 +70,7 @@ const ProgramForm: React.FC = () => {
             toast.error(t("program.updateError"));
           });
       } else {
-        Axios.post('http://localhost:8080/program', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.post('http://localhost:8080/program', formData)
         .then(() => {
           navigate("/programs")
           toast.success(t("program.addSuccessful"));
@@ -139,11 +130,7 @@ const ProgramForm: React.FC = () => {
   const [selectedFacultyAbbr, setSelectedFacultyAbbr] = useState<string>();
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setAvailableFaculties(response.data);
       })
@@ -158,11 +145,7 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/studyfield', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/studyfield')
       .then((response) => {
         setAvailableFields(response.data);
       })
@@ -176,11 +159,7 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/specialization', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/specialization')
       .then((response) => {
         setAvailableSpecializations(response.data);
       })
@@ -194,11 +173,7 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/studycycle', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/studycycle')
       .then((response) => {
         setAvailableStudyCycles(response.data);
       })

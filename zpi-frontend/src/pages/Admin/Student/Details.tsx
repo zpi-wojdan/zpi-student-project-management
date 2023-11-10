@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Student } from '../../../models/Student';
 import { Faculty } from '../../../models/Faculty';
 import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
-import Cookies from "js-cookie";
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";
 import { toast } from 'react-toastify';

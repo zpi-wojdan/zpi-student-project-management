@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ThesisFront, Thesis } from '../../models/Thesis';
-import Cookies from "js-cookie";
 import api from '../../utils/api';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 import { StudyCycle } from '../../../models/StudyCycle';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const StudyCycleForm: React.FC = () => {
   // @ts-ignore
@@ -41,11 +40,7 @@ const StudyCycleForm: React.FC = () => {
 
     if (validateForm()) {
       if (studyCycle) {
-        Axios.put(`http://localhost:8080/studycycle/${formData.id}`, formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.put(`http://localhost:8080/studycycle/${formData.id}`, formData)
         .then(() => {
           navigate("/cycles")
           toast.success(t("studyCycle.updateSuccessful"));
@@ -59,11 +54,7 @@ const StudyCycleForm: React.FC = () => {
             toast.error(t("studyCycle.updateError"));
           });
       } else {
-        Axios.post('http://localhost:8080/studycycle', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.post('http://localhost:8080/studycycle', formData)
         .then(() => {
           navigate("/cycles")
           toast.success(t("studyCycle.addSuccessful"));

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 import { Department, DepartmentDTO } from '../../../models/Department';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { Faculty } from '../../../models/Faculty';
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const DepartmentForm: React.FC = () => {
   // @ts-ignore
@@ -48,11 +47,7 @@ const DepartmentForm: React.FC = () => {
   const [faculties, setFaculties] = useState<Faculty[]>([]);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/faculty', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/faculty')
       .then((response) => {
         setFaculties(response.data);
       })
@@ -70,11 +65,7 @@ const DepartmentForm: React.FC = () => {
 
     if (validateForm()) {
       if (department) {
-        Axios.put(`http://localhost:8080/departments/${formData.code}`, formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.put(`http://localhost:8080/departments/${formData.code}`, formData)
         .then(() => {
           navigate("/departments")
           toast.success(t("department.updateSuccessful"));
@@ -97,11 +88,7 @@ const DepartmentForm: React.FC = () => {
             }
           });
       } else {
-        Axios.post('http://localhost:8080/departments', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.post('http://localhost:8080/departments', formData)
         .then(() => {
           navigate("/departments")
           toast.success(t("department.addSuccessful"));

@@ -1,13 +1,12 @@
 import { useState, useCallback } from 'react';
-import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
-import Cookies from "js-cookie";
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
 import { InvalidStudentData } from '../../models/ImportedData';
 
 import {useTranslation} from "react-i18next";
+import api from "../../utils/api";
 
 function UploadStudentFilePage() {
   // @ts-ignore
@@ -123,12 +122,7 @@ function UploadStudentFilePage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      axios
-        .post('http://localhost:8080/file/student', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            },
-        })
+      api.post('http://localhost:8080/file/student', formData)
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);

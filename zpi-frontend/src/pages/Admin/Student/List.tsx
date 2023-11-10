@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Student } from '../../../models/Student';
-import Cookies from "js-cookie";
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const StudentList: React.FC = () => {
   // @ts-ignore
@@ -14,12 +13,9 @@ const StudentList: React.FC = () => {
   const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/student', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/student')
       .then((response) => {
         response.data.sort((a: Student, b: Student) => parseInt(a.index, 10) - parseInt(b.index, 10));
         setStudents(response.data);

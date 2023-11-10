@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Department } from '../../../models/Department';
-import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const DepartmentList: React.FC = () => {
   // @ts-ignore
@@ -17,12 +16,9 @@ const DepartmentList: React.FC = () => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/departments', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/departments')
       .then((response) => {
         console.log(response.data)
         const sortedDepartments = response.data.sort((a: Department, b: Department) => {
@@ -86,11 +82,7 @@ const DepartmentList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/departments/${departmentToDelete}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/departments/${departmentToDelete}`)
         .then(() => {
           toast.success(t('department.deleteSuccessful'));
           setRefreshList(!refreshList);
