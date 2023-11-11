@@ -7,5 +7,9 @@ export type Faculty = {
   id: number;
   abbreviation: string;
   name: string;
-  departments: Department[];
+}
+
+export type FacultyDTO = {
+  abbreviation: string;
+  name: string;
 }

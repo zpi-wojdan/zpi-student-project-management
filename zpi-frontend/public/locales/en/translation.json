@@ -122,7 +122,8 @@
     "facultyDeleteSuccessful": "Faculty has been deleted",
     "facultyDeleteError": "Faculty cannot be deleted!",
     "add": "Add faculty",
-    "deleteConfirmation": "Are you sure you want to delete this faculty?"
+    "deleteConfirmation": "Are you sure you want to delete this faculty?",
+    "goodAbbrFormat": "Correct format: \"W\", two digits, optionally one uppercase letter"
   },
   "field": {
     "deleteSuccessful": "Field has been deleted",
@@ -132,7 +133,8 @@
     "addSuccessful": "Field has been added",
     "addError": "Field has not been added",
     "updateSuccessful": "Field has been updated",
-    "updateError": "Field has not been updated"
+    "updateError": "Field has not been updated",
+    "goodAbbrFormat": "Correct format: three uppercase letters"
   },
   "program": {
     "deleteSuccessful": "Study program has been deleted",
@@ -153,7 +155,8 @@
     "addSuccessful": "Specialization has been added",
     "addError": "Specialization has not been added",
     "updateSuccessful": "Specialization has been updated",
-    "updateError": "Specialization has not been updated"
+    "updateError": "Specialization has not been updated",
+    "goodAbbrFormat": "Correct format: three uppercase letters"
   },
   "reservation": {
     "reservationSuccessful": "Reservation completed successfully!",

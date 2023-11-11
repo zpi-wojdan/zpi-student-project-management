@@ -69,11 +69,11 @@ const FacultyList: React.FC = () => {
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [facultyToDelete, setFacultyToDelete] = useState<string | null>(null);
+  const [facultyToDelete, setFacultyToDelete] = useState<number | null>(null);
 
-  const handleDeleteClick = (facultyAbbreviation: string) => {
+  const handleDeleteClick = (facultyId: number) => {
     setShowDeleteConfirmation(true);
-    setFacultyToDelete(facultyAbbreviation);
+    setFacultyToDelete(facultyId);
   };
 
   const handleConfirmDelete = () => {
@@ -196,13 +196,13 @@ const FacultyList: React.FC = () => {
                 <td>
                   <button
                     className="custom-button coverall"
-                    onClick={() => handleDeleteClick(faculty.abbreviation)}
+                    onClick={() => handleDeleteClick(faculty.id)}
                   >
                     <i className="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
-              {facultyToDelete === faculty.abbreviation && showDeleteConfirmation && (
+              {facultyToDelete === faculty.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
                   <DeleteConfirmation

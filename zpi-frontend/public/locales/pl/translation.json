@@ -77,7 +77,7 @@
     "addError": "Cykl nie został dodany",
     "updateSuccessful": "Cykl został zaktualizowany",
     "updateError": "Cykl nie został zaktualizowany",
-    "goodFormat": "Poprawny format: \"xxxx/xx-XYZ\", gdzie \"xxxx\" to 4 cyfry, \"xx\" to 2 cyfry, a \"XYZ\" to od 1 do 3 dużych liter alfabetu."
+    "goodFormat": "Poprawny format: \"xxxx/xx-XYZ\", gdzie \"xxxx\" to 4 cyfry, \"xx\" to 2 cyfry, a \"XYZ\" to od 1 do 3 wielkich liter alfabetu."
   },
   "department": {
     "deleteSuccessful": "Katedra została usunięta",
@@ -122,7 +122,8 @@
     "deleteSuccessful": "Wydział został usunięty",
     "deleteError": "Wydział nie może zostać usunięty!",
     "add": "Dodaj wydział",
-    "deleteConfirmation": "Czy na pewno chcesz usunąć ten wydział?"
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten wydział?",
+    "goodAbbrFormat": "Poprawny format: \"W\", dwie cyfry, opcjonalnie jedna wielka litera"
   },
   "field": {
     "deleteSuccessful": "Kierunek został usunięty",
@@ -132,7 +133,8 @@
     "addSuccessful": "Kierunek został dodany",
     "addError": "Kierunek nie został dodany",
     "updateSuccessful": "Kierunek został zaktualizowany",
-    "updateError": "Kierunek nie został zaktualizowany"
+    "updateError": "Kierunek nie został zaktualizowany",
+    "goodAbbrFormat": "Poprawny format: trzy wielkie litery"
   },
   "program": {
     "deleteSuccessful": "Program studiów został usunięty",
@@ -153,7 +155,8 @@
     "addSuccessful": "Specjalność została dodana",
     "addError": "Specjalność nie została dodana",
     "updateSuccessful": "Specjalność została zaktualizowana",
-    "updateError": "Specjalność nie została zaktualizowana"
+    "updateError": "Specjalność nie została zaktualizowana",
+    "goodAbbrFormat": "Poprawny format: trzy wielkie litery"
   },
   "reservation": {
     "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",
