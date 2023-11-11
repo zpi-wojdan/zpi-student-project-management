@@ -12,6 +12,7 @@ import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.models.university.StudentProgramCycleId;
 import pwr.zpibackend.models.university.StudyCycle;
+import pwr.zpibackend.repositories.ReservationRepository;
 import pwr.zpibackend.repositories.StudentRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudentProgramCycleRepository;
@@ -21,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +32,7 @@ public class StudentService {
     private ProgramRepository programRepository;
     private StudyCycleRepository studyCycleRepository;
     private StudentProgramCycleRepository studentProgramCycleRepository;
+    private ReservationRepository reservationRepository;
     private RoleService roleService;
 
     @Transactional(readOnly = true)
@@ -130,5 +133,10 @@ public class StudentService {
             newSpcSet.add(spc);
         }
         return newSpcSet;
+    }
+    public List<Student> getStudentsWithoutThesis() {
+        return studentRepository.findAll().stream()
+                .filter(student -> !reservationRepository.existsByStudent(student))
+                .collect(Collectors.toList());
     }
 }
