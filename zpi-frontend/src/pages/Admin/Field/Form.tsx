@@ -6,7 +6,7 @@ import { Faculty } from '../../../models/Faculty';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import api from '../../../utils/api';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const StudyFieldForm: React.FC = () => {
   // @ts-ignore
@@ -15,7 +15,7 @@ const StudyFieldForm: React.FC = () => {
   const location = useLocation();
   const { i18n, t } = useTranslation();
   const studyField = location.state?.studyField as StudyField;
-  const [oldAbbr, setOldAbbr] = useState<String>();
+  const [fieldId, setFieldId] = useState<number>();
   const [formData, setFormData] = useState<StudyFieldDTO>({
     abbreviation: '',
     name: '',
@@ -28,21 +28,29 @@ const StudyFieldForm: React.FC = () => {
   useEffect(() => {
     const newErrors: Record<string, string> = {};
     Object.keys(errorsKeys).forEach((key) => {
-        newErrors[key] = t(errorsKeys[key]);
+      newErrors[key] = t(errorsKeys[key]);
     });
     setErrors(newErrors);
   }, [i18n.language]);
 
   useEffect(() => {
+    if (studyField) {
+      setFormData((prevFormData) => {
+        return {
+          ...prevFormData,
+          abbreviation: studyField.abbreviation,
+          name: studyField.name,
+          facultyAbbr: studyField.faculty.abbreviation
+        };
+      });
+      setFieldId(studyField.id);
+    }
+  }, [studyField]);
+
+  useEffect(() => {
     api.get('http://localhost:8080/faculty')
       .then((response) => {
         setFaculties(response.data);
-        if (studyField) {
-          formData.abbreviation = studyField.abbreviation;
-          formData.name = studyField.name;
-          formData.facultyAbbr = faculties.find((faculty) => faculty.id === studyField.faculty.id)?.abbreviation || '';
-          setOldAbbr(studyField.abbreviation);
-        }
       })
       .catch((error) => {
         console.error(error);
@@ -59,19 +67,19 @@ const StudyFieldForm: React.FC = () => {
     if (validateForm()) {
       console.log(formData);
       if (studyField) {
-        api.put(`http://localhost:8080/studyfield/${oldAbbr}`, formData)
-        .then(() => {
-          navigate("/fields")
-          toast.success(t("field.updateSuccessful"));
-        })
-        .catch((error) => {
+        api.put(`http://localhost:8080/studyfield/${fieldId}`, formData)
+          .then(() => {
+            navigate("/fields")
+            toast.success(t("field.updateSuccessful"));
+          })
+          .catch((error) => {
             if (error.response && error.response.status === 409) {
-                const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = t("general.management.abbreviationExists")
-                setErrors(newErrors);
-                const newErrorsKeys: Record<string, string> = {};
-                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
-                setErrorsKeys(newErrorsKeys);
+              const newErrors: Record<string, string> = {};
+              newErrors.abbreviation = t("general.management.abbreviationExists")
+              setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.abbreviation = "general.management.abbreviationExists"
+              setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
@@ -83,18 +91,18 @@ const StudyFieldForm: React.FC = () => {
           });
       } else {
         api.post('http://localhost:8080/studyfield', formData)
-        .then(() => {
-          navigate("/fields")
-          toast.success(t("field.addSuccessful"));
-        })
-        .catch((error) => {
+          .then(() => {
+            navigate("/fields")
+            toast.success(t("field.addSuccessful"));
+          })
+          .catch((error) => {
             if (error.response && error.response.status === 409) {
-                const newErrors: Record<string, string> = {};
-                newErrors.abbreviation = t("general.management.abbreviationExists")
-                setErrors(newErrors);
-                const newErrorsKeys: Record<string, string> = {};
-                newErrorsKeys.abbreviation = "general.management.abbreviationExists"
-                setErrorsKeys(newErrorsKeys);
+              const newErrors: Record<string, string> = {};
+              newErrors.abbreviation = t("general.management.abbreviationExists")
+              setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.abbreviation = "general.management.abbreviationExists"
+              setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
@@ -114,10 +122,16 @@ const StudyFieldForm: React.FC = () => {
     let isValid = true;
 
     const errorRequireText = t('general.management.fieldIsRequired');
+    const errorWrongFormat = t("general.management.wrongFormat");
+    const regexPatternForAbbr = /^[A-Z]{3}$/;
 
     if (!formData.abbreviation) {
       newErrors.abbreviation = errorRequireText;
       newErrorsKeys.abbreviation = "general.management.fieldIsRequired"
+      isValid = false;
+    } else if (!regexPatternForAbbr.test(formData.abbreviation)) {
+      newErrors.abbreviation = errorWrongFormat
+      newErrorsKeys.abbreviation = "general.management.wrongFormat"
       isValid = false;
     }
 
@@ -140,65 +154,67 @@ const StudyFieldForm: React.FC = () => {
 
   return (
     <div className='page-margin'>
-        <form onSubmit={handleSubmit} className="form">
-            <div className='d-flex justify-content-begin  align-items-center mb-3'>
-                <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; {t('general.management.goBack')}
-                </button>
-                <button type="submit" className="custom-button">
-                {studyField ? t('general.management.save') : t('general.management.add')}
-                </button>
-            </div>
-            <div className="mb-3">
-              <label className="bold" htmlFor="faculty">
-                  {t('general.university.faculty')}:
-              </label>
-              <select
-                id="faculty"
-                name="faculty"
-                value={formData.facultyAbbr}
-                onChange={(e) => setFormData({ ...formData, facultyAbbr: e.target.value })}
-                className="form-control"
-              >
-                <option value="">{t('general.management.choose')}</option>
-                {faculties.map((faculty) => (
-                  <option key={faculty.abbreviation} value={faculty.abbreviation}>
-                    {faculty.name}
-                  </option>
-                ))}
-              </select>
-              {errors.faculty && <div className="text-danger">{errors.faculty}</div>}
-            </div>
-            <div className="mb-3">
-                <label className="bold" htmlFor="abbreviation">
-                    {t('general.university.abbreviation')}:
-                </label>
-                <input
-                type="text"
-                id="abbreviation"
-                name="abbreviation"
-                value={formData.abbreviation}
-                onChange={(e) => setFormData({ ...formData, abbreviation: e.target.value })}
-                className="form-control"
-                disabled={studyField ? true : false}
-                />
-                {errors.abbreviation && <div className="text-danger">{errors.abbreviation}</div>}
-            </div>
-            <div className="mb-3">
-                <label className="bold" htmlFor="name">
-                    {t('general.university.name')}:
-                </label>
-                <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="form-control"
-                />
-                {errors.name && <div className="text-danger">{errors.name}</div>}
-            </div>
-        </form>
+      <form onSubmit={handleSubmit} className="form">
+        <div className='d-flex justify-content-begin  align-items-center mb-3'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+            &larr; {t('general.management.goBack')}
+          </button>
+          <button type="submit" className="custom-button">
+            {studyField ? t('general.management.save') : t('general.management.add')}
+          </button>
+        </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="faculty">
+            {t('general.university.faculty')}:
+          </label>
+          <select
+            id="faculty"
+            name="faculty"
+            value={formData.facultyAbbr}
+            onChange={(e) => setFormData({ ...formData, facultyAbbr: e.target.value })}
+            className="form-control"
+          >
+            <option value="">{t('general.management.choose')}</option>
+            {faculties.map((faculty) => (
+              <option key={faculty.abbreviation} value={faculty.abbreviation}>
+                {faculty.name}
+              </option>
+            ))}
+          </select>
+          {errors.faculty && <div className="text-danger">{errors.faculty}</div>}
+        </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="abbreviation">
+            {t('general.university.abbreviation')}:
+          </label>
+          <input
+            type="text"
+            id="abbreviation"
+            name="abbreviation"
+            value={formData.abbreviation}
+            onChange={(e) => setFormData({ ...formData, abbreviation: e.target.value })}
+            className="form-control"
+          />
+          <div className="text-info">
+            {t('field.goodAbbrFormat')}
+          </div>
+          {errors.abbreviation && <div className="text-danger">{errors.abbreviation}</div>}
+        </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="name">
+            {t('general.university.name')}:
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="form-control"
+          />
+          {errors.name && <div className="text-danger">{errors.name}</div>}
+        </div>
+      </form>
     </div>
   );
 };
