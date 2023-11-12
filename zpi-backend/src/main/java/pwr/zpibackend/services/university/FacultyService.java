@@ -44,7 +44,9 @@ public class FacultyService {
 
     public Faculty updateFaculty(Long id, FacultyDTO faculty) {
         if (facultyRepository.existsByAbbreviation(faculty.getAbbreviation())) {
-            throw new AlreadyExistsException();
+            if (!(facultyRepository.findByAbbreviation(faculty.getAbbreviation()).get().getId() == id)) {
+                throw new AlreadyExistsException();
+            }
         }
         Faculty existingFaculty = facultyRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

@@ -36,6 +36,11 @@ public class StatusService {
     }
 
     public Status updateStatus(Long statusId, StatusDTO updatedStatus) {
+        if (statusRepository.existsByName(updatedStatus.getName())) {
+            if (!(statusRepository.findByName(updatedStatus.getName()).get().getId() == statusId)) {
+                throw new AlreadyExistsException("Status with name " + updatedStatus.getName() + " already exists");
+            }
+        }
         Status status = statusRepository.findById(statusId).orElse(null);
         if (status != null) {
             status.setName(updatedStatus.getName());
