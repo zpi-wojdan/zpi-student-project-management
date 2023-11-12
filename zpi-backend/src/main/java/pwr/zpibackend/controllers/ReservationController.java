@@ -31,11 +31,7 @@ public class ReservationController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
     public ResponseEntity<Reservation> getReservation(@PathVariable Long id) {
-        try {
-            return new ResponseEntity<>(reservationService.getReservation(id), HttpStatus.OK);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return new ResponseEntity<>(reservationService.getReservation(id), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -43,32 +39,20 @@ public class ReservationController {
     public ResponseEntity<Reservation> addReservation(@RequestBody ReservationDTO reservation) {
         try {
             return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
-        } catch (AlreadyExistsException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (ThesisOccupancyFullException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
     public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @PathVariable Long id) {
-        try {
-            return new ResponseEntity<>(reservationService.updateReservation(reservation, id), HttpStatus.OK);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return new ResponseEntity<>(reservationService.updateReservation(reservation, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
     public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
-        try {
-            return new ResponseEntity<>(reservationService.deleteReservation(id), HttpStatus.OK);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return new ResponseEntity<>(reservationService.deleteReservation(id), HttpStatus.OK);
     }
 }

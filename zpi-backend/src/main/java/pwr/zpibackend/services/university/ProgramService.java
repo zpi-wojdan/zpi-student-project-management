@@ -27,12 +27,12 @@ public class ProgramService {
         return programRepository.findAll();
     }
 
-    public Program getProgramById(Long id) throws NotFoundException {
+    public Program getProgramById(Long id) {
         return programRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Program saveProgram(ProgramDTO program) throws NotFoundException, AlreadyExistsException {
+    public Program saveProgram(ProgramDTO program) {
         if (programRepository.findByName(program.getName()).isPresent()) {
             throw new AlreadyExistsException();
         }
@@ -56,7 +56,7 @@ public class ProgramService {
         return programRepository.saveAndFlush(newProgram);
     }
 
-    public Program deleteProgram(Long id) throws NotFoundException {
+    public Program deleteProgram(Long id) {
         Program program = programRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         program.setStudyField(null);
@@ -66,7 +66,10 @@ public class ProgramService {
         return program;
     }
 
-    public Program updateProgram(Long id, ProgramDTO updatedProgram) throws NotFoundException {
+    public Program updateProgram(Long id, ProgramDTO updatedProgram) {
+        if (programRepository.findByName(updatedProgram.getName()).isPresent()) {
+            throw new AlreadyExistsException();
+        }
         Program existingProgram = programRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         existingProgram.setName(updatedProgram.getName());

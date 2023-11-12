@@ -22,13 +22,13 @@ public class DepartmentService {
         return departmentRepository.findAll();
     }
 
-    public Department getDepartmentByCode(String code) throws NotFoundException {
+    public Department getDepartmentByCode(String code) {
         return departmentRepository.findByCode(code).orElseThrow(
                 () -> new NotFoundException("Department with code " + code + " does not exist")
         );
     }
 
-    public Department addDepartment(DepartmentDTO department) throws AlreadyExistsException {
+    public Department addDepartment(DepartmentDTO department) {
         if (departmentRepository.existsByCode(department.getCode())) {
             throw new AlreadyExistsException();
         }
@@ -40,14 +40,17 @@ public class DepartmentService {
         return departmentRepository.saveAndFlush(newDepartment);
     }
 
-    public Department deleteDepartment(Long id) throws NotFoundException {
+    public Department deleteDepartment(Long id) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         departmentRepository.delete(department);
         return department;
     }
 
-    public Department updateDepartment(Long id, DepartmentDTO updatedDepartment) throws NotFoundException {
+    public Department updateDepartment(Long id, DepartmentDTO updatedDepartment) {
+        if (departmentRepository.existsByCode(updatedDepartment.getCode())) {
+            throw new AlreadyExistsException();
+        }
         Department existingDepartment = departmentRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         existingDepartment.setCode(updatedDepartment.getCode());

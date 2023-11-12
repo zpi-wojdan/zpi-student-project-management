@@ -22,12 +22,12 @@ public class ThesisService {
         return thesisRepository.findAll();
     }
 
-    public Thesis getThesis(Long id) throws NotFoundException {
+    public Thesis getThesis(Long id) {
         return thesisRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Thesis addThesis(Thesis thesis) throws NotFoundException {
+    public Thesis addThesis(Thesis thesis) {
         Employee supervisor = employeeRepository
                 .findById(thesis.getSupervisor().getId())
                 .orElseThrow(NotFoundException::new);
@@ -48,7 +48,7 @@ public class ThesisService {
         return thesis;
     }
 
-    public Thesis updateThesis(Long id, Thesis param) throws NotFoundException {
+    public Thesis updateThesis(Long id, Thesis param) {
         System.out.println(param.getSupervisor().getName());
         if (thesisRepository.existsById(id)) {
             Thesis updated = thesisRepository.findById(id).get();

@@ -27,12 +27,7 @@ public class ThesisController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Thesis> getThesisById(@PathVariable Long id) {
-        try{
-            return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
-        }
-        catch(NotFoundException err){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -44,12 +39,7 @@ public class ThesisController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<Thesis> updateThesis(@PathVariable Long id, @RequestBody Thesis param) {
-        try{
-            return new ResponseEntity<>(thesisService.updateThesis(id, param), HttpStatus.OK);
-        }
-        catch(NotFoundException err){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(thesisService.updateThesis(id, param), HttpStatus.OK);
     }
 
 }
