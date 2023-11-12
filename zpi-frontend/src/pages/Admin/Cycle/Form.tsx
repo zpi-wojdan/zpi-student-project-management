@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StudyCycle } from '../../../models/StudyCycle';
+import { StudyCycle, StudyCycleDTO } from '../../../models/StudyCycle';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
@@ -14,8 +14,8 @@ const StudyCycleForm: React.FC = () => {
   const location = useLocation();
   const { i18n, t } = useTranslation();
   const studyCycle = location.state?.studyCycle as StudyCycle;
-  const [formData, setFormData] = useState<StudyCycle>({
-    id: 4,
+  const [cycleId, setCycleId] = useState<number>();
+  const [formData, setFormData] = useState<StudyCycleDTO>({
     name: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -31,6 +31,18 @@ const StudyCycleForm: React.FC = () => {
 
   useEffect(() => {
     if (studyCycle) {
+      setFormData((prevFormData) => {
+        return {
+          ...prevFormData,
+          name: studyCycle.name,
+        };
+      });
+      setCycleId(studyCycle.id);
+    }
+  }, [studyCycle]);
+
+  useEffect(() => {
+    if (studyCycle) {
       setFormData(studyCycle);
     }
   }, [studyCycle]);
@@ -40,10 +52,10 @@ const StudyCycleForm: React.FC = () => {
 
     if (validateForm()) {
       if (studyCycle) {
-        api.put(`http://localhost:8080/studycycle/${formData.id}`, formData)
+        api.put(`http://localhost:8080/studycycle/${cycleId}`, formData)
         .then(() => {
           navigate("/cycles")
-          toast.success(t("studyCycle.updateSuccessful"));
+          toast.success(t("cycle.updateSuccessful"));
         })
         .catch((error) => {
             console.error(error);
@@ -51,13 +63,13 @@ const StudyCycleForm: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error(t("studyCycle.updateError"));
+            toast.error(t("cycle.updateError"));
           });
       } else {
         api.post('http://localhost:8080/studycycle', formData)
         .then(() => {
           navigate("/cycles")
-          toast.success(t("studyCycle.addSuccessful"));
+          toast.success(t("cycle.addSuccessful"));
         })
         .catch((error) => {
             console.error(error);
@@ -65,7 +77,7 @@ const StudyCycleForm: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error(t("studyCycle.addError"));
+            toast.error(t("cycle.addError"));
           });
       }
     }
