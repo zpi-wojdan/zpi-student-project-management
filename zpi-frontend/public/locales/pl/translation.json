@@ -87,7 +87,8 @@
     "addSuccessful": "Katedra została dodana",
     "addError": "Katedra nie została dodana",
     "updateSuccessful": "Katedra została zaktualizowana",
-    "updateError": "Katedra nie została zaktualizowana"
+    "updateError": "Katedra nie została zaktualizowana",
+    "goodCodeFormat": "Poprawny format: ciąg od 1 do 10 znaków, zawierający tylko wielkie litery, cyfry oraz ukośniki (/)."
   },
   "employee": {
     "add": "Dodaj pracownika",

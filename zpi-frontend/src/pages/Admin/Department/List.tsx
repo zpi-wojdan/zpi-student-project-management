@@ -70,11 +70,11 @@ const DepartmentList: React.FC = () => {
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [departmentToDelete, setDepartmentToDelete] = useState<string | null>(null);
+  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null);
 
-  const handleDeleteClick = (departmentAbbreviation: string) => {
+  const handleDeleteClick = (departmentId: number) => {
     setShowDeleteConfirmation(true);
-    setDepartmentToDelete(departmentAbbreviation);
+    setDepartmentToDelete(departmentId);
   };
 
   const handleConfirmDelete = () => {
@@ -171,7 +171,7 @@ const DepartmentList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '15%', textAlign: 'center'   }}>{t('general.university.abbreviation')}</th>
+            <th style={{ width: '15%', textAlign: 'center'   }}>{t('general.university.code')}</th>
             <th style={{ width: '62%' }}>{t('general.university.name')}</th>
             <th style={{ width: '10%', textAlign: 'center'  }}>{t('general.management.edit')}</th>
             <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
@@ -188,7 +188,7 @@ const DepartmentList: React.FC = () => {
                   <button
                     className="custom-button coverall"
                     onClick={() => {
-                      navigate(`/departments/edit/${department.code}`, { state: { department } });
+                      navigate(`/departments/edit/${department.id}`, { state: { department } });
                     }}
                   >
                     <i className="bi bi-arrow-right"></i>
@@ -197,13 +197,13 @@ const DepartmentList: React.FC = () => {
                 <td>
                   <button
                     className="custom-button coverall"
-                    onClick={() => handleDeleteClick(department.code)}
+                    onClick={() => handleDeleteClick(department.id)}
                   >
                     <i className="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
-              {departmentToDelete === department.code && showDeleteConfirmation && (
+              {departmentToDelete === department.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
                   <DeleteConfirmation

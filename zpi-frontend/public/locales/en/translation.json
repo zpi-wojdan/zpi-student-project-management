@@ -87,7 +87,8 @@
     "addSuccessful": "Department has been added",
     "addError": "Department has not been added",
     "updateSuccessful": "Department has been updated",
-    "updateError": "Department has not been updated"
+    "updateError": "Department has not been updated",
+    "goodCodeFormat": "Correct format: a string of 1 to 10 characters, containing only uppercase letters, digits, and forward slashes (/)."
   },
   "employee": {
     "add": "Add employee",
