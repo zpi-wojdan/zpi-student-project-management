@@ -29,40 +29,24 @@ public class FacultyController {
     @GetMapping("/{abbreviation}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Faculty> getFacultyById(@PathVariable String abbreviation) {
-        try {
-            return ResponseEntity.ok(facultyService.getFacultyByAbbreviation(abbreviation));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(facultyService.getFacultyByAbbreviation(abbreviation));
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyDTO faculty) {
-        try{
-            return ResponseEntity.ok(facultyService.saveFaculty(faculty));
-        } catch(AlreadyExistsException err) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        }
+        return ResponseEntity.ok(facultyService.saveFaculty(faculty));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody FacultyDTO faculty) {
-        try {
-            return ResponseEntity.ok(facultyService.updateFaculty(id, faculty));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(facultyService.updateFaculty(id, faculty));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(facultyService.deleteFaculty(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(facultyService.deleteFaculty(id));
     }
 }

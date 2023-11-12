@@ -30,52 +30,25 @@ public class StudentController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        try{
-            return new ResponseEntity<>(studentService.getStudent(id), HttpStatus.OK);
-        }
-        catch(NotFoundException err){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
+        return new ResponseEntity<>(studentService.getStudent(id), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Student> addStudent(@RequestBody StudentDTO student)
     {
-        try{
-            return new ResponseEntity<>(studentService.addStudent(student), HttpStatus.CREATED);
-        }
-        catch(AlreadyExistsException err){
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        return new ResponseEntity<>(studentService.addStudent(student), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody StudentDTO updatedStudent) {
-        try{
-            return new ResponseEntity<>(studentService.updateStudent(id, updatedStudent), HttpStatus.OK);
-        }
-        catch(NotFoundException err){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(studentService.updateStudent(id, updatedStudent), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        try{
-            return new ResponseEntity<>(studentService.deleteStudent(id), HttpStatus.OK);
-        }
-        catch(NotFoundException err){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(studentService.deleteStudent(id), HttpStatus.OK);
     }
 }

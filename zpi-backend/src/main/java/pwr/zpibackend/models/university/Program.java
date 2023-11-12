@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     @Column(nullable = false)
     @NotNull(message = "Program name cannot be null")
     private String name;

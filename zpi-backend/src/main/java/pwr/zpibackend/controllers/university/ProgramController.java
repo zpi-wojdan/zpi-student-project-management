@@ -28,42 +28,24 @@ public class ProgramController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Program> getProgramById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(programService.getProgramById(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(programService.getProgramById(id));
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Program> addProgram(@RequestBody ProgramDTO program) {
-        try {
-            return ResponseEntity.ok(programService.saveProgram(program));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(programService.saveProgram(program));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Program> updateProgram(@PathVariable Long id, @RequestBody ProgramDTO program) {
-        try {
-            return ResponseEntity.ok(programService.updateProgram(id, program));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(programService.updateProgram(id, program));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Program> deleteProgram(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(programService.deleteProgram(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(programService.deleteProgram(id));
     }
 }

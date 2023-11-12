@@ -24,7 +24,7 @@ public class ReservationService {
     private final ThesisRepository thesisRepository;
     private final StudentRepository studentRepository;
 
-    public Reservation addReservation(ReservationDTO reservation) throws AlreadyExistsException, ThesisOccupancyFullException {
+    public Reservation addReservation(ReservationDTO reservation) {
         if (reservation.getThesisId() == null || reservation.getStudent() == null || reservation.getReservationDate() == null) {
             throw new IllegalArgumentException();
         }
@@ -69,7 +69,7 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    public Reservation getReservation(Long id) throws NotFoundException {
+    public Reservation getReservation(Long id) {
         Optional<Reservation> reservation = reservationRepository.findById(id);
         if (reservation.isPresent()) {
             return reservation.get();
@@ -78,7 +78,7 @@ public class ReservationService {
         }
     }
 
-    public Reservation updateReservation(Reservation newReservation, Long id) throws NotFoundException {
+    public Reservation updateReservation(Reservation newReservation, Long id) {
         return reservationRepository.findById(id)
                 .map(reservation -> {
                     reservation.setConfirmedByLeader(newReservation.isConfirmedByLeader());
@@ -91,7 +91,7 @@ public class ReservationService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Reservation deleteReservation(Long id) throws NotFoundException {
+    public Reservation deleteReservation(Long id) {
         return reservationRepository.findById(id)
                 .map(reservation -> {
                     reservationRepository.deleteById(id);

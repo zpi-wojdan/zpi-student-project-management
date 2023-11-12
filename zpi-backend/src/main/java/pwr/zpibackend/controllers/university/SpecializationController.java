@@ -29,42 +29,24 @@ public class SpecializationController {
     @GetMapping("/{abbreviation}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Specialization> getSpecializationByAbbreviation(@PathVariable String abbreviation) {
-        try {
-            return ResponseEntity.ok(specialisationService.getSpecializationByAbbreviation(abbreviation));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(specialisationService.getSpecializationByAbbreviation(abbreviation));
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Specialization> addSpecialization(@RequestBody SpecializationDTO specialization) {
-        try{
-            return ResponseEntity.ok(specialisationService.saveSpecialization(specialization));
-        } catch(AlreadyExistsException err) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(specialisationService.saveSpecialization(specialization));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Specialization> updateSpecialization(@PathVariable Long id, @RequestBody SpecializationDTO specialization) {
-        try {
-            return ResponseEntity.ok(specialisationService.updateSpecialization(id, specialization));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(specialisationService.updateSpecialization(id, specialization));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Specialization> deleteSpecialization(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(specialisationService.deleteSpecialization(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(specialisationService.deleteSpecialization(id));
     }
 }

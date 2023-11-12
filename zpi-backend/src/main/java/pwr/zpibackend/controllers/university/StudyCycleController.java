@@ -27,11 +27,7 @@ public class StudyCycleController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<StudyCycle> getStudyCycleById(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(studyCycleService.getStudyCycleById(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyCycleService.getStudyCycleById(id));
     }
 
     @PostMapping("")
@@ -43,20 +39,12 @@ public class StudyCycleController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudyCycle> updateStudyCycle(@RequestBody StudyCycleDTO studyCycle, @PathVariable Long id){
-        try {
-            return ResponseEntity.ok(studyCycleService.updateStudyCycle(id, studyCycle));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyCycleService.updateStudyCycle(id, studyCycle));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudyCycle> deleteStudyCycle(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(studyCycleService.deleteStudyCycle(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyCycleService.deleteStudyCycle(id));
     }
 }
