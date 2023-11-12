@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
@@ -8,6 +7,7 @@ import { toast } from 'react-toastify';
 import { Student } from '../../models/Student';
 import { Thesis } from '../../models/Thesis';
 import {useTranslation} from "react-i18next";
+import api from "../../utils/api";
 
 type SupervisorReservationProps = {
 }
@@ -80,11 +80,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
             newErrors[index] = false;
         }
 
-        await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        await api.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)
             .then(response => {
                 newStudents[index] = response.data as Student;
             })
@@ -117,12 +113,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                 };
                 console.log(JSON.stringify(responseBody));
 
-                const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${Cookies.get('google_token')}`
-                    },
-                })
+                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody))
                     .then(response => {
                         if (response.status === 201) {
                             console.log(`Reservation ${reservation} created successfully`);

@@ -1,11 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import Axios from 'axios';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
-import Cookies from "js-cookie";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
 import handleSignOut from "../../auth/Logout";
 import {useTranslation} from "react-i18next";
+import api from "../../utils/api";
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
@@ -209,12 +208,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     console.log(formData);
   
     try {
-      const response = await Axios.post('http://localhost:8080/thesis', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-        },
-      });
+      const response = await api.post('http://localhost:8080/thesis', formData);
   
       if (response.status === 201) {
         console.log('Request was successful');

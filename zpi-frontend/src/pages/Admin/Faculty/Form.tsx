@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Axios from 'axios';
 import { Faculty } from '../../../models/Faculty';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const FacultyForm: React.FC = () => {
   // @ts-ignore
@@ -45,11 +44,7 @@ const FacultyForm: React.FC = () => {
 
     if (validateForm()) {
       if (faculty) {
-        Axios.put(`http://localhost:8080/faculty/${oldAbbr}`, formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.put(`http://localhost:8080/faculty/${oldAbbr}`, formData)
         .then(() => {
           navigate("/faculties")
           toast.success(t("faculty.updateSuccessful"));
@@ -71,11 +66,7 @@ const FacultyForm: React.FC = () => {
             }
           });
       } else {
-        Axios.post('http://localhost:8080/faculty', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        api.post('http://localhost:8080/faculty', formData)
         .then(() => {
           navigate("/faculties")
           toast.success(t("faculty.addSuccessful"));

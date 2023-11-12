@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Axios from 'axios';
 import { StudentDTO } from '../../../models/Student';
 import { Program } from '../../../models/Program';
 import { toast } from 'react-toastify';
 import { StudyCycle } from '../../../models/StudyCycle';
-import Cookies from 'js-cookie';
 import { StudentProgramCycle, StudentProgramCycleDTO } from '../../../models/StudentProgramCycle';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const StudentForm: React.FC = () => {
   // @ts-ignore
@@ -63,11 +62,7 @@ const StudentForm: React.FC = () => {
 
     if (validateForm()) {
       if (student) {
-        Axios.put(`http://localhost:8080/student/${formData.mail}`, formData, {
-          headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-          }
-        })
+        api.put(`http://localhost:8080/student/${formData.mail}`, formData)
           .then(() => {
             navigate("/students");
             toast.success(t("student.updateSuccessful"));
@@ -82,11 +77,7 @@ const StudentForm: React.FC = () => {
             toast.error(t("student.updateError"));
           });
       } else {
-        Axios.post('http://localhost:8080/student', formData, {
-          headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-          }
-        })
+        api.post('http://localhost:8080/student', formData)
           .then(() => {
             navigate("/students");
             toast.success(t("student.addSuccessful"));
@@ -180,11 +171,7 @@ const StudentForm: React.FC = () => {
   const [availablePrograms, setAvailablePrograms] = useState<Program[]>([]);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/studycycle', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/studycycle')
       .then((response) => {
         setAvailableCycles(response.data);
       })
@@ -199,11 +186,7 @@ const StudentForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/program', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/program')
       .then((response) => {
         setAvailablePrograms(response.data);
       })

@@ -1,17 +1,16 @@
 import { useState, useCallback } from 'react';
-import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
-import Cookies from "js-cookie";
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
 import { InvalidEmployeeData } from '../../models/ImportedData';
 import {useTranslation} from "react-i18next";
+import api from '../../utils/api';
 
 function UplaodEmployeeFilePage() {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -21,6 +20,7 @@ function UplaodEmployeeFilePage() {
   const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
 
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidEmployeeData | null>(null);
+  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
   const [sentData, setSentData] = useState(false);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
@@ -33,7 +33,8 @@ function UplaodEmployeeFilePage() {
   const [invalidPositionsOpen, setInvalidPositionsOpen] = useState(false);
   const [invalidPhoneNumbersOpen, setInvalidPhoneNumbersOpen] = useState(false);
   const [invalidEmailsOpen, setInvalidEmailsOpen] = useState(false);
-
+  const [invalidDataOpen, setInvalidDataOpen] = useState(false);
+  const [recordsSavedOpen, setRecordsSavedOpen] = useState(false);
 
   const invalidDataList = [
     {
@@ -96,8 +97,13 @@ function UplaodEmployeeFilePage() {
       isOpen: invalidEmailsOpen,
       toggleOpen: () => setInvalidEmailsOpen(!invalidEmailsOpen)
     },
+    {
+      title: t('uploadFiles.invalidData'),
+      data: invalidJsonData?.invalid_data,
+      isOpen: invalidDataOpen,
+      toggleOpen: () => setInvalidDataOpen(!invalidDataOpen)
+    },
   ];
-
 
   setTimeout(() => {
     setDuplicateErrorMessageVisible(false);
@@ -105,6 +111,10 @@ function UplaodEmployeeFilePage() {
 
   setTimeout(() => {
     setUploadErrorMessageVisible(false);
+  }, 20000);
+
+  setTimeout(() => {
+    setRecordsSavedOpen(false);
   }, 20000);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -132,6 +142,9 @@ function UplaodEmployeeFilePage() {
 
   const handleUpload = () => {
     setUploadError(null);
+    setRecordsSaved(0);
+    setInvalidJsonData(null);
+
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
@@ -144,17 +157,63 @@ function UplaodEmployeeFilePage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      axios
-        .post('http://localhost:8080/file/employee', formData, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            },
-        })
+      api.post('http://localhost:8080/file/employee', formData)
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
-          console.log(invalidData);
-          setInvalidJsonData(invalidData);
+          const recordsSavedCount = invalidData.saved_records;
+
+          setInvalidJsonData((prevInvalidData) => ({
+            ...prevInvalidData,
+            database_repetitions: [
+              ...(prevInvalidData?.database_repetitions || []),
+              ...(invalidData.database_repetitions || []),
+            ],
+            invalid_indices: [
+              ...(prevInvalidData?.invalid_indices || []),
+              ...(invalidData.invalid_indices || []),
+            ],
+            invalid_academic_titles: [
+              ...(prevInvalidData?.invalid_academic_titles || []),
+              ...(invalidData.invalid_academic_titles || []),
+            ],
+            invalid_surnames: [
+              ...(prevInvalidData?.invalid_surnames || []),
+              ...(invalidData.invalid_surnames || []),
+            ],
+            invalid_names: [
+              ...(prevInvalidData?.invalid_names || []),
+              ...(invalidData.invalid_names || []),
+            ],
+            invalid_units: [
+              ...(prevInvalidData?.invalid_units || []),
+              ...(invalidData.invalid_units || []),
+            ],
+            invalid_subunits: [
+              ...(prevInvalidData?.invalid_subunits || []),
+              ...(invalidData.invalid_subunits || []),
+            ],
+            invalid_positions: [
+              ...(prevInvalidData?.invalid_positions || []),
+              ...(invalidData.invalid_positions || []),
+            ],
+            invalid_phone_numbers: [
+              ...(prevInvalidData?.invalid_phone_numbers || []),
+              ...(invalidData.invalid_phone_numbers || []),
+            ],
+            invalid_emails: [
+              ...(prevInvalidData?.invalid_emails || []),
+              ...(invalidData.invalid_emails || []),
+            ],
+            invalid_data: [
+              ...(prevInvalidData?.invalid_data || []),
+              ...(invalidData.invalid_data || []),
+            ],
+          }));
+          
+          setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
+
+          setRecordsSavedOpen(true);
           setSentData(true);
         })
         .catch((error) => {
@@ -171,6 +230,8 @@ function UplaodEmployeeFilePage() {
     setSelectedFiles([]);
     setButtonDisabled(true);
   };
+
+  let keyCounter = 0;
 
   return (
     <div className="container d-flex justify-content-center mt-5 mb-5">
@@ -208,7 +269,7 @@ function UplaodEmployeeFilePage() {
               <h4>{t('uploadFiles.chosenFiles')}:</h4>
               <ul className="list-group mb-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
                 {selectedFiles.map((file, index) => (
-                  <li key={index} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
+                  <li key={`${index}-${keyCounter++}`} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {file.name}
                     </span>
@@ -229,6 +290,13 @@ function UplaodEmployeeFilePage() {
               {uploadError}
             </div>
           )}
+
+          {recordsSavedOpen && (
+            <div className="alert alert-success" role="alert">
+              {t('uploadFiles.recordsSaved')} {recordsSaved}
+            </div>
+          )}
+
           <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
               {t('uploadFiles.sendFiles')}
           </button>
@@ -255,7 +323,7 @@ function UplaodEmployeeFilePage() {
             <ul className="list-group">
               {invalidDataList.map((item, index) => (
                 item.data && item.data.length > 0 ? (
-                  <li className="list-group-item mb-2 border" key={index}>
+                  <li className="list-group-item mb-2 border" key={`${index}-${keyCounter++}`}>
                     <div>
                     <div onClick={item.toggleOpen}>
                       <div className="d-flex justify-content-between align-items-center">
@@ -267,19 +335,15 @@ function UplaodEmployeeFilePage() {
                       <table className="custom-table">
                         <thead>
                           <tr>
-                            <th style={{ width: '8%' }}>{t('general.title')}</th>
-                            <th style={{ width: '23%' }}>{t('general.people.surname')}</th>
-                            <th style={{ width: '23%' }}>{t('general.people.name')}</th>
-                            <th style={{ width: '23%' }}>{t('uploadFiles.unit')}</th>
-                            <th style={{ width: '23%' }}>{t('uploadFiles.subunit')}</th>
+                            <th style={{ width: '33%' }}>E-mail</th>
+                            <th style={{ width: '33%' }}>{t('uploadFiles.unit')}</th>
+                            <th style={{ width: '33%' }}>{t('uploadFiles.subunit')}</th>
                           </tr>
                         </thead>
                         <tbody>
                           {item.data?.map((employee, index) => (
-                            <tr key={employee.mail}>
-                              <td>{employee.mail}</td>
-                              <td>{employee.surname}</td>
-                              <td>{employee.name}</td>
+                            <tr key={`${employee.email}-${keyCounter++}`}>
+                              <td>{employee.email}</td>
                               <td>{employee.faculty}</td>
                               <td>{employee.department}</td>
                             </tr>

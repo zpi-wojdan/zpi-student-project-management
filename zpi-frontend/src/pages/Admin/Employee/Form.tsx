@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { EmployeeDTO } from '../../../models/Employee';
 import { toast } from 'react-toastify';
-import Cookies from 'js-cookie';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { Role, RoleDTO } from '../../../models/Role';
 import { Department } from '../../../models/Department';
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 export type  Title = {
     name: string;
@@ -59,11 +58,7 @@ const EmployeeForm: React.FC = () => {
 
     if (validateForm()) {
       if (employee) {
-        Axios.put(`http://localhost:8080/employee/${formData.mail}`, formData, {
-          headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-          }
-        })
+        api.put(`http://localhost:8080/employee/${formData.mail}`, formData)
           .then(() => {
             navigate("/employees");
             toast.success(t("employee.updateSuccessful"));
@@ -78,11 +73,7 @@ const EmployeeForm: React.FC = () => {
             toast.error(t("employee.updateError"));
           });
       } else {
-        Axios.post('http://localhost:8080/employee', formData, {
-          headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-          }
-        })
+        api.post('http://localhost:8080/employee', formData)
           .then(() => {
             navigate("/employees");
             toast.success(t("employee.addSuccessful"));
@@ -175,11 +166,7 @@ const EmployeeForm: React.FC = () => {
   ]);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/departments', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/departments')
       .then((response) => {
         setAvailableDepartments(response.data);
       })
@@ -194,11 +181,7 @@ const EmployeeForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/role', {
-      headers: {
-        'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-    })
+    api.get('http://localhost:8080/role')
       .then((response) => {
         const filteredRoles = response.data.filter((role:Role) => role.name !== "student");
       setAvailableRoles(filteredRoles);
@@ -214,11 +197,7 @@ const EmployeeForm: React.FC = () => {
   }, []);
 
 //   useEffect(() => {
-//     Axios.get('http://localhost:8080/title', {
-//       headers: {
-//         'Authorization': `Bearer ${Cookies.get('google_token')}`
-//       }
-//     })
+//     api.get('http://localhost:8080/title')
 //       .then((response) => {
 //         setAvailableTitles(response.data);
 //       })

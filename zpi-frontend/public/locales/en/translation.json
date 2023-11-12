@@ -98,7 +98,8 @@
     "deleteConfirmation": "Are you sure you want to delete this employee?",
     "updateSuccessful": "Employee has been updated",
     "updateError": "Employee has not been updated",
-    "rolesRequired": "Employee must have at least one role."
+    "rolesRequired": "Employee must have at least one role.",
+    "import": "Import employees"
   },
   "student": {
     "add": "Add student",
@@ -112,7 +113,8 @@
     "indexExists": "Given index already exists!",
     "indexLength": "Index must have 6 digits!",
     "cycleProgramRequired": "Choose study cycle and study program for all entries.",
-    "duplicatedPrograms": "List of programs contains duplicates!"
+    "duplicatedPrograms": "List of programs contains duplicates!",
+    "import": "Import students"
   },
   "faculty": {
     "facultyUpdateSuccessful": "Faculty has been updated",
@@ -198,7 +200,9 @@
     "wrongSubunits": "Wrong subunits",
     "wrongPositions": "Wrong positions",
     "wrongPhoneNumbers": "Wrong phone numbers",
-    "wrongEmails": "Wrong emails"
+    "wrongEmails": "Wrong emails",
+    "invalidData": "Missing data in the system",
+    "recordsSaved": "Number of saved records: "
   },
   "login": {
     "sessionExpired": "Your session has ended. Please log in again.",

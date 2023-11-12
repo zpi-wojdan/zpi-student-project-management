@@ -12,6 +12,7 @@ import pwr.zpibackend.repositories.university.StudyFieldRepository;
 import pwr.zpibackend.exceptions.NotFoundException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -24,12 +25,12 @@ public class StudyFieldService {
         return studyFieldRepository.findAll();
     }
 
-    public StudyField getStudyFieldByAbbreviation(String abbreviation) throws NotFoundException {
+    public StudyField getStudyFieldByAbbreviation(String abbreviation) {
         return studyFieldRepository.findByAbbreviation(abbreviation)
                 .orElseThrow(NotFoundException::new);
     }
 
-    public StudyField saveStudyField(StudyFieldDTO studyField) throws AlreadyExistsException, NotFoundException {
+    public StudyField saveStudyField(StudyFieldDTO studyField) {
         if (studyFieldRepository.existsByAbbreviation(studyField.getAbbreviation())) {
             throw new AlreadyExistsException();
         }
@@ -40,14 +41,20 @@ public class StudyFieldService {
         return studyFieldRepository.save(newStudyField);
     }
 
-    public StudyField deleteStudyField(Long id) throws NotFoundException {
+    public StudyField deleteStudyField(Long id) {
         StudyField studyField = studyFieldRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
+        studyField.setFaculty(null);
         studyFieldRepository.delete(studyField);
         return studyField;
     }
 
-    public StudyField updateStudyField(Long id, StudyFieldDTO updatedStudyField) throws NotFoundException {
+    public StudyField updateStudyField(Long id, StudyFieldDTO updatedStudyField) {
+        if (studyFieldRepository.existsByAbbreviation(updatedStudyField.getAbbreviation())) {
+            if (!(Objects.equals(studyFieldRepository.findByAbbreviation(updatedStudyField.getAbbreviation()).get().getId(), id))) {
+                throw new AlreadyExistsException("studyField with abbreviation " + updatedStudyField.getAbbreviation() + " already exists");
+            }
+        }
         StudyField existingStudyField = studyFieldRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         existingStudyField.setAbbreviation(updatedStudyField.getAbbreviation());

@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import {Alert, Col, Container, Row} from "react-bootstrap";
-import axios from "axios";
 import jwt_decode from "jwt-decode";
 import {useLocation, useNavigate} from "react-router-dom";
 // @ts-ignore

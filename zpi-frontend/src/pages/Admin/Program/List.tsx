@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Program } from '../../../models/Program';
-import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const ProgramList: React.FC = () => {
   // @ts-ignore
@@ -17,12 +16,9 @@ const ProgramList: React.FC = () => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/program', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/program')
       .then((response) => {
         const sortedPrograms = response.data.sort((a: Program, b: Program) => a.id - b.id);
         setPrograms(sortedPrograms);
@@ -46,32 +42,28 @@ const ProgramList: React.FC = () => {
   }, [refreshList]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setInputValue] = useState(currentPage);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE[0]);
   const indexOfLastItem = itemsPerPage === 'All' ? programs.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
   const currentPrograms = programs.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(programs.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = Math.max(1, currentPage - 2); i <= Math.min(currentPage + 2, totalPages); i++) {
-      pageNumbers.push(i);
+    if(!newPage || newPage<1){
+      setCurrentPage(1);
+      setInputValue(1);
     }
-
-    return pageNumbers.map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={currentPage === pageNumber ? 'active' : ''}
-      >
-        {pageNumber}
-      </button>
-    ));
+    else {
+      if(newPage>totalPages){
+        setCurrentPage(totalPages);
+        setInputValue(totalPages);
+      }
+      else{
+        setCurrentPage(newPage);
+        setInputValue(newPage);
+      }
+    }
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -83,11 +75,7 @@ const ProgramList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    Axios.delete(`http://localhost:8080/program/${programToDelete}`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+    api.delete(`http://localhost:8080/program/${programToDelete}`)
         .then(() => {
           toast.success(t('program.deleteSuccessful'));
           setRefreshList(!refreshList);
@@ -109,19 +97,22 @@ const ProgramList: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-between  align-items-center mb-3'>
+      <div className='d-flex justify-content-between  align-items-center'>
         <div >
           <button className="custom-button" onClick={() => {navigate('/programs/add')}}>
               {t('program.add')}
           </button>
         </div>
-        <div >
-          {ITEMS_PER_PAGE.length > 1 && (
-            <div>
+        {ITEMS_PER_PAGE.length > 1 && (
+        <div className="d-flex justify-content-between">
+          <div className="d-flex align-items-center">
             <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(e.target.value)}
+            onChange={(e) => {
+              setItemsPerPage(e.target.value);
+              handlePageChange(1);
+            }}
             >
             {ITEMS_PER_PAGE.map((value) => (
                 <option key={value} value={value}>
@@ -129,9 +120,49 @@ const ProgramList: React.FC = () => {
                 </option>
             ))}
             </select>
+          </div>
+          <div style={{ marginLeft: '30px' }}>
+            {itemsPerPage !== 'All' && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='custom-button'
+              >
+                &lt;
+              </button>
+
+              <input
+                type="number"
+                value={inputValue}
+                onChange={(e) => {
+                  const newPage = parseInt(e.target.value, 10);
+                  setInputValue(newPage);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePageChange(inputValue);
+                  }
+                }}
+                onBlur={() => {
+                  handlePageChange(inputValue);
+                }}
+                className='text'
+              />
+              
+            <span className='text'> z {totalPages}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='custom-button'
+              >
+                &gt;
+              </button>
             </div>
-          )}
+            )}
+          </div>
         </div>
+        )}
       </div>
       <table className="custom-table">
         <thead>
@@ -143,60 +174,80 @@ const ProgramList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-  {currentPrograms.map((program, index) => (
-    <React.Fragment key={program.id}>
-      <tr>
-        <td className="centered">{indexOfFirstItem + index + 1}</td>
-        <td>{program.name}</td>
-        <td>
-          <button
-            className="custom-button coverall"
-            onClick={() => {
-              navigate(`/programs/edit/${program.id}`, { state: { program } });
-            }}
-          >
-            <i className="bi bi-arrow-right"></i>
-          </button>
-        </td>
-        <td>
-          <button
-            className="custom-button coverall"
-            onClick={() => handleDeleteClick(program.id)}
-          >
-            <i className="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-      {programToDelete === program.id && showDeleteConfirmation && (
-        <tr>
-          <td colSpan={5}>
-          <DeleteConfirmation
-            isOpen={showDeleteConfirmation}
-            onClose={handleCancelDelete}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-            questionText={t('program.deleteConfirmation')}
-          />
-          </td>
-        </tr>
-      )}
-    </React.Fragment>
-  ))}
-</tbody>
-
+          {currentPrograms.map((program, index) => (
+            <React.Fragment key={program.id}>
+              <tr>
+                <td className="centered">{indexOfFirstItem + index + 1}</td>
+                <td>{program.name}</td>
+                <td>
+                  <button
+                    className="custom-button coverall"
+                    onClick={() => {
+                      navigate(`/programs/edit/${program.id}`, { state: { program } });
+                    }}
+                  >
+                    <i className="bi bi-arrow-right"></i>
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="custom-button coverall"
+                    onClick={() => handleDeleteClick(program.id)}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {programToDelete === program.id && showDeleteConfirmation && (
+                <tr>
+                  <td colSpan={5}>
+                  <DeleteConfirmation
+                    isOpen={showDeleteConfirmation}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                    questionText={t('program.deleteConfirmation')}
+                  />
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
       </table>
       {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            className='custom-button'
           >
             &lt;
           </button>
-          {renderPageNumbers()}
+
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => {
+              const newPage = parseInt(e.target.value, 10);
+              setInputValue(newPage);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handlePageChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              handlePageChange(inputValue);
+            }}
+            className='text'
+          />
+          
+        <span className='text'> z {totalPages}</span>
           <button
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className='custom-button'
           >
             &gt;
           </button>
