@@ -1,5 +1,4 @@
 import { Student } from "./Student";
-import { Employee } from "./Employee";
 
 export type InvalidStudentData = {
     database_repetitions: Student[] | null;
@@ -9,10 +8,11 @@ export type InvalidStudentData = {
     invalid_statuses: Student[] | null;
     invalid_programs: Student[] | null;
     invalid_cycles: Student[] | null;
+    invalid_data: Student[] | null;
 };
 
 export type ImportedEmployee = {
-    mail: string;
+    email: string;
     name: string;
     surname: string;
     roles: string;
@@ -34,4 +34,5 @@ export type InvalidEmployeeData = {
     invalid_positions: ImportedEmployee[] | null;
     invalid_phone_numbers: ImportedEmployee[] | null;
     invalid_emails: ImportedEmployee[] | null;
+    invalid_data: ImportedEmployee[] | null;
 };

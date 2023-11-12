@@ -200,7 +200,9 @@
     "wrongSubunits": "Niepoprawne podjednostki",
     "wrongPositions": "Niepoprawne stanowiska",
     "wrongPhoneNumbers": "Niepoprawne numery telefonów",
-    "wrongEmails": "Niepoprawne adresy email"
+    "wrongEmails": "Niepoprawne adresy email",
+    "invalidData": "Brakujące dane w systemie",
+    "recordsSaved": "Liczba zapisanych rekordów: "
   },
   "login": {
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
