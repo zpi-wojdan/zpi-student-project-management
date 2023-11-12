@@ -44,7 +44,9 @@ public class StudyCycleService {
 
     public StudyCycle updateStudyCycle(Long id, StudyCycleDTO updatedStudyCycle) {
         if (studyCycleRepository.existsByName(updatedStudyCycle.getName())) {
-            throw new AlreadyExistsException("studyCycle with name " + updatedStudyCycle.getName() + " already exists");
+            if (!(studyCycleRepository.findByName(updatedStudyCycle.getName()).get().getId() == id)) {
+                throw new AlreadyExistsException("studyCycle with name " + updatedStudyCycle.getName() + " already exists");
+            }
         }
         StudyCycle existingStudyCycle = studyCycleRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

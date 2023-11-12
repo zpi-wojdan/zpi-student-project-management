@@ -12,6 +12,7 @@ import pwr.zpibackend.repositories.university.*;
 import pwr.zpibackend.exceptions.NotFoundException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -68,7 +69,9 @@ public class ProgramService {
 
     public Program updateProgram(Long id, ProgramDTO updatedProgram) {
         if (programRepository.findByName(updatedProgram.getName()).isPresent()) {
-            throw new AlreadyExistsException();
+            if (!(Objects.equals(programRepository.findByName(updatedProgram.getName()).get().getId(), id))) {
+                throw new AlreadyExistsException();
+            }
         }
         Program existingProgram = programRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

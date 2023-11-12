@@ -76,7 +76,8 @@ public class EmployeeService {
 
     public Employee updateEmployee(Long id, EmployeeDTO updatedEmployee) {
         if (employeeRepository.existsByMail(updatedEmployee.getMail()))
-            throw new AlreadyExistsException("Employee with mail " + updatedEmployee.getMail() + " already exists");
+            if (!(employeeRepository.findByMail(updatedEmployee.getMail()).get().getId() == id))
+                throw new AlreadyExistsException("Employee with mail " + updatedEmployee.getMail() + " already exists");
 
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Employee with id " + id + " does not exist"));

@@ -10,6 +10,7 @@ import pwr.zpibackend.repositories.university.TitleRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +38,9 @@ public class TitleService {
 
     public Title updateTitle(Long titleId, TitleDTO updatedTitle) {
         if (titleRepository.existsByName(updatedTitle.getName())) {
-            throw new AlreadyExistsException("title with name " + updatedTitle.getName() + " already exists");
+            if (!(Objects.equals(titleRepository.findByName(updatedTitle.getName()).get().getId(), titleId))) {
+                throw new AlreadyExistsException("title with name " + updatedTitle.getName() + " already exists");
+            }
         }
         Title title = titleRepository.findById(titleId).orElse(null);
         if (title != null) {

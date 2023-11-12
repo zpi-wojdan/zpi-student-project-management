@@ -17,10 +17,7 @@ import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudentProgramCycleRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -75,7 +72,8 @@ public class StudentService {
 
     public Student updateStudent(Long id, StudentDTO updatedStudent) {
         if (studentRepository.existsByIndex(updatedStudent.getIndex())) {
-            throw new AlreadyExistsException();
+            if (!(Objects.equals(studentRepository.findByIndex(updatedStudent.getIndex()).get().getId(), id)))
+                throw new AlreadyExistsException();
         }
         Student student = studentRepository.findById(id).orElseThrow(NotFoundException::new);
 
