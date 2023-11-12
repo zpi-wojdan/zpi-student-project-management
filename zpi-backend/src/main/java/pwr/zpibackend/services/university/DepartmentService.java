@@ -49,7 +49,9 @@ public class DepartmentService {
 
     public Department updateDepartment(Long id, DepartmentDTO updatedDepartment) {
         if (departmentRepository.existsByCode(updatedDepartment.getCode())) {
-            throw new AlreadyExistsException();
+            if (!departmentRepository.findByCode(updatedDepartment.getCode()).get().getId().equals(id)) {
+                throw new AlreadyExistsException();
+            }
         }
         Department existingDepartment = departmentRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

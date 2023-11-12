@@ -12,6 +12,7 @@ import pwr.zpibackend.repositories.university.StudyFieldRepository;
 import pwr.zpibackend.exceptions.NotFoundException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -50,7 +51,9 @@ public class StudyFieldService {
 
     public StudyField updateStudyField(Long id, StudyFieldDTO updatedStudyField) {
         if (studyFieldRepository.existsByAbbreviation(updatedStudyField.getAbbreviation())) {
-            throw new AlreadyExistsException("studyField with abbreviation " + updatedStudyField.getAbbreviation() + " already exists");
+            if (!(Objects.equals(studyFieldRepository.findByAbbreviation(updatedStudyField.getAbbreviation()).get().getId(), id))) {
+                throw new AlreadyExistsException("studyField with abbreviation " + updatedStudyField.getAbbreviation() + " already exists");
+            }
         }
         StudyField existingStudyField = studyFieldRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

@@ -10,6 +10,7 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.repositories.university.StudyFieldRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -49,7 +50,11 @@ public class SpecialisationService {
 
     public Specialization updateSpecialization(Long id, SpecializationDTO updatedSpecialization) {
         if (specializationRepository.existsByAbbreviation(updatedSpecialization.getAbbreviation())) {
-            throw new AlreadyExistsException();
+            if (!(Objects.equals(
+                    specializationRepository.findByAbbreviation(updatedSpecialization.getAbbreviation()).get().getId(),
+                    id))) {
+                throw new AlreadyExistsException();
+            }
         }
         Specialization existingSpecialization = specializationRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

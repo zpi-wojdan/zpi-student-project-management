@@ -49,7 +49,6 @@ public class ThesisService {
     }
 
     public Thesis updateThesis(Long id, Thesis param) {
-        System.out.println(param.getSupervisor().getName());
         if (thesisRepository.existsById(id)) {
             Thesis updated = thesisRepository.findById(id).get();
             updated.setNamePL(param.getNamePL());
