@@ -69,11 +69,11 @@ const SpecializationList: React.FC = () => {
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [specializationToDelete, setSpecializationToDelete] = useState<string | null>(null);
+  const [specializationToDelete, setSpecializationToDelete] = useState<number | null>(null);
 
-  const handleDeleteClick = (specializationAbbreviation: string) => {
+  const handleDeleteClick = (specializationId: number) => {
     setShowDeleteConfirmation(true);
-    setSpecializationToDelete(specializationAbbreviation);
+    setSpecializationToDelete(specializationId);
   };
 
   const handleConfirmDelete = () => {
@@ -196,13 +196,13 @@ const SpecializationList: React.FC = () => {
                 <td>
                   <button
                     className="custom-button coverall"
-                    onClick={() => handleDeleteClick(specialization.abbreviation)}
+                    onClick={() => handleDeleteClick(specialization.id)}
                   >
                     <i className="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
-              {specializationToDelete === specialization.abbreviation && showDeleteConfirmation && (
+              {specializationToDelete === specialization.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
                   <DeleteConfirmation
