@@ -43,17 +43,17 @@ public class ImportEmployees{
         List<ObjectNode> invalidEmailData = new ArrayList<>();
 
         List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
+        List<ObjectNode> invalidData = new ArrayList<>();
 
         readEmployeeFile(file_path, validData, invalidIndexData, invalidAcademicTitleData,
                         invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                         invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
 
-        invalidDatabaseRepetitions = saveValidToDatabase(validData);
+        String fullJson = saveValidToDatabase(validData, invalidIndexData, invalidAcademicTitleData,
+                invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
+                invalidPositionsData, invalidPhoneNumberData,
+                invalidEmailData, invalidDatabaseRepetitions, invalidData);
 
-        String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
-                            invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
-                            invalidPositionsData, invalidPhoneNumberData,
-                            invalidEmailData, invalidDatabaseRepetitions);
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
 
@@ -228,7 +228,7 @@ public class ImportEmployees{
     }
 
 
-    public List<ObjectNode> saveValidToDatabase(List<ObjectNode> validData){
+    public String saveValidToDatabase(List<ObjectNode> validData){
         List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
 
         for (ObjectNode node : validData){

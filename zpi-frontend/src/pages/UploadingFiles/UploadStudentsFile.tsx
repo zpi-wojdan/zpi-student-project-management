@@ -6,12 +6,13 @@ import {useNavigate} from "react-router-dom";
 import { InvalidStudentData } from '../../models/ImportedData';
 
 import {useTranslation} from "react-i18next";
-import api from "../../utils/api";
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 function UploadStudentFilePage() {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -21,6 +22,7 @@ function UploadStudentFilePage() {
   const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
 
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidStudentData | null>(null);
+  const [recordsSaved, setRecordsSaved] = useState<string | null>(null);
   const [sentData, setSentData] = useState(false);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
@@ -30,6 +32,8 @@ function UploadStudentFilePage() {
   const [invalidProgramsOpen, setInvalidProgramsOpen] = useState(false);
   const [invalidCyclesOpen, setInvalidCyclesOpen] = useState(false);
   const [invalidStatusesOpen, setInvalidStatusesOpen] = useState(false);
+  const [invalidDataOpen, setInvalidDataOpen] = useState(false);
+  const [recordsSavedOpen, setRecordsSavedOpen] = useState(false);
 
   const invalidDataList = [
     {
@@ -73,7 +77,13 @@ function UploadStudentFilePage() {
       data: invalidJsonData?.invalid_statuses,
       isOpen: invalidStatusesOpen,
       toggleOpen: () => setInvalidStatusesOpen(!invalidStatusesOpen)
-    }
+    },
+    {
+      title: t('uploadFiles.invalidData'),
+      data: invalidJsonData?.invalid_data,
+      isOpen: invalidDataOpen,
+      toggleOpen: () => setInvalidDataOpen(!invalidDataOpen)
+    },
   ]
 
 
@@ -83,6 +93,10 @@ function UploadStudentFilePage() {
 
   setTimeout(() => {
     setUploadErrorMessageVisible(false);
+  }, 20000);
+
+  setTimeout(() => {
+    setRecordsSavedOpen(false);
   }, 20000);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -122,11 +136,20 @@ function UploadStudentFilePage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      api.post('http://localhost:8080/file/student', formData)
+      axios
+        .post('http://localhost:8080/file/student', formData, {
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('google_token')}`
+            },
+        })
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
+          const savedRecordsCount = invalidData.saved_records;
+          
           setInvalidJsonData(invalidData);
+          setRecordsSaved(savedRecordsCount);
+          setRecordsSavedOpen(true);
           setSentData(true);
         })
         .catch((error) => {
@@ -143,6 +166,8 @@ function UploadStudentFilePage() {
     setSelectedFiles([]);
     setButtonDisabled(true);
   };
+
+  let keyCounter = 0;
 
   return (
     <div className="container d-flex justify-content-center mt-5 mb-5">
@@ -180,7 +205,7 @@ function UploadStudentFilePage() {
               <h4>{t('uploadFiles.chosenFiles')}:</h4>
               <ul className="list-group mb-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
                 {selectedFiles.map((file, index) => (
-                  <li key={index} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
+                  <li key={`${index}-${keyCounter++}`} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {file.name}
                     </span>
@@ -201,6 +226,13 @@ function UploadStudentFilePage() {
               {uploadError}
             </div>
           )}
+
+          {recordsSavedOpen && (
+            <div className="alert alert-success" role="alert">
+              {t('uploadFiles.recordsSaved')} {recordsSaved}
+            </div>
+          )}
+
           <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
               {t('uploadFiles.sendFiles')}
           </button>
@@ -227,7 +259,7 @@ function UploadStudentFilePage() {
           <ul className="list-group">
             {invalidDataList.map((item, index) => (
               item.data && item.data.length > 0 ? (
-                <li className="list-group-item mb-2 border" key={index}>
+                <li className="list-group-item mb-2 border" key={`${index}-${keyCounter++}`}>
                   <div>
                   <div onClick={item.toggleOpen}>
                     <div className="d-flex justify-content-between align-items-center">
@@ -246,7 +278,7 @@ function UploadStudentFilePage() {
                       </thead>
                       <tbody>
                         {item.data?.map((student, index) => (
-                          <tr key={student.index}>
+                          <tr key={`${student.index}-${keyCounter++}`}>
                             <td>{student.index}</td>
                             <td>{student.surname}</td>
                             <td>{student.name}</td>

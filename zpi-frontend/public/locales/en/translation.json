@@ -200,7 +200,9 @@
     "wrongSubunits": "Wrong subunits",
     "wrongPositions": "Wrong positions",
     "wrongPhoneNumbers": "Wrong phone numbers",
-    "wrongEmails": "Wrong emails"
+    "wrongEmails": "Wrong emails",
+    "invalidData": "Missing data in the system",
+    "recordsSaved": "Number of saved records: "
   },
   "login": {
     "sessionExpired": "Your session has ended. Please log in again.",
