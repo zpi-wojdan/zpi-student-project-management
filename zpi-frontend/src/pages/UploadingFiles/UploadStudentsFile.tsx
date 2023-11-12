@@ -22,7 +22,8 @@ function UploadStudentFilePage() {
   const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
 
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidStudentData | null>(null);
-  const [recordsSaved, setRecordsSaved] = useState<string | null>(null);
+
+  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
   const [sentData, setSentData] = useState(false);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
@@ -86,7 +87,6 @@ function UploadStudentFilePage() {
     },
   ]
 
-
   setTimeout(() => {
     setDuplicateErrorMessageVisible(false);
   }, 20000);
@@ -124,6 +124,9 @@ function UploadStudentFilePage() {
 
   const handleUpload = () => {
     setUploadError(null);
+    setRecordsSaved(0);
+    setInvalidJsonData(null);
+
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
@@ -145,10 +148,46 @@ function UploadStudentFilePage() {
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
-          const savedRecordsCount = invalidData.saved_records;
+          const recordsSavedCount = invalidData.saved_records;
           
-          setInvalidJsonData(invalidData);
-          setRecordsSaved(savedRecordsCount);
+          setInvalidJsonData((prevInvalidData) => ({
+            ...prevInvalidData,
+            database_repetitions: [
+              ...(prevInvalidData?.database_repetitions || []),
+              ...(invalidData.database_repetitions || []),
+            ],
+            invalid_indices: [
+              ...(prevInvalidData?.invalid_indices || []),
+              ...(invalidData.invalid_indices || []),
+            ],
+            invalid_names: [
+              ...(prevInvalidData?.invalid_names || []),
+              ...(invalidData.invalid_names || []),
+            ],
+            invalid_surnames: [
+              ...(prevInvalidData?.invalid_surnames || []),
+              ...(invalidData.invalid_surnames || []),
+            ],
+            invalid_statuses: [
+              ...(prevInvalidData?.invalid_statuses || []),
+              ...(invalidData.invalid_statuses || []),
+            ],
+            invalid_programs: [
+              ...(prevInvalidData?.invalid_programs || []),
+              ...(invalidData.invalid_programs || []),
+            ],
+            invalid_cycles: [
+              ...(prevInvalidData?.invalid_cycles || []),
+              ...(invalidData.invalid_cycles || []),
+            ],
+            invalid_data: [
+              ...(prevInvalidData?.invalid_data || []),
+              ...(invalidData.invalid_data || []),
+            ],
+          }));
+          
+          setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
+          
           setRecordsSavedOpen(true);
           setSentData(true);
         })

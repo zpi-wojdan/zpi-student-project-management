@@ -21,7 +21,7 @@ function UplaodEmployeeFilePage() {
   const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
 
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidEmployeeData | null>(null);
-  const [recordsSaved, setRecordsSaved] = useState<string | null>(null);
+  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
   const [sentData, setSentData] = useState(false);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
@@ -106,7 +106,6 @@ function UplaodEmployeeFilePage() {
     },
   ];
 
-
   setTimeout(() => {
     setDuplicateErrorMessageVisible(false);
   }, 20000);
@@ -144,6 +143,9 @@ function UplaodEmployeeFilePage() {
 
   const handleUpload = () => {
     setUploadError(null);
+    setRecordsSaved(0);
+    setInvalidJsonData(null);
+
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
@@ -167,10 +169,56 @@ function UplaodEmployeeFilePage() {
           const invalidData = JSON.parse(response.data.invalidData);
           const recordsSavedCount = invalidData.saved_records;
 
-          console.log(invalidData)
+          setInvalidJsonData((prevInvalidData) => ({
+            ...prevInvalidData,
+            database_repetitions: [
+              ...(prevInvalidData?.database_repetitions || []),
+              ...(invalidData.database_repetitions || []),
+            ],
+            invalid_indices: [
+              ...(prevInvalidData?.invalid_indices || []),
+              ...(invalidData.invalid_indices || []),
+            ],
+            invalid_academic_titles: [
+              ...(prevInvalidData?.invalid_academic_titles || []),
+              ...(invalidData.invalid_academic_titles || []),
+            ],
+            invalid_surnames: [
+              ...(prevInvalidData?.invalid_surnames || []),
+              ...(invalidData.invalid_surnames || []),
+            ],
+            invalid_names: [
+              ...(prevInvalidData?.invalid_names || []),
+              ...(invalidData.invalid_names || []),
+            ],
+            invalid_units: [
+              ...(prevInvalidData?.invalid_units || []),
+              ...(invalidData.invalid_units || []),
+            ],
+            invalid_subunits: [
+              ...(prevInvalidData?.invalid_subunits || []),
+              ...(invalidData.invalid_subunits || []),
+            ],
+            invalid_positions: [
+              ...(prevInvalidData?.invalid_positions || []),
+              ...(invalidData.invalid_positions || []),
+            ],
+            invalid_phone_numbers: [
+              ...(prevInvalidData?.invalid_phone_numbers || []),
+              ...(invalidData.invalid_phone_numbers || []),
+            ],
+            invalid_emails: [
+              ...(prevInvalidData?.invalid_emails || []),
+              ...(invalidData.invalid_emails || []),
+            ],
+            invalid_data: [
+              ...(prevInvalidData?.invalid_data || []),
+              ...(invalidData.invalid_data || []),
+            ],
+          }));
+          
+          setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
 
-          setInvalidJsonData(invalidData);
-          setRecordsSaved(recordsSavedCount);
           setRecordsSavedOpen(true);
           setSentData(true);
         })

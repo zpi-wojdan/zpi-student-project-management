@@ -1,5 +1,4 @@
 import { Student } from "./Student";
-import { Employee } from "./Employee";
 
 export type InvalidStudentData = {
     database_repetitions: Student[] | null;
