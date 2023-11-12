@@ -70,11 +70,11 @@ const StudyFieldList: React.FC = () => {
   };
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [studyFieldToDelete, setStudyFieldToDelete] = useState<string | null>(null);
+  const [studyFieldToDelete, setStudyFieldToDelete] = useState<number | null>(null);
 
-  const handleDeleteClick = (studyFieldAbbreviation: string) => {
+  const handleDeleteClick = (studyFieldId: number) => {
     setShowDeleteConfirmation(true);
-    setStudyFieldToDelete(studyFieldAbbreviation);
+    setStudyFieldToDelete(studyFieldId);
   };
 
   const handleConfirmDelete = () => {
@@ -197,13 +197,13 @@ const StudyFieldList: React.FC = () => {
                 <td>
                   <button
                     className="custom-button coverall"
-                    onClick={() => handleDeleteClick(studyField.abbreviation)}
+                    onClick={() => handleDeleteClick(studyField.id)}
                   >
                     <i className="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
-              {studyFieldToDelete === studyField.abbreviation && showDeleteConfirmation && (
+              {studyFieldToDelete === studyField.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
                     <DeleteConfirmation
