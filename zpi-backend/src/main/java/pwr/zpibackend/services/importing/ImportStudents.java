@@ -1,5 +1,6 @@
 package pwr.zpibackend.services.importing;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import lombok.AllArgsConstructor;
@@ -44,26 +45,28 @@ public class ImportStudents {
         List<ObjectNode> invalidStatusData = new ArrayList<>();
 
         List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
+        List<ObjectNode> invalidData = new ArrayList<>();
 
         readStudentFile(file_path, validData, invalidIndexData, invalidSurnameData,
-                        invalidNameData, invalidProgramData, invalidTeachingCycleData,
-                        invalidStatusData);
+                invalidNameData, invalidProgramData, invalidTeachingCycleData,
+                invalidStatusData);
 
-        invalidDatabaseRepetitions = saveValidToDatabase(validData);
+        String fullJson = dataframesToJson(validData, invalidIndexData, invalidSurnameData,
+                invalidNameData, invalidProgramData, invalidTeachingCycleData,
+                invalidStatusData, invalidDatabaseRepetitions, invalidData);
 
-        String fullJson = dataframesToJson(validData, invalidIndexData,
-                            invalidSurnameData, invalidNameData, invalidProgramData,
-                            invalidTeachingCycleData, invalidStatusData, invalidDatabaseRepetitions);
+        String updatedJson = saveValidToDatabase(fullJson);
+
         System.out.println("\nFull JSON:");
-        System.out.println(fullJson);
+        System.out.println(updatedJson);
 
-        return fullJson;
+        return updatedJson;
     }
 
     public void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
-                                       List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
-                                       List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
-                                       List<ObjectNode> invalidStatusData) throws IOException {
+                                List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
+                                List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
+                                List<ObjectNode> invalidStatusData) throws IOException {
         FileInputStream excelFile = new FileInputStream(file_path);
         Workbook workbook = new XSSFWorkbook(excelFile);
 
@@ -156,10 +159,10 @@ public class ImportStudents {
         excelFile.close();
     }
 
-    public String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
-                                          List<ObjectNode> invalidSurnameData, List<ObjectNode> invalidNameData,
-                                          List<ObjectNode> invalidProgramData, List<ObjectNode> invalidTeachingCycleData,
-                                          List<ObjectNode> invalidStatusData, List<ObjectNode> invalidDatabaseRepetitions) throws IOException{
+    public String dataframesToJson(List<ObjectNode> validData, List<ObjectNode> invalidIndexData, List<ObjectNode> invalidSurnameData,
+                                   List<ObjectNode> invalidNameData, List<ObjectNode> invalidProgramData,
+                                   List<ObjectNode> invalidTeachingCycleData, List<ObjectNode> invalidStatusData,
+                                   List<ObjectNode> invalidDatabaseRepetitions, List<ObjectNode> invalidData) throws IOException{
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, List<ObjectNode>> fullJson = new HashMap<>();
@@ -171,6 +174,7 @@ public class ImportStudents {
         fullJson.put("invalid_teaching_cycles", invalidTeachingCycleData);
         fullJson.put("invalid_statuses", invalidStatusData);
         fullJson.put("database_repetitions", invalidDatabaseRepetitions);
+        fullJson.put("invalid_data", invalidData);
 
         fullJson = mergeFullJson(fullJson);
 
@@ -235,125 +239,175 @@ public class ImportStudents {
         return false;
     }
 
-    private List<ObjectNode> saveValidToDatabase(List<ObjectNode> validData){
+    private String saveValidToDatabase(String fullJson){
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<ObjectNode> validData = new ArrayList<>();
+        List<ObjectNode> invalidIndexData = new ArrayList<>();
+        List<ObjectNode> invalidSurnameData = new ArrayList<>();
+        List<ObjectNode> invalidNameData = new ArrayList<>();
+        List<ObjectNode> invalidProgramData = new ArrayList<>();
+        List<ObjectNode> invalidTeachingCycleData = new ArrayList<>();
+        List<ObjectNode> invalidStatusData = new ArrayList<>();
+        List<ObjectNode> invalidDatabaseRepetitions = new ArrayList<>();
         List<ObjectNode> invalidData = new ArrayList<>();
+        List<JsonNode> validDataWithoutRepetitions = new ArrayList<>();
 
-        for (ObjectNode node : validData) {
-            Optional<Student> existingStudent = studentRepository.findByIndex(node.get("index").asText());
-            Optional<Role> existingRole = roleRepository.findByName(node.get("role").asText());
+        int saved_records = 0;
 
-            if (existingRole.isEmpty()){
-                invalidData.add(node);
-                continue;
-            }
+        try{
+            JsonNode rootNode = objectMapper.readTree(fullJson);
 
-            boolean failed = false;
-            JsonNode programsCyclesNode = node.get("programsCycles");
-            if (existingStudent.isEmpty()) {
-                //  save a new student to the repository
-                Student student = new Student();
-                student.setSurname(node.get("surname").asText());
-                student.setName(node.get("name").asText());
-                student.setIndex(node.get("index").asText());
-                student.setMail(node.get("mail").asText());
-                student.setStatus(node.get("status").asText());
+            if (rootNode.has("valid_data") && rootNode.get("valid_data").isArray()) {
+                ArrayNode validDataArray = (ArrayNode) rootNode.get("valid_data");
+                for (JsonNode validDataNode : validDataArray) {
+                    ObjectNode validDataObject = (ObjectNode) validDataNode;
 
-                student.setRole(existingRole.get());
+                    Optional<Student> existingStudent = studentRepository.findByIndex(validDataObject.get("index").asText());
+                    Optional<Role> existingRole = roleRepository.findByName(validDataObject.get("role").asText());
 
-                if (programsCyclesNode.isArray()){
+                    if (existingRole.isEmpty()) {
+                        invalidData.add(validDataObject);
+                        continue;
+                    }
 
-                    for (JsonNode elem : programsCyclesNode){
-                        StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
-                        StudentProgramCycleId studentProgramCycleId = new StudentProgramCycleId();
+                    boolean failed = false;
+                    JsonNode programsCyclesNode = validDataObject.get("programsCycles");
 
-                        String programName = elem.get(0).asText();
-                        String cycleName = elem.get(1).asText();
+                    if (existingStudent.isEmpty()) {
+                        // Create a new student
+                        Student student = new Student();
+                        student.setSurname(validDataObject.get("surname").asText());
+                        student.setName(validDataObject.get("name").asText());
+                        student.setIndex(validDataObject.get("index").asText());
+                        student.setMail(validDataObject.get("mail").asText());
+                        student.setStatus(validDataObject.get("status").asText());
 
-                        Optional<Program> existingProgram = programRepository.findByName(programName);
-                        Optional<StudyCycle> existingStudyCycle = studyCycleRepository.findByName(cycleName);
+                        student.setRole(existingRole.get());
 
-                        if (existingProgram.isEmpty()){
+                        if (programsCyclesNode.isArray()) {
+                            for (JsonNode elem : programsCyclesNode){
+                                StudentProgramCycle studentProgramCycle = new StudentProgramCycle();
+                                StudentProgramCycleId studentProgramCycleId = new StudentProgramCycleId();
+
+                                String programName = elem.get(0).asText();
+                                String cycleName = elem.get(1).asText();
+
+                                Optional<Program> existingProgram = programRepository.findByName(programName);
+                                Optional<StudyCycle> existingStudyCycle = studyCycleRepository.findByName(cycleName);
+
+                                if (existingProgram.isEmpty() || existingStudyCycle.isEmpty()){
+                                    failed = true;
+                                    break;
+                                }
+                                else{
+                                    studentProgramCycleId.setStudentId(student.getId());
+                                    studentProgramCycleId.setProgramId(existingProgram.get().getId());
+                                    studentProgramCycleId.setCycleId(existingStudyCycle.get().getId());
+
+                                    studentProgramCycle.setCycle(existingStudyCycle.get());
+                                    studentProgramCycle.setProgram(existingProgram.get());
+                                    studentProgramCycle.setStudent(student);
+                                    studentProgramCycle.setId(studentProgramCycleId);
+
+                                    student.getStudentProgramCycles().add(studentProgramCycle);
+                                }
+                            }
+                        }
+                        else {
                             failed = true;
-                            break;
+                        }
+
+                        if (failed) {
+                            invalidData.add(validDataObject);
+                        }
+                        else {
+                            validDataWithoutRepetitions.add(validDataObject);
+                            studentRepository.save(student);
+                            saved_records++;
+                        }
+                    }
+                    else {
+                        Set<StudentProgramCycle> existingStudentProgramCycles = existingStudent.get().getStudentProgramCycles();
+                        Set<StudentProgramCycle> newStudentProgramCycles = new HashSet<>();
+
+                        boolean repetition = true;
+                        for (JsonNode elem : programsCyclesNode){
+                            String programName = elem.get(0).asText();
+                            String cycleName = elem.get(1).asText();
+
+                            boolean isPresent = false;
+                            for (StudentProgramCycle existing : existingStudentProgramCycles){
+                                if(existing.getProgram().getName().equals(programName) &&
+                                        existing.getCycle().getName().equals(cycleName)){
+                                    isPresent = true;
+                                    break;
+                                }
+                            }
+                            if (!isPresent){
+                                repetition = false;
+                                Optional<Program> existingProgram = programRepository.findByName(programName);
+                                Optional<StudyCycle> existingCycle = studyCycleRepository.findByName(cycleName);
+
+                                if (existingProgram.isEmpty() || existingCycle.isEmpty()){
+                                    invalidDatabaseRepetitions.add((ObjectNode) validDataNode);
+                                    failed = true;
+                                    break;
+                                }
+
+                                StudentProgramCycle newStudProgCyc = new StudentProgramCycle();
+                                StudentProgramCycleId id = new StudentProgramCycleId();
+
+                                id.setStudentId(existingStudent.get().getId());
+                                id.setProgramId(existingProgram.get().getId());
+                                id.setCycleId(existingCycle.get().getId());
+
+                                newStudProgCyc.setProgram(existingProgram.get());
+                                newStudProgCyc.setCycle(existingCycle.get());
+                                newStudProgCyc.setStudent(existingStudent.get());
+                                newStudProgCyc.setId(id);
+
+                                newStudentProgramCycles.add(newStudProgCyc);
+                            }
+                        }
+                        if (!failed){
+                            if (!repetition){
+                                existingStudent.get().getStudentProgramCycles().addAll(newStudentProgramCycles);
+                                validDataWithoutRepetitions.add(validDataObject);
+                                studentRepository.save(existingStudent.get());
+                                saved_records++;
+                            }
+                            invalidDatabaseRepetitions.add(validDataObject);
                         }
                         else{
-                            if (existingStudyCycle.isEmpty()){
-                                failed = true;
-                                break;
-                            }
-                            else{
-                                studentProgramCycleId.setStudentMail(student.getMail());
-                                studentProgramCycleId.setProgramId(existingProgram.get().getId());
-                                studentProgramCycleId.setCycleId(existingStudyCycle.get().getId());
-
-                                studentProgramCycle.setCycle(existingStudyCycle.get());
-                                studentProgramCycle.setProgram(existingProgram.get());
-                                studentProgramCycle.setStudent(student);
-                                studentProgramCycle.setId(studentProgramCycleId);
-
-                                student.getStudentProgramCycles().add(studentProgramCycle);
-                            }
+                            invalidDatabaseRepetitions.add(validDataObject);
                         }
                     }
-                }
-                else {
-                    failed = true;
-                }
-                if (failed){
-                    invalidData.add(node);
-                }
-                else{
-                    studentRepository.save(student);
                 }
             }
-            else{
-                Set<StudentProgramCycle> existingStudentProgramCycles = existingStudent.get().getStudentProgramCycles();
-                Set<StudentProgramCycle> newStudentProgramCycles = new HashSet<>();
 
-                for (JsonNode elem : programsCyclesNode){
-                    String programName = elem.get(0).asText();
-                    String cycleName = elem.get(1).asText();
-
-                    boolean isPresent = false;
-                    for (StudentProgramCycle existing : existingStudentProgramCycles){
-                        if(existing.getProgram().getName().equals(programName) &&
-                                existing.getCycle().getName().equals(cycleName)){
-                            isPresent = true;
-                            break;
-                        }
-                    }
-                    if (!isPresent){
-                        Optional<Program> existingProgram = programRepository.findByName(programName);
-                        Optional<StudyCycle> existingCycle = studyCycleRepository.findByName(cycleName);
-
-                        if (existingProgram.isEmpty() || existingCycle.isEmpty()){
-                            invalidData.add(node);
-                            failed = true;
-                            break;
-                        }
-
-                        StudentProgramCycle newStudProgCyc = new StudentProgramCycle();
-                        StudentProgramCycleId id = new StudentProgramCycleId();
-
-                        id.setStudentMail(existingStudent.get().getMail());
-                        id.setProgramId(existingProgram.get().getId());
-                        id.setCycleId(existingCycle.get().getId());
-
-                        newStudProgCyc.setProgram(existingProgram.get());
-                        newStudProgCyc.setCycle(existingCycle.get());
-                        newStudProgCyc.setStudent(existingStudent.get());
-                        newStudProgCyc.setId(id);
-
-                        newStudentProgramCycles.add(newStudProgCyc);
-                    }
-                }
-                if (!failed){
-                    existingStudent.get().getStudentProgramCycles().addAll(newStudentProgramCycles);
-                    studentRepository.save(existingStudent.get()); // Save the updated student
-                }
+            ((ObjectNode) rootNode).set("valid_data", objectMapper.valueToTree(validDataWithoutRepetitions));
+            ArrayNode databaseRepetitionsNode = objectMapper.valueToTree(invalidDatabaseRepetitions);
+            ArrayNode invalidDataNode = objectMapper.valueToTree(invalidData);
+            if (rootNode.has("database_repetitions") && rootNode.get("database_repetitions").isArray()) {
+                ((ArrayNode) rootNode.get("database_repetitions")).addAll(databaseRepetitionsNode);
+            } else {
+                ((ObjectNode) rootNode).set("database_repetitions", databaseRepetitionsNode);
             }
+
+            if (rootNode.has("invalid_data") && rootNode.get("invalid_data").isArray()) {
+                ((ArrayNode) rootNode.get("invalid_data")).addAll(invalidDataNode);
+            } else {
+                ((ObjectNode) rootNode).set("invalid_data", invalidDataNode);
+            }
+            ((ObjectNode) rootNode).put("saved_records", saved_records);
+
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
         }
-        return invalidData;
+        catch (IOException e){
+            e.printStackTrace();
+            return "";
+        }
     }
 
 }

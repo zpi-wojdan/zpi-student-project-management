@@ -18,6 +18,10 @@ code {
   border-color: #9A342D !important;
 }
 
+.custom-checkbox:checked {
+  accent-color: #9A342D;
+}
+
 #sign-in-button {
   width: 20%;
 }
@@ -27,6 +31,7 @@ code {
   width: 100%;
   border-collapse: separate;
   border-spacing: 2px;
+  margin: 10px 0px;
 }
 
 .custom-table tbody tr:nth-child(odd) {
@@ -56,19 +61,23 @@ code {
   display: flex;
   float:right;
   justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 .pagination button {
-  background-color: #f2f2f2;
-  border: 1p solid grey;
-  padding: 5px 10px;
-  cursor: pointer;
+  padding: 5px 15px;
+  margin: 10px 5px;
 }
 
-.pagination button:hover {
-  background-color: #ddd;
+.pagination input{
+  max-width: 40px;
+  appearance: textfield;
+  text-align: center;
+}
+
+.pagination .text {
+  padding: 5px 5px;
+  margin: 10px 0px;
+  margin-left: 5px;
 }
 
 .link-style {
@@ -79,7 +88,7 @@ code {
 
 .page-margin {
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 120px;
 }
 
 .bold {
@@ -157,4 +166,9 @@ ul > li > ul {
 .list-group-item-hover:hover {
   background-color: lightgray; 
   cursor: pointer; 
+}
+
+.lang-link-active {
+  text-decoration: underline;
+  color: #9A342D !important;
 }

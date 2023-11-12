@@ -14,12 +14,6 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorDetails> handleNoSuchElementException(NoSuchElementException e, WebRequest request) {
-        ErrorDetails errorDetails = getErrorDetails(e, request);
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDetails> handleIllegalArgumentException(IllegalArgumentException e, WebRequest request) {
         ErrorDetails errorDetails = getErrorDetails(e, request);
@@ -38,9 +32,26 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        // Log the exception and return a custom error response
-        return new ResponseEntity<>("A data integrity violation occurred.", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("A data integrity violation occurred.", HttpStatus.METHOD_NOT_ALLOWED);
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleNotFoundException(NotFoundException e, WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CannotDeleteException.class)
+    public ResponseEntity<ErrorDetails> handleCannotDeleteException(CannotDeleteException e, WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ErrorDetails> handleAlreadyExistsException(AlreadyExistsException e, WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
 }

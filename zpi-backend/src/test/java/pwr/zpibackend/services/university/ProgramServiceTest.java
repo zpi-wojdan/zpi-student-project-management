@@ -9,9 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import pwr.zpibackend.dto.university.ProgramDTO;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.*;
+import pwr.zpibackend.repositories.university.FacultyRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
+import pwr.zpibackend.repositories.university.SpecializationRepository;
+import pwr.zpibackend.repositories.university.StudyCycleRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,17 +28,27 @@ public class ProgramServiceTest {
 
     @MockBean
     private ProgramRepository programRepository;
-
+    @MockBean
+    private SpecializationRepository specializationRepository;
+    @MockBean
+    private StudyCycleRepository studyCycleRepository;
+    @MockBean
+    private FacultyRepository facultyRepository;
     @Autowired
     private ProgramService programService;
 
     private Program program;
+    private ProgramDTO programDTO;
 
     @BeforeEach
     public void setup() {
         program = new Program();
         program.setId(1L);
         program.setName("Test Program");
+
+        programDTO = new ProgramDTO();
+        programDTO.setName("Test Program");
+        programDTO.setSpecializationAbbr("TST");
     }
 
     @Test
@@ -63,10 +78,13 @@ public class ProgramServiceTest {
     }
 
     @Test
-    public void testSaveProgramSuccess() {
-        when(programRepository.save(any())).thenReturn(program);
+    public void testSaveProgramSuccess() throws NotFoundException, AlreadyExistsException {
+        when(programRepository.saveAndFlush(any())).thenReturn(program);
+        when(specializationRepository.findByAbbreviation(any())).thenReturn(Optional.of(new Specialization()));
+        when(studyCycleRepository.findAllById(any())).thenReturn(List.of());
+        when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
 
-        Program result = programService.saveProgram(program);
+        Program result = programService.saveProgram(programDTO);
 
         assertEquals(program, result);
     }
@@ -93,18 +111,25 @@ public class ProgramServiceTest {
         updatedProgram.setId(program.getId());
         updatedProgram.setName("Updated Test Program");
 
-        when(programRepository.findById(program.getId())).thenReturn(Optional.of(program));
-        when(programRepository.save(any())).thenReturn(updatedProgram);
+        ProgramDTO updatedProgramDTO = new ProgramDTO();
+        updatedProgramDTO.setName("Updated Test Program");
+        updatedProgramDTO.setSpecializationAbbr("TST");
 
-        Program result = programService.updateProgram(program.getId(), updatedProgram);
+        when(programRepository.findById(program.getId())).thenReturn(Optional.of(program));
+        when(specializationRepository.findByAbbreviation(any())).thenReturn(Optional.of(new Specialization()));
+        when(programRepository.saveAndFlush(any())).thenReturn(updatedProgram);
+        when(specializationRepository.findByAbbreviation(any())).thenReturn(Optional.of(new Specialization()));
+        when(studyCycleRepository.findAllById(any())).thenReturn(List.of());
+        when(facultyRepository.findById(any())).thenReturn(Optional.of(new Faculty()));
+
+        Program result = programService.updateProgram(1L, updatedProgramDTO);
 
         assertEquals(updatedProgram, result);
     }
 
     @Test
     public void testUpdateProgramNotFound() {
-        Program updatedProgram = new Program();
-        updatedProgram.setId(program.getId());
+        ProgramDTO updatedProgram = new ProgramDTO();
         updatedProgram.setName("Updated Test Program");
 
         when(programRepository.findById(program.getId())).thenReturn(Optional.empty());

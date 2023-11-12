@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import pwr.zpibackend.dto.university.StudyCycleDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
@@ -28,12 +29,16 @@ public class StudyCycleServiceTest {
     private StudyCycleService studyCycleService;
 
     private StudyCycle studyCycle;
+    private StudyCycleDTO studyCycleDTO;
 
     @BeforeEach
     public void setup() {
         studyCycle = new StudyCycle();
         studyCycle.setId(1L);
         studyCycle.setName("Test Study Cycle");
+
+        studyCycleDTO = new StudyCycleDTO();
+        studyCycleDTO.setName("Test Study Cycle");
     }
 
     @Test
@@ -66,7 +71,7 @@ public class StudyCycleServiceTest {
     public void testSaveStudyCycleSuccess() {
         when(studyCycleRepository.save(any())).thenReturn(studyCycle);
 
-        StudyCycle result = studyCycleService.saveStudyCycle(studyCycle);
+        StudyCycle result = studyCycleService.saveStudyCycle(studyCycleDTO);
 
         assertEquals(studyCycle, result);
     }
@@ -93,22 +98,24 @@ public class StudyCycleServiceTest {
         updatedStudyCycle.setId(studyCycle.getId());
         updatedStudyCycle.setName("Updated Test Study Cycle");
 
+        StudyCycleDTO updatedStudyCycleDTO = new StudyCycleDTO();
+        updatedStudyCycleDTO.setName("Updated Test Study Cycle");
+
         when(studyCycleRepository.findById(studyCycle.getId())).thenReturn(Optional.of(studyCycle));
         when(studyCycleRepository.save(any())).thenReturn(updatedStudyCycle);
 
-        StudyCycle result = studyCycleService.updateStudyCycle(studyCycle.getId(), updatedStudyCycle);
+        StudyCycle result = studyCycleService.updateStudyCycle(studyCycle.getId(), updatedStudyCycleDTO);
 
         assertEquals(updatedStudyCycle, result);
     }
 
     @Test
     public void testUpdateStudyCycleNotFound() {
-        StudyCycle updatedStudyCycle = new StudyCycle();
-        updatedStudyCycle.setId(studyCycle.getId());
-        updatedStudyCycle.setName("Updated Test Study Cycle");
+        StudyCycleDTO updatedStudyCycleDTO = new StudyCycleDTO();
+        updatedStudyCycleDTO.setName("Updated Test Study Cycle");
 
         when(studyCycleRepository.findById(studyCycle.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> studyCycleService.updateStudyCycle(studyCycle.getId(), updatedStudyCycle));
+        assertThrows(NotFoundException.class, () -> studyCycleService.updateStudyCycle(studyCycle.getId(), updatedStudyCycleDTO));
     }
 }

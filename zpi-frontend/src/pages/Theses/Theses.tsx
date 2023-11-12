@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ThesisFront, Thesis } from '../../models/Thesis';
-import Cookies from "js-cookie";
+import api from '../../utils/api';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
+import {useTranslation} from "react-i18next";
 
 
 const ThesesTable: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [theses, setTheses] = useState<ThesisFront[]>([]);
   
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/thesis', {
-        headers: {
-            'Authorization': `Bearer ${Cookies.get('google_token')}`
-        }
-    })
+    api.get('http://localhost:8080/thesis')
       .then((response) => {
         console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
@@ -28,7 +25,8 @@ const ThesesTable: React.FC = () => {
             id: thesisDb.id,
             namePL: thesisDb.namePL,
             nameEN: thesisDb.nameEN,
-            description: thesisDb.description,
+            descriptionPL: thesisDb.descriptionPL,
+            descriptionEN: thesisDb.descriptionEN,
             programs: thesisDb.programs,
             studyCycle: thesisDb.studyCycle,
             num_people: thesisDb.num_people,
@@ -63,42 +61,43 @@ const ThesesTable: React.FC = () => {
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setInputValue] = useState(currentPage);
   const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
   const indexOfLastItem = itemsPerPage === 'All' ? theses.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
   const currentTheses = theses.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(theses.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = Math.max(1, currentPage - 2); i <= Math.min(currentPage + 2, totalPages); i++) {
-      pageNumbers.push(i);
+    if(!newPage || newPage<1){
+      setCurrentPage(1);
+      setInputValue(1);
     }
-
-    return pageNumbers.map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={currentPage === pageNumber ? 'active' : ''}
-      >
-        {pageNumber}
-      </button>
-    ));
+    else {
+      if(newPage>totalPages){
+        setCurrentPage(totalPages);
+        setInputValue(totalPages);
+      }
+      else{
+        setCurrentPage(newPage);
+        setInputValue(newPage);
+      }
+    }
   };
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-end  align-items-center mb-3'>
-        <div >
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+      <div className='d-flex justify-content-end  align-items-center'>
+      {ITEMS_PER_PAGE.length > 1 && (
+        <div className="d-flex justify-content-between">
+          <div className="d-flex align-items-center">
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(e.target.value)}
+            onChange={(e) => {
+              setItemsPerPage(e.target.value);
+              handlePageChange(1);
+            }}
             >
             {ITEMS_PER_PAGE.map((value) => (
                 <option key={value} value={value}>
@@ -106,40 +105,110 @@ const ThesesTable: React.FC = () => {
                 </option>
             ))}
             </select>
+          </div>
+          <div style={{ marginLeft: '30px' }}>
+            {itemsPerPage !== 'All' && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='custom-button'
+              >
+                &lt;
+              </button>
+
+              <input
+                type="number"
+                value={inputValue}
+                onChange={(e) => {
+                  const newPage = parseInt(e.target.value, 10);
+                  setInputValue(newPage);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePageChange(inputValue);
+                  }
+                }}
+                onBlur={() => {
+                  handlePageChange(inputValue);
+                }}
+                className='text'
+              />
+              
+            <span className='text'> z {totalPages}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='custom-button'
+              >
+                &gt;
+              </button>
+            </div>
+            )}
+          </div>
         </div>
+        )}
       </div>
       <table className="custom-table">
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center'}}>#</th>
-            <th style={{ width: '70%' }}>Temat</th>
-            <th style={{ width: '17%' }}>Promotor</th>
-            <th style={{ width: '10%', textAlign: 'center'}}>Zajęte miejsca</th>
+            <th style={{ width: '70%' }}>{t('general.university.thesis')}</th>
+            <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+            <th style={{ width: '10%', textAlign: 'center'}}>{t('thesis.occupiedSeats')}</th>
           </tr>
         </thead>
         <tbody>
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
-              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}} className="link-style btn">{thesis.namePL}</button></td>
+              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}}
+                          className="link-style btn">
+                  {i18n.language === 'pl' ? (
+                      thesis.namePL
+                  ) : (
+                      thesis.nameEN
+                  )}
+              </button></td>
               <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      {itemsPerPage !== 'All' && (
+      {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            className='custom-button'
           >
             &lt;
           </button>
-          {renderPageNumbers()}
+
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => {
+              const newPage = parseInt(e.target.value, 10);
+              setInputValue(newPage);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handlePageChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              handlePageChange(inputValue);
+            }}
+            className='text'
+          />
+          
+        <span className='text'> z {totalPages}</span>
           <button
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className='custom-button'
           >
             &gt;
           </button>

@@ -21,6 +21,9 @@ import java.util.*;
 @Table(name = "student")
 public class Student {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, unique = true)
     private String mail;
     @Column(nullable = false)
     private String name;
@@ -31,7 +34,7 @@ public class Student {
     @Column(nullable = false)
     private String status;
     @NotNull(message = "Role cannot be null")
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)

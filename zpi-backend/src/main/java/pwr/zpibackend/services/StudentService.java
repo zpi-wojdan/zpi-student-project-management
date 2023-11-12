@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.StudentDTO;
-import pwr.zpibackend.dto.StudentProgramCycleDTO;
+import pwr.zpibackend.dto.university.StudentProgramCycleDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.models.Student;
@@ -17,10 +17,7 @@ import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudentProgramCycleRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -38,22 +35,28 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public Student getStudent(String mail) throws NotFoundException {
-        return studentRepository.findById(mail)
+    public Student getStudent(Long id) {
+        return studentRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Student getStudent(String mail) {
+        return studentRepository.findByMail(mail)
                 .orElseThrow(NotFoundException::new);
     }
 
     public boolean exists(String email) {
-        return studentRepository.existsById(email);
+        return studentRepository.existsByMail(email);
     }
 
-    public Student addStudent(StudentDTO student) throws AlreadyExistsException, NotFoundException {
-        if (studentRepository.existsById(student.getMail())) {
+    public Student addStudent(StudentDTO student) {
+        if (studentRepository.existsByIndex(student.getIndex())) {
             throw new AlreadyExistsException();
         }
 
         Student newStudent = new Student();
-        newStudent.setMail(student.getMail());
+        newStudent.setMail(student.getIndex() + "@student.pwr.edu.pl");
         newStudent.setName(student.getName());
         newStudent.setSurname(student.getSurname());
         newStudent.setIndex(student.getIndex());
@@ -67,9 +70,14 @@ public class StudentService {
         return newStudent;
     }
 
-    public Student updateStudent(String mail, StudentDTO updatedStudent) throws NotFoundException {
-        Student student = studentRepository.findById(mail).orElseThrow(NotFoundException::new);
+    public Student updateStudent(Long id, StudentDTO updatedStudent) {
+        if (studentRepository.existsByIndex(updatedStudent.getIndex())) {
+            if (!(Objects.equals(studentRepository.findByIndex(updatedStudent.getIndex()).get().getId(), id)))
+                throw new AlreadyExistsException();
+        }
+        Student student = studentRepository.findById(id).orElseThrow(NotFoundException::new);
 
+        student.setMail(updatedStudent.getIndex() + "@student.pwr.edu.pl");
         student.setName(updatedStudent.getName());
         student.setSurname(updatedStudent.getSurname());
         student.setIndex(updatedStudent.getIndex());
@@ -77,36 +85,45 @@ public class StudentService {
         student.setRole(roleService.getRoleByName("student"));
 
         Set<StudentProgramCycle> spcSet = getStudentProgramCycles(updatedStudent, student);
-        studentRepository.save(student);
 
+        List<StudentProgramCycle> existingSpcList = studentProgramCycleRepository.findByStudentId(student.getId());
+
+        for (StudentProgramCycle existingSpc : existingSpcList) {
+            if (!spcSet.contains(existingSpc)) {
+                studentProgramCycleRepository.delete(existingSpc);
+            }
+        }
+
+        studentRepository.save(student);
         studentProgramCycleRepository.saveAll(spcSet);
 
         return student;
     }
 
 
-    public Student deleteStudent(String mail) throws NotFoundException {
-        Optional<Student> studentOptional = studentRepository.findById(mail);
+    public Student deleteStudent(Long id) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
 
         if (studentOptional.isPresent()) {
             Student deletedStudent = studentOptional.get();
-            studentRepository.deleteById(mail);
+            studentRepository.deleteById(id);
             return deletedStudent;
         } else {
             throw new NotFoundException();
         }
     }
 
-    private Set<StudentProgramCycle> getStudentProgramCycles(StudentDTO student, Student newStudent) throws NotFoundException {
+    private Set<StudentProgramCycle> getStudentProgramCycles(StudentDTO studentDTO, Student newStudent) {
         Set<StudentProgramCycle> newSpcSet = new HashSet<>();
-        for (int i = 0; i < student.getProgramsCycles().size(); i++) {
-            StudentProgramCycleDTO spcDTO = student.getProgramsCycles().get(i);
+        for (int i = 0; i < studentDTO.getProgramsCycles().size(); i++) {
+            StudentProgramCycleDTO spcDTO = studentDTO.getProgramsCycles().get(i);
 
+            Student student = studentRepository.findByIndex(studentDTO.getIndex()).orElseThrow(NotFoundException::new);
             Program program = programRepository.findById(spcDTO.getProgramId()).orElseThrow(NotFoundException::new);
             StudyCycle cycle = studyCycleRepository.findById(spcDTO.getCycleId()).orElseThrow(NotFoundException::new);
 
             StudentProgramCycle spc = new StudentProgramCycle();
-            spc.setId(new StudentProgramCycleId(student.getMail(), program.getId(), cycle.getId()));
+            spc.setId(new StudentProgramCycleId(student.getId(), program.getId(), cycle.getId()));
             spc.setStudent(newStudent);
             spc.setProgram(program);
             spc.setCycle(cycle);

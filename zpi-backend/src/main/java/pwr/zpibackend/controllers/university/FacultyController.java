@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.dto.university.FacultyDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Faculty;
@@ -20,48 +21,32 @@ public class FacultyController {
     private final FacultyService facultyService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Faculty>> getAllFaculties() {
         return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 
     @GetMapping("/{abbreviation}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Faculty> getFacultyById(@PathVariable String abbreviation) {
-        try {
-            return ResponseEntity.ok(facultyService.getFacultyByAbbreviation(abbreviation));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(facultyService.getFacultyByAbbreviation(abbreviation));
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Faculty> addFaculty(@RequestBody Faculty faculty) {
-        try{
-            return ResponseEntity.ok(facultyService.saveFaculty(faculty));
-        } catch(AlreadyExistsException err) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        }
+    public ResponseEntity<Faculty> addFaculty(@RequestBody FacultyDTO faculty) {
+        return ResponseEntity.ok(facultyService.saveFaculty(faculty));
     }
 
-    @PutMapping("/{abbreviation}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable String abbreviation, @RequestBody Faculty faculty) {
-        try {
-            return ResponseEntity.ok(facultyService.updateFaculty(abbreviation, faculty));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id, @RequestBody FacultyDTO faculty) {
+        return ResponseEntity.ok(facultyService.updateFaculty(id, faculty));
     }
 
-    @DeleteMapping("/{abbreviation}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable String abbreviation) {
-        try {
-            return ResponseEntity.ok(facultyService.deleteFaculty(abbreviation));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
+        return ResponseEntity.ok(facultyService.deleteFaculty(id));
     }
 }

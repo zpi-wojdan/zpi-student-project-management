@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
@@ -8,6 +6,8 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { Student } from '../../models/Student';
 import { Thesis } from '../../models/Thesis';
+import api from '../../utils/api';
+import {useTranslation} from "react-i18next";
 
 type ReservationProps = {
 }
@@ -15,6 +15,7 @@ type ReservationProps = {
 function ReservationPage({ }: ReservationProps) {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
+    const { i18n, t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
@@ -27,7 +28,6 @@ function ReservationPage({ }: ReservationProps) {
 
     useEffect(() => {
         setUser(JSON.parse(Cookies.get("user") || "{}"));
-        console.log(user);
         reservations[0] = user?.index || "";
         setReservations(reservations);
     }, []);
@@ -104,11 +104,7 @@ function ReservationPage({ }: ReservationProps) {
             newErrors[index] = false;
         }
 
-        await axios.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`, {
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('google_token')}`
-            }
-        })
+        await api.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)
             .then(response => {
                 newStudents[index] = response.data as Student;
             })
@@ -138,12 +134,7 @@ function ReservationPage({ }: ReservationProps) {
                 };
                 console.log(JSON.stringify(responseBody));
 
-                const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${Cookies.get('google_token')}`
-                    },
-                })
+                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody))
                     .then(response => {
                         if (response.status === 201) {
                             console.log(`Reservation ${reservation} created successfully`);
@@ -161,10 +152,10 @@ function ReservationPage({ }: ReservationProps) {
             }
 
             if (allReservationsSuccessful) {
-                toast.success("Rezerwacja zakończona pomyślnie!");
+                toast.success(t('reservation.reservationSuccessful'));
                 navigate("/theses/" + thesis.id)
             } else {
-                toast.error("Rezerwacja nie powiodła się!");
+                toast.error(t('reservation.reservationError'));
             }
         } else {
             for (const reservation of reservations) {
@@ -177,14 +168,15 @@ function ReservationPage({ }: ReservationProps) {
     return (
         <div className="container">
             <button type="button" className="btn btn-secondary m-2" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
             </button>
-            <h1>Rezerwacja tematu:</h1>
-            <h3>Temat: {thesis?.namePL}</h3>
+            <h1>{t('reservation.reservation')}:</h1>
+            <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
                 {reservations.map((reservation, index) => (
                     <div key={index} className="form-group row justify-content-center">
-                        <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">Student {index + 1}:</label>
+                        <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">
+                            {t('general.people.student')} {index + 1}:</label>
                         <div className="col-sm-4 d-flex">
                             <input
                                 id={`reservation-${index}`}
@@ -209,7 +201,8 @@ function ReservationPage({ }: ReservationProps) {
                                 {students[index] && students[index].name !== undefined ?
                                     students[index].name + ' ' + students[index].surname
                                     : (errors[index] ?
-                                        (doubles[index] ? 'Indeks juz wpisany w innym wierszu!' : 'Indeks jest niepoprawny lub nie istnieje w systemie!'
+                                        (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
+                                                t('reservation.wrongIndex')
                                         ) : ''
                                     )}
                             </p>
@@ -221,10 +214,10 @@ function ReservationPage({ }: ReservationProps) {
                     <div className="col-sm-6">
                         <div className="form-group row justify-content-center">
                             <button type="button" className="col-sm-3 btn btn-primary m-2" onClick={addReservationInput}>
-                                Dodaj osobę
+                                {t('reservation.addPerson')}
                             </button>
                             <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
-                                Zarezerwuj
+                                {t('general.management.reserve')}
                             </button>
                         </div>
                     </div>

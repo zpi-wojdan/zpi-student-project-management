@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import pwr.zpibackend.dto.university.FacultyDTO;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.repositories.university.FacultyRepository;
@@ -48,7 +50,7 @@ public class FacultyServiceTest {
 
     @Test
     public void testGetFacultyByAbbreviationSuccess() throws NotFoundException {
-        when(facultyRepository.findById(faculty.getAbbreviation())).thenReturn(Optional.of(faculty));
+        when(facultyRepository.findByAbbreviation(faculty.getAbbreviation())).thenReturn(Optional.of(faculty));
 
         Faculty result = facultyService.getFacultyByAbbreviation(faculty.getAbbreviation());
 
@@ -57,34 +59,38 @@ public class FacultyServiceTest {
 
     @Test
     public void testGetFacultyByAbbreviationNotFound() {
-        when(facultyRepository.findById(faculty.getAbbreviation())).thenReturn(Optional.empty());
+        when(facultyRepository.findByAbbreviation(faculty.getAbbreviation())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> facultyService.getFacultyByAbbreviation(faculty.getAbbreviation()));
     }
 
-//    @Test
-//    public void testSaveFacultySuccess() {
-//        when(facultyRepository.save(any())).thenReturn(faculty);
-//
-//        Faculty result = facultyService.saveFaculty(faculty);
-//
-//        assertEquals(faculty, result);
-//    }
+    @Test
+    public void testSaveFacultySuccess() throws AlreadyExistsException {
+        FacultyDTO newFaculty = new FacultyDTO();
+        newFaculty.setAbbreviation(faculty.getAbbreviation());
+        newFaculty.setName("Wydział Elektroniki");
+
+        when(facultyRepository.saveAndFlush(any())).thenReturn(faculty);
+
+        Faculty result = facultyService.saveFaculty(newFaculty);
+
+        assertEquals(faculty, result);
+    }
 
     @Test
     public void testDeleteFacultySuccess() throws NotFoundException {
-        when(facultyRepository.findById(faculty.getAbbreviation())).thenReturn(Optional.of(faculty));
+        when(facultyRepository.findById(faculty.getId())).thenReturn(Optional.of(faculty));
 
-        Faculty result = facultyService.deleteFaculty(faculty.getAbbreviation());
+        Faculty result = facultyService.deleteFaculty(faculty.getId());
 
         assertEquals(faculty, result);
     }
 
     @Test
     public void testDeleteFacultyNotFound() {
-        when(facultyRepository.findById(faculty.getAbbreviation())).thenReturn(Optional.empty());
+        when(facultyRepository.findById(faculty.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> facultyService.deleteFaculty(faculty.getAbbreviation()));
+        assertThrows(NotFoundException.class, () -> facultyService.deleteFaculty(faculty.getId()));
     }
 
     @Test
@@ -93,22 +99,26 @@ public class FacultyServiceTest {
         updatedFaculty.setAbbreviation(faculty.getAbbreviation());
         updatedFaculty.setName("Updated Test Faculty");
 
-        when(facultyRepository.findById(faculty.getAbbreviation())).thenReturn(Optional.of(faculty));
-        when(facultyRepository.save(any())).thenReturn(updatedFaculty);
+        FacultyDTO updatedFacultyDTO = new FacultyDTO();
+        updatedFaculty.setAbbreviation(faculty.getAbbreviation());
+        updatedFaculty.setName("Updated Test Faculty");
 
-        Faculty result = facultyService.updateFaculty(faculty.getAbbreviation(), updatedFaculty);
+        when(facultyRepository.findById(faculty.getId())).thenReturn(Optional.of(faculty));
+        when(facultyRepository.saveAndFlush(any())).thenReturn(updatedFaculty);
+
+        Faculty result = facultyService.updateFaculty(faculty.getId(), updatedFacultyDTO);
 
         assertEquals(updatedFaculty, result);
     }
 
     @Test
     public void testUpdateFacultyNotFound() {
-        Faculty updatedFaculty = new Faculty();
+        FacultyDTO updatedFaculty = new FacultyDTO();
         updatedFaculty.setAbbreviation(faculty.getAbbreviation());
         updatedFaculty.setName("Updated Test Faculty");
 
-        when(facultyRepository.findById(faculty.getAbbreviation())).thenReturn(Optional.empty());
+        when(facultyRepository.findById(faculty.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> facultyService.updateFaculty(faculty.getAbbreviation(), updatedFaculty));
+        assertThrows(NotFoundException.class, () -> facultyService.updateFaculty(faculty.getId(), updatedFaculty));
     }
 }

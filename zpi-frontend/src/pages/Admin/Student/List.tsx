@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Student } from '../../../models/Student';
-import Cookies from "js-cookie";
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
+import {useTranslation} from "react-i18next";
+import api from "../../../utils/api";
 
 const StudentList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
+
   useEffect(() => {
-    Axios.get('http://localhost:8080/student', {
-      headers: {
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-      }
-  })
+    api.get('http://localhost:8080/student')
       .then((response) => {
         response.data.sort((a: Student, b: Student) => parseInt(a.index, 10) - parseInt(b.index, 10));
         setStudents(response.data);
@@ -26,7 +24,7 @@ const StudentList: React.FC = () => {
               return true;
             } else {
               const perPageValue = parseInt(itemPerPage, 10);
-              return perPageValue <= response.data.length;
+              return perPageValue < response.data.length;
             }
           });
           setITEMS_PER_PAGE(filteredItemsPerPage);
@@ -41,54 +39,51 @@ const StudentList: React.FC = () => {
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setInputValue] = useState(currentPage);
   const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
   const indexOfLastItem = itemsPerPage === 'All' ? students.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
   const currentStudents = students.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(students.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = Math.max(1, currentPage - 2); i <= Math.min(currentPage + 2, totalPages); i++) {
-      pageNumbers.push(i);
+    if(!newPage || newPage<1){
+      setCurrentPage(1);
+      setInputValue(1);
     }
-
-    return pageNumbers.map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={currentPage === pageNumber ? 'active' : ''}
-      >
-        {pageNumber}
-      </button>
-    ));
+    else {
+      if(newPage>totalPages){
+        setCurrentPage(totalPages);
+        setInputValue(totalPages);
+      }
+      else{
+        setCurrentPage(newPage);
+        setInputValue(newPage);
+      }
+    }
   };
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-between  align-items-center mb-3'>
+      <div className='d-flex justify-content-between  align-items-center'>
         <div >
-          <button className="custom-button" onClick={() => {
-            // Obsługa dodawania nowego studenta
-          }}>
-            Dodaj studenta
+          <button className="custom-button" onClick={() =>{navigate('/students/add')}}>
+              {t('student.add')}
           </button>
           <button className="custom-button" onClick={() => {navigate('/file/student')}}>
-            Importuj studentów
+              {t('student.import')}
           </button>
-          <div >
         </div>
-      </div>
-        <div >
-            <label style={{ marginRight: '10px' }}>Widok:</label>
+        {ITEMS_PER_PAGE.length > 1 && (
+        <div className="d-flex justify-content-between">
+          <div className="d-flex align-items-center">
+            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
             <select
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(e.target.value)}
+            onChange={(e) => {
+              setItemsPerPage(e.target.value);
+              handlePageChange(1);
+            }}
             >
             {ITEMS_PER_PAGE.map((value) => (
                 <option key={value} value={value}>
@@ -96,16 +91,58 @@ const StudentList: React.FC = () => {
                 </option>
             ))}
             </select>
+          </div>
+          <div style={{ marginLeft: '30px' }}>
+            {itemsPerPage !== 'All' && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='custom-button'
+              >
+                &lt;
+              </button>
+
+              <input
+                type="number"
+                value={inputValue}
+                onChange={(e) => {
+                  const newPage = parseInt(e.target.value, 10);
+                  setInputValue(newPage);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePageChange(inputValue);
+                  }
+                }}
+                onBlur={() => {
+                  handlePageChange(inputValue);
+                }}
+                className='text'
+              />
+              
+            <span className='text'> z {totalPages}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='custom-button'
+              >
+                &gt;
+              </button>
+            </div>
+            )}
+          </div>
         </div>
+        )}
       </div>
       <table className="custom-table">
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '17%' }}>Indeks</th>
-            <th style={{ width: '35%' }}>Imię</th>
-            <th style={{ width: '35%' }}>Nazwisko</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>Szczegóły</th>
+            <th style={{ width: '17%' }}>{t('general.people.index')}</th>
+            <th style={{ width: '35%' }}>{t('general.people.name')}</th>
+            <th style={{ width: '35%' }}>{t('general.people.surname')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
           </tr>
         </thead>
         <tbody>
@@ -129,18 +166,39 @@ const StudentList: React.FC = () => {
           ))}
         </tbody>
       </table>
-      {itemsPerPage !== 'All' && (
+      {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            className='custom-button'
           >
             &lt;
           </button>
-          {renderPageNumbers()}
+
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => {
+              const newPage = parseInt(e.target.value, 10);
+              setInputValue(newPage);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handlePageChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              handlePageChange(inputValue);
+            }}
+            className='text'
+          />
+          
+        <span className='text'> z {totalPages}</span>
           <button
-            onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className='custom-button'
           >
             &gt;
           </button>

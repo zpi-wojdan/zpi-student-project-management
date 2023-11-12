@@ -1,12 +1,14 @@
 package pwr.zpibackend.controllers.university;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
-import pwr.zpibackend.dto.DepartmentDTO;
+import pwr.zpibackend.dto.university.DepartmentDTO;
 import pwr.zpibackend.services.university.DepartmentService;
 
 import java.util.List;
@@ -19,19 +21,15 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Department>> getAllDepartments() {
         return ResponseEntity.ok(departmentService.getAllDepartments());
     }
 
     @GetMapping("/{code}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Department> getDepartmentById(@PathVariable String code) {
-        try {
-            return ResponseEntity.ok(departmentService.getDepartmentByCode(code));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(departmentService.getDepartmentByCode(code));
     }
 
     @PostMapping("")
@@ -40,23 +38,15 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.addDepartment(department));
     }
 
-    @PutMapping("/{code}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Department> updateDepartment(@PathVariable String code, @RequestBody DepartmentDTO department) {
-        try {
-            return ResponseEntity.ok(departmentService.updateDepartment(code, department));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody DepartmentDTO department) {
+        return ResponseEntity.ok(departmentService.updateDepartment(id, department));
     }
 
-    @DeleteMapping("/{code}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Department> deleteDepartment(@PathVariable String code) {
-        try {
-            return ResponseEntity.ok(departmentService.deleteDepartment(code));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Department> deleteDepartment(@PathVariable Long id) {
+        return ResponseEntity.ok(departmentService.deleteDepartment(id));
     }
 }

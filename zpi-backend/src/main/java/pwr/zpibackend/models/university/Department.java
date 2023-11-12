@@ -13,11 +13,13 @@ import javax.persistence.*;
 @Entity(name = "department")
 public class Department {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, unique = true)
     private String code;
     @Column(nullable = false)
     private String name;
-    @JoinColumn(name = "faculty_abbreviation", nullable = false)
+    @JoinColumn(name = "faculty_id", nullable = false)
     @ManyToOne
-    @JsonIgnore
     private Faculty faculty;
 }

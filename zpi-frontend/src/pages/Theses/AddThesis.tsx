@@ -1,15 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
-import Axios from 'axios';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
-import Cookies from "js-cookie";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
 import handleSignOut from "../../auth/Logout";
+import {useTranslation} from "react-i18next";
+import api from "../../utils/api";
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
@@ -17,13 +18,19 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   
   const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
   const [supervisorError, setSupervisorError] = useState<string | null>(null);
+  const [supervisorErrorKey, setSupervisorErrorKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSupervisorError(t(supervisorErrorKey));
+  }, [i18n.language]);
 
   const [showDropdown, setShowDropdown] = useState(false);
 
   const [formState, setFormState] = useState({
     namePL: '',
     nameEN: '',
-    description: '',
+    descriptionPL: '',
+    descriptionEN: '',
     num_people: '4',
     supervisorMail: '',
     supervisor: {} as SupervisorData,
@@ -129,14 +136,18 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             supervisor: supervisorData,
           });
           setSupervisorError(null);
+          setSupervisorErrorKey(null);
+
         }
         else{
-          setSupervisorError("Supervisor does not exist in the database");
+          setSupervisorError(t('thesis.supervisorNotExists'));
+          setSupervisorErrorKey('thesis.supervisorNotExists')
         }
 
       }
       catch(error) {
-        setSupervisorError("Error fetching supervisor data");
+        setSupervisorError(t('thesis.errorOfLoadingSupervisorData'));
+        setSupervisorErrorKey('thesis.errorOfLoadingSupervisorData')
         console.log("Error fetching supervisor data: ", error);
       }
     }
@@ -177,7 +188,8 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     const formData = {
       namePL: formState.namePL,
       nameEN: formState.nameEN,
-      description: formState.description,
+      descriptionPL: formState.descriptionPL,
+      descriptionEN: formState.descriptionEN,
       num_people: parseInt(formState.num_people, 10),
       supervisor: {
         mail: formState.supervisorMail,
@@ -196,12 +208,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     console.log(formData);
   
     try {
-      const response = await Axios.post('http://localhost:8080/thesis', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Cookies.get('google_token')}`
-        },
-      });
+      const response = await api.post('http://localhost:8080/thesis', formData);
   
       if (response.status === 201) {
         console.log('Request was successful');
@@ -219,11 +226,11 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
   return (
     <div className="container mt-5">
-      <h2>Dodaj temat</h2>
+      <h2>{t('thesis.add')}</h2>
       <form onSubmit={(event) => handleSubmit(event, formState.status)}>
 
       <div className="mb-3">
-        <label htmlFor="namePL">Tytuł (PL):</label>
+        <label htmlFor="namePL">{t('general.title')} (PL):</label>
         <textarea
           className="form-control resizable-input"
           id="namePL"
@@ -236,7 +243,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="nameEN">Tytuł (EN):</label>
+          <label htmlFor="nameEN">{t('general.title')} (EN):</label>
           <textarea
             className="form-control resizable-input"
             id="nameEN"
@@ -247,13 +254,14 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             ref={nameENRef}
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="description">Opis:</label>
+          <label htmlFor="descriptionPL">{t('general.university.description')} (PL):</label>
           <textarea
             className="form-control resizable-input"
-            id="description"
-            name="description"
-            value={formState.description}
+            id="descriptionPL"
+            name="descriptionPL"
+            value={formState.descriptionPL}
             onChange={(event) => handleTextAreaChange(event, descriptionRef)}
             maxLength={1000}
             ref={descriptionRef}
@@ -261,7 +269,20 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="num_people">Limit osób:</label>
+          <label htmlFor="descriptionEN">{t('general.university.description')} (EN):</label>
+          <textarea
+              className="form-control resizable-input"
+              id="descriptionEN"
+              name="descriptionEN"
+              value={formState.descriptionEN}
+              onChange={(event) => handleTextAreaChange(event, descriptionRef)}
+              maxLength={1000}
+              ref={descriptionRef}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="num_people">{t('thesis.peopleLimit')}:</label>
           <input
             type="number"
             className="form-control"
@@ -275,7 +296,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="supervisor">Prowadzący:</label>
+          <label htmlFor="supervisor">{t('general.people.supervisor')}:</label>
 
           {role == 'employee' && (
             <input
@@ -318,7 +339,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
         </div>
         <div className="mb-3">
-          <label htmlFor="faculty">Kierunki:</label>
+          <label htmlFor="faculty">{t('general.university.fields')}:</label>
           <input
             type="text"
             className="form-control"
@@ -329,7 +350,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="field">Specjalność:</label>
+          <label htmlFor="field">{t('general.university.specialization')}:</label>
           <input
             type="text"
             className="form-control"
@@ -340,7 +361,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="edu_cycle">Cykl edukacyjny:</label>
+          <label htmlFor="edu_cycle">{t('general.university.studyCycle')}:</label>
           <input
             type="text"
             className="form-control"
@@ -355,7 +376,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
         {role === 'admin' && (
           <div className="mb-3">
-            <label htmlFor="status">Status:</label>
+            <label htmlFor="status">{t('general.university.status')}:</label>
             <input
               type="text"
               id="status"
@@ -390,14 +411,14 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
               style={{ marginRight: '10px' }}
               onClick={(event) => handleSubmit(event, 'To be reviewed')}
             >
-              Zgłoś temat
+              {t('thesis.reportThesis')}
             </button>
             <button 
               type="submit" 
               className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
               onClick={(event) => handleSubmit(event, 'Draft')}
             >
-              Zapisz wersję roboczą
+              {t('thesis.saveDraft')}
             </button>
           </div>
         )}
@@ -409,7 +430,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           style={{ marginRight: '10px' }}
           onClick={(event) => handleSubmit(event, formState.status)}
       >
-          Zapisz
+            {t('general.management.save')}
       </button>
         )}
 

@@ -15,15 +15,15 @@ import java.util.Objects;
 @Entity(name = "program")
 public class Program {
     @Id
-    @GeneratedValue
-    private Long Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(nullable = false)
     @NotNull(message = "Program name cannot be null")
     private String name;
-    @JoinColumn(name = "study_field_abbreviation")
+    @JoinColumn(name = "study_field_id")
     @OneToOne(cascade = CascadeType.ALL)
     private StudyField studyField;
-    @JoinColumn(name = "specialization_abbreviation")
+    @JoinColumn(name = "specialization_id")
     @OneToOne(cascade = CascadeType.ALL)
     private Specialization specialization;
 
@@ -34,6 +34,10 @@ public class Program {
             joinColumns = @JoinColumn(name = "program_id"),
             inverseJoinColumns = @JoinColumn(name = "cycle_id"))
     private List<StudyCycle> studyCycles;
+
+    @JoinColumn(name = "faculty_id")
+    @ManyToOne
+    private Faculty faculty;
 
     @Override
     public boolean equals(Object o) {

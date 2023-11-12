@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
@@ -8,6 +7,8 @@ import { toast } from 'react-toastify';
 import { Employee } from '../../models/Employee';
 import { Student } from '../../models/Student';
 import { Thesis } from '../../models/Thesis';
+import {useTranslation} from "react-i18next";
+import api from "../../utils/api";
 
 type SingleReservationProps = {
 }
@@ -15,6 +16,7 @@ type SingleReservationProps = {
 function SingleReservationPage({ }: SingleReservationProps) {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
+    const { i18n, t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
@@ -38,16 +40,11 @@ function SingleReservationPage({ }: SingleReservationProps) {
             };
             console.log(JSON.stringify(responseBody));
 
-            const response = await axios.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${Cookies.get('google_token')}`
-                },
-            })
+            const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody))
                 .then(response => {
                     if (response.status === 201) {
                         console.log(`Reservation ${reservation} created successfully`);
-                        toast.success("Rezerwacja zakończona pomyślnie");
+                        toast.success(t('reservation.reservationSuccessful'));
                         navigate("/theses/" + thesis.id)
                     }
                 })
@@ -58,21 +55,22 @@ function SingleReservationPage({ }: SingleReservationProps) {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
                     }
-                    toast.error("Rezerwacja nie powiodła się");
+                    toast.error(t('reservation.reservationError'));
                 });
     };
 
     return (
         <div className="container">
             <button type="button" className="btn btn-secondary m-2" onClick={() => navigate(-1)}>
-                &larr; Powrót
+                &larr; {t('general.management.goBack')}
             </button>
-            <h1>Rezerwacja tematu:</h1>
-            <h3>Temat: {thesis?.namePL}</h3>
+            <h1>{t('reservation.reservation')}:</h1>
+            <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
 
                 <div className="form-group row justify-content-center">
-                    <label htmlFor={`reservation`} className="col-sm-2 col-form-label">Student:</label>
+                    <label htmlFor={`reservation`} className="col-sm-2 col-form-label">
+                        {t('general.people.student')}:</label>
                     <div className="col-sm-4 d-flex">
                         <input
                             id={`reservation`}
@@ -88,7 +86,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
                     <div className="col-sm-6">
                         <div className="form-group row justify-content-center">
                             <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
-                                Zarezerwuj
+                                {t('general.management.reserve')}
                             </button>
                         </div>
                     </div>
