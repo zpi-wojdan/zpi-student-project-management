@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import pwr.zpibackend.utils.MailTemplates;
 
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Service
 public class MailService {
     public static final String UTF_8_ENCODING = "UTF-8";
+    public static final String IMAGES_LOGO_PNG = "./src/main/resources/images/logo.png";
     @Value("${spring.mail.verify.host.res_leader}")
     private String host_res_leader;
     @Value("${spring.mail.username}")
@@ -28,39 +30,28 @@ public class MailService {
     private final TemplateEngine templateEngine;
 
     @Async
-    public void sendSimpleMailMessage(String to, String subject, String text) {
+    public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, String name) {  // te liste arg pewnie też będzie można poprawić później
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
-            javaMailSender.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Async
-    public void sendHtmlMailMessage(String to, String subject, String text, String page, String template) {
-        try {
+            // utworzenie odpowiedniego template html z danymi
             Context context = new Context();
             context.setVariables(Map.of(
-                    "name", to,
-                    "textContents", text,
-                    "url", getLinkReservationLeader(page)
+                    "name", name,
+                    "thesis", "Temat pracy dyplomowej", // tu będzie do zmiany jak się już podepnie notyfikacje
+                    "url", getLinkReservation(urlPath)
             ));
-            String html = templateEngine.process(template, context);
+            String html = templateEngine.process(template.getTemplateName(), context);
+
+            // utworzenie wiadomości mailowej z załącznikiem w formie obrazu (logo pwr)
             MimeMessage message = getMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
-
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(html, true);
-
-            FileSystemResource image = new FileSystemResource(new File("./src/main/resources/images/logo.png"));
+            FileSystemResource image = new FileSystemResource(new File(IMAGES_LOGO_PNG));
             helper.addInline("image", image);
+
+            // ustawienie parametrów wiadomości
+            helper.setFrom(fromEmail);
+            helper.setTo(recipient);
+            helper.setSubject(template.getSubject());
+            helper.setText(html, true);
 
             javaMailSender.send(message);
         } catch (Exception e) {
@@ -69,9 +60,9 @@ public class MailService {
     }
 
     @Async
-    public void sendHtmlMailGroupMessage(List<String> to, String subject, String text, String page, String template) {
-        for (String recipient : to) {
-            sendHtmlMailMessage(recipient, subject, text, page, template);
+    public void sendHtmlMailGroupMessage(List<String> recipients, String page, MailTemplates template, List<String> names) {
+        for (int i = 0; i < recipients.size(); i++) {
+            sendHtmlMailMessage(recipients.get(i), page, template, names.get(i));
         }
     }
 
@@ -79,7 +70,7 @@ public class MailService {
         return javaMailSender.createMimeMessage();
     }
 
-    private String getLinkReservationLeader(String page) {
+    private String getLinkReservation(String page) {
         return host_res_leader + "/" + page;
     }
 }

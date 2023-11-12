@@ -28,7 +28,7 @@
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td class="content-block"
                       style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                    Hello <strong
+                    Witaj <strong
                           style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"
                           th:text="${name}"></strong>,
                   </td>
@@ -36,8 +36,9 @@
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td class="content-block"
                       style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                    <p th:text="${textContents}"></p>
-                    <p>Click below to visit your reservation:</p>
+                    <p>Do systemu został dodany nowy temat projektu: <strong th:text="${thesis}"></strong>.</p>
+                    <p>Wymaga on zatwierdzenia lub odrzucenia!</p>
+                    <p>Kliknij niżej, aby zobaczyć nowy temat:</p>
                   </td>
                 </tr>
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; text-align: center">
@@ -46,7 +47,7 @@
                     <a class="btn-primary"
                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 5px; text-transform: capitalize; background-color: #9A342D; margin: 0; border-color: #9A342D; border-style: solid; border-width: 8px 16px;"
                        th:href="${url}">
-                      Go to reservation!</a>
+                      Zobacz temat!</a>
                   </td>
                 </tr>
                 </tbody>
