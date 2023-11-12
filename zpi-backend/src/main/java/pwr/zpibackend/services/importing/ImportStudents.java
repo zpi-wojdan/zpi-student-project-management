@@ -388,7 +388,6 @@ public class ImportStudents {
             }
 
             ((ObjectNode) rootNode).set("valid_data", objectMapper.valueToTree(validDataWithoutRepetitions));
-            // Update the "database_repetitions" section in the JSON
             ArrayNode databaseRepetitionsNode = objectMapper.valueToTree(invalidDatabaseRepetitions);
             ArrayNode invalidDataNode = objectMapper.valueToTree(invalidData);
             if (rootNode.has("database_repetitions") && rootNode.get("database_repetitions").isArray()) {
@@ -404,7 +403,6 @@ public class ImportStudents {
             }
             ((ObjectNode) rootNode).put("saved_records", saved_records);
 
-            // Convert the updated JSON back to a string
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
         }
         catch (IOException e){

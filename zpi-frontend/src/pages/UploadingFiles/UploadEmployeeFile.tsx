@@ -115,6 +115,10 @@ function UplaodEmployeeFilePage() {
     setUploadErrorMessageVisible(false);
   }, 20000);
 
+  setTimeout(() => {
+    setRecordsSavedOpen(false);
+  }, 20000);
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setDuplicateFilesError(null);
     const newFiles = acceptedFiles.filter(
@@ -161,10 +165,13 @@ function UplaodEmployeeFilePage() {
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
-          const recordsSavedCount = response.data.saved_records;
+          const recordsSavedCount = invalidData.saved_records;
+
+          console.log(invalidData)
 
           setInvalidJsonData(invalidData);
           setRecordsSaved(recordsSavedCount);
+          setRecordsSavedOpen(true);
           setSentData(true);
         })
         .catch((error) => {
@@ -257,14 +264,6 @@ function UplaodEmployeeFilePage() {
         <div
           className="container d-flex justify-content-center mt-5"
         >
-          <div>
-          {recordsSaved && (
-            <p>
-              ssssssssss {recordsSaved}
-            </p>
-          )}
-          </div>
-
         <div
           className="border p-4 rounded shadow-lg"
           style={{
@@ -294,19 +293,15 @@ function UplaodEmployeeFilePage() {
                       <table className="custom-table">
                         <thead>
                           <tr>
-                            <th style={{ width: '8%' }}>{t('general.title')}</th>
-                            <th style={{ width: '23%' }}>{t('general.people.surname')}</th>
-                            <th style={{ width: '23%' }}>{t('general.people.name')}</th>
-                            <th style={{ width: '23%' }}>{t('uploadFiles.unit')}</th>
-                            <th style={{ width: '23%' }}>{t('uploadFiles.subunit')}</th>
+                            <th style={{ width: '33%' }}>E-mail</th>
+                            <th style={{ width: '33%' }}>{t('uploadFiles.unit')}</th>
+                            <th style={{ width: '33%' }}>{t('uploadFiles.subunit')}</th>
                           </tr>
                         </thead>
                         <tbody>
                           {item.data?.map((employee, index) => (
-                            <tr key={`${employee.mail}-${keyCounter++}`}>
-                              <td>{employee.mail}</td>
-                              <td>{employee.surname}</td>
-                              <td>{employee.name}</td>
+                            <tr key={`${employee.email}-${keyCounter++}`}>
+                              <td>{employee.email}</td>
                               <td>{employee.faculty}</td>
                               <td>{employee.department}</td>
                             </tr>

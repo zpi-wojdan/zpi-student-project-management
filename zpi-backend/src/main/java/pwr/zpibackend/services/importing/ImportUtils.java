@@ -81,7 +81,7 @@ public class ImportUtils {
     }
 
     public static boolean isValidIndex(String index) {
-        return Pattern.matches("^\\d{6}$", index);
+        return Pattern.matches("^[1-9]\\d{5}$", index);
     }
 
     public static boolean isValidSurname(String surname) {

@@ -13,7 +13,7 @@ export type InvalidStudentData = {
 };
 
 export type ImportedEmployee = {
-    mail: string;
+    email: string;
     name: string;
     surname: string;
     roles: string;
