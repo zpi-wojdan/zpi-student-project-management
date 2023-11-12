@@ -55,12 +55,7 @@ public class ImportStudents {
                 invalidNameData, invalidProgramData, invalidTeachingCycleData,
                 invalidStatusData, invalidDatabaseRepetitions, invalidData);
 
-        String updatedJson = saveValidToDatabase(fullJson);
-
-        System.out.println("\nFull JSON:");
-        System.out.println(updatedJson);
-
-        return updatedJson;
+        return saveValidToDatabase(fullJson);
     }
 
     public void readStudentFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
@@ -230,7 +225,7 @@ public class ImportStudents {
         return new ArrayList<>(mergedData.values());
     }
 
-    private boolean containsProgramCycleTuple(ArrayNode programsCyclesArray, String cycle) {
+    boolean containsProgramCycleTuple(ArrayNode programsCyclesArray, String cycle) {
         for (JsonNode existingCycle : programsCyclesArray) {
             if (existingCycle.asText().equals(cycle)) {
                 return true;
@@ -239,7 +234,7 @@ public class ImportStudents {
         return false;
     }
 
-    private String saveValidToDatabase(String fullJson){
+    String saveValidToDatabase(String fullJson){
         ObjectMapper objectMapper = new ObjectMapper();
 
         List<ObjectNode> validData = new ArrayList<>();

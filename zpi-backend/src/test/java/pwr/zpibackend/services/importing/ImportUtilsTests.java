@@ -169,6 +169,7 @@ public class ImportUtilsTests {
         assertFalse(ImportUtils.isValidIndex("1234567"));
         assertFalse(ImportUtils.isValidIndex("12345A"));
         assertFalse(ImportUtils.isValidIndex("12345!"));
+        assertFalse(ImportUtils.isValidIndex("012345"));
         assertFalse(ImportUtils.isValidIndex(""));
     }
 
