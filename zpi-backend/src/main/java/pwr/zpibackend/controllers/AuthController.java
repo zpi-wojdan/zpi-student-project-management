@@ -20,7 +20,7 @@ public class AuthController {
     @Operation(summary = "Get logged user details", description = "Returns logged user details based on email")
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/{email}/details")
-    public ResponseEntity<Object> getUserDetails(@PathVariable String email) throws EmployeeAndStudentWithTheSameEmailException {
+    public ResponseEntity<Object> getUserDetails(@PathVariable String email) {
         return ResponseEntity.ok(authService.getUserDetails(email));
     }
 

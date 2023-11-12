@@ -29,42 +29,24 @@ public class StudyFieldController {
     @GetMapping("/{abbreviation}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<StudyField> getStudyFieldByAbbreviation(@PathVariable String abbreviation){
-        try {
-            return ResponseEntity.ok(studyFieldService.getStudyFieldByAbbreviation(abbreviation));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyFieldService.getStudyFieldByAbbreviation(abbreviation));
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudyField> createStudyField(@RequestBody StudyFieldDTO studyField){
-        try{
-            return ResponseEntity.ok(studyFieldService.saveStudyField(studyField));
-        } catch(AlreadyExistsException err) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyFieldService.saveStudyField(studyField));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudyField> updateStudyField(@RequestBody StudyFieldDTO studyField, @PathVariable Long id){
-        try {
-            return ResponseEntity.ok(studyFieldService.updateStudyField(id, studyField));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyFieldService.updateStudyField(id, studyField));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudyField> deleteStudyField(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(studyFieldService.deleteStudyField(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(studyFieldService.deleteStudyField(id));
     }
 }

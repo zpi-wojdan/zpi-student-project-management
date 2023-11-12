@@ -38,13 +38,13 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public Student getStudent(Long id) throws NotFoundException {
+    public Student getStudent(Long id) {
         return studentRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)
-    public Student getStudent(String mail) throws NotFoundException {
+    public Student getStudent(String mail) {
         return studentRepository.findByMail(mail)
                 .orElseThrow(NotFoundException::new);
     }
@@ -53,7 +53,7 @@ public class StudentService {
         return studentRepository.existsByMail(email);
     }
 
-    public Student addStudent(StudentDTO student) throws AlreadyExistsException, NotFoundException {
+    public Student addStudent(StudentDTO student) {
         if (studentRepository.existsByIndex(student.getIndex())) {
             throw new AlreadyExistsException();
         }
@@ -73,7 +73,10 @@ public class StudentService {
         return newStudent;
     }
 
-    public Student updateStudent(Long id, StudentDTO updatedStudent) throws NotFoundException {
+    public Student updateStudent(Long id, StudentDTO updatedStudent) {
+        if (studentRepository.existsByIndex(updatedStudent.getIndex())) {
+            throw new AlreadyExistsException();
+        }
         Student student = studentRepository.findById(id).orElseThrow(NotFoundException::new);
 
         student.setMail(updatedStudent.getIndex() + "@student.pwr.edu.pl");
@@ -100,7 +103,7 @@ public class StudentService {
     }
 
 
-    public Student deleteStudent(Long id) throws NotFoundException {
+    public Student deleteStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
 
         if (studentOptional.isPresent()) {
@@ -112,7 +115,7 @@ public class StudentService {
         }
     }
 
-    private Set<StudentProgramCycle> getStudentProgramCycles(StudentDTO studentDTO, Student newStudent) throws NotFoundException {
+    private Set<StudentProgramCycle> getStudentProgramCycles(StudentDTO studentDTO, Student newStudent) {
         Set<StudentProgramCycle> newSpcSet = new HashSet<>();
         for (int i = 0; i < studentDTO.getProgramsCycles().size(); i++) {
             StudentProgramCycleDTO spcDTO = studentDTO.getProgramsCycles().get(i);

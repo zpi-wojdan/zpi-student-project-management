@@ -2,6 +2,8 @@ package pwr.zpibackend.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Status;
 import pwr.zpibackend.dto.StatusDTO;
 import pwr.zpibackend.repositories.StatusRepository;
@@ -21,13 +23,13 @@ public class StatusService {
 
     public Status getStatus(Long statusId) {
         return statusRepository.findById(statusId).orElseThrow(
-                () -> new NoSuchElementException("Status with id " + statusId + " does not exist")
+                () -> new NotFoundException("Status with id " + statusId + " does not exist")
         );
     }
 
     public Status addStatus(StatusDTO status) {
         if (statusRepository.existsByName(status.getName())) {
-            throw new IllegalArgumentException("Status with name " + status.getName() + " already exists");
+            throw new AlreadyExistsException("Status with name " + status.getName() + " already exists");
         }
         Status newStatus = new Status(status.getName());
         return statusRepository.save(newStatus);
@@ -39,7 +41,7 @@ public class StatusService {
             status.setName(updatedStatus.getName());
             return statusRepository.save(status);
         }
-        throw new NoSuchElementException("Status with id " + statusId + " does not exist");
+        throw new NotFoundException("Status with id " + statusId + " does not exist");
     }
 
     public Status deleteStatus(Long statusId) {
@@ -48,13 +50,13 @@ public class StatusService {
             statusRepository.delete(status);
             return status;
         } else {
-            throw new NoSuchElementException("Status with id " + statusId + " does not exist");
+            throw new NotFoundException("Status with id " + statusId + " does not exist");
         }
     }
 
     public Status getStatusByName(String name) {
         return statusRepository.findByName(name).orElseThrow(
-                () -> new NoSuchElementException("Status with name " + name + " does not exist")
+                () -> new NotFoundException("Status with name " + name + " does not exist")
         );
     }
 

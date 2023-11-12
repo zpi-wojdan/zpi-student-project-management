@@ -22,12 +22,12 @@ public class SpecialisationService {
         return specializationRepository.findAll();
     }
 
-    public Specialization getSpecializationByAbbreviation(String abbreviation) throws NotFoundException {
+    public Specialization getSpecializationByAbbreviation(String abbreviation) {
         return specializationRepository.findByAbbreviation(abbreviation)
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Specialization saveSpecialization(SpecializationDTO specialization) throws AlreadyExistsException, NotFoundException {
+    public Specialization saveSpecialization(SpecializationDTO specialization) {
         if (specializationRepository.existsByAbbreviation(specialization.getAbbreviation())) {
             throw new AlreadyExistsException();
         }
@@ -39,7 +39,7 @@ public class SpecialisationService {
         return specializationRepository.save(newSpecialization);
     }
 
-    public Specialization deleteSpecialization(Long id) throws NotFoundException {
+    public Specialization deleteSpecialization(Long id) {
         Specialization specialization = specializationRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         specialization.setStudyField(null);
@@ -47,7 +47,10 @@ public class SpecialisationService {
         return specialization;
     }
 
-    public Specialization updateSpecialization(Long id, SpecializationDTO updatedSpecialization) throws NotFoundException {
+    public Specialization updateSpecialization(Long id, SpecializationDTO updatedSpecialization) {
+        if (specializationRepository.existsByAbbreviation(updatedSpecialization.getAbbreviation())) {
+            throw new AlreadyExistsException();
+        }
         Specialization existingSpecialization = specializationRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         existingSpecialization.setAbbreviation(updatedSpecialization.getAbbreviation());
