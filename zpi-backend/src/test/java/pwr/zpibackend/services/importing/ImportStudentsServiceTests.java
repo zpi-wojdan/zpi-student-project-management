@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -45,7 +44,9 @@ public class ImportStudentsServiceTests {
         invalidStatusData.clear();
         invalidDatabaseRepetitions.clear();
         invalidData.clear();
-        importStudents.readStudentFile(file_path, validData, invalidIndexData, invalidSurnameData, invalidNameData, invalidProgramData, invalidCycleData, invalidStatusData);
+        importStudents.readStudentFile(file_path, validData,
+                invalidIndexData, invalidSurnameData, invalidNameData,
+                invalidProgramData, invalidCycleData, invalidStatusData);
     }
 
     public List<ObjectNode> createSampleJson(){
@@ -184,9 +185,10 @@ public class ImportStudentsServiceTests {
     @Test
     public void testDataFramesToJson() throws IOException{
         setUp();
-        importStudents.readStudentFile(file_path, validData, invalidIndexData, invalidSurnameData, invalidNameData, invalidProgramData, invalidCycleData, invalidStatusData);
-        String result = importStudents.dataframesToJson(validData, invalidIndexData, invalidSurnameData, invalidNameData, invalidProgramData, invalidCycleData, invalidStatusData, invalidDatabaseRepetitions, invalidData);
-        String expected_result = """
+        String result = importStudents.dataframesToJson(validData, invalidIndexData,
+                invalidSurnameData, invalidNameData, invalidProgramData, invalidCycleData,
+                invalidStatusData, invalidDatabaseRepetitions, invalidData);
+        String expectedResult = """
                 {
                   "invalid_names" : [ ],
                   "invalid_programs" : [ ],
@@ -196,7 +198,7 @@ public class ImportStudentsServiceTests {
                     "index" : "123456",
                     "status" : "STUUUU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OQEW1", "2020/21-Z" ], [ "W04-ISTP-000P-OQEW1", "2020/21-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OQEW1", "2020/21-Z" ] ],
                     "mail" : "123456@student.pwr.edu.pl"
                   } ],
                   "invalid_indices" : [ {
@@ -205,7 +207,7 @@ public class ImportStudentsServiceTests {
                     "index" : "1234567",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ], [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ], [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ], [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ], [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ] ],
                     "mail" : "1234567@student.pwr.edu.pl"
                   } ],
                   "invalid_surnames" : [ ],
@@ -217,7 +219,7 @@ public class ImportStudentsServiceTests {
                     "index" : "222222",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2010/11-Z" ], [ "W04-ISTP-000P-OSIW7", "2010/11-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2010/11-Z" ] ],
                     "mail" : "222222@student.pwr.edu.pl"
                   }, {
                     "surname" : "Chapman",
@@ -225,7 +227,7 @@ public class ImportStudentsServiceTests {
                     "index" : "998090",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-INAP-000P-OSME3", "2022/23-Z" ], [ "W04-ISTP-000A-OSME4", "2022/23-Z" ], [ "W04-INAP-000P-OSME3", "2022/23-Z" ], [ "W04-ISTP-000A-OSME4", "2022/23-Z" ] ],
+                    "programsCycles" : [ [ "W04-INAP-000P-OSME3", "2022/23-Z" ], [ "W04-ISTP-000A-OSME4", "2022/23-Z" ] ],
                     "mail" : "998090@student.pwr.edu.pl"
                   }, {
                     "surname" : "Doe",
@@ -233,7 +235,7 @@ public class ImportStudentsServiceTests {
                     "index" : "123456",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ], [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
                     "mail" : "123456@student.pwr.edu.pl"
                   }, {
                     "surname" : "Brakujące",
@@ -241,7 +243,7 @@ public class ImportStudentsServiceTests {
                     "index" : "999999",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-QQQQ1", "2010/11-Z" ], [ "W04-ISTP-000P-QQQQ1", "2010/11-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-QQQQ1", "2010/11-Z" ] ],
                     "mail" : "999999@student.pwr.edu.pl"
                   }, {
                     "surname" : "Brakujący",
@@ -249,14 +251,13 @@ public class ImportStudentsServiceTests {
                     "index" : "111111",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-XDDP-000P-OSIW7", "2020/21-Z" ], [ "W04-XDDP-000P-OSIW7", "2020/21-Z" ] ],
+                    "programsCycles" : [ [ "W04-XDDP-000P-OSIW7", "2020/21-Z" ] ],
                     "mail" : "111111@student.pwr.edu.pl"
                   } ],
                   "invalid_teaching_cycles" : [ ]
                 }""";
-
         result = result.replaceAll("\\r\\n", "\n");
-        assertEquals(expected_result, result);
+        assertEquals(expectedResult, result);
     }
 
     @Test
@@ -266,7 +267,7 @@ public class ImportStudentsServiceTests {
         String json = importStudents.dataframesToJson(validData, invalidIndexData, invalidSurnameData, invalidNameData, invalidProgramData, invalidCycleData, invalidStatusData, invalidDatabaseRepetitions, invalidData);
         String result = importStudents.saveValidToDatabase(json);
         result = result.replaceAll("\\r\\n", "\n");
-        String expected_result = """
+        String expectedResult = """
                 {
                   "invalid_names" : [ ],
                   "invalid_programs" : [ ],
@@ -335,7 +336,7 @@ public class ImportStudentsServiceTests {
                   "invalid_teaching_cycles" : [ ],
                   "saved_records" : 0
                 }""";
-        assertEquals(expected_result, result);
+        assertEquals(expectedResult, result);
     }
 
 }

@@ -53,7 +53,7 @@ public class ImportEmployees{
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
 
-        int saved_records = saveValidToDatabase(validData, invalidIndexData, invalidAcademicTitleData,
+        int savedRecords = saveValidToDatabase(validData, invalidIndexData, invalidAcademicTitleData,
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData,
                 invalidEmailData, invalidDatabaseRepetitions, invalidData);
@@ -61,7 +61,7 @@ public class ImportEmployees{
         String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData, invalidEmailData,
-                invalidDatabaseRepetitions, invalidData, saved_records);
+                invalidDatabaseRepetitions, invalidData, savedRecords);
 
         System.out.println("\nFull JSON:");
         System.out.println(fullJson);
@@ -254,13 +254,6 @@ public class ImportEmployees{
             Optional<Department> existingDepartment = departmentRepository.findByCode(node.get("department").asText());
             Optional<Title> existingTitle = titleRepository.findByName(node.get("title").asText());
             Optional<Faculty> existingFaculty = facultyRepository.findByAbbreviation(node.get("faculty").asText());
-
-            if (existingDepartment.isPresent()){
-                System.out.println(existingDepartment.get().getCode());
-            }
-            else{
-                System.out.println("WROOOOOOOOONG   -   " + node.get("department").asText());
-            }
 
             if (existingRole.isEmpty() || existingDepartment.isEmpty() || existingTitle.isEmpty() || existingFaculty.isEmpty()){
                 invalidData.add(node);

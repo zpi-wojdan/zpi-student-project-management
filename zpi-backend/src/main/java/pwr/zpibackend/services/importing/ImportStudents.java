@@ -55,6 +55,9 @@ public class ImportStudents {
                 invalidNameData, invalidProgramData, invalidTeachingCycleData,
                 invalidStatusData, invalidDatabaseRepetitions, invalidData);
 
+        System.out.println("FULL JSON: \n");
+        System.out.println(fullJson);
+
         return saveValidToDatabase(fullJson);
     }
 
