@@ -13,7 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 public class ThesisGroupDTO {
     private String thesisNamePL;
-    private String thesisNameEN;
+    private String facultyAbbreviation;
+    private String facultyName;
+    private String studyFieldAbbreviation;
+    private String studyFieldName;
     private SupervisorDTO supervisor;
     private List<StudentWithThesisDTO> students;
 }

@@ -2,18 +2,13 @@ package pwr.zpibackend.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pwr.zpibackend.dto.reports.StudentWithThesisDTO;
-import pwr.zpibackend.dto.reports.SupervisorDTO;
-import pwr.zpibackend.dto.reports.ThesisGroupDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.repositories.EmployeeRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -76,33 +71,6 @@ public class ThesisService {
             return updated;
         }
         throw new NotFoundException();
-    }
-
-    public List<ThesisGroupDTO> getThesisGroups() {
-        return thesisRepository.findAll().stream()
-                .map(thesis -> {
-                    ThesisGroupDTO report = new ThesisGroupDTO();
-                    report.setThesisNamePL(thesis.getNamePL());
-                    report.setThesisNameEN(thesis.getNameEN());
-                    SupervisorDTO supervisor = new SupervisorDTO();
-                    supervisor.setName(thesis.getSupervisor().getName());
-                    supervisor.setSurname(thesis.getSupervisor().getSurname());
-                    supervisor.setMail(thesis.getSupervisor().getMail());
-                    supervisor.setTitle(thesis.getSupervisor().getTitle().getName());
-                    report.setSupervisor(supervisor);
-                    report.setStudents(thesis.getReservations().stream()
-                            .map(reservation -> {
-                                StudentWithThesisDTO student = new StudentWithThesisDTO();
-                                student.setName(reservation.getStudent().getName());
-                                student.setSurname(reservation.getStudent().getSurname());
-                                student.setMail(reservation.getStudent().getMail());
-                                student.setIndex(reservation.getStudent().getIndex());
-                                return student;
-                            })
-                            .collect(Collectors.toList()));
-                    return report;
-                })
-                .collect(Collectors.toList());
     }
 
 }
