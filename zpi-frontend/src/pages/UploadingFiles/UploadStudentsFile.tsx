@@ -310,7 +310,7 @@ function UploadStudentFilePage() {
                         className="btn btn-danger btn-sm custom-pwr-button"
                         onClick={(event) => deleteFile(event, file)}
                       >
-                        {t('general.management.delete')}
+                        <i className="bi bi-trash"></i>
                       </button>
                   </li>
                 ))}

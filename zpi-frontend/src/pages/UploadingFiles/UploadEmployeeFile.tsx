@@ -293,10 +293,6 @@ function UplaodEmployeeFilePage() {
               &larr; {t('general.management.goBack')}
             </button>
           </div>
-          <div {...getRootProps()} className="dropzone">
-            <input {...getInputProps()} />
-            <p>{t('uploadFiles.instruction')}</p>
-          </div>
 
           {duplicateFilesError && duplicateErrorMessageVisible && (
             <div className="alert alert-danger mt-3" role="alert">
@@ -352,7 +348,7 @@ function UplaodEmployeeFilePage() {
                         className="btn btn-danger btn-sm custom-pwr-button"
                         onClick={(event) => deleteFile(event, file)}
                       >
-                        {t('general.management.delete')}
+                        <i className="bi bi-trash"></i>
                       </button>
                   </li>
                 ))}
