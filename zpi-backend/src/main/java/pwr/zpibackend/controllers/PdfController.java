@@ -39,6 +39,16 @@ public class PdfController {
             return new ResponseEntity<>("Students without thesis not found", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("pdf/thesis-groups")
+    public ResponseEntity<String> generateThesisGroupsReport(HttpServletResponse response,
+            @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
+            throws DocumentException, IOException {
+        if (pdfService.generateThesisGroupsReport(response, facultyAbbr, studyFieldAbbr))
+            return new ResponseEntity<>("Report generated successfully", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Thesis groups not found", HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping("data/students-without-thesis")
     public ResponseEntity<Map<String, Map<String, List<StudentWithoutThesisDTO>>>> getStudentsWithoutThesis(
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {

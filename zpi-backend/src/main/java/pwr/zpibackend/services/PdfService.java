@@ -12,7 +12,6 @@ import pwr.zpibackend.dto.reports.StudentWithThesisDTO;
 import pwr.zpibackend.dto.reports.StudentWithoutThesisDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
-import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.university.Faculty;
@@ -169,10 +168,11 @@ public class PdfService {
     private void createStudentsTableHeader(PdfPTable table) {
         PdfPCell cell = new PdfPCell();
         cell.setBackgroundColor(WebColors.getRGBColor("#9A342D"));
-        cell.setPadding(5);
+        cell.setPaddingBottom(5);
 
         Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
         font.setColor(Color.WHITE);
+        font.setSize(12);
 
         cell.setPhrase(new Phrase("Indeks", font));
         table.addCell(cell);
@@ -195,6 +195,9 @@ public class PdfService {
                         FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250"));
                 document.add(p);
 
+                Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250");
+                font.setSize(12);
+
                 PdfPTable table = new PdfPTable(4);
                 table.setWidthPercentage(100f);
                 table.setWidths(new float[]{1.3f, 3.5f, 3.5f, 3.8f});
@@ -203,10 +206,23 @@ public class PdfService {
                 createStudentsTableHeader(table);
 
                 for (StudentWithoutThesisDTO student : studyFieldEntry.getValue()) {
-                    table.addCell(student.getIndex());
-                    table.addCell(student.getName());
-                    table.addCell(student.getSurname());
-                    table.addCell(student.getMail());
+                    PdfPCell cell;
+
+                    cell = new PdfPCell(new Phrase(student.getIndex(), font));
+                    cell.setPaddingBottom(5);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell(new Phrase(student.getName(), font));
+                    cell.setPaddingBottom(5);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell(new Phrase(student.getSurname(), font));
+                    cell.setPaddingBottom(5);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell(new Phrase(student.getMail(), font));
+                    cell.setPaddingBottom(5);
+                    table.addCell(cell);
                 }
 
                 document.add(table);
@@ -248,13 +264,113 @@ public class PdfService {
             Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
             font.setSize(18);
 
-            Paragraph p = new Paragraph("Lista studentów bez tematu zpi", font);
+            Paragraph p = new Paragraph("Lista studentów bez tematu projektu zpi", font);
             p.setAlignment(Paragraph.ALIGN_CENTER);
 
             document.add(p);
             document.add(Chunk.NEWLINE);
 
             writeStudentsDataToTheDocument(studentsWithoutThesis, document);
+            document.close();
+            return true;
+        }
+    }
+
+    private void writeThesisGroupsDataToTheDocument(Map<String, Map<String, List<ThesisGroupDTO>>>
+                                                        studentsWithoutThesis, Document document) {
+        for (Map.Entry<String, Map<String, List<ThesisGroupDTO>>> facultyEntry : studentsWithoutThesis.entrySet()) {
+            for (Map.Entry<String, List<ThesisGroupDTO>> studyFieldEntry : facultyEntry.getValue().entrySet()) {
+                Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(),
+                        FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250"));
+                document.add(p);
+
+                Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250");
+                font.setSize(12);
+
+                for (ThesisGroupDTO thesisGroup : studyFieldEntry.getValue()) {
+                    p = new Paragraph("Temat: " + thesisGroup.getThesisNamePL(), font);
+                    document.add(p);
+
+                    p = new Paragraph("Prowadzący: " + thesisGroup.getSupervisor().getTitle() + " " +
+                            thesisGroup.getSupervisor().getName() + " " + thesisGroup.getSupervisor().getSurname() +
+                            " (" + thesisGroup.getSupervisor().getMail() + ")", font);
+                    document.add(p);
+
+                    PdfPTable table = new PdfPTable(4);
+                    table.setWidthPercentage(100f);
+                    table.setWidths(new float[]{1.3f, 3.5f, 3.5f, 3.8f});
+                    table.setSpacingBefore(10);
+
+                    createStudentsTableHeader(table);
+
+                    for (StudentWithThesisDTO student : thesisGroup.getStudents()) {
+                        PdfPCell cell;
+
+                        cell = new PdfPCell(new Phrase(student.getIndex(), font));
+                        cell.setPaddingBottom(5);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell(new Phrase(student.getName(), font));
+                        cell.setPaddingBottom(5);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell(new Phrase(student.getSurname(), font));
+                        cell.setPaddingBottom(5);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell(new Phrase(student.getMail(), font));
+                        cell.setPaddingBottom(5);
+                        table.addCell(cell);
+                    }
+
+                    document.add(table);
+                    document.add(Chunk.NEWLINE);
+                }
+
+            }
+        }
+    }
+
+    public boolean generateThesisGroupsReport(HttpServletResponse response, String facultyAbbr,
+                                                       String studyFieldAbbr) throws DocumentException, IOException {
+
+        Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups = getThesisGroups(facultyAbbr, studyFieldAbbr);
+
+        if (getThesisGroups.isEmpty())
+            return false;
+        else {
+            response.setContentType("application/pdf");
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+            String currentDateTime = dateFormatter.format(new Date());
+
+            String headerKey = "Content-Disposition";
+
+            StringBuilder filename = new StringBuilder("grupy_zpi");
+            if (facultyAbbr != null)
+                filename.append("_").append(facultyAbbr);
+            if (studyFieldAbbr != null)
+                filename.append("_").append(studyFieldAbbr);
+            filename.append("_");
+            filename.append(currentDateTime);
+            filename.append(".pdf");
+
+            String headerValue = "attachment; filename=" + filename;
+            response.setHeader(headerKey, headerValue);
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, response.getOutputStream());
+
+            document.open();
+            Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
+            font.setSize(18);
+
+            Paragraph p = new Paragraph("Lista grup studentów wraz z przypisanymi prowadzącymi" +
+                    "\ni tematem projektu zpi", font);
+            p.setAlignment(Paragraph.ALIGN_CENTER);
+
+            document.add(p);
+            document.add(Chunk.NEWLINE);
+
+            writeThesisGroupsDataToTheDocument(getThesisGroups, document);
             document.close();
             return true;
         }
