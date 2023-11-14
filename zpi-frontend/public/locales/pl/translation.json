@@ -197,10 +197,12 @@
     "readyForApproval": "Prześlij do akceptacji"
   },
   "uploadFiles": {
+    "fileName": "Nazwa pliku źródłowego",
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",
     "tooBigFileError": "Zbyt duży rozmiar pliku {fileName} - jego rozmiar: {fileSize} MB",
     "filesNotSentError": "Nie udało się przesłać plików",
-    "attach": "Załącz pliki",
+    "attachStudent": "Załącz pliki z danymi studentów",
+    "attachEmployee": "Załącz pliki z danymi pracowników",
     "instruction": "Przeciągnij i upuść, lub kliknij aby wybrać",
     "chosenFiles": "Wybrane pliki",
     "sendFiles": "Prześlij pliki",
@@ -218,7 +220,9 @@
     "wrongSubunits": "Niepoprawne podjednostki",
     "wrongPositions": "Niepoprawne stanowiska",
     "wrongPhoneNumbers": "Niepoprawne numery telefonów",
-    "wrongEmails": "Niepoprawne adresy email"
+    "wrongEmails": "Niepoprawne adresy email",
+    "invalidData": "Brakujące dane w systemie",
+    "recordsSaved": "Liczba zapisanych rekordów: "
   },
   "login": {
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",

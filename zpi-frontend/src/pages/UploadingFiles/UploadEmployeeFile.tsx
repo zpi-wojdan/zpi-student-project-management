@@ -3,14 +3,14 @@ import { useDropzone } from 'react-dropzone';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
-import { InvalidEmployeeData } from '../../models/ImportedData';
+import { InvalidEmployeeData, ImportedEmployee } from '../../models/ImportedData';
 import {useTranslation} from "react-i18next";
-import api from "../../utils/api";
+import api from '../../utils/api';
 
 function UplaodEmployeeFilePage() {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -20,6 +20,7 @@ function UplaodEmployeeFilePage() {
   const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
 
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidEmployeeData | null>(null);
+  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
   const [sentData, setSentData] = useState(false);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
@@ -32,7 +33,8 @@ function UplaodEmployeeFilePage() {
   const [invalidPositionsOpen, setInvalidPositionsOpen] = useState(false);
   const [invalidPhoneNumbersOpen, setInvalidPhoneNumbersOpen] = useState(false);
   const [invalidEmailsOpen, setInvalidEmailsOpen] = useState(false);
-
+  const [invalidDataOpen, setInvalidDataOpen] = useState(false);
+  const [recordsSavedOpen, setRecordsSavedOpen] = useState(false);
 
   const invalidDataList = [
     {
@@ -95,8 +97,13 @@ function UplaodEmployeeFilePage() {
       isOpen: invalidEmailsOpen,
       toggleOpen: () => setInvalidEmailsOpen(!invalidEmailsOpen)
     },
+    {
+      title: t('uploadFiles.invalidData'),
+      data: invalidJsonData?.invalid_data,
+      isOpen: invalidDataOpen,
+      toggleOpen: () => setInvalidDataOpen(!invalidDataOpen)
+    },
   ];
-
 
   setTimeout(() => {
     setDuplicateErrorMessageVisible(false);
@@ -104,6 +111,10 @@ function UplaodEmployeeFilePage() {
 
   setTimeout(() => {
     setUploadErrorMessageVisible(false);
+  }, 20000);
+
+  setTimeout(() => {
+    setRecordsSavedOpen(false);
   }, 20000);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -119,7 +130,8 @@ function UplaodEmployeeFilePage() {
     setButtonDisabled(false);
   }, [selectedFiles]);
 
-  const deleteFile = (fileToDelete: File) => {
+  const deleteFile = (event: React.MouseEvent<HTMLButtonElement>, fileToDelete: File) => {
+    event.stopPropagation();
     const updatedFiles = selectedFiles.filter((file) => file !== fileToDelete);
     setSelectedFiles(updatedFiles);
     if (updatedFiles.length === 0) {
@@ -131,6 +143,9 @@ function UplaodEmployeeFilePage() {
 
   const handleUpload = () => {
     setUploadError(null);
+    setRecordsSaved(0);
+    setInvalidJsonData(null);
+
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
@@ -147,8 +162,96 @@ function UplaodEmployeeFilePage() {
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
-          console.log(invalidData);
-          setInvalidJsonData(invalidData);
+          const recordsSavedCount = invalidData.saved_records;
+
+          const invalidDataWithFilename = {
+            ...invalidData,
+            database_repetitions: invalidData.database_repetitions
+              ?.map((employee: ImportedEmployee) =>
+               ({ ...employee, source_file_name: file.name })),
+            invalid_indices: invalidData.invalid_indices
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_academic_titles: invalidData.invalid_academic_titles
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_surnames: invalidData.invalid_surnames
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_names: invalidData.invalid_names
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_units: invalidData.invalid_units
+              ?.map((employee: ImportedEmployee) =>
+              ({ ...employee, source_file_name: file.name })),
+            invalid_subunits: invalidData.invalid_subunits
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_positions: invalidData.invalid_positions
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_phone_numbers: invalidData.invalid_phone_numbers
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_emails: invalidData.invalid_emails
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+            invalid_data: invalidData.invalid_data
+              ?.map((employee: ImportedEmployee) =>
+                ({ ...employee, source_file_name: file.name })),
+          }
+
+          setInvalidJsonData((prevInvalidData) => ({
+            ...prevInvalidData,
+            database_repetitions: [
+              ...(prevInvalidData?.database_repetitions || []),
+              ...(invalidDataWithFilename.database_repetitions || []),
+            ],
+            invalid_indices: [
+              ...(prevInvalidData?.invalid_indices || []),
+              ...(invalidDataWithFilename.invalid_indices || []),
+            ],
+            invalid_academic_titles: [
+              ...(prevInvalidData?.invalid_academic_titles || []),
+              ...(invalidDataWithFilename.invalid_academic_titles || []),
+            ],
+            invalid_surnames: [
+              ...(prevInvalidData?.invalid_surnames || []),
+              ...(invalidDataWithFilename.invalid_surnames || []),
+            ],
+            invalid_names: [
+              ...(prevInvalidData?.invalid_names || []),
+              ...(invalidDataWithFilename.invalid_names || []),
+            ],
+            invalid_units: [
+              ...(prevInvalidData?.invalid_units || []),
+              ...(invalidDataWithFilename.invalid_units || []),
+            ],
+            invalid_subunits: [
+              ...(prevInvalidData?.invalid_subunits || []),
+              ...(invalidDataWithFilename.invalid_subunits || []),
+            ],
+            invalid_positions: [
+              ...(prevInvalidData?.invalid_positions || []),
+              ...(invalidDataWithFilename.invalid_positions || []),
+            ],
+            invalid_phone_numbers: [
+              ...(prevInvalidData?.invalid_phone_numbers || []),
+              ...(invalidDataWithFilename.invalid_phone_numbers || []),
+            ],
+            invalid_emails: [
+              ...(prevInvalidData?.invalid_emails || []),
+              ...(invalidDataWithFilename.invalid_emails || []),
+            ],
+            invalid_data: [
+              ...(prevInvalidData?.invalid_data || []),
+              ...(invalidDataWithFilename.invalid_data || []),
+            ],
+          }));
+          
+          setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
+
+          setRecordsSavedOpen(true);
           setSentData(true);
         })
         .catch((error) => {
@@ -165,6 +268,8 @@ function UplaodEmployeeFilePage() {
     setSelectedFiles([]);
     setButtonDisabled(true);
   };
+
+  let keyCounter = 0;
 
   return (
     <div className="container d-flex justify-content-center mt-5 mb-5">
@@ -183,39 +288,16 @@ function UplaodEmployeeFilePage() {
 
         <div>
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>{t('uploadFiles.attach')}</h2>
+            <h2>{t('uploadFiles.attachEmployee')}</h2>
             <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
               &larr; {t('general.management.goBack')}
             </button>
           </div>
-          <div {...getRootProps()} className="dropzone">
-            <input {...getInputProps()} />
-            <p>{t('uploadFiles.instruction')}</p>
-          </div>
+
           {duplicateFilesError && duplicateErrorMessageVisible && (
             <div className="alert alert-danger mt-3" role="alert">
               {duplicateFilesError}
             </div>
-          )}
-          {selectedFiles.length > 0 && (
-            <section style={{maxHeight: '40%', overflow: 'auto'}}>
-              <h4>{t('uploadFiles.chosenFiles')}:</h4>
-              <ul className="list-group mb-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
-                {selectedFiles.map((file, index) => (
-                  <li key={index} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {file.name}
-                    </span>
-                    <button
-                      className="btn btn-danger btn-sm custom-pwr-button"
-                      onClick={() => deleteFile(file)}
-                    >
-                        {t('general.management.delete')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
           )}
 
           {uploadError && uploadErrorMessageVisible && (
@@ -223,7 +305,60 @@ function UplaodEmployeeFilePage() {
               {uploadError}
             </div>
           )}
-          <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
+
+          {recordsSavedOpen && (
+            <div className="alert alert-success" role="alert">
+              {t('uploadFiles.recordsSaved')} {recordsSaved}
+            </div>
+          )}
+
+        <div
+        className="container d-flex justify-content-center mt-4 mb-4"
+        >
+          <div
+            {...getRootProps()}
+            className="border p-4 rounded shadow-lg dropzone"
+            style={{
+              width: '90%',
+              maxWidth: '100%',
+              height: '60%',
+              maxHeight: '100%',
+              overflowX: 'hidden',
+              overflowY: 'hidden',
+              marginBottom: '10px',
+              display: 'block',
+              textAlign: 'center',
+              }}
+          >
+            <input {...getInputProps()} />
+            <p>{t('uploadFiles.instruction')}</p>
+            <h3 className="bi bi-download"></h3>
+            {selectedFiles.length > 0 && (
+            <section style={{maxHeight: '40%', overflow: 'auto'}}>
+              <h4>{t('uploadFiles.chosenFiles')}:</h4>
+              <ul className="list-group mb-3 file-list" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
+                {selectedFiles.map((file, index) => (
+                  <li 
+                    key={`${index}-${keyCounter++}`} 
+                    className="list-group-item d-flex justify-content-between align-items-center mb-2 mt-2 border file-entry">
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {file.name}
+                      </span>
+                      <button
+                        className="btn btn-danger btn-sm custom-pwr-button"
+                        onClick={(event) => deleteFile(event, file)}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          </div>
+        </div>
+
+          <button onClick={handleUpload} disabled={buttonDisabled} className="custom-button">
               {t('uploadFiles.sendFiles')}
           </button>
         </div>
@@ -246,34 +381,31 @@ function UplaodEmployeeFilePage() {
             }}>
           <h4>{t('general.management.wrongData')}:</h4>
           <div style={{ overflow: 'auto', height: '100%', maxHeight: '100%' }}>
-            <ul className="list-group">
+            <ul className="list-group mb-3 mt-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
               {invalidDataList.map((item, index) => (
                 item.data && item.data.length > 0 ? (
-                  <li className="list-group-item mb-2 border" key={index}>
+                  <li className="list-group-item mb-2 border" key={`${index}-${keyCounter++}`}>
                     <div>
                     <div onClick={item.toggleOpen}>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <span>{item.title}</span>
-                        <span>{item.data.length}</span>
+                      <div className="dropdown-toggle d-flex justify-content-between align-items-center">
+                        <span>{item.title}: {item.data.length}</span>
                       </div>
                     </div>
                     <div className={`collapse ${item.isOpen ? 'show' : ''}`} style={{ height: '100%', maxHeight: '100%', overflowX: 'auto', overflowY: 'hidden'}}>
                       <table className="custom-table">
                         <thead>
                           <tr>
-                            <th style={{ width: '8%' }}>{t('general.title')}</th>
-                            <th style={{ width: '23%' }}>{t('general.people.surname')}</th>
-                            <th style={{ width: '23%' }}>{t('general.people.name')}</th>
-                            <th style={{ width: '23%' }}>{t('uploadFiles.unit')}</th>
-                            <th style={{ width: '23%' }}>{t('uploadFiles.subunit')}</th>
+                            <th style={{ width: '32%' }}>{t('uploadFiles.fileName')}</th>
+                            <th style={{ width: '33%' }}>E-mail</th>
+                            <th style={{ width: '33%' }}>{t('uploadFiles.unit')}</th>
+                            <th style={{ width: '33%' }}>{t('uploadFiles.subunit')}</th>
                           </tr>
                         </thead>
                         <tbody>
                           {item.data?.map((employee, index) => (
-                            <tr key={employee.mail}>
-                              <td>{employee.mail}</td>
-                              <td>{employee.surname}</td>
-                              <td>{employee.name}</td>
+                            <tr key={`${employee.email}-${keyCounter++}`}>
+                              <td>{employee?.source_file_name}</td>
+                              <td>{employee.email}</td>
                               <td>{employee.faculty}</td>
                               <td>{employee.department}</td>
                             </tr>
