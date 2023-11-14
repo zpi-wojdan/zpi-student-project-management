@@ -26,7 +26,7 @@ const StudentForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student;
-  const statusOptions = ['STU', 'Inny/Other'];
+  const statusOptions = ['STU', 'SKR, ABS-KS', 'ABS-PD', 'DYP'];
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
