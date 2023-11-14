@@ -134,9 +134,4 @@ public class StudentService {
         }
         return newSpcSet;
     }
-    public List<Student> getStudentsWithoutThesis() {
-        return studentRepository.findAll().stream()
-                .filter(student -> !reservationRepository.existsByStudent(student))
-                .collect(Collectors.toList());
-    }
 }

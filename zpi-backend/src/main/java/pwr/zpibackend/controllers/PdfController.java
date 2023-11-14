@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pwr.zpibackend.dto.reports.StudentWithThesisDTO;
+import pwr.zpibackend.dto.reports.StudentWithoutThesisDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
 import pwr.zpibackend.services.PdfService;
 
@@ -43,5 +45,11 @@ public class PdfController {
     public ResponseEntity<Map<String, Map<String, List<ThesisGroupDTO>>>> getThesisGroups(
             @RequestParam(required = false) Long facultyId, @RequestParam(required = false) Long studyFieldId) {
         return new ResponseEntity<>(pdfService.getThesisGroups(facultyId, studyFieldId), HttpStatus.OK);
+    }
+
+    @GetMapping("/students-without-thesis-json")
+    public ResponseEntity<Map<String, Map<String, List<StudentWithoutThesisDTO>>>> getStudentsWithoutThesis(
+            @RequestParam(required = false) Long facultyId, @RequestParam(required = false) Long studyFieldId) {
+        return new ResponseEntity<>(pdfService.getStudentsWithoutThesis(facultyId, studyFieldId), HttpStatus.OK);
     }
 }
