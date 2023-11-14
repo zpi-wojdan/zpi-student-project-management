@@ -114,7 +114,7 @@ const StudyCycleForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {studyCycle ? t('general.management.save') : t('general.management.add')}
+            {studyCycle ? t('cycle.save') : t('cycle.add')}
           </button>
         </div>
         <div className="mb-3">

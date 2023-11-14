@@ -48,7 +48,7 @@ const EmployeeDetails: React.FC = () => {
           &larr; {t('general.management.goBack')}
         </button>
         <button type="button" className="custom-button" onClick={() => { navigate(`/employees/edit/${employee.mail}`, { state: { employee } }) }}>
-          {t('general.management.edit')}
+          {t('employee.edit')}
         </button>
         <button type="button" className="custom-button" onClick={() => handleDeleteClick(employee.mail)}>
           <i className="bi bi-trash"></i>

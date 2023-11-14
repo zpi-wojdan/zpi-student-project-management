@@ -137,7 +137,7 @@ const FacultyForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {faculty ? t('general.management.save') : t('general.management.add')}
+            {faculty ? t('faculty.save') : t('faculty.add')}
           </button>
         </div>
         <div className="mb-3">

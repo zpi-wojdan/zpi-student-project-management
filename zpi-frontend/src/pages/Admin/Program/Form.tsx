@@ -233,7 +233,7 @@ const ProgramForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {program ? t('general.management.save') : t('general.management.add')}
+            {program ? t('program.save') : t('program.add')}
           </button>
         </div>
         <div className="mb-3">

@@ -74,7 +74,7 @@ const StudentDetails: React.FC = () => {
           &larr; {t('general.management.goBack')}
         </button>
         <button type="button" className="custom-button" onClick={() => { navigate(`/students/edit/${student.mail}`, { state: { student } }) }}>
-          {t('general.management.edit')}
+          {t('student.edit')}
         </button>
         <button type="button" className="custom-button" onClick={() => handleDeleteClick(student.mail)}>
           <i className="bi bi-trash"></i>

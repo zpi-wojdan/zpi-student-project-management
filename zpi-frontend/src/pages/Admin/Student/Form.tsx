@@ -242,7 +242,7 @@ const StudentForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {student ? t('general.management.save') : t('general.management.add')}
+            {student ? t('student.save') : t('student.add')}
           </button>
         </div>
         <div className="mb-3">

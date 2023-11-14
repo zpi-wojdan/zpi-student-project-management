@@ -184,7 +184,7 @@ const SpecializationForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {specialization ? t('general.management.save') : t('general.management.add')}
+            {specialization ? t('specialization.save') : t('specialization.add')}
           </button>
         </div>
         <div className="mb-3">
