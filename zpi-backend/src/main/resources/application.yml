@@ -67,3 +67,6 @@ spring:
     verify:
       host:
         res_leader: ${VERIFY_RES_LEADER_URL}
+
+frontend:
+  url: ${FRONTEND_URL}
