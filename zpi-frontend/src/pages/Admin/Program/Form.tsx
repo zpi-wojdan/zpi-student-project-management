@@ -9,6 +9,7 @@ import { Faculty } from '../../../models/Faculty';
 import { StudyCycle } from '../../../models/StudyCycle';
 import {useTranslation} from "react-i18next";
 import api from "../../../utils/api";
+import { Specialization } from '../../../models/Specialization';
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
@@ -17,12 +18,13 @@ const ProgramForm: React.FC = () => {
   const location = useLocation();
   const { i18n, t } = useTranslation();
   const program = location.state?.program as Program;
-  const [oldId, setOldId] = useState<number>();
+  const [programId, setProgramId] = useState<number>();
   const [formData, setFormData] = useState<ProgramDTO>({
     name: '',
     studyFieldAbbr: '',
     specializationAbbr: '',
     studyCyclesId: [],
+    facultyId: -1,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
@@ -44,10 +46,11 @@ const ProgramForm: React.FC = () => {
           studyFieldAbbr: program.studyField.abbreviation,
           specializationAbbr: program.specialization?.abbreviation,
           studyCyclesId: program.studyCycles.map((cycle) => cycle.id),
+          facultyId: program.faculty.id,
         };
       });
-      setOldId(program.id);
-      //setSelectedFacultyAbbr(program.studyField.faculty.abbreviation)
+      setProgramId(program.id);
+      setSelectedFacultyAbbr(program.studyField.faculty.abbreviation)
     }
   }, [program]);
 
@@ -55,20 +58,30 @@ const ProgramForm: React.FC = () => {
     e.preventDefault();
 
     if (validateForm()) {
+      console.log(formData)
       if (program) {
-        api.put(`http://localhost:8080/program/${oldId}`, formData)
+        api.put(`http://localhost:8080/program/${programId}`, formData)
         .then(() => {
           navigate("/programs")
           toast.success(t("program.updateSuccessful"));
         })
         .catch((error) => {
+          if (error.response && error.response.status === 409) {
+            const newErrors: Record<string, string> = {};
+            newErrors.index = t("program.nameExists")
+            setErrors(newErrors);
+            const newErrorsKeys: Record<string, string> = {};
+            newErrorsKeys.index = "program.nameExists"
+            setErrorsKeys(newErrorsKeys);
+          } else {
             console.error(error);
             if (error.response.status === 401 || error.response.status === 403) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
             }
+            navigate("/programs")
             toast.error(t("program.updateError"));
-          });
+          }});
       } else {
         api.post('http://localhost:8080/program', formData)
         .then(() => {
@@ -76,13 +89,22 @@ const ProgramForm: React.FC = () => {
           toast.success(t("program.addSuccessful"));
         })
         .catch((error) => {
+          if (error.response && error.response.status === 409) {
+            const newErrors: Record<string, string> = {};
+            newErrors.index = t("program.nameExists")
+            setErrors(newErrors);
+            const newErrorsKeys: Record<string, string> = {};
+            newErrorsKeys.index = "program.nameExists"
+            setErrorsKeys(newErrorsKeys);
+          } else {
             console.error(error);
             if (error.response.status === 401 || error.response.status === 403) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
             }
+            navigate("/programs")
             toast.error(t("program.addError"));
-          });
+          }});
       }
     }
   };
@@ -93,6 +115,8 @@ const ProgramForm: React.FC = () => {
     let isValid = true;
 
     const errorRequireText = t('general.management.fieldIsRequired');
+    const errorWrongFormat = t("general.management.wrongFormat");
+    const regexPatternForAbbr = /^[A-Z0-9]{1,5}-[A-Z]{1,5}-[A-Z0-9]{1,5}-[A-Z0-9]{1,6}$/;
 
     if (!selectedFacultyAbbr) {
       newErrors.faculty = errorRequireText;
@@ -110,6 +134,10 @@ const ProgramForm: React.FC = () => {
       newErrors.name = errorRequireText;
       newErrorsKeys.name = 'general.management.fieldIsRequired';
       isValid = false;
+    } else if (!regexPatternForAbbr.test(formData.name)) {
+      newErrors.name = errorWrongFormat
+      newErrorsKeys.name = "general.management.wrongFormat"
+      isValid = false;
     }
 
     if (formData.studyCyclesId.length === 0) {
@@ -125,7 +153,7 @@ const ProgramForm: React.FC = () => {
 
   const [availableFaculties, setAvailableFaculties] = useState<Faculty[]>([]);
   const [availableFields, setAvailableFields] = useState<StudyField[]>([]);
-  const [availableSpecializations, setAvailableSpecializations] = useState<StudyField[]>([]);
+  const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
   const [availableStudyCycles, setAvailableStudyCycles] = useState<StudyCycle[]>([]);
   const [selectedFacultyAbbr, setSelectedFacultyAbbr] = useState<string>();
 
@@ -252,16 +280,12 @@ const ProgramForm: React.FC = () => {
                 disabled={!selectedFacultyAbbr}
                   >
                     <option value={""}>{t('general.management.choose')}</option>
-                    {/* {selectedFacultyAbbr == "" &&
+                     {selectedFacultyAbbr !== "" &&
                       availableFields
-                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbr))
+                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbr)
                         .map((field, fIndex) => (
                           <option key={fIndex} value={field.abbreviation}>
                             {field.name}
-                        tak bedzie jak kierunek będzie miał przypisany wydział i będzie mozna po tym filtrować*/} 
-                    {availableFields.map((studyField) => (
-                        <option key={studyField.abbreviation} value={studyField.abbreviation}>
-                            {studyField.name}
                         </option>
                     ))}
                   </select>
@@ -282,15 +306,11 @@ const ProgramForm: React.FC = () => {
                 disabled={formData.studyFieldAbbr == ""}
                   >
                     <option value={""}>{t('general.management.choose')}</option>
-                    {/* {formData.studyFieldAbbr == "" &&
+                    {formData.studyFieldAbbr !== "" &&
                       availableSpecializations
-                        .filter((s) => s.studyField.abbreviation === formData.studyFieldAbbr))
+                        .filter((s) => s.studyField.abbreviation === formData.studyFieldAbbr)
                         .map((specialization, sIndex) => (
                           <option key={sIndex} value={specialization.abbreviation}>
-                            {specialization.name}
-                        */} 
-                    {availableSpecializations.map((specialization) => (
-                        <option key={specialization.abbreviation} value={specialization.abbreviation}>
                             {specialization.name}
                         </option>
                     ))}

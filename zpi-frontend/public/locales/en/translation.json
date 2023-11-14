@@ -146,7 +146,8 @@
     "addError": "Study program has not been added",
     "updateSuccessful": "Study program has been updated",
     "updateError": "Study program has not been updated",
-    "cycleRequired": "Study program must have assigned at least one study cycle."
+    "cycleRequired": "Study program must have assigned at least one study cycle.",
+    "nameExists": "Given program name already exists!"
   },
   "specialization": {
     "deleteSuccessful": "Specialization has been deleted",

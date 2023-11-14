@@ -50,7 +50,7 @@ const StudentDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/student/${student.mail}`)
+    api.delete(`http://localhost:8080/student/${student.id}`)
         .then(() => {
           toast.success(t('student.deleteSuccessful'));
           navigate("/students");
@@ -118,7 +118,7 @@ const StudentDetails: React.FC = () => {
                             </li>
                             <li>
                             <p><span className="bold">{t('general.university.faculty')} - </span>
-                                <span>{studentProgramCycle.program.id}</span></p>
+                                <span>{studentProgramCycle.program.studyField.faculty.name}</span></p>
                             </li>
                             <li>
                             <p><span className="bold">{t('general.university.field')} - </span>

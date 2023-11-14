@@ -146,7 +146,8 @@
     "addError": "Program studiów nie został dodany",
     "updateSuccessful": "Program studiów został zaktualizowany",
     "updateError": "Program studiów nie został zaktualizowany",
-    "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania."
+    "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania.",
+    "nameExists": "Podana nazwa programu już istnieje!"
   },
   "specialization": {
     "deleteSuccessful": "Specjalność została usunięta",
