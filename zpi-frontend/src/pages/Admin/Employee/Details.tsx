@@ -24,7 +24,7 @@ const EmployeeDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/employee/${employee.mail}`)
+    api.delete(`http://localhost:8080/employee/${employee.id}`)
         .then(() => {
           toast.success(t("employee.deleteSuccessful"));
           navigate("/employees");
