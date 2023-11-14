@@ -53,20 +53,15 @@ public class ImportEmployees{
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData, invalidEmailData);
 
-        int saved_records = saveValidToDatabase(validData, invalidIndexData, invalidAcademicTitleData,
+        int savedRecords = saveValidToDatabase(validData, invalidIndexData, invalidAcademicTitleData,
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData,
                 invalidEmailData, invalidDatabaseRepetitions, invalidData);
 
-        String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
+        return dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData, invalidEmailData,
-                invalidDatabaseRepetitions, invalidData, saved_records);
-
-        System.out.println("\nFull JSON:");
-        System.out.println(fullJson);
-
-        return fullJson;
+                invalidDatabaseRepetitions, invalidData, savedRecords);
     }
 
     public void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
@@ -254,13 +249,6 @@ public class ImportEmployees{
             Optional<Department> existingDepartment = departmentRepository.findByCode(node.get("department").asText());
             Optional<Title> existingTitle = titleRepository.findByName(node.get("title").asText());
             Optional<Faculty> existingFaculty = facultyRepository.findByAbbreviation(node.get("faculty").asText());
-
-            if (existingDepartment.isPresent()){
-                System.out.println(existingDepartment.get().getCode());
-            }
-            else{
-                System.out.println("WROOOOOOOOONG   -   " + node.get("department").asText());
-            }
 
             if (existingRole.isEmpty() || existingDepartment.isEmpty() || existingTitle.isEmpty() || existingFaculty.isEmpty()){
                 invalidData.add(node);
