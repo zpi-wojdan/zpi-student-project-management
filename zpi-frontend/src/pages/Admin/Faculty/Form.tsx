@@ -67,6 +67,8 @@ const FacultyForm: React.FC = () => {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
+              navigate("/faculties")
+              toast.error(t("faculty.updateSuccessful"));
             }
           });
       } else {
@@ -89,6 +91,8 @@ const FacultyForm: React.FC = () => {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
+              navigate("/faculties")
+              toast.error(t("faculty.updateSuccessful"));
             }
           });
       }

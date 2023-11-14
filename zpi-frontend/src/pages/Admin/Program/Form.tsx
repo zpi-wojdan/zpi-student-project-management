@@ -57,7 +57,6 @@ const ProgramForm: React.FC = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log("FormData: ", formData)
       if (program) {
         api.put(`http://localhost:8080/program/${programId}`, formData)
           .then(() => {

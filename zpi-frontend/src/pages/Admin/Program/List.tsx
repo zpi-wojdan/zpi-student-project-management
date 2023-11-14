@@ -24,7 +24,6 @@ const ProgramList: React.FC = () => {
           return a.name.localeCompare(b.name);
         });
         setPrograms(sortedPrograms);
-        console.log(programs)
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
             if (itemPerPage === 'All') {
               return true;

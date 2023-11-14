@@ -197,7 +197,6 @@ const StudentForm: React.FC = () => {
     api.get('http://localhost:8080/program')
       .then((response) => {
         setAvailablePrograms(response.data);
-        console.log(availablePrograms)
       })
       .catch((error) => {
         console.error(error)

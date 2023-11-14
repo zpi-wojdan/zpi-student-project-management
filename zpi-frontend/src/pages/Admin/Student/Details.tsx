@@ -8,7 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import api from '../../../utils/api';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -17,7 +17,7 @@ const StudentDetails: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student as Student;
-    
+
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
     api.get('http://localhost:8080/faculty')
@@ -25,11 +25,11 @@ const StudentDetails: React.FC = () => {
         setFaculties(response.data);
       })
       .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-          }
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
       });
   }, []);
 
@@ -51,15 +51,15 @@ const StudentDetails: React.FC = () => {
 
   const handleConfirmDelete = () => {
     api.delete(`http://localhost:8080/student/${student.id}`)
-        .then(() => {
-          toast.success(t('student.deleteSuccessful'));
-          navigate("/students");
-        })
-        .catch((error) => {
-            console.error(error);
-            toast.error(t('student.deleteError'));
-            navigate("/students");
-          });
+      .then(() => {
+        toast.success(t('student.deleteSuccessful'));
+        navigate("/students");
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(t('student.deleteError'));
+        navigate("/students");
+      });
     setShowDeleteConfirmation(false);
   };
 
@@ -73,25 +73,25 @@ const StudentDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => {navigate(`/students/edit/${student.mail}`, {state: {student}})}}>
-            {t('general.management.edit')}
+        <button type="button" className="custom-button" onClick={() => { navigate(`/students/edit/${student.mail}`, { state: { student } }) }}>
+          {t('general.management.edit')}
         </button>
         <button type="button" className="custom-button" onClick={() => handleDeleteClick(student.mail)}>
           <i className="bi bi-trash"></i>
         </button>
-        { showDeleteConfirmation && (
-        <tr>
-          <td colSpan={5}>
-          <DeleteConfirmation
-            isOpen={showDeleteConfirmation}
-            onClose={handleCancelDelete}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-            questionText={t('student.deleteConfirmation')}
-          />
-          </td>
-        </tr>
-      )}
+        {showDeleteConfirmation && (
+          <tr>
+            <td colSpan={5}>
+              <DeleteConfirmation
+                isOpen={showDeleteConfirmation}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                questionText={t('student.deleteConfirmation')}
+              />
+            </td>
+          </tr>
+        )}
       </div>
       <div>
         {student ? (
@@ -101,43 +101,43 @@ const StudentDetails: React.FC = () => {
             <p><span className="bold">{t('general.people.index')}:</span> <span>{student.index}</span></p>
             <p><span className="bold">{t('general.university.status')}:</span> <span>{student.status}</span></p>
             {student.studentProgramCycles.length > 0 && (
-            <div>
+              <div>
                 <p className="bold">{t('general.university.studyPrograms')}:</p>
                 <ul>
-                    {student.studentProgramCycles.map((studentProgramCycle: StudentProgramCycle) => (
+                  {student.studentProgramCycles.map((studentProgramCycle: StudentProgramCycle) => (
                     <li key={studentProgramCycle.program.id}>
-                        {studentProgramCycle.program.name}
-                        <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(studentProgramCycle.program.id)}>
-                        {expandedPrograms.includes(studentProgramCycle.program.id) ? '▼' : '▶'} 
-                        </button>
-                        {expandedPrograms.includes(studentProgramCycle.program.id) && (
+                      {studentProgramCycle.program.name}
+                      <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(studentProgramCycle.program.id)}>
+                        {expandedPrograms.includes(studentProgramCycle.program.id) ? '▼' : '▶'}
+                      </button>
+                      {expandedPrograms.includes(studentProgramCycle.program.id) && (
                         <ul>
-                            <li>
-                                <p><span className="bold">{t('general.university.studyCycle')} - </span>
-                                    <span>{studentProgramCycle.cycle.name}</span></p>
-                            </li>
-                            <li>
+                          <li>
+                            <p><span className="bold">{t('general.university.studyCycle')} - </span>
+                              <span>{studentProgramCycle.cycle.name}</span></p>
+                          </li>
+                          <li>
                             <p><span className="bold">{t('general.university.faculty')} - </span>
-                                <span>{studentProgramCycle.program.studyField.faculty.name}</span></p>
-                            </li>
-                            <li>
+                              <span>{studentProgramCycle.program.studyField.faculty.name}</span></p>
+                          </li>
+                          <li>
                             <p><span className="bold">{t('general.university.field')} - </span>
-                                <span>{studentProgramCycle.program.studyField.name}</span></p>
-                            </li>
-                            <li>
+                              <span>{studentProgramCycle.program.studyField.name}</span></p>
+                          </li>
+                          <li>
                             <p><span className="bold">{t('general.university.specialization')} - </span>
-                                <span>{studentProgramCycle.program.specialization ?
-                                    studentProgramCycle.program.specialization.name : t('general.management.lack')}
-                                </span>
+                              <span>{studentProgramCycle.program.specialization ?
+                                studentProgramCycle.program.specialization.name : t('general.management.lack')}
+                              </span>
                             </p>
-                            </li>
+                          </li>
                         </ul>
-                        )}
+                      )}
                     </li>
-                    ))}
+                  ))}
                 </ul>
-            </div>
-            )} 
+              </div>
+            )}
           </div>
         ) : (
           <p>{t('general.management.errorOfLoading')}</p>

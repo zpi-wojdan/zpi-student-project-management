@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 
 const SpecializationList: React.FC = () => {
@@ -25,14 +25,14 @@ const SpecializationList: React.FC = () => {
         });
         setSpecializations(sortedSpecializations);
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
-            if (itemPerPage === 'All') {
-              return true;
-            } else {
-              const perPageValue = parseInt(itemPerPage, 10);
-              return perPageValue < response.data.length;
-            }
-          });
-          setITEMS_PER_PAGE(filteredItemsPerPage);
+          if (itemPerPage === 'All') {
+            return true;
+          } else {
+            const perPageValue = parseInt(itemPerPage, 10);
+            return perPageValue < response.data.length;
+          }
+        });
+        setITEMS_PER_PAGE(filteredItemsPerPage);
       })
       .catch((error) => {
         console.error(error);
@@ -52,16 +52,16 @@ const SpecializationList: React.FC = () => {
   const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(specializations.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
-    if(!newPage || newPage<1){
+    if (!newPage || newPage < 1) {
       setCurrentPage(1);
       setInputValue(1);
     }
     else {
-      if(newPage>totalPages){
+      if (newPage > totalPages) {
         setCurrentPage(totalPages);
         setInputValue(totalPages);
       }
-      else{
+      else {
         setCurrentPage(newPage);
         setInputValue(newPage);
       }
@@ -78,18 +78,18 @@ const SpecializationList: React.FC = () => {
 
   const handleConfirmDelete = () => {
     api.delete(`http://localhost:8080/specialization/${specializationToDelete}`)
-        .then(() => {
-          toast.success(t('specialization.deleteSuccessful'));
-          setRefreshList(!refreshList);
-        })
-        .catch((error) => {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-            }
-            toast.error(t('specialization.deleteError'));
-          });
+      .then(() => {
+        toast.success(t('specialization.deleteSuccessful'));
+        setRefreshList(!refreshList);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+        toast.error(t('specialization.deleteError'));
+      });
     setShowDeleteConfirmation(false);
   };
 
@@ -101,78 +101,78 @@ const SpecializationList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center'>
         <div >
-          <button className="custom-button" onClick={() => {navigate('/specializations/add')}}>
-              {t('specialization.add')}
+          <button className="custom-button" onClick={() => { navigate('/specializations/add') }}>
+            {t('specialization.add')}
           </button>
         </div>
         {ITEMS_PER_PAGE.length > 1 && (
-        <div className="d-flex justify-content-between">
-          <div className="d-flex align-items-center">
-            <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
-            <select
-            value={itemsPerPage}
-            onChange={(e) => {
-              setItemsPerPage(e.target.value);
-              handlePageChange(1);
-            }}
-            >
-            {ITEMS_PER_PAGE.map((value) => (
-                <option key={value} value={value}>
-                {value}
-                </option>
-            ))}
-            </select>
-          </div>
-          <div style={{ marginLeft: '30px' }}>
-            {itemsPerPage !== 'All' && (
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className='custom-button'
-              >
-                &lt;
-              </button>
-
-              <input
-                type="number"
-                value={inputValue}
+          <div className="d-flex justify-content-between">
+            <div className="d-flex align-items-center">
+              <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
+              <select
+                value={itemsPerPage}
                 onChange={(e) => {
-                  const newPage = parseInt(e.target.value, 10);
-                  setInputValue(newPage);
+                  setItemsPerPage(e.target.value);
+                  handlePageChange(1);
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handlePageChange(inputValue);
-                  }
-                }}
-                onBlur={() => {
-                  handlePageChange(inputValue);
-                }}
-                className='text'
-              />
-              
-            <span className='text'> z {totalPages}</span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className='custom-button'
               >
-                &gt;
-              </button>
+                {ITEMS_PER_PAGE.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
             </div>
-            )}
+            <div style={{ marginLeft: '30px' }}>
+              {itemsPerPage !== 'All' && (
+                <div className="pagination">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className='custom-button'
+                  >
+                    &lt;
+                  </button>
+
+                  <input
+                    type="number"
+                    value={inputValue}
+                    onChange={(e) => {
+                      const newPage = parseInt(e.target.value, 10);
+                      setInputValue(newPage);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handlePageChange(inputValue);
+                      }
+                    }}
+                    onBlur={() => {
+                      handlePageChange(inputValue);
+                    }}
+                    className='text'
+                  />
+
+                  <span className='text'> z {totalPages}</span>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className='custom-button'
+                  >
+                    &gt;
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         )}
       </div>
       <table className="custom-table">
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '15%', textAlign: 'center'   }}>{t('general.university.abbreviation')}</th>
+            <th style={{ width: '15%', textAlign: 'center' }}>{t('general.university.abbreviation')}</th>
             <th style={{ width: '62%' }}>{t('general.university.name')}</th>
-            <th style={{ width: '10%', textAlign: 'center'  }}>{t('general.management.edit')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
             <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
           </tr>
         </thead>
@@ -205,13 +205,13 @@ const SpecializationList: React.FC = () => {
               {specializationToDelete === specialization.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
-                  <DeleteConfirmation
-                    isOpen={showDeleteConfirmation}
-                    onClose={handleCancelDelete}
-                    onConfirm={handleConfirmDelete}
-                    onCancel={handleCancelDelete}
-                    questionText={t('specialization.deleteConfirmation')}
-                  />
+                    <DeleteConfirmation
+                      isOpen={showDeleteConfirmation}
+                      onClose={handleCancelDelete}
+                      onConfirm={handleConfirmDelete}
+                      onCancel={handleCancelDelete}
+                      questionText={t('specialization.deleteConfirmation')}
+                    />
                   </td>
                 </tr>
               )}
@@ -246,8 +246,8 @@ const SpecializationList: React.FC = () => {
             }}
             className='text'
           />
-          
-        <span className='text'> z {totalPages}</span>
+
+          <span className='text'> z {totalPages}</span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}

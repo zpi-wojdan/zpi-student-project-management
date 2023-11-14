@@ -3,6 +3,6 @@ export type Role = {
     name: string;
 }
 
-export type  RoleDTO = {
+export type RoleDTO = {
     name: string;
-  }
+}

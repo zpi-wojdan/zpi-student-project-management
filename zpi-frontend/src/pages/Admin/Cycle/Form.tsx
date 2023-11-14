@@ -4,7 +4,7 @@ import { StudyCycle, StudyCycleDTO } from '../../../models/StudyCycle';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 
 const StudyCycleForm: React.FC = () => {
@@ -53,11 +53,11 @@ const StudyCycleForm: React.FC = () => {
     if (validateForm()) {
       if (studyCycle) {
         api.put(`http://localhost:8080/studycycle/${cycleId}`, formData)
-        .then(() => {
-          navigate("/cycles")
-          toast.success(t("cycle.updateSuccessful"));
-        })
-        .catch((error) => {
+          .then(() => {
+            navigate("/cycles")
+            toast.success(t("cycle.updateSuccessful"));
+          })
+          .catch((error) => {
             console.error(error);
             if (error.response.status === 401 || error.response.status === 403) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
@@ -67,11 +67,11 @@ const StudyCycleForm: React.FC = () => {
           });
       } else {
         api.post('http://localhost:8080/studycycle', formData)
-        .then(() => {
-          navigate("/cycles")
-          toast.success(t("cycle.addSuccessful"));
-        })
-        .catch((error) => {
+          .then(() => {
+            navigate("/cycles")
+            toast.success(t("cycle.addSuccessful"));
+          })
+          .catch((error) => {
             console.error(error);
             if (error.response.status === 401 || error.response.status === 403) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
@@ -108,33 +108,33 @@ const StudyCycleForm: React.FC = () => {
 
   return (
     <div className='page-margin'>
-        <form onSubmit={handleSubmit} className="form">
-            <div className='d-flex justify-content-begin  align-items-center mb-3'>
-                <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                &larr; {t('general.management.goBack')}
-                </button>
-                <button type="submit" className="custom-button">
-                {studyCycle ? t('general.management.save') : t('general.management.add')}
-                </button>
-            </div>
-            <div className="mb-3">
-                <label className="bold" htmlFor="name">
-                    {t('general.university.name')}:
-                </label>
-                <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="form-control"
-                />
-                <div className="text-info">
-                    {t('cycle.goodFormat')}
-                </div>
-                {errors.name && <div className="text-danger">{errors.name}</div>}
-            </div>
-        </form>
+      <form onSubmit={handleSubmit} className="form">
+        <div className='d-flex justify-content-begin  align-items-center mb-3'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+            &larr; {t('general.management.goBack')}
+          </button>
+          <button type="submit" className="custom-button">
+            {studyCycle ? t('general.management.save') : t('general.management.add')}
+          </button>
+        </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="name">
+            {t('general.university.name')}:
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="form-control"
+          />
+          <div className="text-info">
+            {t('cycle.goodFormat')}
+          </div>
+          {errors.name && <div className="text-danger">{errors.name}</div>}
+        </div>
+      </form>
     </div>
   );
 };

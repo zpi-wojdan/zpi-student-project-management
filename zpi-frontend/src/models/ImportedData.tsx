@@ -21,7 +21,7 @@ export type ImportedEmployee = {
     title: string;
     phone_number: string;
     position: string;
-  }
+}
 
 export type InvalidEmployeeData = {
     database_repetitions: ImportedEmployee[] | null;

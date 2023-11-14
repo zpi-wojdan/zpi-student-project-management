@@ -65,7 +65,6 @@ const StudyFieldForm: React.FC = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log(formData);
       if (studyField) {
         api.put(`http://localhost:8080/studyfield/${fieldId}`, formData)
           .then(() => {

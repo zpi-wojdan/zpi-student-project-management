@@ -119,7 +119,9 @@
   },
   "faculty": {
     "updateSuccessful": "Wydział został zaktualizowany",
+    "updateError": "Wydział nie został zaktualizowany",
     "addSuccessful": "Wydział został dodany",
+    "addError": "Wydział nie został dodany",
     "deleteSuccessful": "Wydział został usunięty",
     "deleteError": "Wydział nie może zostać usunięty!",
     "add": "Dodaj wydział",
