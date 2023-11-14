@@ -179,10 +179,12 @@
     "readyForApproval": "Send for approval"
   },
   "uploadFiles": {
+    "fileName": "Source file name",
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",
     "tooBigFileError": "Too big size of the file {fileName} - its size: {fileSize} MB",
     "filesNotSentError": "Sending files failed",
-    "attach": "Attach files",
+    "attachStudent": "Attach files with students' data",
+    "attachEmployee": "Attach files with employees' data",
     "instruction": "Drag and drop files here or click to select files",
     "chosenFiles": "Chosen files",
     "sendFiles": "Send files",

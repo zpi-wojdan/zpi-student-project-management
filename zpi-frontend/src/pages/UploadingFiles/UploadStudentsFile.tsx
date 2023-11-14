@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import {useNavigate} from "react-router-dom";
-import { InvalidStudentData } from '../../models/ImportedData';
+import { ImportedStudent, InvalidStudentData } from '../../models/ImportedData';
 
 import {useTranslation} from "react-i18next";
 import api from '../../utils/api';
@@ -111,7 +111,8 @@ function UploadStudentFilePage() {
     setButtonDisabled(false);
   }, [selectedFiles]);
 
-  const deleteFile = (fileToDelete: File) => {
+  const deleteFile = (event: React.MouseEvent<HTMLButtonElement>, fileToDelete: File) => {
+    event.stopPropagation();
     const updatedFiles = selectedFiles.filter((file) => file !== fileToDelete);
     setSelectedFiles(updatedFiles);
     if (updatedFiles.length === 0) {
@@ -143,45 +144,59 @@ function UploadStudentFilePage() {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
           const recordsSavedCount = invalidData.saved_records;
+
+          const invalidDataWithFilename = {
+            ...invalidData,
+            database_repetitions: invalidData.database_repetitions?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_indices: invalidData.invalid_indices?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_names: invalidData.invalid_names?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_surnames: invalidData.invalid_surnames?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_statuses: invalidData.invalid_statuses?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_programs: invalidData.invalid_programs?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_cycles: invalidData.invalid_cycles?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            invalid_data: invalidData.invalid_data?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+          };
+
+          console.log(invalidData);
           
           setInvalidJsonData((prevInvalidData) => ({
             ...prevInvalidData,
             database_repetitions: [
               ...(prevInvalidData?.database_repetitions || []),
-              ...(invalidData.database_repetitions || []),
+              ...(invalidDataWithFilename.database_repetitions || []),
             ],
             invalid_indices: [
               ...(prevInvalidData?.invalid_indices || []),
-              ...(invalidData.invalid_indices || []),
+              ...(invalidDataWithFilename.invalid_indices || []),
             ],
             invalid_names: [
               ...(prevInvalidData?.invalid_names || []),
-              ...(invalidData.invalid_names || []),
+              ...(invalidDataWithFilename.invalid_names || []),
             ],
             invalid_surnames: [
               ...(prevInvalidData?.invalid_surnames || []),
-              ...(invalidData.invalid_surnames || []),
+              ...(invalidDataWithFilename.invalid_surnames || []),
             ],
             invalid_statuses: [
               ...(prevInvalidData?.invalid_statuses || []),
-              ...(invalidData.invalid_statuses || []),
+              ...(invalidDataWithFilename.invalid_statuses || []),
             ],
             invalid_programs: [
               ...(prevInvalidData?.invalid_programs || []),
-              ...(invalidData.invalid_programs || []),
+              ...(invalidDataWithFilename.invalid_programs || []),
             ],
             invalid_cycles: [
               ...(prevInvalidData?.invalid_cycles || []),
-              ...(invalidData.invalid_cycles || []),
+              ...(invalidDataWithFilename.invalid_cycles || []),
             ],
             invalid_data: [
               ...(prevInvalidData?.invalid_data || []),
-              ...(invalidData.invalid_data || []),
+              ...(invalidDataWithFilename.invalid_data || []),
             ],
           }));
           
           setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
-          
+        
           setRecordsSavedOpen(true);
           setSentData(true);
         })
@@ -219,52 +234,75 @@ function UploadStudentFilePage() {
 
         <div>
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>{t('uploadFiles.attach')}</h2>
+            <h2>{t('uploadFiles.attachStudent')}</h2>
             <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
               &larr; {t('general.management.goBack')}
             </button>
-          </div>
-            <div {...getRootProps()} className="dropzone">
-              <input {...getInputProps()} />
-              <p>{t('uploadFiles.instruction')}</p>
+        </div>
+
+        {duplicateFilesError && duplicateErrorMessageVisible && (
+            <div className="alert alert-danger mt-3 mb-3" role="alert">
+              {duplicateFilesError}
             </div>
-            {duplicateFilesError && duplicateErrorMessageVisible && (
-              <div className="alert alert-danger mt-3" role="alert">
-                {duplicateFilesError}
-              </div>
-            )}
-          {selectedFiles.length > 0 && (
+        )}
+
+        {uploadError && uploadErrorMessageVisible && (
+          <div className="alert alert-danger mt-3 mb-3" role="alert">
+            {uploadError}
+          </div>
+        )}
+
+        {recordsSavedOpen && (
+          <div className="alert alert-success mt-3 mb-3" role="alert">
+            {t('uploadFiles.recordsSaved')} {recordsSaved}
+          </div>
+        )}
+
+        <div
+          className="container d-flex justify-content-center mt-3 mb-3"
+        >
+          <div
+            {...getRootProps()}
+            className="border p-4 rounded shadow-lg dropzone"
+            style={{
+              width: '90%',
+              maxWidth: '100%',
+              height: '60%',
+              maxHeight: '100%',
+              overflowX: 'hidden',
+              overflowY: 'hidden',
+              marginBottom: '10px',
+              display: 'block',
+              textAlign: 'center',
+              }}
+          >
+            <input {...getInputProps()} />
+            <p>{t('uploadFiles.instruction')}</p>
+            <h3 className="bi bi-download"></h3>
+            {selectedFiles.length > 0 && (
             <section style={{maxHeight: '40%', overflow: 'auto'}}>
               <h4>{t('uploadFiles.chosenFiles')}:</h4>
-              <ul className="list-group mb-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
+              <ul className="list-group mb-3 file-list" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
                 {selectedFiles.map((file, index) => (
-                  <li key={`${index}-${keyCounter++}`} className="list-group-item d-flex justify-content-between align-items-center mb-2 border">
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {file.name}
-                    </span>
-                    <button
-                      className="btn btn-danger btn-sm custom-pwr-button"
-                      onClick={() => deleteFile(file)}
-                    >
+                  <li 
+                    key={`${index}-${keyCounter++}`} 
+                    className="list-group-item d-flex justify-content-between align-items-center mb-2 mt-2 border file-entry">
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {file.name}
+                      </span>
+                      <button
+                        className="btn btn-danger btn-sm custom-pwr-button"
+                        onClick={(event) => deleteFile(event, file)}
+                      >
                         {t('general.management.delete')}
-                    </button>
+                      </button>
                   </li>
                 ))}
               </ul>
             </section>
           )}
-
-          {uploadError && uploadErrorMessageVisible && (
-            <div className="alert alert-danger" role="alert">
-              {uploadError}
-            </div>
-          )}
-
-          {recordsSavedOpen && (
-            <div className="alert alert-success" role="alert">
-              {t('uploadFiles.recordsSaved')} {recordsSaved}
-            </div>
-          )}
+          </div>
+        </div>
 
           <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
               {t('uploadFiles.sendFiles')}
@@ -289,29 +327,30 @@ function UploadStudentFilePage() {
           }}>
         <h4>{t('general.management.wrongData')}:</h4>
         <div style={{ overflow: 'auto', height: '100%', maxHeight: '100%' }}>
-          <ul className="list-group">
+          <ul className="list-group mb-3 mt-3" style={{ flexWrap: 'wrap', overflow: 'auto' }}>
             {invalidDataList.map((item, index) => (
               item.data && item.data.length > 0 ? (
                 <li className="list-group-item mb-2 border" key={`${index}-${keyCounter++}`}>
                   <div>
                   <div onClick={item.toggleOpen}>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <span>{item.title}</span>
-                      <span>{item.data.length}</span>
+                    <div className="dropdown-toggle d-flex justify-content-between align-items-center">
+                      <span>{item.title}: {item.data.length}</span>
                     </div>
                   </div>
                   <div className={`collapse ${item.isOpen ? 'show' : ''}`} style={{ height: '100%', maxHeight: '100%', overflowX: 'auto', overflowY: 'hidden'}}>
                     <table className="custom-table">
                       <thead>
                         <tr>
+                          <th style={{ width: '32%' }}>{t('uploadFiles.fileName')}</th>
                           <th style={{ width: '4%' }}>{t('general.people.index')}</th>
-                          <th style={{ width: '48%' }}>{t('general.people.surname')}</th>
-                          <th style={{ width: '48%' }}>{t('general.people.name')}</th>
+                          <th style={{ width: '32%' }}>{t('general.people.surname')}</th>
+                          <th style={{ width: '32%' }}>{t('general.people.name')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {item.data?.map((student, index) => (
                           <tr key={`${student.index}-${keyCounter++}`}>
+                            <td>{student?.source_file_name}</td>
                             <td>{student.index}</td>
                             <td>{student.surname}</td>
                             <td>{student.name}</td>

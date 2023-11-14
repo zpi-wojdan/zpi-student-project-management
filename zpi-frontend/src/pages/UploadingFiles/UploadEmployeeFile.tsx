@@ -250,7 +250,7 @@ function UplaodEmployeeFilePage() {
 
         <div>
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>{t('uploadFiles.attach')}</h2>
+            <h2>{t('uploadFiles.attachEmployee')}</h2>
             <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
               &larr; {t('general.management.goBack')}
             </button>
