@@ -6,3 +6,9 @@ export type Specialization = {
   name: string;
   studyField: StudyField;
 }
+
+export type SpecializationDTO = {
+  abbreviation: string;
+  name: string;
+  studyFieldAbbr: string;
+}

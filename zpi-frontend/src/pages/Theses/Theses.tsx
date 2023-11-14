@@ -29,7 +29,7 @@ const ThesesTable: React.FC = () => {
             descriptionEN: thesisDb.descriptionEN,
             programs: thesisDb.programs,
             studyCycle: thesisDb.studyCycle,
-            num_people: thesisDb.num_people,
+            numPeople: thesisDb.numPeople,
             occupied: thesisDb.occupied,
             supervisor: thesisDb.supervisor,
             status: thesisDb.status,
@@ -170,8 +170,8 @@ const ThesesTable: React.FC = () => {
                       thesis.nameEN
                   )}
               </button></td>
-              <td>{thesis.supervisor.title + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
-              <td className="centered">{thesis.occupied + "/" + thesis.num_people}</td>
+              <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+              <td className="centered">{thesis.occupied + "/" + thesis.numPeople}</td>
             </tr>
           ))}
         </tbody>

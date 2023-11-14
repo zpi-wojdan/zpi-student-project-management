@@ -7,15 +7,15 @@ import { StudyCycle } from '../../../models/StudyCycle';
 import { StudentProgramCycle, StudentProgramCycleDTO } from '../../../models/StudentProgramCycle';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 
 const StudentForm: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
+  const [studentId, setStudentId] = useState<number>();
   const [formData, setFormData] = useState<StudentDTO>({
-    mail: '',
     name: '',
     surname: '',
     index: '',
@@ -26,7 +26,7 @@ const StudentForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student;
-  const statusOptions = ['STU', 'Inny/Other'];
+  const statusOptions = ['STU', 'SKR', 'ABS-KS', 'ABS-PD', 'DYP'];
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
@@ -43,17 +43,17 @@ const StudentForm: React.FC = () => {
       setFormData((prevFormData) => {
         return {
           ...prevFormData,
-          mail: student.mail,
           name: student.name,
           surname: student.surname,
           index: student.index,
           status: student.status,
-          programsCycles: student.studentProgramCycles.map((programCycle:StudentProgramCycle) => ({
+          programsCycles: student.studentProgramCycles.map((programCycle: StudentProgramCycle) => ({
             cycleId: programCycle.cycle.id,
             programId: programCycle.program.id,
           })),
         };
       });
+      setStudentId(student.id)
     }
   }, [student]);
 
@@ -62,19 +62,28 @@ const StudentForm: React.FC = () => {
 
     if (validateForm()) {
       if (student) {
-        api.put(`http://localhost:8080/student/${formData.mail}`, formData)
+        api.put(`http://localhost:8080/student/${studentId}`, formData)
           .then(() => {
             navigate("/students");
             toast.success(t("student.updateSuccessful"));
           })
           .catch((error) => {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
+            if (error.response && error.response.status === 409) {
+              const newErrors: Record<string, string> = {};
+              newErrors.index = t("student.indexExists")
+              setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.index = "student.indexExists"
+              setErrorsKeys(newErrorsKeys);
+            } else {
+              console.error(error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
+              navigate("/students");
+              toast.error(t("student.updateError"));
             }
-            navigate("/students");
-            toast.error(t("student.updateError"));
           });
       } else {
         api.post('http://localhost:8080/student', formData)
@@ -175,8 +184,7 @@ const StudentForm: React.FC = () => {
       .then((response) => {
         setAvailableCycles(response.data);
       })
-      .catch((error) => 
-      {
+      .catch((error) => {
         console.error(error);
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
@@ -234,7 +242,7 @@ const StudentForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {student ? t('general.management.save') : t('general.management.add')}
+            {student ? t('student.save') : t('student.add')}
           </button>
         </div>
         <div className="mb-3">

@@ -13,7 +13,6 @@ export type Student = {
 }
 
 export type StudentDTO = {
-  mail: string;
   name: string;
   surname: string;
   index: string;

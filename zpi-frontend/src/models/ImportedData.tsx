@@ -31,7 +31,7 @@ export type ImportedEmployee = {
     phone_number: string;
     position: string;
     source_file_name: string;
-  }
+}
 
 export type InvalidEmployeeData = {
     database_repetitions: ImportedEmployee[] | null;

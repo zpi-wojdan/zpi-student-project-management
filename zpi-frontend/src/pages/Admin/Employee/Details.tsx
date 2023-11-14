@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Employee } from '../../../models/Employee';
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 
 const EmployeeDetails: React.FC = () => {
@@ -24,16 +24,16 @@ const EmployeeDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/employee/${employee.mail}`)
-        .then(() => {
-          toast.success(t("employee.deleteSuccessful"));
-          navigate("/employees");
-        })
-        .catch((error) => {
-            console.error(error);
-            toast.error(t("employee.deleteError"));
-            navigate("/employees");
-          });
+    api.delete(`http://localhost:8080/employee/${employee.id}`)
+      .then(() => {
+        toast.success(t("employee.deleteSuccessful"));
+        navigate("/employees");
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(t("employee.deleteError"));
+        navigate("/employees");
+      });
     setShowDeleteConfirmation(false);
   };
 
@@ -47,45 +47,45 @@ const EmployeeDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => {navigate(`/employees/edit/${employee.mail}`, {state: {employee}})}}>
-            {t('general.management.edit')}
+        <button type="button" className="custom-button" onClick={() => { navigate(`/employees/edit/${employee.mail}`, { state: { employee } }) }}>
+          {t('employee.edit')}
         </button>
         <button type="button" className="custom-button" onClick={() => handleDeleteClick(employee.mail)}>
           <i className="bi bi-trash"></i>
         </button>
-        { showDeleteConfirmation && (
-        <tr>
-          <td colSpan={5}>
-          <DeleteConfirmation
-            isOpen={showDeleteConfirmation}
-            onClose={handleCancelDelete}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-            questionText={t('employee.deleteConfirmation')}
-          />
-          </td>
-        </tr>
-      )}
+        {showDeleteConfirmation && (
+          <tr>
+            <td colSpan={5}>
+              <DeleteConfirmation
+                isOpen={showDeleteConfirmation}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                questionText={t('employee.deleteConfirmation')}
+              />
+            </td>
+          </tr>
+        )}
       </div>
       <div>
         {employee ? (
-        <div>
+          <div>
             <p><span className="bold">{t('general.title')}:</span> <span>{employee.title.name}</span></p>
             <p><span className="bold">{t('general.people.name')}:</span> <span>{employee.name}</span></p>
             <p><span className="bold">{t('general.people.surname')}:</span> <span>{employee.surname}</span></p>
             <p><span className="bold">{t('general.people.mail')}:</span> <span>{employee.mail}</span></p>
             <p><span className="bold">{t('general.university.department')}:</span> <span>{employee.department.name}</span></p>
             <p className="bold">{t('general.people.roles')}:</p>
-                <ul>
-                    {employee.roles.map((role) => (
-                        <li key={role.id}>
-                          {roleLabels[role.name] || role.name}
-                        </li>
-                    ))}
-                </ul> 
-        </div>
+            <ul>
+              {employee.roles.map((role) => (
+                <li key={role.id}>
+                  {roleLabels[role.name] || role.name}
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
-        <p>{t('general.management.errorOfLoading')}</p>
+          <p>{t('general.management.errorOfLoading')}</p>
         )}
       </div>
     </div>
