@@ -147,14 +147,30 @@ function UploadStudentFilePage() {
 
           const invalidDataWithFilename = {
             ...invalidData,
-            database_repetitions: invalidData.database_repetitions?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_indices: invalidData.invalid_indices?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_names: invalidData.invalid_names?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_surnames: invalidData.invalid_surnames?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_statuses: invalidData.invalid_statuses?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_programs: invalidData.invalid_programs?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_cycles: invalidData.invalid_cycles?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
-            invalid_data: invalidData.invalid_data?.map((student: ImportedStudent) => ({ ...student, source_file_name: file.name })),
+            database_repetitions: invalidData.database_repetitions
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_indices: invalidData.invalid_indices
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_names: invalidData.invalid_names
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_surnames: invalidData.invalid_surnames
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_statuses: invalidData.invalid_statuses
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_programs: invalidData.invalid_programs
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_cycles: invalidData.invalid_cycles
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
+            invalid_data: invalidData.invalid_data
+              ?.map((student: ImportedStudent) =>
+               ({ ...student, source_file_name: file.name })),
           };
 
           console.log(invalidData);
@@ -259,7 +275,7 @@ function UploadStudentFilePage() {
         )}
 
         <div
-          className="container d-flex justify-content-center mt-3 mb-3"
+          className="container d-flex justify-content-center mt-4 mb-4"
         >
           <div
             {...getRootProps()}
@@ -304,7 +320,7 @@ function UploadStudentFilePage() {
           </div>
         </div>
 
-          <button onClick={handleUpload} disabled={buttonDisabled} className="btn btn-primary mt-2 custom-pwr-button">
+          <button onClick={handleUpload} disabled={buttonDisabled} className="custom-button">
               {t('uploadFiles.sendFiles')}
           </button>
         </div>
