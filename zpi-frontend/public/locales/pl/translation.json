@@ -147,7 +147,8 @@
     "updateSuccessful": "Program studiów został zaktualizowany",
     "updateError": "Program studiów nie został zaktualizowany",
     "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania.",
-    "nameExists": "Podana nazwa programu już istnieje!"
+    "nameExists": "Podana nazwa programu już istnieje!",
+    "goodNameFormat": "Poprawny format: skrót wydziału - skrót kierunku - skrót specjalności - charakterystyka np. W04-INAP-CCSA-OSME3"
   },
   "specialization": {
     "deleteSuccessful": "Specjalność została usunięta",

@@ -147,7 +147,8 @@
     "updateSuccessful": "Study program has been updated",
     "updateError": "Study program has not been updated",
     "cycleRequired": "Study program must have assigned at least one study cycle.",
-    "nameExists": "Given program name already exists!"
+    "nameExists": "Given program name already exists!",
+    "goodNameFormat": "Correct format: faculty abbreviation - study field abbreviation - specialization abbreviation - characteristics e.g. W04-INAP-CCSA-OSME3"
   },
   "specialization": {
     "deleteSuccessful": "Specialization has been deleted",
