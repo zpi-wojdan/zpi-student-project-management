@@ -11,7 +11,7 @@ export type Thesis = {
     nameEN: string;
     descriptionPL: string;
     descriptionEN: string;
-    num_people: number;
+    numPeople: number;
     supervisor: Employee;
     leader: Student | null;
     programs: Program[];
@@ -27,7 +27,7 @@ export type ThesisFront = {
     nameEN: string;
     descriptionPL: string;
     descriptionEN: string;
-    num_people: number;
+    numPeople: number;
     supervisor: Employee;
     leader: Student | null;
     programs: Program[];
