@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pwr.zpibackend.dto.reports.StudentWithThesisDTO;
 import pwr.zpibackend.dto.reports.StudentWithoutThesisDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.services.PdfService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,33 +24,30 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/pdf")
+@RequestMapping("/report")
 public class PdfController {
 
     private final PdfService pdfService;
 
-    @GetMapping("/students-without-thesis")
-    public void generateStudentsWithoutThesisReport(HttpServletResponse response) throws DocumentException, IOException {
-        response.setContentType("application/pdf");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=students_without_thesis_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
-
-        pdfService.generateStudentsWithoutThesisReport(response);
+    @GetMapping("pdf/students-without-thesis")
+    public ResponseEntity<String> generateStudentsWithThesisReport(HttpServletResponse response,
+            @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
+            throws DocumentException, IOException {
+        if (pdfService.generateStudentsWithoutThesisReport(response, facultyAbbr, studyFieldAbbr))
+            return new ResponseEntity<>("Report generated successfully", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Students without thesis not found", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/thesis-groups")
-    public ResponseEntity<Map<String, Map<String, List<ThesisGroupDTO>>>> getThesisGroups(
-            @RequestParam(required = false) Long facultyId, @RequestParam(required = false) Long studyFieldId) {
-        return new ResponseEntity<>(pdfService.getThesisGroups(facultyId, studyFieldId), HttpStatus.OK);
-    }
-
-    @GetMapping("/students-without-thesis-json")
+    @GetMapping("data/students-without-thesis")
     public ResponseEntity<Map<String, Map<String, List<StudentWithoutThesisDTO>>>> getStudentsWithoutThesis(
-            @RequestParam(required = false) Long facultyId, @RequestParam(required = false) Long studyFieldId) {
-        return new ResponseEntity<>(pdfService.getStudentsWithoutThesis(facultyId, studyFieldId), HttpStatus.OK);
+            @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {
+        return new ResponseEntity<>(pdfService.getStudentsWithoutThesis(facultyAbbr, studyFieldAbbr), HttpStatus.OK);
+    }
+
+    @GetMapping("data/thesis-groups")
+    public ResponseEntity<Map<String, Map<String, List<ThesisGroupDTO>>>> getThesisGroups(
+            @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {
+        return new ResponseEntity<>(pdfService.getThesisGroups(facultyAbbr, studyFieldAbbr), HttpStatus.OK);
     }
 }

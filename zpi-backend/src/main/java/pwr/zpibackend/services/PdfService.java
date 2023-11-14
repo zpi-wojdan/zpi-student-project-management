@@ -12,6 +12,7 @@ import pwr.zpibackend.dto.reports.StudentWithThesisDTO;
 import pwr.zpibackend.dto.reports.StudentWithoutThesisDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.models.Student;
 import pwr.zpibackend.models.university.Faculty;
@@ -25,6 +26,8 @@ import pwr.zpibackend.repositories.ThesisRepository;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,8 +39,8 @@ public class PdfService {
     private final StudentRepository studentRepository;
     private final ReservationRepository reservationRepository;
 
-    public Map<String, Map<String, List<StudentWithoutThesisDTO>>> getStudentsWithoutThesis(Long facultyId,
-                                                                                            Long studyFieldId) {
+    public Map<String, Map<String, List<StudentWithoutThesisDTO>>> getStudentsWithoutThesis(String facultyAbbr,
+                                                                                            String studyFieldAbbr) {
         Set<Student> studentsWithConfirmedReservations = reservationRepository.findAll().stream()
                 .filter(Reservation::isConfirmedBySupervisor)
                 .map(Reservation::getStudent)
@@ -51,9 +54,10 @@ public class PdfService {
                         .filter(program -> {
                             Faculty faculty = program.getFaculty();
                             StudyField studyField = program.getStudyField();
-                            return (faculty != null && (facultyId == null || faculty.getId() == facultyId)) &&
-                                    (studyField != null && (studyFieldId == null ||
-                                            studyField.getId().equals(studyFieldId)));
+                            return (faculty != null && (facultyAbbr == null ||
+                                    faculty.getAbbreviation().equals(facultyAbbr))) &&
+                                    (studyField != null && (studyFieldAbbr == null ||
+                                            studyField.getAbbreviation().equals(studyFieldAbbr)));
                         })
                         .map(program -> {
                             StudentWithoutThesisDTO report = new StudentWithoutThesisDTO();
@@ -74,21 +78,21 @@ public class PdfService {
                                 Collectors.toList())));
     }
 
-    public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(Long facultyId, Long studyFieldId) {
+    public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(String facultyAbbr, String studyFieldAbbr) {
         return thesisRepository.findAllByOrderByNamePLAsc().stream()
                 .filter(thesis -> thesis.getReservations().stream().anyMatch(Reservation::isConfirmedBySupervisor))
                 .filter(thesis -> thesis.getPrograms().stream()
                         .anyMatch(program -> program.getFaculty() != null &&
-                                (facultyId == null || program.getFaculty().getId() == facultyId)))
+                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr))))
                 .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getStudyField() != null &&
-                                (studyFieldId == null || program.getStudyField().getId().equals(studyFieldId))))
+                        .anyMatch(program -> program.getStudyField() != null && (studyFieldAbbr == null ||
+                                program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
                 .map(thesis -> {
                     ThesisGroupDTO report = new ThesisGroupDTO();
                     report.setThesisNamePL(thesis.getNamePL());
 
                     Faculty faculty = null;
-                    if (facultyId == null) {
+                    if (facultyAbbr == null) {
                         List<Faculty> thesisFaculties = thesis.getPrograms().stream()
                                 .map(Program::getFaculty)
                                 .toList();
@@ -102,7 +106,7 @@ public class PdfService {
                     } else {
                         faculty = thesis.getPrograms().stream()
                                 .map(Program::getFaculty)
-                                .filter(fac -> Objects.equals(fac.getId(), facultyId))
+                                .filter(fac -> Objects.equals(fac.getAbbreviation(), facultyAbbr))
                                 .findFirst()
                                 .orElse(null);
                     }
@@ -112,7 +116,7 @@ public class PdfService {
                     }
 
                     StudyField studyField = null;
-                    if (studyFieldId == null) {
+                    if (studyFieldAbbr == null) {
                         List<StudyField> thesisStudyFields = thesis.getPrograms().stream()
                                 .map(Program::getStudyField)
                                 .toList();
@@ -126,7 +130,7 @@ public class PdfService {
                     } else {
                         studyField = thesis.getPrograms().stream()
                                 .map(Program::getStudyField)
-                                .filter(sf -> Objects.equals(sf.getId(), studyFieldId))
+                                .filter(sf -> Objects.equals(sf.getAbbreviation(), studyFieldAbbr))
                                 .findFirst()
                                 .orElse(null);
                     }
@@ -167,59 +171,92 @@ public class PdfService {
         cell.setBackgroundColor(WebColors.getRGBColor("#9A342D"));
         cell.setPadding(5);
 
-        Font font = FontFactory.getFont(FontFactory.TIMES_BOLD);
+        Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
         font.setColor(Color.WHITE);
 
-        cell.setPhrase(new Phrase("Index", font));
+        cell.setPhrase(new Phrase("Indeks", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Name", font));
+        cell.setPhrase(new Phrase("Imię", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Surname", font));
+        cell.setPhrase(new Phrase("Nazwisko", font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Mail", font));
         table.addCell(cell);
     }
 
-    private void writeStudentsTableData(PdfPTable table) {
-        List<StudentWithoutThesisDTO> students = getStudentsWithoutThesis(null, null).values().stream()
-                .flatMap(map -> map.values().stream())
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        for (StudentWithoutThesisDTO student : students) {
-            table.addCell(String.valueOf(student.getIndex()));
-            table.addCell(student.getName());
-            table.addCell(student.getSurname());
-            table.addCell(student.getMail());
+    private void writeStudentsDataToTheDocument(Map<String, Map<String, List<StudentWithoutThesisDTO>>>
+            studentsWithoutThesis, Document document) {
+        for (Map.Entry<String, Map<String, List<StudentWithoutThesisDTO>>> facultyEntry : studentsWithoutThesis.entrySet()) {
+            for (Map.Entry<String, List<StudentWithoutThesisDTO>> studyFieldEntry : facultyEntry.getValue().entrySet()) {
+                Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(),
+                        FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250"));
+                document.add(p);
+
+                PdfPTable table = new PdfPTable(4);
+                table.setWidthPercentage(100f);
+                table.setWidths(new float[]{1.3f, 3.5f, 3.5f, 3.8f});
+                table.setSpacingBefore(10);
+
+                createStudentsTableHeader(table);
+
+                for (StudentWithoutThesisDTO student : studyFieldEntry.getValue()) {
+                    table.addCell(student.getIndex());
+                    table.addCell(student.getName());
+                    table.addCell(student.getSurname());
+                    table.addCell(student.getMail());
+                }
+
+                document.add(table);
+                document.add(Chunk.NEWLINE);
+            }
         }
     }
 
-    public void generateStudentsWithoutThesisReport(HttpServletResponse response) throws DocumentException, IOException {
-        Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, response.getOutputStream());
+    public boolean generateStudentsWithoutThesisReport(HttpServletResponse response, String facultyAbbr,
+            String studyFieldAbbr) throws DocumentException, IOException {
 
-        document.open();
-        Font font = FontFactory.getFont(FontFactory.TIMES_BOLD);
-        font.setSize(18);
+        Map<String, Map<String, List<StudentWithoutThesisDTO>>> studentsWithoutThesis =
+                getStudentsWithoutThesis(facultyAbbr, studyFieldAbbr);
 
-        Paragraph p = new Paragraph("List of students without the thesis", font);
-        p.setAlignment(Paragraph.ALIGN_CENTER);
+        if (studentsWithoutThesis.isEmpty())
+            return false;
+        else {
+            response.setContentType("application/pdf");
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+            String currentDateTime = dateFormatter.format(new Date());
 
-        document.add(p);
+            String headerKey = "Content-Disposition";
 
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100f);
-        table.setWidths(new float[]{1.3f, 3.5f, 3.5f, 3.8f});
-        table.setSpacingBefore(10);
+            StringBuilder filename = new StringBuilder("studenci_bez_tematu_zpi");
+            if (facultyAbbr != null)
+                filename.append("_").append(facultyAbbr);
+            if (studyFieldAbbr != null)
+                filename.append("_").append(studyFieldAbbr);
+            filename.append("_");
+            filename.append(currentDateTime);
+            filename.append(".pdf");
 
-        createStudentsTableHeader(table);
-        writeStudentsTableData(table);
+            String headerValue = "attachment; filename=" + filename;
+            response.setHeader(headerKey, headerValue);
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, response.getOutputStream());
 
-        document.add(table);
+            document.open();
+            Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
+            font.setSize(18);
 
-        document.close();
+            Paragraph p = new Paragraph("Lista studentów bez tematu zpi", font);
+            p.setAlignment(Paragraph.ALIGN_CENTER);
+
+            document.add(p);
+            document.add(Chunk.NEWLINE);
+
+            writeStudentsDataToTheDocument(studentsWithoutThesis, document);
+            document.close();
+            return true;
+        }
     }
-
 }
