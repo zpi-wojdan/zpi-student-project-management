@@ -55,25 +55,24 @@ public class ImportEmployeesServiceTests {
     public void testReadEmployeeFile() throws IOException {
         setUp();
         assertEquals(4, validData.size());
-        assertEquals(0, invalidIndexData.size());
-        assertEquals(0, invalidAcademicTitleData.size());
-        assertEquals(0, invalidSurnameData.size());
-        assertEquals(0, invalidNameData.size());
-        assertEquals(0, invalidUnitData.size());
-        assertEquals(0, invalidSubunitData.size());
-        assertEquals(0, invalidPositionsData.size());
-        assertEquals(0, invalidPhoneNumberData.size());
+        assertEquals(1, invalidIndexData.size());
+        assertEquals(1, invalidAcademicTitleData.size());
+        assertEquals(1, invalidSurnameData.size());
+        assertEquals(1, invalidNameData.size());
+        assertEquals(1, invalidUnitData.size());
+        assertEquals(1, invalidSubunitData.size());
+        assertEquals(1, invalidPositionsData.size());
+        assertEquals(1, invalidPhoneNumberData.size());
         assertEquals(1, invalidEmailData.size());
         assertEquals(0, invalidDatabaseRepetitions.size());
         assertEquals(0, invalidData.size());
 
         ObjectNode validEmployeeData = validData.get(0);
-//        3	dr	Babczyński	Tomasz	W04N	K30W04ND03	adiunkt (N1-0501)
-//        tomasz.babczynski@pwr.edu.pl
+
         assertEquals("3", validEmployeeData.get("id").asText());
         assertEquals("dr", validEmployeeData.get("title").asText());
-        assertEquals("Babczyński", validEmployeeData.get("surname").asText());
-        assertEquals("Tomasz", validEmployeeData.get("name").asText());
+        assertEquals("Będzie", validEmployeeData.get("surname").asText());
+        assertEquals("Powtórka", validEmployeeData.get("name").asText());
         assertEquals("W04N", validEmployeeData.get("faculty").asText());
         assertEquals("K30W04ND03", validEmployeeData.get("department").asText());
         assertEquals("Adiunkt (N1-0501)", validEmployeeData.get("position").asText());
@@ -91,7 +90,6 @@ public class ImportEmployeesServiceTests {
                 invalidSubunitData, invalidPositionsData, invalidPhoneNumberData, invalidEmailData,
                 invalidDatabaseRepetitions, invalidData);
         assertEquals(0, savedRecords);
-        //  how to assert every single little thing inside the method?
     }
 
     @Test
@@ -112,8 +110,8 @@ public class ImportEmployeesServiceTests {
                   "valid_data" : [ {
                     "id" : "3",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Będzie",
+                    "name" : "Powtórka",
                     "faculty" : "W04N",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
@@ -123,8 +121,8 @@ public class ImportEmployeesServiceTests {
                   }, {
                     "id" : "3",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Będzie",
+                    "name" : "Powtórka",
                     "faculty" : "W04N",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
@@ -134,39 +132,127 @@ public class ImportEmployeesServiceTests {
                   }, {
                     "id" : "239",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Git",
+                    "name" : "Git",
                     "faculty" : "W10",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
-                    "phoneNumber" : "",
+                    "phoneNumber" : "123456789",
                     "email" : "tomasz.babczynskiii@pwr.edu.pl",
                     "role" : "supervisor"
                   }, {
                     "id" : "240",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Git",
+                    "name" : "Git",
                     "faculty" : "W04N",
                     "department" : "K30W04XD10",
                     "position" : "Adiunkt (N1-0501)",
-                    "phoneNumber" : "",
+                    "phoneNumber" : "+48234567890",
                     "email" : "tomasz.babczynskiiii@pwr.edu.pl",
                     "role" : "supervisor"
                   } ],
-                  "invalid_indices" : [ ],
-                  "invalid_academic_titles" : [ ],
-                  "invalid_surnames" : [ ],
-                  "invalid_names" : [ ],
-                  "invalid_units" : [ ],
-                  "invalid_subunits" : [ ],
-                  "invalid_positions" : [ ],
-                  "invalid_phone_numbers" : [ ],
+                  "invalid_indices" : [ {
+                    "id" : "?",
+                    "title" : "dr",
+                    "surname" : "Złe",
+                    "name" : "Id",
+                    "faculty" : "W04N",
+                    "department" : "K30W04ND03",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "",
+                    "email" : "zle.id@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_academic_titles" : [ {
+                    "id" : "243",
+                    "title" : "?",
+                    "surname" : "Zły",
+                    "name" : "Tytuł",
+                    "faculty" : "W04N",
+                    "department" : "K30W04ND03",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "",
+                    "email" : "zly.tytul@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_surnames" : [ {
+                    "id" : "244",
+                    "title" : "dr",
+                    "surname" : "?",
+                    "name" : "Złenazwisko",
+                    "faculty" : "W04N",
+                    "department" : "K30W04ND03",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "",
+                    "email" : "zle.nazwisko@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_names" : [ {
+                    "id" : "245",
+                    "title" : "dr",
+                    "surname" : "Złeimie",
+                    "name" : "?",
+                    "faculty" : "W04N",
+                    "department" : "K30W04ND03",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "",
+                    "email" : "zle.imie@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_units" : [ {
+                    "id" : "246",
+                    "title" : "dr",
+                    "surname" : "Zły",
+                    "name" : "Wydział",
+                    "faculty" : "?",
+                    "department" : "K30W04ND03",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "",
+                    "email" : "zly.wydzial@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_subunits" : [ {
+                    "id" : "247",
+                    "title" : "dr",
+                    "surname" : "Zła",
+                    "name" : "Katedra",
+                    "faculty" : "W04N",
+                    "department" : "?",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "",
+                    "email" : "zla.katedra@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_positions" : [ {
+                    "id" : "248",
+                    "title" : "dr",
+                    "surname" : "Złe",
+                    "name" : "Stanowisko",
+                    "faculty" : "W04N",
+                    "department" : "K30W04ND03",
+                    "position" : "?",
+                    "phoneNumber" : "",
+                    "email" : "zle.stanowisko@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
+                  "invalid_phone_numbers" : [ {
+                    "id" : "249",
+                    "title" : "dr",
+                    "surname" : "Zły",
+                    "name" : "Telefon",
+                    "faculty" : "W04N",
+                    "department" : "K30W04ND03",
+                    "position" : "Adiunkt (N1-0501)",
+                    "phoneNumber" : "?",
+                    "email" : "zly.telefon@pwr.edu.pl",
+                    "role" : "supervisor"
+                  } ],
                   "invalid_emails" : [ {
                     "id" : "241",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Zły",
+                    "name" : "Email",
                     "faculty" : "W04N",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
@@ -177,8 +263,8 @@ public class ImportEmployeesServiceTests {
                   "database_repetitions" : [ {
                     "id" : "3",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Będzie",
+                    "name" : "Powtórka",
                     "faculty" : "W04N",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
@@ -188,8 +274,8 @@ public class ImportEmployeesServiceTests {
                   }, {
                     "id" : "3",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Będzie",
+                    "name" : "Powtórka",
                     "faculty" : "W04N",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
@@ -200,23 +286,23 @@ public class ImportEmployeesServiceTests {
                   "invalid_data" : [ {
                     "id" : "239",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Git",
+                    "name" : "Git",
                     "faculty" : "W10",
                     "department" : "K30W04ND03",
                     "position" : "Adiunkt (N1-0501)",
-                    "phoneNumber" : "",
+                    "phoneNumber" : "123456789",
                     "email" : "tomasz.babczynskiii@pwr.edu.pl",
                     "role" : "supervisor"
                   }, {
                     "id" : "240",
                     "title" : "dr",
-                    "surname" : "Babczyński",
-                    "name" : "Tomasz",
+                    "surname" : "Git",
+                    "name" : "Git",
                     "faculty" : "W04N",
                     "department" : "K30W04XD10",
                     "position" : "Adiunkt (N1-0501)",
-                    "phoneNumber" : "",
+                    "phoneNumber" : "+48234567890",
                     "email" : "tomasz.babczynskiiii@pwr.edu.pl",
                     "role" : "supervisor"
                   } ],

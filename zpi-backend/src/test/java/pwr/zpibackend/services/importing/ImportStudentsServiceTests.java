@@ -91,17 +91,19 @@ public class ImportStudentsServiceTests {
     @Test
     public void testReadStudentFile() throws IOException {
         setUp();
-        assertEquals(6, validData.size());
-        assertEquals(2, invalidIndexData.size());
-        assertEquals(0, invalidSurnameData.size());
-        assertEquals(0, invalidNameData.size());
+        assertEquals(8, validData.size());
+        assertEquals(1, invalidIndexData.size());
+        assertEquals(1, invalidSurnameData.size());
+        assertEquals(1, invalidNameData.size());
         assertEquals(0, invalidProgramData.size());
         assertEquals(0, invalidCycleData.size());
         assertEquals(1, invalidStatusData.size());
+        assertEquals(0, invalidDatabaseRepetitions.size());
+        assertEquals(0 , invalidData.size());
 
         ObjectNode validStudentData = validData.get(0);
-        assertEquals("Doe", validStudentData.get("surname").asText());
-        assertEquals("John", validStudentData.get("name").asText());
+        assertEquals("Git", validStudentData.get("surname").asText());
+        assertEquals("Git", validStudentData.get("name").asText());
         assertEquals("123456", validStudentData.get("index").asText());
 
         assertEquals("STU", validStudentData.get("status").asText());
@@ -164,7 +166,7 @@ public class ImportStudentsServiceTests {
         List<ObjectNode> mergedInvalidIndicies = mergedData.get("invalid_indicies");
         List<ObjectNode> mergedDatabaseRepetitions = mergedData.get("database_repetitions");
 
-        assertEquals(5, mergedValidData.size());
+        assertEquals(6, mergedValidData.size());
         assertEquals(1, mergedInvalidIndicies.size());
         assertEquals(0, mergedDatabaseRepetitions.size());
 
@@ -190,7 +192,15 @@ public class ImportStudentsServiceTests {
                 invalidStatusData, invalidDatabaseRepetitions, invalidData);
         String expectedResult = """
                 {
-                  "invalid_names" : [ ],
+                  "invalid_names" : [ {
+                    "surname" : "Złeimie",
+                    "name" : "?",
+                    "index" : "444444",
+                    "status" : "STU",
+                    "role" : "student",
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "mail" : "444444@student.pwr.edu.pl"
+                  } ],
                   "invalid_programs" : [ ],
                   "invalid_statuses" : [ {
                     "surname" : "Zły",
@@ -202,18 +212,34 @@ public class ImportStudentsServiceTests {
                     "mail" : "123456@student.pwr.edu.pl"
                   } ],
                   "invalid_indices" : [ {
-                    "surname" : "Kowalski",
-                    "name" : "Jan",
+                    "surname" : "Zły",
+                    "name" : "Indeks",
                     "index" : "1234567",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ], [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ] ],
                     "mail" : "1234567@student.pwr.edu.pl"
                   } ],
-                  "invalid_surnames" : [ ],
+                  "invalid_surnames" : [ {
+                    "surname" : "?",
+                    "name" : "Złenazwisko",
+                    "index" : "333333",
+                    "status" : "STU",
+                    "role" : "student",
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "mail" : "333333@student.pwr.edu.pl"
+                  } ],
                   "invalid_data" : [ ],
                   "database_repetitions" : [ ],
                   "valid_data" : [ {
+                    "surname" : "Git",
+                    "name" : "Git",
+                    "index" : "666666",
+                    "status" : "STU",
+                    "role" : "student",
+                    "programsCycles" : [ [ "W04-INAP-000P-OSME3", "2022/23-Z" ] ],
+                    "mail" : "666666@student.pwr.edu.pl"
+                  }, {
                     "surname" : "Brakujący",
                     "name" : "Cykl",
                     "index" : "222222",
@@ -222,20 +248,20 @@ public class ImportStudentsServiceTests {
                     "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2010/11-Z" ] ],
                     "mail" : "222222@student.pwr.edu.pl"
                   }, {
-                    "surname" : "Chapman",
-                    "name" : "Ava",
+                    "surname" : "Zlepi",
+                    "name" : "ProgramsCycles",
                     "index" : "998090",
                     "status" : "STU",
                     "role" : "student",
                     "programsCycles" : [ [ "W04-INAP-000P-OSME3", "2022/23-Z" ], [ "W04-ISTP-000A-OSME4", "2022/23-Z" ] ],
                     "mail" : "998090@student.pwr.edu.pl"
                   }, {
-                    "surname" : "Doe",
-                    "name" : "John",
+                    "surname" : "Git",
+                    "name" : "Git",
                     "index" : "123456",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ], [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
                     "mail" : "123456@student.pwr.edu.pl"
                   }, {
                     "surname" : "Brakujące",
@@ -269,7 +295,15 @@ public class ImportStudentsServiceTests {
         result = result.replaceAll("\\r\\n", "\n");
         String expectedResult = """
                 {
-                  "invalid_names" : [ ],
+                  "invalid_names" : [ {
+                    "surname" : "Złeimie",
+                    "name" : "?",
+                    "index" : "444444",
+                    "status" : "STU",
+                    "role" : "student",
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "mail" : "444444@student.pwr.edu.pl"
+                  } ],
                   "invalid_programs" : [ ],
                   "invalid_statuses" : [ {
                     "surname" : "Zły",
@@ -281,15 +315,23 @@ public class ImportStudentsServiceTests {
                     "mail" : "123456@student.pwr.edu.pl"
                   } ],
                   "invalid_indices" : [ {
-                    "surname" : "Kowalski",
-                    "name" : "Jan",
+                    "surname" : "Zły",
+                    "name" : "Indeks",
                     "index" : "1234567",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ], [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2023/24-Z" ] ],
                     "mail" : "1234567@student.pwr.edu.pl"
                   } ],
-                  "invalid_surnames" : [ ],
+                  "invalid_surnames" : [ {
+                    "surname" : "?",
+                    "name" : "Złenazwisko",
+                    "index" : "333333",
+                    "status" : "STU",
+                    "role" : "student",
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "mail" : "333333@student.pwr.edu.pl"
+                  } ],
                   "invalid_data" : [ {
                     "surname" : "Brakujący",
                     "name" : "Cykl",
@@ -316,20 +358,28 @@ public class ImportStudentsServiceTests {
                     "mail" : "111111@student.pwr.edu.pl"
                   } ],
                   "database_repetitions" : [ {
-                    "surname" : "Chapman",
-                    "name" : "Ava",
+                    "surname" : "Git",
+                    "name" : "Git",
+                    "index" : "666666",
+                    "status" : "STU",
+                    "role" : "student",
+                    "programsCycles" : [ [ "W04-INAP-000P-OSME3", "2022/23-Z" ] ],
+                    "mail" : "666666@student.pwr.edu.pl"
+                  }, {
+                    "surname" : "Zlepi",
+                    "name" : "ProgramsCycles",
                     "index" : "998090",
                     "status" : "STU",
                     "role" : "student",
                     "programsCycles" : [ [ "W04-INAP-000P-OSME3", "2022/23-Z" ], [ "W04-ISTP-000A-OSME4", "2022/23-Z" ] ],
                     "mail" : "998090@student.pwr.edu.pl"
                   }, {
-                    "surname" : "Doe",
-                    "name" : "John",
+                    "surname" : "Git",
+                    "name" : "Git",
                     "index" : "123456",
                     "status" : "STU",
                     "role" : "student",
-                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
+                    "programsCycles" : [ [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ], [ "W04-ISTP-000P-OSIW7", "2020/21-Z" ] ],
                     "mail" : "123456@student.pwr.edu.pl"
                   } ],
                   "valid_data" : [ ],

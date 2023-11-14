@@ -58,15 +58,10 @@ public class ImportEmployees{
                 invalidPositionsData, invalidPhoneNumberData,
                 invalidEmailData, invalidDatabaseRepetitions, invalidData);
 
-        String fullJson = dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
+        return dataframesToJson(validData, invalidIndexData, invalidAcademicTitleData,
                 invalidSurnameData, invalidNameData, invalidUnitData, invalidSubunitData,
                 invalidPositionsData, invalidPhoneNumberData, invalidEmailData,
                 invalidDatabaseRepetitions, invalidData, savedRecords);
-
-        System.out.println("\nFull JSON:");
-        System.out.println(fullJson);
-
-        return fullJson;
     }
 
     public void readEmployeeFile(String file_path, List<ObjectNode> validData, List<ObjectNode> invalidIndexData,
