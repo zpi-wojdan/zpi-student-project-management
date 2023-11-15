@@ -18,6 +18,7 @@ import pwr.zpibackend.services.university.DepartmentService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
 
 @Service
 @AllArgsConstructor
@@ -58,8 +59,9 @@ public class EmployeeService {
     public Employee addEmployee(EmployeeDTO employee) throws NotFoundException, AlreadyExistsException {
         if(employee.getRoles() == null || employee.getRoles().isEmpty())
             throw new IllegalArgumentException("Employee must have at least one role");
-        if(!employee.getMail().endsWith("pwr.edu.pl"))
-            throw new IllegalArgumentException("Email must be from pwr.edu.pl domain");
+        if(!Pattern.matches("^[a-z0-9-]{1,50}(\\.[a-z0-9-]{1,50}){0,4}@(?:student\\.)" +
+                "?(pwr\\.edu\\.pl|pwr\\.wroc\\.pl)$", employee.getMail()))
+            throw new IllegalArgumentException("Email must be from pwr.edu.pl or pwr.wroc.pl domain");
         if (exists(employee.getMail()))
             throw new AlreadyExistsException();
 
