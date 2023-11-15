@@ -5,9 +5,13 @@ import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import useAuth from "../../../auth/useAuth";
+import handleSignOut from "../../../auth/Logout";
 
 const EmployeeDetails: React.FC = () => {
   const navigate = useNavigate();
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
   const location = useLocation();
   const employee = location.state?.employee as Employee;
@@ -31,8 +35,11 @@ const EmployeeDetails: React.FC = () => {
       })
       .catch((error) => {
         console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
         toast.error(t("employee.deleteError"));
-        navigate("/employees");
       });
     setShowDeleteConfirmation(false);
   };
