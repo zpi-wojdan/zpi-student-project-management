@@ -1,10 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
 import useAuth from "../../auth/useAuth";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import handleSignOut from "../../auth/Logout";
 import {useTranslation} from "react-i18next";
 import api from "../../utils/api";
+import { Thesis, ThesisDTO } from '../../models/Thesis';
+import { Status } from '../../models/Status';
+import { StudyCycle } from '../../models/StudyCycle';
+import { Specialization } from '../../models/Specialization';
+import { StudyField } from '../../models/StudyField';
+import { Employee } from '../../models/Employee';
 
 
 function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
@@ -12,17 +18,155 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   
+  const thesis = location.state?.thesis as Thesis;
+  const [formData, setFormData] = useState<ThesisDTO>({
+    namePL: '',
+    nameEN: '',
+    descriptionPL: '',
+    descriptionEN: '',
+    num_people: 0,
+    supervisor: null,
+    // programs: null,
+    studyFieldAbbr: '',
+    specializationAbbr: '',
+    studyCycleName: '',
+    statusName: '',
+    occupied: 0,
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorKeys, setErrorKeys] = useState<Record<string, string>>({});
+
+  const [statuses, setStatuses] = useState<Status[]>([]);
+  const [studyCycles, setStudyCycles] = useState<StudyCycle[]>([]);
+  const [specializations, setSpecializations] = useState<Specialization[]>([]);
+  const [studyFields, setStudyFields] = useState<StudyField[]>([]);
+  const [supervisors, setSupervisors] = useState<Employee[]>([]);
+
   const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
-  const [supervisorError, setSupervisorError] = useState<string | null>(null);
-  const [supervisorErrorKey, setSupervisorErrorKey] = useState<string | null>(null);
 
   useEffect(() => {
-    setSupervisorError(t(supervisorErrorKey));
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorKeys).forEach((key) => {
+      newErrors[key] = t(errorKeys[key]);
+    });
+    setErrors(newErrors);
   }, [i18n.language]);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/status')
+      .then((response) => {
+        setStatuses(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status ===403){
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+
+      api.get('http://localhost:8080/studycycle')
+      .then((response) => {
+        setStudyCycles(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status ===403){
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+
+      api.get('http://localhost:8080/specialization')
+      .then((response) => {
+        setSpecializations(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status ===403){
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+
+      api.get('http://localhost:8080/studyfield')
+      .then((response) => {
+        setStudyFields(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status ===403){
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+      
+      api.get('http://localhost:8080/employee')
+      .then((response) => {
+        setSupervisors(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status ===403){
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+
+      if (thesis){
+        setFormData((prevFormData) => {
+          return {
+            ...prevFormData,
+            statusName: statuses.find((status) => status.id === thesis.status.id)?.name || '',
+            studyCycleName: studyCycles.find((cycle) => cycle.id === thesis.studyCycle?.id)?.name || '',
+            // specializationAbbr: specializations.find((spec) => spec.id === thesis.specialization?.id)?.name || '',
+            // studyFieldAbbr = studyFields.find((field) => field.id === thesis.s)
+            supervisorMail: supervisors.find((supervisor) => supervisor.mail === thesis.supervisor.mail) || '',
+            // studyCyclesId: thesis.studyCycles.map((cycle) => cycle.id),
+          }
+        })
+      }
+  }, []);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> =  {};
+    const newErrorsKeys: Record<string, string> = {};
+    let isValid = true;
+
+    const errorRequireText = t('general.management.fieldIsRequired');
+
+    if (!formData.namePL){
+      newErrors.namePL = errorRequireText
+      newErrorsKeys.namePL = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.nameEN){
+      newErrors.nameEN = errorRequireText
+      newErrorsKeys.nameEN = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.descriptionPL){
+      newErrors.descriptionPL = errorRequireText
+      newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.descriptionEN){
+      newErrors.descriptionEN = errorRequireText
+      newErrorsKeys.descriptionEN = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    // ...and so on
+
+    setErrors(newErrors);
+    setErrorKeys(newErrorsKeys);
+    return isValid;
+  };
+
 
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -135,19 +279,19 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             ...formState,
             supervisor: supervisorData,
           });
-          setSupervisorError(null);
-          setSupervisorErrorKey(null);
+          // setSupervisorError(null);
+          // setSupervisorErrorKey(null);
 
         }
         else{
-          setSupervisorError(t('thesis.supervisorNotExists'));
-          setSupervisorErrorKey('thesis.supervisorNotExists')
+          // setSupervisorError(t('thesis.supervisorNotExists'));
+          // setSupervisorErrorKey('thesis.supervisorNotExists')
         }
 
       }
       catch(error) {
-        setSupervisorError(t('thesis.errorOfLoadingSupervisorData'));
-        setSupervisorErrorKey('thesis.errorOfLoadingSupervisorData')
+        // setSupervisorError(t('thesis.errorOfLoadingSupervisorData'));
+        // setSupervisorErrorKey('thesis.errorOfLoadingSupervisorData')
         console.log("Error fetching supervisor data: ", error);
       }
     }
@@ -225,9 +369,18 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>{t('thesis.add')}</h2>
-      <form onSubmit={(event) => handleSubmit(event, formState.status)}>
+    <div className='page-margin'>
+      <form onSubmit={(event) => handleSubmit(event, formState.status)} className="form">
+
+      <div className='d-flex justify-content-begin  align-items-center mb-3'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+          &larr; {t('general.management.goBack')}
+          </button>
+          <button type="submit" className="custom-button">
+          {thesis ? t('general.management.save') : t('general.management.add')}
+          </button>
+      </div>
+
 
       <div className="mb-3">
         <label htmlFor="namePL">{t('general.title')} (PL):</label>
@@ -320,7 +473,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
                 onChange={handleSupervisorInputChange}
                 onBlur={handleBlurSupervisor}
             />
-            {supervisorError && <div className="text-danger">{supervisorError}</div>}
+            {/* {supervisorError && <div className="text-danger">{supervisorError}</div>} */}
           </>
           )}
           {suggestions.length > 0 && (
@@ -407,7 +560,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           <div>
             <button 
               type="submit" 
-              className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
+              // className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
               style={{ marginRight: '10px' }}
               onClick={(event) => handleSubmit(event, 'To be reviewed')}
             >
@@ -415,7 +568,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             </button>
             <button 
               type="submit" 
-              className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
+              // className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
               onClick={(event) => handleSubmit(event, 'Draft')}
             >
               {t('thesis.saveDraft')}
@@ -426,7 +579,7 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         {role === 'admin' && (
           <button
           type="submit"
-          className={`btn btn-primary ${supervisorError ? 'disabled' : ''}`}
+          // className={`btn btn-primary ${supervisorError ? 'disabled' : ''}`}
           style={{ marginRight: '10px' }}
           onClick={(event) => handleSubmit(event, formState.status)}
       >
@@ -435,9 +588,9 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
         )}
 
 
-        {supervisorError && (
+        {/* {supervisorError && (
           <div className="text-danger mt-2">{supervisorError}</div>
-         )}        
+         )}         */}
       </form>
     </div>
   )

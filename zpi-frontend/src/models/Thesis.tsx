@@ -37,3 +37,18 @@ export type ThesisFront = {
     students: Student[];
     reservations: Reservation[];
 }
+
+export type ThesisDTO = {
+  namePL: string;
+  nameEN: string;
+  descriptionPL: string;
+  descriptionEN: string;
+  num_people: number;
+  supervisor: Employee | null;
+  // programs: Program[] | null;
+  studyFieldAbbr: string;
+  specializationAbbr: string;
+  studyCycleName: string;
+  statusName: string;
+  occupied: number;
+}
