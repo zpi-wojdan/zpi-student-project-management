@@ -180,7 +180,7 @@ const ThesisDetails: React.FC = () => {
                         <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
                       </li>
                       <li>
-                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.nan')}</span></p>
+                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.nA')}</span></p>
                       </li>
                     </ul>
                   )}

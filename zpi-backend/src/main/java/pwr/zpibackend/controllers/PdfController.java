@@ -4,21 +4,17 @@ import com.lowagie.text.DocumentException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pwr.zpibackend.dto.reports.StudentWithThesisDTO;
-import pwr.zpibackend.dto.reports.StudentWithoutThesisDTO;
+import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
-import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.services.PdfService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +26,7 @@ public class PdfController {
     private final PdfService pdfService;
 
     @GetMapping("pdf/students-without-thesis")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> generateStudentsWithThesisReport(HttpServletResponse response,
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
             throws DocumentException, IOException {
@@ -40,6 +37,7 @@ public class PdfController {
     }
 
     @GetMapping("pdf/thesis-groups")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> generateThesisGroupsReport(HttpServletResponse response,
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
             throws DocumentException, IOException {
@@ -50,12 +48,14 @@ public class PdfController {
     }
 
     @GetMapping("data/students-without-thesis")
-    public ResponseEntity<Map<String, Map<String, List<StudentWithoutThesisDTO>>>> getStudentsWithoutThesis(
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Map<String, Map<String, List<StudentInReportsDTO>>>> getStudentsWithoutThesis(
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {
         return new ResponseEntity<>(pdfService.getStudentsWithoutThesis(facultyAbbr, studyFieldAbbr), HttpStatus.OK);
     }
 
     @GetMapping("data/thesis-groups")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, Map<String, List<ThesisGroupDTO>>>> getThesisGroups(
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {
         return new ResponseEntity<>(pdfService.getThesisGroups(facultyAbbr, studyFieldAbbr), HttpStatus.OK);

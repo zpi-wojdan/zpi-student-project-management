@@ -127,7 +127,7 @@ const StudentDetails: React.FC = () => {
                             <li>
                             <p><span className="bold">{t('general.university.specialization')} - </span>
                                 <span>{studentProgramCycle.program.specialization ?
-                                    studentProgramCycle.program.specialization.name : t('general.management.nan')}
+                                    studentProgramCycle.program.specialization.name : t('general.management.nA')}
                                 </span>
                             </p>
                             </li>
