@@ -77,13 +77,13 @@ export default function App(props: IAppProps) {
 
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
-                <Route path='students/:mail' element={<StudentDetails />} />
+                <Route path='students/:id' element={<StudentDetails />} />
                 <Route path='students/add' element={<StudentForm/>} />
-                <Route path='students/edit/:mail' element={<StudentForm/>} />
+                <Route path='students/edit/:id' element={<StudentForm/>} />
                 <Route path='employees' element={<EmployeeList />} />
-                <Route path='employees/:mail' element={<EmployeeDetails />} />
+                <Route path='employees/:id' element={<EmployeeDetails />} />
                 <Route path='employees/add' element={<EmployeeForm/>} />
-                <Route path='employees/edit/:mail' element={<EmployeeForm/>} />
+                <Route path='employees/edit/:id' element={<EmployeeForm/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
