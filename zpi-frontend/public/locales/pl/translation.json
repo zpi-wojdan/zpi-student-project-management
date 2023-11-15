@@ -73,24 +73,29 @@
     "deleteError": "Cykl nie może zostać usunięty!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten cykl nauczania?",
     "add": "Dodaj cykl",
+    "save": "Zapisz cykl",
     "addSuccessful": "Cykl został dodany",
     "addError": "Cykl nie został dodany",
     "updateSuccessful": "Cykl został zaktualizowany",
     "updateError": "Cykl nie został zaktualizowany",
-    "goodFormat": "Poprawny format: \"xxxx/xx-XYZ\", gdzie \"xxxx\" to 4 cyfry, \"xx\" to 2 cyfry, a \"XYZ\" to od 1 do 3 dużych liter alfabetu."
+    "goodFormat": "Poprawny format: \"xxxx/xx-XYZ\", gdzie \"xxxx\" to 4 cyfry, \"xx\" to 2 cyfry, a \"XYZ\" to od 1 do 3 wielkich liter alfabetu."
   },
   "department": {
     "deleteSuccessful": "Katedra została usunięta",
     "deleteError": "Katedra nie może zostać usunięta!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć tę katedrę?",
     "add": "Dodaj katedrę",
+    "save": "Zapisz katedrę",
     "addSuccessful": "Katedra została dodana",
     "addError": "Katedra nie została dodana",
     "updateSuccessful": "Katedra została zaktualizowana",
-    "updateError": "Katedra nie została zaktualizowana"
+    "updateError": "Katedra nie została zaktualizowana",
+    "goodCodeFormat": "Poprawny format: ciąg od 1 do 10 znaków, zawierający tylko wielkie litery, cyfry oraz ukośniki (/)."
   },
   "employee": {
     "add": "Dodaj pracownika",
+    "save": "Zapisz pracownika",
+    "edit": "Edytuj pracownika",
     "addSuccessful": "Pracownik został dodany",
     "addError": "Pracownik nie został dodany",
     "deleteConfirmation": "Czy na pewno chcesz usunąć tego pracownika?",
@@ -103,6 +108,8 @@
   },
   "student": {
     "add": "Dodaj studenta",
+    "save": "Zapisz studenta",
+    "edit": "Edytuj studenta",
     "addSuccessful": "Student został dodany",
     "addError": "Student nie został dodany",
     "deleteConfirmation": "Czy na pewno chcesz usunąć tego studenta?",
@@ -118,42 +125,53 @@
   },
   "faculty": {
     "updateSuccessful": "Wydział został zaktualizowany",
+    "updateError": "Wydział nie został zaktualizowany",
     "addSuccessful": "Wydział został dodany",
+    "addError": "Wydział nie został dodany",
     "deleteSuccessful": "Wydział został usunięty",
     "deleteError": "Wydział nie może zostać usunięty!",
     "add": "Dodaj wydział",
-    "deleteConfirmation": "Czy na pewno chcesz usunąć ten wydział?"
+    "save": "Zapisz wydział",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten wydział?",
+    "goodAbbrFormat": "Poprawny format: \"W\", dwie cyfry, opcjonalnie jedna wielka litera"
   },
   "field": {
     "deleteSuccessful": "Kierunek został usunięty",
     "deleteError": "Kierunek nie może zostać usunięty!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten kierunek?",
     "add": "Dodaj kierunek",
+    "save": "Zapisz kierunek",
     "addSuccessful": "Kierunek został dodany",
     "addError": "Kierunek nie został dodany",
     "updateSuccessful": "Kierunek został zaktualizowany",
-    "updateError": "Kierunek nie został zaktualizowany"
+    "updateError": "Kierunek nie został zaktualizowany",
+    "goodAbbrFormat": "Poprawny format: trzy wielkie litery"
   },
   "program": {
     "deleteSuccessful": "Program studiów został usunięty",
     "deleteError": "Program studiów nie może zostać usunięty!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten program studiów?",
     "add": "Dodaj program studiów",
+    "save": "Zapisz program studiów",
     "addSuccessful": "Program studiów został dodany",
     "addError": "Program studiów nie został dodany",
     "updateSuccessful": "Program studiów został zaktualizowany",
     "updateError": "Program studiów nie został zaktualizowany",
-    "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania."
+    "cycleRequired": "Program musi mieć przypisany conajmniej jeden cykl nauczania.",
+    "nameExists": "Podana nazwa programu już istnieje!",
+    "goodNameFormat": "Poprawny format: skrót wydziału - skrót kierunku - skrót specjalności - charakterystyka np. W04-INAP-CCSA-OSME3"
   },
   "specialization": {
     "deleteSuccessful": "Specjalność została usunięta",
     "deleteError": "Specjalność nie może zostać usunięta!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć tę specjalność?",
     "add": "Dodaj specjalność",
+    "save": "Zapisz specjalność",
     "addSuccessful": "Specjalność została dodana",
     "addError": "Specjalność nie została dodana",
     "updateSuccessful": "Specjalność została zaktualizowana",
-    "updateError": "Specjalność nie została zaktualizowana"
+    "updateError": "Specjalność nie została zaktualizowana",
+    "goodAbbrFormat": "Poprawny format: trzy wielkie litery"
   },
   "reservation": {
     "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",
@@ -179,10 +197,12 @@
     "readyForApproval": "Prześlij do akceptacji"
   },
   "uploadFiles": {
+    "fileName": "Nazwa pliku źródłowego",
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",
     "tooBigFileError": "Zbyt duży rozmiar pliku {fileName} - jego rozmiar: {fileSize} MB",
     "filesNotSentError": "Nie udało się przesłać plików",
-    "attach": "Załącz pliki",
+    "attachStudent": "Załącz pliki z danymi studentów",
+    "attachEmployee": "Załącz pliki z danymi pracowników",
     "instruction": "Przeciągnij i upuść, lub kliknij aby wybrać",
     "chosenFiles": "Wybrane pliki",
     "sendFiles": "Prześlij pliki",
@@ -200,7 +220,9 @@
     "wrongSubunits": "Niepoprawne podjednostki",
     "wrongPositions": "Niepoprawne stanowiska",
     "wrongPhoneNumbers": "Niepoprawne numery telefonów",
-    "wrongEmails": "Niepoprawne adresy email"
+    "wrongEmails": "Niepoprawne adresy email",
+    "invalidData": "Brakujące dane w systemie",
+    "recordsSaved": "Liczba zapisanych rekordów: "
   },
   "login": {
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",

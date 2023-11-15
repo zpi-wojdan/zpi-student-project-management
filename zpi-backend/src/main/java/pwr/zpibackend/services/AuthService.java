@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Student;
 
@@ -18,7 +19,7 @@ public class AuthService {
     private final StudentService studentService;
     private final EmployeeService employeeService;
 
-    public Object getUserDetails(String email) throws EmployeeAndStudentWithTheSameEmailException {
+    public Object getUserDetails(String email) {
         Employee employee = null;
         Student student = null;
 
@@ -49,7 +50,7 @@ public class AuthService {
         } else if (student != null) {
             return student;
         } else {
-            throw new NoSuchElementException("User with email: " + email + " not found");
+            throw new NotFoundException("User with email: " + email + " not found");
         }
     }
 

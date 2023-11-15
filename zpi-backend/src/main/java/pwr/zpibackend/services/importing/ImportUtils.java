@@ -24,11 +24,11 @@ public class ImportUtils {
         return columnMap;
     }
 
-    private static String cleanString(String str) {
+    static String cleanString(String str) {
         return str.replace("\n", "").replace("\r", "");
     }
 
-    private static String capitalizeString(String surname) {
+    static String capitalizeString(String surname) {
         if (surname != null && !surname.isEmpty()) {
             String[] words = surname.split("-");
             for (int i = 0; i < words.length; i++) {
@@ -40,7 +40,7 @@ public class ImportUtils {
         }
     }
 
-    private static Object numericToObject(Cell cell){
+    static Object numericToObject(Cell cell){
         if (HSSFDateUtil.isCellDateFormatted(cell)){
             return formatDate.format(cell.getDateCellValue());
         }
@@ -49,24 +49,26 @@ public class ImportUtils {
         }
     }
 
-    public static Object cellToObject(Cell cell){
-        if (cell == null){
+    public static Object cellToObject(Cell cell) {
+        if (cell == null) {
             return "";
         }
 
         CellType type = cell.getCellType();
 
-        if (type == CellType.STRING){
+        if (type == CellType.STRING) {
             String clean = cleanString(cell.getStringCellValue());
             return capitalizeString(clean);
-        }
-        else if (type == CellType.NUMERIC){
-            if (cell.getCellStyle().getDataFormatString().contains("%")){
-                return (int)cell.getNumericCellValue() * 100;
+        } else if (type == CellType.NUMERIC) {
+            if (cell.getCellStyle() != null && cell.getCellStyle().getDataFormatString() != null
+                    && cell.getCellStyle().getDataFormatString().contains("%")) {
+                return cell.getNumericCellValue() * 100;
+            } else if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                return formatDate.format(cell.getDateCellValue());
+            } else {
+                return (int) cell.getNumericCellValue();
             }
-            return numericToObject(cell);
-        }
-        else if (type == CellType.BOOLEAN){
+        } else if (type == CellType.BOOLEAN) {
             return cell.getBooleanCellValue();
         }
         return "";
@@ -81,7 +83,7 @@ public class ImportUtils {
     }
 
     public static boolean isValidIndex(String index) {
-        return Pattern.matches("^\\d{6}$", index);
+        return Pattern.matches("^[1-9]\\d{5}$", index);
     }
 
     public static boolean isValidSurname(String surname) {
@@ -120,7 +122,7 @@ public class ImportUtils {
     }
 
     public static boolean isValidPosition(String position) {
-        return Pattern.matches("^[0-9a-zA-ZàáâäãåčćèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĆČĖÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\s()\'-]{1,50}$", position);
+        return Pattern.matches("^[0-9a-zA-ZàáâäãåčćèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĆČĖÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðśŚćĆżŻźŹńŃłŁąĄęĘóÓ ,.\\s()'-]{1,50}$|^$", position);
     }
 
     public static boolean isValidPhoneNumber(String phone) {

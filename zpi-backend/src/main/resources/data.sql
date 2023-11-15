@@ -162,7 +162,7 @@ VALUES
     ('432106@student.pwr.edu.pl', 'Daniel', 'Nelson', '432106', (SELECT id FROM role WHERE name = 'student'), 'STU'),
     ('321007@student.pwr.edu.pl', 'Sophia', 'Wells', '321007', (SELECT id FROM role WHERE name = 'student'), 'STU'),
     ('210908@student.pwr.edu.pl', 'William', 'Rose', '210908', (SELECT id FROM role WHERE name = 'student'), 'STU'),
-    ('998090@student.pwr.edu.pl', 'Ava', 'Chapman', '099809', (SELECT id FROM role WHERE name = 'student'), 'STU'),
+    ('998090@student.pwr.edu.pl', 'Ava', 'Chapman', '998090', (SELECT id FROM role WHERE name = 'student'), 'STU'),
     ('988710@student.pwr.edu.pl', 'Michael', 'Gilbert', '988710', (SELECT id FROM role WHERE name = 'student'), 'STU'),
     ('877611@student.pwr.edu.pl', 'Olivia', 'Thornton', '877611', (SELECT id FROM role WHERE name = 'student'), 'STU'),
     ('766512@student.pwr.edu.pl', 'Daniel', 'Malone', '766512', (SELECT id FROM role WHERE name = 'student'), 'STU'),

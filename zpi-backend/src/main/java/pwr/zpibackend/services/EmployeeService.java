@@ -38,13 +38,13 @@ public class EmployeeService {
 
     public Employee getEmployee(Long id) {
         return employeeRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Employee with id " + id + " does not exist")
+                () -> new NotFoundException("Employee with id " + id + " does not exist")
         );
     }
 
     public Employee getEmployee(String mail) {
         return employeeRepository.findByMail(mail).orElseThrow(
-                () -> new NoSuchElementException("Employee with mail " + mail + " does not exist")
+                () -> new NotFoundException("Employee with mail " + mail + " does not exist")
         );
     }
 
@@ -56,7 +56,7 @@ public class EmployeeService {
         return employeeRepository.existsByMail(mail);
     }
 
-    public Employee addEmployee(EmployeeDTO employee) throws NotFoundException, AlreadyExistsException {
+    public Employee addEmployee(EmployeeDTO employee) {
         if(employee.getRoles() == null || employee.getRoles().isEmpty())
             throw new IllegalArgumentException("Employee must have at least one role");
         if(!Pattern.matches("^[a-z0-9-]{1,50}(\\.[a-z0-9-]{1,50}){0,4}@(?:student\\.)" +
@@ -76,7 +76,11 @@ public class EmployeeService {
         return employeeRepository.save(newEmployee);
     }
 
-    public Employee updateEmployee(Long id, EmployeeDTO updatedEmployee) throws NotFoundException {
+    public Employee updateEmployee(Long id, EmployeeDTO updatedEmployee) {
+        if (employeeRepository.existsByMail(updatedEmployee.getMail()))
+            if (!(employeeRepository.findByMail(updatedEmployee.getMail()).get().getId() == id))
+                throw new AlreadyExistsException("Employee with mail " + updatedEmployee.getMail() + " already exists");
+
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Employee with id " + id + " does not exist"));
 
@@ -98,7 +102,7 @@ public class EmployeeService {
             throw new IllegalArgumentException("Title name cannot be null");
         Title title = titleRepository.findByName(titleDTO.getName()).orElse(null);
         if (title == null)
-            throw new NoSuchElementException("Title with name " + titleDTO.getName() + " does not exist");
+            throw new NotFoundException("Title with name " + titleDTO.getName() + " does not exist");
         return title;
     }
 
@@ -107,7 +111,7 @@ public class EmployeeService {
         for (RoleDTO role : roles) {
             Role newRole = roleService.getRoleByName(role.getName());
             if (newRole == null)
-                throw new NoSuchElementException("Role with name " + role.getName() + " does not exist");
+                throw new NotFoundException("Role with name " + role.getName() + " does not exist");
             if(newRole.getName().equals("student"))
                 throw new IllegalArgumentException("Employee cannot have role 'student'");
             newRoles.add(newRole);

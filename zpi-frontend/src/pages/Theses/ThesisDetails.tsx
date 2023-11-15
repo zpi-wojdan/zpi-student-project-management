@@ -35,7 +35,7 @@ const ThesisDetails: React.FC = () => {
           descriptionEN: thesisDb.descriptionEN,
           programs: thesisDb.programs,
           studyCycle: thesisDb.studyCycle,
-          num_people: thesisDb.num_people,
+          numPeople: thesisDb.numPeople,
           occupied: thesisDb.occupied,
           supervisor: thesisDb.supervisor,
           status: thesisDb.status,
@@ -159,7 +159,7 @@ const ThesisDetails: React.FC = () => {
                 ) : (
                 <p>{thesis.descriptionEN}</p>
                 )}
-            <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title +
+            <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title.name +
                 " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
             <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
                 thesis.studyCycle.name : 'N/A'}</span></p>
@@ -189,7 +189,7 @@ const ThesisDetails: React.FC = () => {
             </ul>
             <div>
               <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
-                  {thesis.occupied + "/" + thesis.num_people}</span></p>
+                  {thesis.occupied + "/" + thesis.numPeople}</span></p>
               {thesis.students.length > 0 ? (
                 <StudentTable students={thesis.students} thesis={thesis} role={"student"} />
               ) : (
