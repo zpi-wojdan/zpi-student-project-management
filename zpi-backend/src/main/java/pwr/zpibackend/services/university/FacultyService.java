@@ -54,4 +54,8 @@ public class FacultyService {
         existingFaculty.setName(faculty.getName());
         return facultyRepository.saveAndFlush(existingFaculty);
     }
+
+    public List<Faculty> getAllFacultiesOrderedByAbbreviationAsc() {
+        return facultyRepository.findAllByOrderByAbbreviationAsc();
+    }
 }

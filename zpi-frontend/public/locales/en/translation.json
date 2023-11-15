@@ -4,6 +4,7 @@
       "abbreviationExists": "Given abbreviation already exists!",
       "add": "Add",
       "addNext": "Add next",
+      "all": "All",
       "choose": "Choose",
       "delete": "Delete",
       "details": "Details",
@@ -66,7 +67,8 @@
     "home": "Home",
     "manage": "Manage",
     "myTheses": "My theses",
-    "imageAlt": "Symbol of the Wrocław University of Science and Technology"
+    "imageAlt": "Symbol of the Wrocław University of Science and Technology",
+    "reports": "Reports"
   },
   "cycle": {
     "deleteSuccessful": "Study cycle has been deleted",
@@ -239,5 +241,15 @@
   "unauthorizedPage": {
     "title": "Access denied",
     "description": "You do not have permission to access this page."
+  },
+  "reports": {
+    "reportType": "Type of report",
+    "thesisGroups": "Groups of students for the zpi project",
+    "studentsWithoutThesis": "Students without the topic of the zpi project",
+    "generate": "Generate report",
+    "generateSuccessful": "Report has been generated",
+    "generateThesisGroupsError": "Groups of students for the zpi project not found",
+    "generateStudentsWithoutThesisError": "Students without the topic of the zpi project not found",
+    "generateError": "An error occurred while generating the report"
   }
 }
