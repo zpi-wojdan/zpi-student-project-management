@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+**/application-dev.yml
 
 ### STS ###
 .apt_generated
@@ -38,3 +39,6 @@ venv/
 *.pyc
 *.pyo
 __pycache__/
+
+# Exclude application-dev.yml from git
+**/src/main/resources/application-dev.yml

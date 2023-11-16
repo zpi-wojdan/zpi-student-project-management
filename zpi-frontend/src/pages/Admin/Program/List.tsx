@@ -20,9 +20,10 @@ const ProgramList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/program')
       .then((response) => {
-        const sortedPrograms = response.data.sort((a: Program, b: Program) => a.id - b.id);
+        const sortedPrograms = response.data.sort((a: Program, b: Program) => {
+          return a.name.localeCompare(b.name);
+        });
         setPrograms(sortedPrograms);
-        console.log(programs)
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
             if (itemPerPage === 'All') {
               return true;

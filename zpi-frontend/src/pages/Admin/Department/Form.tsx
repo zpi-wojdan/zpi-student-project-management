@@ -160,7 +160,7 @@ const DepartmentForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {department ? t('general.management.save') : t('general.management.add')}
+            {department ? t('department.save') : t('department.add')}
           </button>
         </div>
         <div className="mb-3">

@@ -67,6 +67,8 @@ const FacultyForm: React.FC = () => {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
+              navigate("/faculties")
+              toast.error(t("faculty.updateSuccessful"));
             }
           });
       } else {
@@ -89,6 +91,8 @@ const FacultyForm: React.FC = () => {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
+              navigate("/faculties")
+              toast.error(t("faculty.updateSuccessful"));
             }
           });
       }
@@ -133,7 +137,7 @@ const FacultyForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {faculty ? t('general.management.save') : t('general.management.add')}
+            {faculty ? t('faculty.save') : t('faculty.add')}
           </button>
         </div>
         <div className="mb-3">

@@ -53,7 +53,6 @@ const SpecializationForm: React.FC = () => {
 
     if (validateForm()) {
       if (specialization) {
-        console.log(formData)
         api.put(`http://localhost:8080/specialization/${specializationId}`, formData)
           .then(() => {
             navigate("/specializations")
@@ -77,7 +76,6 @@ const SpecializationForm: React.FC = () => {
             }
           });
       } else {
-        console.log(formData)
         api.post('http://localhost:8080/specialization', formData)
           .then(() => {
             navigate("/specializations")
@@ -186,7 +184,7 @@ const SpecializationForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {specialization ? t('general.management.save') : t('general.management.add')}
+            {specialization ? t('specialization.save') : t('specialization.add')}
           </button>
         </div>
         <div className="mb-3">

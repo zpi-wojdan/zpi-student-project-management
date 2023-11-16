@@ -65,7 +65,6 @@ const StudyFieldForm: React.FC = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log(formData);
       if (studyField) {
         api.put(`http://localhost:8080/studyfield/${fieldId}`, formData)
           .then(() => {
@@ -160,7 +159,7 @@ const StudyFieldForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {studyField ? t('general.management.save') : t('general.management.add')}
+            {studyField ? t('field.save') : t('field.add')}
           </button>
         </div>
         <div className="mb-3">

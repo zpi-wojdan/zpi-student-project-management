@@ -1,1 +1,3 @@
 .DS_Store
+zpi-backend/src/main/resources/application-dev.yml
+zpi-backend/src/main/resources/images/logo.png

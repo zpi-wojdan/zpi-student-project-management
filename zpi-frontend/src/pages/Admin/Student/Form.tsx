@@ -26,7 +26,7 @@ const StudentForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const student = location.state?.student;
-  const statusOptions = ['STU', 'Inny/Other'];
+  const statusOptions = ['STU', 'SKR', 'ABS-KS', 'ABS-PD', 'DYP'];
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
@@ -197,7 +197,6 @@ const StudentForm: React.FC = () => {
     api.get('http://localhost:8080/program')
       .then((response) => {
         setAvailablePrograms(response.data);
-        console.log(availablePrograms)
       })
       .catch((error) => {
         console.error(error)
@@ -243,7 +242,7 @@ const StudentForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {student ? t('general.management.save') : t('general.management.add')}
+            {student ? t('student.save') : t('student.add')}
           </button>
         </div>
         <div className="mb-3">

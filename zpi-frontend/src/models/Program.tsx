@@ -16,6 +16,6 @@ export type ProgramDTO = {
   name: string;
   studyFieldAbbr: string;
   specializationAbbr: string;
-  studyCyclesId: number[];
+  studyCycleIds: number[];
   facultyId: number;
 }

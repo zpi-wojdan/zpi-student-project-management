@@ -116,12 +116,13 @@ const EmployeeForm: React.FC = () => {
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
     const errorRequireText = t('general.management.fieldIsRequired');
+    const regexPattern = /^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(pwr\.edu\.pl|pwr\.wroc\.pl)$/
 
     if (!formData.mail) {
       newErrors.mail = errorRequireText;
       newErrorsKeys.mail = "general.management.fieldIsRequired"
       isValid = false;
-    } else if (!/.+@pwr\.edu\.pl$/.test(formData.mail)) {
+    } else if (!regexPattern.test(formData.mail)) {
       newErrors.mail = t('general.management.mailMustBePwr');
       newErrorsKeys.mail = "general.management.mailMustBePwr"
       isValid = false;
@@ -241,7 +242,7 @@ const EmployeeForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {employee ? t('general.management.save') : t('general.management.add')}
+            {employee ? t('employee.save') : t('employee.add')}
           </button>
         </div>
         <div className="mb-3">
