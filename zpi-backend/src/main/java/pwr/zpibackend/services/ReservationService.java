@@ -112,7 +112,7 @@ public class ReservationService {
                                                 thesis.setLeader(null);
                                             });
                                 }
-                                thesis.setOccupied(thesis.getOccupied() - 1);
+                                thesis.setOccupied(Math.min(thesis.getOccupied() - 1, 0));
                                 if (thesis.getOccupied() == 0) {
                                     thesis.setLeader(null);
                                 }
@@ -123,16 +123,17 @@ public class ReservationService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    @Scheduled(cron = "0 0 3 1/1 * ? *")            // every day at 3:00 AM
+    @Scheduled(cron = "0 0 3 * * ?")            // every day at 3:00 AM
     private void removeExpiredReservations() {
         LocalDateTime threshold = now().minusDays(1).minusHours(3); // 1 day and 3 hours ago
         reservationRepository.findAll().stream()
+                .filter(reservation -> !reservation.isConfirmedByLeader() || !reservation.isConfirmedByStudent())
                 .filter(reservation -> reservation.getReservationDate().isBefore(threshold))
                 .forEach(reservation -> {
                     reservationRepository.delete(reservation);
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
-                                thesis.setOccupied(thesis.getOccupied() - 1);
+                                thesis.setOccupied(Math.min(thesis.getOccupied() - 1, 0));
                                 if (thesis.getOccupied() == 0) {
                                     thesis.setLeader(null);
                                 }
