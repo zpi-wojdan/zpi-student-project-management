@@ -38,6 +38,21 @@ public class PdfService {
     private final StudentRepository studentRepository;
     private final ReservationRepository reservationRepository;
 
+    private static final int numColumns = 4;
+    private static final float tableWidth = 100f;
+    private static final float[] columnWidths = {1.3f, 3.5f, 3.5f, 3.8f};
+    private static final float spacing = 10f;
+    private static final float padding = 5f;
+    private static final Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 18);
+    private static final Font tableHeaderFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 12,
+            Font.NORMAL, Color.WHITE);
+    private static final Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250", 12);
+    private static final Font sectionFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
+    private static final Color headerColor = WebColors.getRGBColor("#9A342D");
+    private static final String thesisGroupsReportName = "grupy_zpi";
+    private static final String studentsWithoutThesisReportName = "studenci_bez_tematu_zpi";
+
+
     public Map<String, Map<String, List<StudentInReportsDTO>>> getStudentsWithoutThesis(String facultyAbbr,
                                                                                             String studyFieldAbbr) {
         Set<Student> studentsWithConfirmedReservations = reservationRepository.findAll().stream()
@@ -198,55 +213,48 @@ public class PdfService {
 
     private void createStudentsTableHeader(PdfPTable table) {
         PdfPCell cell = new PdfPCell();
-        cell.setBackgroundColor(WebColors.getRGBColor("#9A342D"));
-        cell.setPaddingBottom(5);
+        cell.setBackgroundColor(headerColor);
+        cell.setPaddingBottom(padding);
 
-        Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
-        font.setColor(Color.WHITE);
-        font.setSize(12);
-
-        cell.setPhrase(new Phrase("Indeks", font));
+        cell.setPhrase(new Phrase("Indeks", tableHeaderFont));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Imię", font));
+        cell.setPhrase(new Phrase("Imię", tableHeaderFont));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Nazwisko", font));
+        cell.setPhrase(new Phrase("Nazwisko", tableHeaderFont));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Mail", font));
+        cell.setPhrase(new Phrase("Mail", tableHeaderFont));
         table.addCell(cell);
     }
 
     private void createStudentsTable(Document document, List<StudentInReportsDTO> students)
             throws DocumentException {
-        Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250");
-        font.setSize(12);
-
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100f);
-        table.setWidths(new float[]{1.3f, 3.5f, 3.5f, 3.8f});
-        table.setSpacingBefore(10);
+        PdfPTable table = new PdfPTable(numColumns);
+        table.setWidthPercentage(tableWidth);
+        table.setWidths(columnWidths);
+        table.setSpacingBefore(spacing);
 
         createStudentsTableHeader(table);
 
         for (StudentInReportsDTO student : students) {
             PdfPCell cell;
 
-            cell = new PdfPCell(new Phrase(student.getIndex(), font));
-            cell.setPaddingBottom(5);
+            cell = new PdfPCell(new Phrase(student.getIndex(), dataFont));
+            cell.setPaddingBottom(padding);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(student.getName(), font));
-            cell.setPaddingBottom(5);
+            cell = new PdfPCell(new Phrase(student.getName(), dataFont));
+            cell.setPaddingBottom(padding);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(student.getSurname(), font));
-            cell.setPaddingBottom(5);
+            cell = new PdfPCell(new Phrase(student.getSurname(), dataFont));
+            cell.setPaddingBottom(padding);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(student.getMail(), font));
-            cell.setPaddingBottom(5);
+            cell = new PdfPCell(new Phrase(student.getMail(), dataFont));
+            cell.setPaddingBottom(padding);
             table.addCell(cell);
         }
 
@@ -258,8 +266,7 @@ public class PdfService {
             studentsWithoutThesis, Document document) {
         for (Map.Entry<String, Map<String, List<StudentInReportsDTO>>> facultyEntry : studentsWithoutThesis.entrySet()) {
             for (Map.Entry<String, List<StudentInReportsDTO>> studyFieldEntry : facultyEntry.getValue().entrySet()) {
-                Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(),
-                        FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250"));
+                Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(), sectionFont);
                 document.add(p);
 
                 createStudentsTable(document, studyFieldEntry.getValue());
@@ -276,15 +283,13 @@ public class PdfService {
         if (studentsWithoutThesis.isEmpty())
             return false;
         else {
-            setResponseHeaders(response, "studenci_bez_tematu_zpi", facultyAbbr, studyFieldAbbr);
+            setResponseHeaders(response, studentsWithoutThesisReportName, facultyAbbr, studyFieldAbbr);
             Document document = new Document(PageSize.A4);
             PdfWriter.getInstance(document, response.getOutputStream());
 
             document.open();
-            Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
-            font.setSize(18);
 
-            Paragraph p = new Paragraph("Lista studentów bez tematu projektu zpi", font);
+            Paragraph p = new Paragraph("Lista studentów bez tematu projektu zpi", titleFont);
             p.setAlignment(Paragraph.ALIGN_CENTER);
 
             document.add(p);
@@ -300,20 +305,16 @@ public class PdfService {
                                                         studentsWithoutThesis, Document document) {
         for (Map.Entry<String, Map<String, List<ThesisGroupDTO>>> facultyEntry : studentsWithoutThesis.entrySet()) {
             for (Map.Entry<String, List<ThesisGroupDTO>> studyFieldEntry : facultyEntry.getValue().entrySet()) {
-                Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(),
-                        FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250"));
+                Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(), sectionFont);
                 document.add(p);
 
-                Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250");
-                font.setSize(12);
-
                 for (ThesisGroupDTO thesisGroup : studyFieldEntry.getValue()) {
-                    p = new Paragraph("Temat: " + thesisGroup.getThesisNamePL(), font);
+                    p = new Paragraph("Temat: " + thesisGroup.getThesisNamePL(), dataFont);
                     document.add(p);
 
                     p = new Paragraph("Prowadzący: " + thesisGroup.getSupervisor().getTitle() + " " +
                             thesisGroup.getSupervisor().getName() + " " + thesisGroup.getSupervisor().getSurname() +
-                            " (" + thesisGroup.getSupervisor().getMail() + ")", font);
+                            " (" + thesisGroup.getSupervisor().getMail() + ")", dataFont);
                     document.add(p);
 
                     createStudentsTable(document, thesisGroup.getStudents());
@@ -330,16 +331,14 @@ public class PdfService {
         if (getThesisGroups.isEmpty())
             return false;
         else {
-            setResponseHeaders(response, "grupy_zpi", facultyAbbr, studyFieldAbbr);
+            setResponseHeaders(response, thesisGroupsReportName, facultyAbbr, studyFieldAbbr);
             Document document = new Document(PageSize.A4);
             PdfWriter.getInstance(document, response.getOutputStream());
 
             document.open();
-            Font font = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
-            font.setSize(18);
 
             Paragraph p = new Paragraph("Lista grup studentów wraz z przypisanymi prowadzącymi" +
-                    "\ni tematem projektu zpi", font);
+                    "\ni tematem projektu zpi", titleFont);
             p.setAlignment(Paragraph.ALIGN_CENTER);
 
             document.add(p);
