@@ -1,10 +1,9 @@
-package pwr.zpibackend.models.university;
+package pwr.zpibackend.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.models.user.Employee;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,23 +11,27 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "title")
-public class Title {
+@Entity
+@Table(name = "role")
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false, unique = true)
+    @Column(name = "id")
+    private long Id;
+    @Column(nullable = false)
     private String name;
-    @JoinColumn(name = "title")
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role")
     @JsonIgnore
-    List<Employee> employees;
+    private List<Student> students;
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
+    private List<Employee> employees;
 
-    public Title(Long id, String name) {
-        this.id = id;
+    public Role(long id, String name) {
+        Id = id;
         this.name = name;
     }
-    public Title(String name) {
+    public Role(String name) {
         this.name = name;
     }
 }

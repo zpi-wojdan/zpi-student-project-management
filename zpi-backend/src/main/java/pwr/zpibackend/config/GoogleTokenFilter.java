@@ -9,11 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.models.Student;
-import pwr.zpibackend.services.EmployeeService;
-import pwr.zpibackend.services.StudentService;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.StudentService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

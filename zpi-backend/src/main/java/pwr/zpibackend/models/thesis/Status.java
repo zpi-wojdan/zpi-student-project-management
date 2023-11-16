@@ -1,10 +1,9 @@
-package pwr.zpibackend.models.university;
+package pwr.zpibackend.models.thesis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.models.user.Employee;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,23 +11,28 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "title")
-public class Title {
+@Entity
+@Table(name = "status")
+public class Status {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false, unique = true)
-    private String name;
-    @JoinColumn(name = "title")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonIgnore
-    List<Employee> employees;
+    @Column(name = "id")
+    private long Id;
 
-    public Title(Long id, String name) {
-        this.id = id;
+    @Column(nullable = false)
+    private String name;
+
+    @OneToMany(mappedBy = "status")
+    @JsonIgnore
+    private List<Thesis> theses;
+
+    public Status(long id, String name) {
+        Id = id;
         this.name = name;
     }
-    public Title(String name) {
+
+    public Status(String name) {
         this.name = name;
     }
 }
