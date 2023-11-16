@@ -1,15 +1,13 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
-import pwr.zpibackend.services.AuthService;
+import pwr.zpibackend.services.user.AuthService;
 
 @RestController
 @AllArgsConstructor

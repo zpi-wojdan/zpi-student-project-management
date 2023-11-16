@@ -1,4 +1,4 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -6,10 +6,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Student;
-
-import java.util.NoSuchElementException;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Student;
 
 @Service
 @AllArgsConstructor

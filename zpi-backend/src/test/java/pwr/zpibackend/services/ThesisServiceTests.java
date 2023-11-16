@@ -4,14 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.Thesis;
-import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.repositories.EmployeeRepository;
+import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
 import java.util.ArrayList;

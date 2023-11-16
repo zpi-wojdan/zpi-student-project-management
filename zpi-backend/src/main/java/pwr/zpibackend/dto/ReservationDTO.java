@@ -3,7 +3,7 @@ package pwr.zpibackend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.user.Student;
 
 import java.time.LocalDateTime;
 

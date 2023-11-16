@@ -1,16 +1,16 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pwr.zpibackend.dto.EmployeeDTO;
+import pwr.zpibackend.dto.user.EmployeeDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.services.EmployeeService;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.services.user.EmployeeService;
 
 import java.util.List;
 

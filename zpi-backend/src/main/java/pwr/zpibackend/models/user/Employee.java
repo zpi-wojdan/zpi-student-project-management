@@ -1,12 +1,13 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.user;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pwr.zpibackend.models.Comment;
 import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.models.university.Title;
 
@@ -40,5 +41,9 @@ public class Employee {
     @JoinColumn(name = "title", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Title title;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Comment> comments;
 
 }

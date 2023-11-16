@@ -1,18 +1,18 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pwr.zpibackend.dto.StudentDTO;
+import pwr.zpibackend.dto.user.StudentDTO;
 import pwr.zpibackend.dto.university.StudentProgramCycleDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
-import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.models.university.StudentProgramCycleId;
 import pwr.zpibackend.models.university.StudyCycle;
-import pwr.zpibackend.repositories.StudentRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudentProgramCycleRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;

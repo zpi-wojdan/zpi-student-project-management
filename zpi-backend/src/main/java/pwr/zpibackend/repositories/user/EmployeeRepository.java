@@ -1,8 +1,8 @@
-package pwr.zpibackend.repositories;
+package pwr.zpibackend.repositories.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.user.Employee;
 
 import java.util.List;
 import java.util.Optional;

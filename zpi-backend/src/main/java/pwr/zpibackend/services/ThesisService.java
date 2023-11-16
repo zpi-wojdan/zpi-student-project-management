@@ -3,13 +3,12 @@ package pwr.zpibackend.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.Thesis;
-import pwr.zpibackend.repositories.EmployeeRepository;
+import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

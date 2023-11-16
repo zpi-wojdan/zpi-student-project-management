@@ -1,16 +1,13 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import pwr.zpibackend.dto.StudentDTO;
-import pwr.zpibackend.exceptions.AlreadyExistsException;
-import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Student;
-import pwr.zpibackend.services.StudentService;
+import pwr.zpibackend.dto.user.StudentDTO;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.services.user.StudentService;
 
 import java.util.List;
 

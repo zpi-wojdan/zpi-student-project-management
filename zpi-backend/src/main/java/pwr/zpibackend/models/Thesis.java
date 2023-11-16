@@ -5,10 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CreationTimestamp;
+
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudyCycle;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Student;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -55,4 +60,13 @@ public class Thesis {
     @JoinColumn(name = "thesis_id")
     @OneToMany(cascade = CascadeType.ALL)
     private List<Reservation> reservations;
+    @CreationTimestamp
+    @Column(name = "creation_date", updatable = false)
+    private LocalDateTime creationTime;
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    @JoinColumn(name = "comment_id", referencedColumnName = "id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis")
+    private List<Comment> comments;
 }

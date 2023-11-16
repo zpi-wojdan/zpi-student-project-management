@@ -1,4 +1,4 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.dto.RoleDTO;
-import pwr.zpibackend.services.RoleService;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.dto.user.RoleDTO;
+import pwr.zpibackend.services.user.RoleService;
 
 import java.util.List;
 

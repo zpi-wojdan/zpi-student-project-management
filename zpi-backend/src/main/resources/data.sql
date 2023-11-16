@@ -119,11 +119,12 @@ VALUES
 
 INSERT INTO status (name)
 VALUES
-    ('OPEN'),
-    ('CLOSED'),
-    ('IN_PROGRESS'),
-    ('ACCEPTED'),
-    ('REJECTED');
+    ('Draft'),
+    ('Pending approval'),
+    ('Rejected'),
+    ('Approved'),
+    ('Assigned'),
+    ('Closed');
 
 INSERT INTO role (name)
 VALUES

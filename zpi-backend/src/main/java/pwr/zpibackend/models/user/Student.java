@@ -1,16 +1,11 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.user;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudentProgramCycle;
-import pwr.zpibackend.models.university.StudyCycle;
 
 import java.util.*;
 

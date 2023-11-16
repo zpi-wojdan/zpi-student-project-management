@@ -518,3 +518,14 @@ databaseChangeLog:
                     referencedTableName: role
                     referencedColumnNames: id
                     nullable: false
+  - changeSet:
+      id: updating_thesis_and_adding_comments
+      author: Kuba
+      changes:
+        - addColumn:
+            tableName: thesis
+            columns:
+              - column:
+                  name: creation_time
+                  type: TIMESTAMP
+                  valueComputed: now()

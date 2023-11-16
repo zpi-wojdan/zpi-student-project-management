@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.models.Employee;
+import pwr.zpibackend.models.user.Employee;
 
 import javax.persistence.*;
 import java.util.List;

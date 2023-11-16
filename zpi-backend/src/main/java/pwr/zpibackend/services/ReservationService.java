@@ -7,10 +7,10 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.Reservation;
 import pwr.zpibackend.dto.ReservationDTO;
-import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.Thesis;
 import pwr.zpibackend.repositories.ReservationRepository;
-import pwr.zpibackend.repositories.StudentRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
 import java.util.List;

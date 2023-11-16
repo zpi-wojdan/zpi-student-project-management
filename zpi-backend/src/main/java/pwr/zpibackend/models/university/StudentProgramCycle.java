@@ -1,9 +1,8 @@
 package pwr.zpibackend.models.university;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.user.Student;
 
 import javax.persistence.*;
 

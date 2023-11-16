@@ -1,8 +1,6 @@
 package pwr.zpibackend.services.importing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -11,14 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.models.university.StudentProgramCycleId;
 import pwr.zpibackend.models.university.StudyCycle;
-import pwr.zpibackend.repositories.RoleRepository;
-import pwr.zpibackend.repositories.StudentRepository;
+import pwr.zpibackend.repositories.user.RoleRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 

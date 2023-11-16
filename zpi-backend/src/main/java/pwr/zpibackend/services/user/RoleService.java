@@ -1,16 +1,15 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.dto.RoleDTO;
-import pwr.zpibackend.repositories.RoleRepository;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.dto.user.RoleDTO;
+import pwr.zpibackend.repositories.user.RoleRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
