@@ -188,7 +188,6 @@ const Reports = () => {
                             });
                         }}
                         className="form-control"
-                        disabled={formData.reportType === ""}
                     >
                         <option value="">{t('general.management.choose')}</option>
                         {availableFaculties.map((faculty) => (
