@@ -5,4 +5,4 @@ export type Role = {
 
 export type  RoleDTO = {
     name: string;
-  }
+}

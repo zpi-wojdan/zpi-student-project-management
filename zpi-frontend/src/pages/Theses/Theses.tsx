@@ -87,7 +87,12 @@ const ThesesTable: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-end  align-items-center'>
+      <div className='d-flex justify-content-between  align-items-center'>
+      <div >
+          <button className="custom-button" onClick={() =>{navigate('/theses/add')}}>
+              {t('thesis.add')}
+          </button>
+      </div>
       {ITEMS_PER_PAGE.length > 1 && (
         <div className="d-flex justify-content-between">
           <div className="d-flex align-items-center">

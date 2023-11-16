@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
 import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
 import useAuth from "../../auth/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -17,11 +17,14 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const descriptionPLRef = useRef<HTMLTextAreaElement | null>(null);
+  const descriptionENRef = useRef<HTMLTextAreaElement | null>(null);
   
   const thesis = location.state?.thesis as Thesis;
   const [formData, setFormData] = useState<ThesisDTO>({
@@ -32,10 +35,10 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     num_people: 0,
     supervisor: null,
     // programs: null,
-    studyFieldAbbr: '',
-    specializationAbbr: '',
-    studyCycleName: '',
-    statusName: '',
+    studyField: '',
+    specialization: '',
+    studyCycle: '',
+    status: '',
     occupied: 0,
   });
 
@@ -46,9 +49,11 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
   const [studyCycles, setStudyCycles] = useState<StudyCycle[]>([]);
   const [specializations, setSpecializations] = useState<Specialization[]>([]);
   const [studyFields, setStudyFields] = useState<StudyField[]>([]);
-  const [supervisors, setSupervisors] = useState<Employee[]>([]);
 
-  const [suggestions, setSuggestions] = useState<SupervisorData[]>([]);
+  const [supervisors, setSupervisors] = useState<Employee[]>([]);
+  const [suggestions, setSuggestions] = useState<Employee[]>([]);
+  const [mailAbbrev, setMailAbbrev] = useState<string>('');
+  const [selectedSupervisor, setSelectedSupervisor] = useState<Employee | null>(null);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -69,64 +74,85 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           handleSignOut(navigate);
         }
       });
+  }, []);
 
-      api.get('http://localhost:8080/studycycle')
-      .then((response) => {
-        setStudyCycles(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status ===403){
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-
-      api.get('http://localhost:8080/specialization')
-      .then((response) => {
-        setSpecializations(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status ===403){
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-
-      api.get('http://localhost:8080/studyfield')
-      .then((response) => {
-        setStudyFields(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status ===403){
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-      
-      api.get('http://localhost:8080/employee')
-      .then((response) => {
-        setSupervisors(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status ===403){
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-
-      if (thesis){
-        setFormData((prevFormData) => {
-          return {
-            ...prevFormData,
-            statusName: statuses.find((status) => status.id === thesis.status.id)?.name || '',
-            studyCycleName: studyCycles.find((cycle) => cycle.id === thesis.studyCycle?.id)?.name || '',
-            // specializationAbbr: specializations.find((spec) => spec.id === thesis.specialization?.id)?.name || '',
-            // studyFieldAbbr = studyFields.find((field) => field.id === thesis.s)
-            supervisorMail: supervisors.find((supervisor) => supervisor.mail === thesis.supervisor.mail) || '',
-            // studyCyclesId: thesis.studyCycles.map((cycle) => cycle.id),
-          }
-        })
+  useEffect(() => {
+    api.get('http://localhost:8080/studycycle')
+    .then((response) => {
+      setStudyCycles(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
       }
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/specialization')
+    .then((response) => {
+      setSpecializations(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/studyfield')
+    .then((response) => {
+      setStudyFields(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/employee')
+    .then((response) => {
+      setSupervisors(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  });
+
+  // useEffect(() => {
+  //     if (thesis){
+  //       setFormData((prevFormData) => {
+  //         return {
+  //           ...prevFormData,
+  //           statusName: statuses.find((status) => status.id === thesis.status.id)?.name || '',
+  //           studyCycleName: studyCycles.find((cycle) => cycle.id === thesis.studyCycle?.id)?.name || '',
+  //           // specializationAbbr: specializations.find((spec) => spec.id === thesis.specialization?.id)?.name || '',
+  //           // studyFieldAbbr = studyFields.find((field) => field.id === thesis.s)
+  //           supervisorMail: supervisors.find((supervisor) => supervisor.mail === thesis.supervisor.mail) || '',
+  //           // studyCyclesId: thesis.studyCycles.map((cycle) => cycle.id),
+  //         }
+  //       })
+  //     }
+  // }, []);
+
+  useEffect(() => {
+    if (thesis){
+      setFormData((prev) => {
+        return{
+          ...prev,
+          num_people: thesis.num_people,
+        }
+      });
+    }
   }, []);
 
   const validateForm = () => {
@@ -167,6 +193,15 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     return isValid;
   };
 
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const abbrev = e.target.value;
+    setMailAbbrev(abbrev);
+    const filteredSupervisors = supervisors.filter(
+      (supervisor) =>
+        supervisor.mail.includes(abbrev.toLowerCase())
+    );
+    setSuggestions(filteredSupervisors);
+  };
 
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -307,24 +342,24 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     setSuggestions([]); 
   };
 
-  const handleSupervisorInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+  // const handleSupervisorInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = event.target;
+  //   setFormState({
+  //     ...formState,
+  //     [name]: value,
+  //   });
   
-    if (name === 'supervisorMail') {
-      fetchMatchingEmployees(value).then((matchingEmployees) => {
-        if (matchingEmployees) {
-          setSuggestions(matchingEmployees);
-        } else {
-          setSuggestions([]);
-          console.log("Supervisor does not exist in the database");
-        }
-      });
-    }
-  };
+  //   if (name === 'supervisorMail') {
+  //     fetchMatchingEmployees(value).then((matchingEmployees) => {
+  //       if (matchingEmployees) {
+  //         setSuggestions(matchingEmployees);
+  //       } else {
+  //         setSuggestions([]);
+  //         console.log("Supervisor does not exist in the database");
+  //       }
+  //     });
+  //   }
+  // };
   
   const handleSubmit = async (event: React.FormEvent, status: string) => {
     event.preventDefault();
@@ -368,9 +403,15 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
     }
   };
 
+  const handleSupervisorSelect = (supervisor: Employee) => {
+    setSelectedSupervisor(supervisor);
+    setMailAbbrev('');
+    setSuggestions([]);
+  };
+
   return (
-    <div className='page-margin'>
-      <form onSubmit={(event) => handleSubmit(event, formState.status)} className="form">
+    <div>
+      <form onSubmit={(event) => handleSubmit(event, formState.status)} className="form mb-5">
 
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
@@ -383,59 +424,73 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
 
 
       <div className="mb-3">
-        <label htmlFor="namePL">{t('general.title')} (PL):</label>
+        <label className="bold" htmlFor="namePL">
+          {t('general.title')} (PL):
+        </label>
         <textarea
           className="form-control resizable-input"
           id="namePL"
           name="namePL"
-          value={formState.namePL}
+          value={formData.namePL}
           onChange={(event) => handleTextAreaChange(event, namePLRef)}
-          maxLength={200}
+          maxLength={1000}
           ref={namePLRef}
         />
         </div>
+        {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
 
         <div className="mb-3">
-          <label htmlFor="nameEN">{t('general.title')} (EN):</label>
+          <label className="bold" htmlFor="nameEN">
+            {t('general.title')} (EN):
+          </label>
           <textarea
             className="form-control resizable-input"
             id="nameEN"
             name="nameEN"
-            value={formState.nameEN}
+            value={formData.nameEN}
             onChange={(event) => handleTextAreaChange(event, nameENRef)}
             maxLength={200}
             ref={nameENRef}
           />
         </div>
+        {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
 
         <div className="mb-3">
-          <label htmlFor="descriptionPL">{t('general.university.description')} (PL):</label>
+          <label className="bold" htmlFor="descriptionPL">
+            {t('general.university.description')} (PL):
+          </label>
           <textarea
             className="form-control resizable-input"
             id="descriptionPL"
             name="descriptionPL"
-            value={formState.descriptionPL}
-            onChange={(event) => handleTextAreaChange(event, descriptionRef)}
+            value={formData.descriptionPL}
+            onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
             maxLength={1000}
-            ref={descriptionRef}
+            ref={descriptionPLRef}
           />
         </div>
+        {errors.descriptionPL && <div className="text-danger">{errors.descriptionPL}</div>}
 
         <div className="mb-3">
-          <label htmlFor="descriptionEN">{t('general.university.description')} (EN):</label>
+          <label className="bold" htmlFor="descriptionEN">
+            {t('general.university.description')} (EN):
+          </label>
           <textarea
               className="form-control resizable-input"
               id="descriptionEN"
               name="descriptionEN"
-              value={formState.descriptionEN}
-              onChange={(event) => handleTextAreaChange(event, descriptionRef)}
+              value={formData.descriptionEN}
+              onChange={(event) => handleTextAreaChange(event, descriptionENRef)}
               maxLength={1000}
-              ref={descriptionRef}
+              ref={descriptionENRef}
           />
         </div>
+        {errors.descriptionEN && <div className="text-danger">{errors.descriptionEN}</div>}
 
         <div className="mb-3">
-          <label htmlFor="num_people">{t('thesis.peopleLimit')}:</label>
+          <label className="bold" htmlFor="num_people">
+            {t('thesis.peopleLimit')}:
+          </label>
           <input
             type="number"
             className="form-control"
@@ -447,11 +502,47 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             max={6}
           />
         </div>
+        {errors.num_people && <div className="text-danger">{errors.num_people}</div>}
 
         <div className="mb-3">
-          <label htmlFor="supervisor">{t('general.people.supervisor')}:</label>
+          <label className="bold" htmlFor="supervisor">
+            {t('general.people.supervisor')}:
+          </label>
+          <input 
+            type="text" 
+            id="supervisor"
+            name="supervisor"
+            value={mailAbbrev} 
+            onChange={handleSearchChange}
+            className="form-control"
+            />
 
-          {role == 'employee' && (
+          {suggestions.length > 0 && (
+              <div className="form-control">
+                <select
+                  id="supervisor"
+                  name="supervisor"
+                  className="form-control"
+                  value={selectedSupervisor ? selectedSupervisor.mail : ''}
+                  onChange={(e) => {
+                    const selected = supervisors.find(
+                      (supervisor) => supervisor.mail === e.target.value
+                    );
+                    if (selected) {
+                      handleSupervisorSelect(selected);
+                    }
+                  }}
+                >
+                  <option value="">{t('general.management.choose')}</option>
+                  {suggestions.map((supervisor) => (
+                    <option key={supervisor.mail} value={supervisor.mail}>
+                      {supervisor.title.name} {supervisor.surname} {supervisor.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+          )}
+          {/* {role == 'employee' && (
             <input
               type="text"
               className="form-control"
@@ -461,8 +552,8 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
               readOnly
               disabled
           />
-          )}
-          {role == 'admin' && (
+          )} */}
+          {/* {role == 'admin' && (
             <>
               <input
                 type="text"
@@ -472,11 +563,11 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
                 value={formState.supervisorMail}
                 onChange={handleSupervisorInputChange}
                 onBlur={handleBlurSupervisor}
-            />
+            /> */}
             {/* {supervisorError && <div className="text-danger">{supervisorError}</div>} */}
-          </>
-          )}
-          {suggestions.length > 0 && (
+          {/* </>
+          )} */}
+          {/* {suggestions.length > 0 && (
             <ul className="list-group">
               {suggestions.map((employee) => (
                 <li
@@ -488,11 +579,87 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
                 </li>
               ))}
             </ul>
-          )}
-
+          )} */}
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
         </div>
+
         <div className="mb-3">
-          <label htmlFor="faculty">{t('general.university.fields')}:</label>
+          <label className="bold">{t('general.university.studyPrograms')}:</label>  
+
+          <ul>
+
+              <li key='studyCycleLi'>
+                <div className='mb-3'>
+                  <label className='bold' htmlFor='studyCycle'>
+                    {t('general.university.studyCycle')}:
+                  </label>
+                  <select
+                    id={'studyCycleSel'}
+                    name={`studyCycle`}
+                    value={formData.studyCycle}
+                    onChange={(cyc) => setFormData({ ...formData, studyCycle: cyc.target.value })}
+                    className='form-control'
+                  >
+                    <option value={-1}>{t('general.management.choose')}</option>
+                    {studyCycles.map((cyc, cycIndex) => (
+                      <option key={cycIndex} value={cyc.id}>
+                        {cyc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </li>
+
+              <li key='studyFieldsLi'>
+                <div className='mb-3'>
+                  <label className='bold' htmlFor='studyFields'>
+                    {t('general.university.field')}:
+                  </label>
+                  <select
+                    id={'studyFieldsSel'}
+                    name={`studyFields`}
+                    value={formData.studyField}
+                    onChange={(cyc) => setFormData({ ...formData, studyField: cyc.target.value })}
+                    className='form-control'
+                  >
+                    <option value={-1}>{t('general.management.choose')}</option>
+                    {studyFields.map((cyc, cycIndex) => (
+                      <option key={cycIndex} value={cyc.id}>
+                        {cyc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </li>
+
+              <li key='specializationLi'>
+                <div className='mb-3'>
+                  <label className='bold' htmlFor='specialization'>
+                    {t('general.university.specialization')}:
+                  </label>
+                  <select
+                    id={'specializationSel'}
+                    name={`specialization`}
+                    value={formData.specialization}
+                    onChange={(cyc) => setFormData({ ...formData, specialization: cyc.target.value })}
+                    className='form-control'
+                  >
+                    <option value={-1}>{t('general.management.choose')}</option>
+                    {specializations.map((cyc, cycIndex) => (
+                      <option key={cycIndex} value={cyc.id}>
+                        {cyc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </li>
+
+          </ul>
+        </div>
+        {errors.edu_cycle && <div className="text-danger">{errors.edu_cycle}</div>}
+
+        <div className="mb-3">
+          <label className="bold" htmlFor="faculty">{t('general.university.fields')}:</label>
           <input
             type="text"
             className="form-control"
@@ -502,8 +669,10 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             onChange={handleInputChange}
           />
         </div>
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+
         <div className="mb-3">
-          <label htmlFor="field">{t('general.university.specialization')}:</label>
+          <label className="bold" htmlFor="field">{t('general.university.specialization')}:</label>
           <input
             type="text"
             className="form-control"
@@ -513,84 +682,26 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
             onChange={handleInputChange}
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="edu_cycle">{t('general.university.studyCycle')}:</label>
-          <input
-            type="text"
-            className="form-control"
-            id="edu_cycle"
-            name="edu_cycle"
-            value={formState.edu_cycle}
-            onChange={handleInputChange}
-            minLength={9}
-            maxLength={11}
-          />
-        </div>
+        {errors.field && <div className="text-danger">{errors.field}</div>}
 
-        {role === 'admin' && (
-          <div className="mb-3">
-            <label htmlFor="status">{t('general.university.status')}:</label>
-            <input
-              type="text"
-              id="status"
-              name="status"
-              value={formState.status}
-              onClick={handleInputClick}
-              readOnly
-              style={{ outline: 'none' }}
-              className="form-control"
-            />
-            {showDropdown && (
-              <ul className="list-group">
-                {Object.values(StatusEnum).map((cycle, index) => (
-                  <li
-                    key={index}
-                    className="list-group-item list-group-item-hover"
-                    onClick={() => handleOptionSelect(cycle)}
-                  >
-                    {cycle}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        {role === 'employee' && (
-          <div>
-            <button 
-              type="submit" 
-              // className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
-              style={{ marginRight: '10px' }}
-              onClick={(event) => handleSubmit(event, 'To be reviewed')}
-            >
-              {t('thesis.reportThesis')}
-            </button>
-            <button 
-              type="submit" 
-              // className={`btn btn-primary ${supervisorError ? "disabled" : ""}`} 
-              onClick={(event) => handleSubmit(event, 'Draft')}
-            >
-              {t('thesis.saveDraft')}
-            </button>
-          </div>
-        )}
-
-        {role === 'admin' && (
-          <button
-          type="submit"
-          // className={`btn btn-primary ${supervisorError ? 'disabled' : ''}`}
-          style={{ marginRight: '10px' }}
-          onClick={(event) => handleSubmit(event, formState.status)}
-      >
-            {t('general.management.save')}
-      </button>
-        )}
-
-
-        {/* {supervisorError && (
-          <div className="text-danger mt-2">{supervisorError}</div>
-         )}         */}
+        <label className="bold" htmlFor="status">
+          {t('general.university.status')}:
+        </label>
+        <select
+          id="status"
+          name="status"
+          value={formData.status}
+          className="form-control"
+          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+        >
+          <option value={-1}>{t('general.management.choose')}</option>
+          {statuses.map((status) => (
+            <option key={status.id} value={status.name}>
+              {status.name}
+            </option>
+          ))}
+        </select>
+        {errors.status && <div className="text-danger">{errors.status}</div>}
       </form>
     </div>
   )
