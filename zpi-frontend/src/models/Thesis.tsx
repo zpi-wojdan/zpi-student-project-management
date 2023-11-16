@@ -43,7 +43,7 @@ export type ThesisDTO = {
   nameEN: string;
   descriptionPL: string;
   descriptionEN: string;
-  num_people: number;
+  num_people: string;
   supervisor: Employee | null;
   // programs: Program[] | null;
   studyField: string;

@@ -176,7 +176,11 @@
     "reportThesis": "Zgłoś temat",
     "saveDraft": "Zapisz wersję roboczą",
     "saveChanges": "Zapisz zmiany",
-    "readyForApproval": "Prześlij do akceptacji"
+    "readyForApproval": "Prześlij do akceptacji",
+    "addSuccessful": "Temat został dodany",
+    "addError": "Temat nie został dodany",
+    "updateSuccessful": "Temat został zaktualizowany",
+    "updateError": "Temat nie został zaktualizowany"
   },
   "uploadFiles": {
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",
