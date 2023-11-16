@@ -237,7 +237,7 @@ VALUES
     ((SELECT id FROM employee WHERE mail = 'william.rose@pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
     ((SELECT id FROM employee WHERE mail = 'ava.chapman@pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
 
-INSERT INTO Thesis (name_pl, name_en, description_pl, description_en, num_people, supervisor, cycle_id, status, creation_date, comment_id)
+INSERT INTO Thesis (name_pl, name_en, description_pl, description_en, num_people, supervisor, cycle_id, status, creation_time, comment_id)
 VALUES
     ('Mobilna aplikacja dla miłośników starych zamków', 'Mobile application for lovers of old castles', 'Opis1', 'Description1', 5, (SELECT e.id FROM Employee e WHERE e.mail = 'john.doe@pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW(), NULL),
     ('Wieloosobowa i wielopoziomowa gra komputerowa', 'Multiplayer, and multi-level computer game', 'Opis2', 'Description2', 5, (SELECT e.id FROM Employee e WHERE e.mail = 'emily.anderson@pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW(), NULL),
@@ -401,19 +401,19 @@ VALUES
 
 INSERT INTO comment (author_id, content, creation_time, thesis_id)
 VALUES
-    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'), 'This is a great idea!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków')),
-    ((SELECT id FROM employee WHERE mail = 'alice.smith@pwr.edu.pl'), 'Interesting concept. Can we discuss further?', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków')),
-    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'), 'Looking forward to the progress!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa')),
-    ((SELECT id FROM employee WHERE mail = 'emily.anderson@pwr.edu.pl'), 'I have some suggestions for improvement.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa')),
-    ((SELECT id FROM employee WHERE mail = 'william.taylor@pwr.edu.pl'), 'This simulation system is needed.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System do symulacji ruchu drogowego')),
-    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'), 'I support this project!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System do symulacji ruchu drogowego')),
-    ((SELECT id FROM employee WHERE mail = 'william.taylor@pwr.edu.pl'), 'Lets discuss the details.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym')),
-    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'), 'Great potential in this simulator.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym')),
-    ((SELECT id FROM employee WHERE mail = 'william.khan@pwr.edu.pl'), 'I am interested in working on this project.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System rozpoznawania mowy do współpracy z dowolnym programem w systemie Windows')),
-    ((SELECT id FROM employee WHERE mail = 'michael.evans@pwr.edu.pl'), 'Lets coordinate our efforts.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System do symulacji ruchu drogowego')),
-    ((SELECT id FROM employee WHERE mail = 'olivia.fisher@pwr.edu.pl'), 'Congratulations on completing the project!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający rozpoznawania obrazów')),
-    ((SELECT id FROM employee WHERE mail = 'daniel.nelson@pwr.edu.pl'), 'Well done on the garden system!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System obsługi rodzinnych ogrodów działkowych')),
-    ((SELECT id FROM employee WHERE mail = 'sophia.cooper@pwr.edu.pl'), 'Im sorry, but I think there are better ideas.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający planowanie wspólnych dojazdów z wykorzystaniem technologii Blockchain')),
-    ((SELECT id FROM employee WHERE mail = 'william.khan@pwr.edu.pl'), 'Unfortunately, this doesnt align with our goals.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający rodzica w organizacji aktywnego spędzania czasu z dzieckiem')),
-    ((SELECT id FROM employee WHERE mail = 'ava.bryant@pwr.edu.pl'), 'Great work on the IoT system!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający integrację oraz komunikację webowych i mobilnych aplikacji IoT')),
-    ((SELECT id FROM employee WHERE mail = 'sophia.cooper@pwr.edu.pl'), 'Congratulations on the simulator!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym'));
+    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl' LIMIT 1), 'This is a great idea!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'alice.smith@pwr.edu.pl'LIMIT 1), 'Interesting concept. Can we discuss further?', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'LIMIT 1), 'Looking forward to the progress!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'emily.anderson@pwr.edu.pl'LIMIT 1), 'I have some suggestions for improvement.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'william.taylor@pwr.edu.pl'LIMIT 1), 'This simulation system is needed.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System do symulacji ruchu drogowego'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'LIMIT 1), 'I support this project!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System do symulacji ruchu drogowego'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'william.taylor@pwr.edu.pl'LIMIT 1), 'Lets discuss the details.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'john.doe@pwr.edu.pl'LIMIT 1), 'Great potential in this simulator.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'william.khan@pwr.edu.pl'LIMIT 1), 'I am interested in working on this project.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System rozpoznawania mowy do współpracy z dowolnym programem w systemie Windows'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'michael.evans@pwr.edu.pl'LIMIT 1), 'Lets coordinate our efforts.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System do symulacji ruchu drogowego'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'olivia.fisher@pwr.edu.pl'LIMIT 1), 'Congratulations on completing the project!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający rozpoznawania obrazów'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'daniel.nelson@pwr.edu.pl'LIMIT 1), 'Well done on the garden system!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System obsługi rodzinnych ogrodów działkowych'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'sophia.cooper@pwr.edu.pl'LIMIT 1), 'Im sorry, but I think there are better ideas.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający planowanie wspólnych dojazdów z wykorzystaniem technologii Blockchain'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'william.khan@pwr.edu.pl'LIMIT 1), 'Unfortunately, this doesnt align with our goals.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający rodzica w organizacji aktywnego spędzania czasu z dzieckiem'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'ava.bryant@pwr.edu.pl'LIMIT 1), 'Great work on the IoT system!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający integrację oraz komunikację webowych i mobilnych aplikacji IoT'LIMIT 1)),
+    ((SELECT id FROM employee WHERE mail = 'sophia.cooper@pwr.edu.pl'LIMIT 1), 'Congratulations on the simulator!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym'LIMIT 1));

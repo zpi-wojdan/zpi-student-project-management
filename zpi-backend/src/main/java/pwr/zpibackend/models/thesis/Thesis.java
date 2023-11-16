@@ -64,7 +64,6 @@ public class Thesis {
     @CreationTimestamp
     @Column(name = "creation_date", updatable = false)
     private LocalDateTime creationTime;
-    @JoinColumn(name = "comment_id", referencedColumnName = "id")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis")
     private List<Comment> comments;
 }
