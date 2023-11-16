@@ -15,4 +15,6 @@ public interface StudentRepository extends JpaRepository<Student, Long>{
     boolean existsByMail(String mail);
 
     boolean existsByIndex(String index);
+
+    List<Student> findAllByOrderByIndexAsc();
 }

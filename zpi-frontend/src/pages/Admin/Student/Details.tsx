@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Student } from '../../../models/Student';
 import { Faculty } from '../../../models/Faculty';
 import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
@@ -15,8 +15,24 @@ const StudentDetails: React.FC = () => {
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
-  const student = location.state?.student as Student;
+  const { id } = useParams<{ id: string }>();
+  const [student, setStudent] = useState<Student>()
+
+  useEffect(() => {
+    api.get(`http://localhost:8080/student/${id}`)
+      .then((response) => {
+        console.log(response.data)
+        setStudent(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+
+  }, [id]);
 
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
@@ -45,20 +61,23 @@ const StudentDetails: React.FC = () => {
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-  const handleDeleteClick = (studentMail: string) => {
+  const handleDeleteClick = () => {
     setShowDeleteConfirmation(true);
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/student/${student.id}`)
+    api.delete(`http://localhost:8080/student/${student?.id}`)
       .then(() => {
         toast.success(t('student.deleteSuccessful'));
         navigate("/students");
       })
       .catch((error) => {
         console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
         toast.error(t('student.deleteError'));
-        navigate("/students");
       });
     setShowDeleteConfirmation(false);
   };
@@ -73,10 +92,10 @@ const StudentDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => { navigate(`/students/edit/${student.mail}`, { state: { student } }) }}>
+        <button type="button" className="custom-button" onClick={() => { navigate(`/students/edit/${student?.id}`, { state: { student } }) }}>
           {t('student.edit')}
         </button>
-        <button type="button" className="custom-button" onClick={() => handleDeleteClick(student.mail)}>
+        <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
           <i className="bi bi-trash"></i>
         </button>
         {showDeleteConfirmation && (
@@ -127,7 +146,7 @@ const StudentDetails: React.FC = () => {
                           <li>
                             <p><span className="bold">{t('general.university.specialization')} - </span>
                               <span>{studentProgramCycle.program.specialization ?
-                                studentProgramCycle.program.specialization.name : t('general.management.lack')}
+                                studentProgramCycle.program.specialization.name : t('general.management.nA')}
                               </span>
                             </p>
                           </li>

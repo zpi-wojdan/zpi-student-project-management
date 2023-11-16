@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import StudentTable from '../../components/StudentsTable';
 import { ThesisFront, Thesis } from '../../models/Thesis';
 import { Program } from '../../models/Program';
-import { Faculty } from '../../models/Faculty';
-
 import Cookies from 'js-cookie';
-import { spawn } from 'child_process';
 import { Employee } from '../../models/Employee';
 import { Student } from '../../models/Student';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
 import handleSignOut from "../../auth/Logout";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-const ThesisDetails: React.FC = () => {
+const ThesesDetails: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -47,11 +44,11 @@ const ThesisDetails: React.FC = () => {
         console.log(thesis);
       })
       .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-          }
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
       });
 
   }, [id]);
@@ -64,11 +61,11 @@ const ThesisDetails: React.FC = () => {
         console.log(programs);
       })
       .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-          }
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
       });
   }, []);
 
@@ -108,7 +105,7 @@ const ThesisDetails: React.FC = () => {
   };
 
   return (
-    <>
+    <div className='page-margin'>
       <div className='row d-flex justify-content-between'>
         <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
@@ -148,21 +145,21 @@ const ThesisDetails: React.FC = () => {
         {thesis ? (
           <div>
             <p className="bold">{t('thesis.thesisName')}:</p>
-              {i18n.language === 'pl' ? (
-                <p>{thesis.namePL}</p>
-              ) : (
-                <p>{thesis.nameEN}</p>
-              )}
+            {i18n.language === 'pl' ? (
+              <p>{thesis.namePL}</p>
+            ) : (
+              <p>{thesis.nameEN}</p>
+            )}
             <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' ? (
-                <p>{thesis.descriptionPL}</p>
-                ) : (
-                <p>{thesis.descriptionEN}</p>
-                )}
+            {i18n.language === 'pl' ? (
+              <p>{thesis.descriptionPL}</p>
+            ) : (
+              <p>{thesis.descriptionEN}</p>
+            )}
             <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title.name +
-                " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
+              " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
             <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
-                thesis.studyCycle.name : 'N/A'}</span></p>
+              thesis.studyCycle.name : 'N/A'}</span></p>
             <p className="bold">{t('general.university.studyPrograms')}:</p>
             <ul>
               {thesis.programs.map((program: Program) => (
@@ -180,7 +177,7 @@ const ThesisDetails: React.FC = () => {
                         <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
                       </li>
                       <li>
-                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.lack')}</span></p>
+                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.nA')}</span></p>
                       </li>
                     </ul>
                   )}
@@ -189,7 +186,7 @@ const ThesisDetails: React.FC = () => {
             </ul>
             <div>
               <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
-                  {thesis.occupied + "/" + thesis.numPeople}</span></p>
+                {thesis.occupied + "/" + thesis.numPeople}</span></p>
               {thesis.students.length > 0 ? (
                 <StudentTable students={thesis.students} thesis={thesis} role={"student"} />
               ) : (
@@ -201,7 +198,7 @@ const ThesisDetails: React.FC = () => {
                   className="col-sm-2 btn btn-primary m-3"
                   onClick={handleReadyForApproval}
                 >
-                    {t('thesis.readyForApproval')}
+                  {t('thesis.readyForApproval')}
                 </button>
               )}
 
@@ -211,8 +208,8 @@ const ThesisDetails: React.FC = () => {
           <p>{t('general.management.errorOfLoading')} {id}</p>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
-export default ThesisDetails;
+export default ThesesDetails;

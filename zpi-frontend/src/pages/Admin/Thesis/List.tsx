@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Employee } from '../../../models/Employee';
+import { Thesis } from '../../../models/Thesis';
+import api from '../../../utils/api';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
-import api from "../../../utils/api";
 
-const EmployeeList: React.FC = () => {
+
+const ThesisList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
-  const navigate = useNavigate();
   const { i18n, t } = useTranslation();
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const navigate = useNavigate();
+  const [theses, setTheses] = useState<Thesis[]>([]);
+
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get('http://localhost:8080/thesis')
       .then((response) => {
-        const sortedFaculties = response.data.sort((a: Employee, b: Employee) => {
-          return a.mail.localeCompare(b.mail);
-        });
-        setEmployees(sortedFaculties);
+        response.data.sort((a: Thesis, b: Thesis) => a.id - b.id);
+        setTheses(response.data);
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
           if (itemPerPage === 'All') {
             return true;
           } else {
             const perPageValue = parseInt(itemPerPage, 10);
-            return perPageValue < response.data.length;
+            return perPageValue <= response.data.length;
           }
         });
         setITEMS_PER_PAGE(filteredItemsPerPage);
@@ -43,10 +43,10 @@ const EmployeeList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState(currentPage);
   const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length > 1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
-  const indexOfLastItem = itemsPerPage === 'All' ? employees.length : currentPage * parseInt(itemsPerPage, 10);
+  const indexOfLastItem = itemsPerPage === 'All' ? theses.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-  const currentEmployees = employees.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(employees.length / parseInt(itemsPerPage, 10));
+  const currentTheses = theses.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(theses.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
     if (!newPage || newPage < 1) {
@@ -68,12 +68,9 @@ const EmployeeList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center'>
-        <div>
-          <button className="custom-button" onClick={() => { navigate('/employees/add') }}>
-            {t('employee.add')}
-          </button>
-          <button className="custom-button" onClick={() => { navigate('/file/employee') }}>
-            {t('employee.import')}
+        <div >
+          <button className="custom-button" onClick={() => { navigate('/theses/add') }}>
+            {t('thesis.add')}
           </button>
         </div>
         {ITEMS_PER_PAGE.length > 1 && (
@@ -141,23 +138,29 @@ const EmployeeList: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '44%' }}>{t('general.people.fullName')}</th>
-            <th style={{ width: '43%' }}>{t('general.people.mail')}</th>
+            <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
+            <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.university.status')}</th>
             <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
           </tr>
         </thead>
         <tbody>
-          {currentEmployees.map((employee, index) => (
-            <tr key={employee.mail}>
+          {currentTheses.map((thesis, index) => (
+            <tr key={thesis.id}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
-              <td>{employee.title.name + " " + employee.name + " " + employee.surname}</td>
-              <td>{employee.mail}</td>
+              <td>
+                {i18n.language === 'pl' ? (
+                  thesis.namePL
+                ) : (
+                  thesis.nameEN
+                )}
+              </td>
+              <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+              <td className="centered">{thesis.status.name}</td>
               <td>
                 <button
                   className="custom-button coverall"
-                  onClick={() => {
-                    navigate(`/employees/${employee.id}`)
-                  }}
+                  onClick={() => { navigate(`/theses/${thesis.id}`) }}
                 >
                   <i className="bi bi-arrow-right"></i>
                 </button>
@@ -206,6 +209,6 @@ const EmployeeList: React.FC = () => {
       )}
     </div>
   );
-};
+}
 
-export default EmployeeList;
+export default ThesisList;
