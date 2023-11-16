@@ -64,7 +64,7 @@ export default function App(props: IAppProps) {
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
                   <Route path='my' element={<ReservationPage />} />
-                  <Route path='theses/add' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
+                  <Route path='theses/add' element={<AddThesisPage />} />
                   <Route path='theses/edit/:id' element={<UpdateThesisPage role={'employee'}
                                                                                   mail={'john.doe@pwr.edu.pl'} />} />
                 </Route>

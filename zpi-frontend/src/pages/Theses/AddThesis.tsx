@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
-import { SupervisorData, AddUpdateThesisProps, StatusEnum } from '../../utils/types';
 import useAuth from "../../auth/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
 import handleSignOut from "../../auth/Logout";
@@ -14,7 +13,7 @@ import { Employee } from '../../models/Employee';
 import { toast } from 'react-toastify';
 
 
-function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
+function AddThesisPage() {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -186,7 +185,53 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
       isValid = false;
     }
 
-    // ...and so on
+    if (!formData.num_people){
+      newErrors.num_people = errorRequireText
+      newErrorsKeys.num_people = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.supervisor){
+      newErrors.supervisor = errorRequireText
+      newErrorsKeys.supervisor = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+    // // programs: null,
+    // if (!formData.num_people){
+    //   newErrors.num_people = errorRequireText
+    //   newErrorsKeys.descriptionEN = "general.management.fieldIsRequired";
+    //   isValid = false;
+    // }
+
+    if (!formData.studyField){
+      newErrors.studyField = errorRequireText
+      newErrorsKeys.studyField = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.specialization){
+      newErrors.specialization = errorRequireText
+      newErrorsKeys.specialization = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.studyCycle){
+      newErrors.studyCycle = errorRequireText
+      newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.status){
+      newErrors.status = errorRequireText
+      newErrorsKeys.status = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.occupied){
+      newErrors.occupied = errorRequireText
+      newErrorsKeys.occupied = "general.management.fieldIsRequired";
+      isValid = false;
+    }
 
     setErrors(newErrors);
     setErrorsKeys(newErrorsKeys);
@@ -302,260 +347,262 @@ function AddThesisPage({ role, mail }: AddUpdateThesisProps) {
           maxLength={1000}
           ref={namePLRef}
         />
-        </div>
         {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
-
-        <div className="mb-3">
-          <label className="bold" htmlFor="nameEN">
-            {t('general.title')} (EN):
-          </label>
-          <textarea
-            className="form-control resizable-input"
-            id="nameEN"
-            name="nameEN"
-            value={formData.nameEN}
-            onChange={(event) => handleTextAreaChange(event, nameENRef)}
-            maxLength={200}
-            ref={nameENRef}
-          />
-        </div>
+      </div>
+    
+      <div className="mb-3">
+        <label className="bold" htmlFor="nameEN">
+          {t('general.title')} (EN):
+        </label>
+        <textarea
+          className="form-control resizable-input"
+          id="nameEN"
+          name="nameEN"
+          value={formData.nameEN}
+          onChange={(event) => handleTextAreaChange(event, nameENRef)}
+          maxLength={200}
+          ref={nameENRef}
+        />
         {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
+      </div>
 
-        <div className="mb-3">
-          <label className="bold" htmlFor="descriptionPL">
-            {t('general.university.description')} (PL):
-          </label>
-          <textarea
-            className="form-control resizable-input"
-            id="descriptionPL"
-            name="descriptionPL"
-            value={formData.descriptionPL}
-            onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
-            maxLength={1000}
-            ref={descriptionPLRef}
-          />
-        </div>
+      <div className="mb-3">
+        <label className="bold" htmlFor="descriptionPL">
+          {t('general.university.description')} (PL):
+        </label>
+        <textarea
+          className="form-control resizable-input"
+          id="descriptionPL"
+          name="descriptionPL"
+          value={formData.descriptionPL}
+          onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
+          maxLength={1000}
+          ref={descriptionPLRef}
+        />
         {errors.descriptionPL && <div className="text-danger">{errors.descriptionPL}</div>}
+      </div>
 
-        <div className="mb-3">
-          <label className="bold" htmlFor="descriptionEN">
-            {t('general.university.description')} (EN):
-          </label>
-          <textarea
-              className="form-control resizable-input"
-              id="descriptionEN"
-              name="descriptionEN"
-              value={formData.descriptionEN}
-              onChange={(event) => handleTextAreaChange(event, descriptionENRef)}
-              maxLength={1000}
-              ref={descriptionENRef}
-          />
-        </div>
+      <div className="mb-3">
+        <label className="bold" htmlFor="descriptionEN">
+          {t('general.university.description')} (EN):
+        </label>
+        <textarea
+            className="form-control resizable-input"
+            id="descriptionEN"
+            name="descriptionEN"
+            value={formData.descriptionEN}
+            onChange={(event) => handleTextAreaChange(event, descriptionENRef)}
+            maxLength={1000}
+            ref={descriptionENRef}
+        />
         {errors.descriptionEN && <div className="text-danger">{errors.descriptionEN}</div>}
+      </div>
 
-        <div className="mb-3">
-          <label className="bold" htmlFor="num_people">
-            {t('thesis.peopleLimit')}:
-          </label>
-          <input
-            type="number"
-            className="form-control"
-            id="num_people"
-            name="num_people"
-            value={formData.num_people}
-            onChange={handleInputChange}
-            min={3}
-            max={5}
-          />
-        </div>
+      <div className="mb-3">
+        <label className="bold" htmlFor="num_people">
+          {t('thesis.peopleLimit')}:
+        </label>
+        <input
+          type="number"
+          className="form-control"
+          id="num_people"
+          name="num_people"
+          value={formData.num_people}
+          onChange={handleInputChange}
+          min={3}
+          max={5}
+        />
         {errors.num_people && <div className="text-danger">{errors.num_people}</div>}
+      </div>
 
-        {/* {/* <div className="mb-3">
-          <label className="bold" htmlFor="supervisor">
-            {t('general.people.supervisor')}:
-          </label>
-          <input 
-            type="text" 
+      {/* {/* <div className="mb-3">
+        <label className="bold" htmlFor="supervisor">
+          {t('general.people.supervisor')}:
+        </label>
+        <input 
+          type="text" 
+          id="supervisor"
+          name="supervisor"
+          value={mailAbbrev} 
+          onChange={handleSearchChange}
+          className="form-control"
+          />
+        {suggestions.length > 0 && (
+              <select
+                id="supervisor"
+                name="supervisor"
+                className="form-control"
+                value={selectedSupervisor ? selectedSupervisor.mail : ''}
+                onChange={(e) => {
+                  const selected = supervisors.find(
+                    (supervisor) => supervisor.mail === e.target.value
+                  );
+                  if (selected) {
+                    handleSupervisorSelect(selected);
+                  }
+                }}
+              >
+                <option value="">{t('general.management.choose')}</option>
+                {suggestions.map((supervisor) => (
+                  <option key={supervisor.mail} value={supervisor.mail}>
+                    {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
+                  </option>
+                ))}
+              </select>
+        )}
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+      </div> */}
+
+      {/* <div className='mb-3'>
+        <label className='bold' htmlFor='supervisor'>
+          {t('general.people.supervisor')}:
+        </label>
+        <div className="dropdown">
+          <input
+            type="text"
             id="supervisor"
             name="supervisor"
-            value={mailAbbrev} 
+            value={mailAbbrev}
             onChange={handleSearchChange}
             className="form-control"
-            />
+          />
           {suggestions.length > 0 && (
-                <select
-                  id="supervisor"
-                  name="supervisor"
-                  className="form-control"
-                  value={selectedSupervisor ? selectedSupervisor.mail : ''}
-                  onChange={(e) => {
-                    const selected = supervisors.find(
-                      (supervisor) => supervisor.mail === e.target.value
-                    );
-                    if (selected) {
-                      handleSupervisorSelect(selected);
-                    }
-                  }}
+            <ul className="dropdown-menu form-control" style={{ display: 'block' }}>
+              {suggestions.map((supervisor) => (
+                <li
+                  key={supervisor.mail}
+                  className="dropdown-item"
+                  onClick={() => handleSupervisorSelect(supervisor)}
                 >
-                  <option value="">{t('general.management.choose')}</option>
-                  {suggestions.map((supervisor) => (
-                    <option key={supervisor.mail} value={supervisor.mail}>
-                      {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
+                  {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+      </div> */}
+
+      <div className='mb-3'>
+        <label className='bold' htmlFor='supervisor'>
+          {t('general.people.supervisor')}:
+        </label>
+        <div className="dropdown">
+          <input
+            type="text"
+            id="supervisor"
+            name="supervisor"
+            value={mailAbbrev}
+            onChange={handleSearchChange}
+            list="supervisorList"
+            className="form-control"
+          />
+          <datalist id="supervisorList">
+            {suggestions.map((supervisor) => (
+              <option key={supervisor.mail} value={supervisor.mail}>
+                {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
+              </option>
+            ))}
+          </datalist>
+        </div>
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+      </div>
+
+      <div className="mb-3">
+        <label className="bold">{t('general.university.studyPrograms')}:</label>  
+
+        <ul>
+
+            <li key='studyCycleLi'>
+              <div className='mb-3'>
+                <label className='bold' htmlFor='studyCycle'>
+                  {t('general.university.studyCycle')}:
+                </label>
+                <select
+                  id={'studyCycleSel'}
+                  name={`studyCycle`}
+                  value={formData.studyCycle}
+                  onChange={(cyc) => setFormData({ ...formData, studyCycle: cyc.target.value })}
+                  className='form-control'
+                >
+                  <option value={-1}>{t('general.management.choose')}</option>
+                  {studyCycles.map((cyc, cycIndex) => (
+                    <option key={cycIndex} value={cyc.id}>
+                      {cyc.name}
                     </option>
                   ))}
                 </select>
-          )}
-          {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-        </div> */}
- 
-        {/* <div className='mb-3'>
-          <label className='bold' htmlFor='supervisor'>
-            {t('general.people.supervisor')}:
-          </label>
-          <div className="dropdown">
-            <input
-              type="text"
-              id="supervisor"
-              name="supervisor"
-              value={mailAbbrev}
-              onChange={handleSearchChange}
-              className="form-control"
-            />
-            {suggestions.length > 0 && (
-              <ul className="dropdown-menu form-control" style={{ display: 'block' }}>
-                {suggestions.map((supervisor) => (
-                  <li
-                    key={supervisor.mail}
-                    className="dropdown-item"
-                    onClick={() => handleSupervisorSelect(supervisor)}
-                  >
-                    {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-        </div> */}
+                {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
+              </div>
+            </li>
 
-        <div className='mb-3'>
-          <label className='bold' htmlFor='supervisor'>
-            {t('general.people.supervisor')}:
-          </label>
-          <div className="dropdown">
-            <input
-              type="text"
-              id="supervisor"
-              name="supervisor"
-              value={mailAbbrev}
-              onChange={handleSearchChange}
-              list="supervisorList"
-              className="form-control"
-            />
-            <datalist id="supervisorList">
-              {suggestions.map((supervisor) => (
-                <option key={supervisor.mail} value={supervisor.mail}>
-                  {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
-                </option>
-              ))}
-            </datalist>
-          </div>
-          {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-        </div>
+            <li key='studyFieldsLi'>
+              <div className='mb-3'>
+                <label className='bold' htmlFor='studyFields'>
+                  {t('general.university.field')}:
+                </label>
+                <select
+                  id={'studyFieldsSel'}
+                  name={`studyFields`}
+                  value={formData.studyField}
+                  onChange={(cyc) => setFormData({ ...formData, studyField: cyc.target.value })}
+                  className='form-control'
+                >
+                  <option value={-1}>{t('general.management.choose')}</option>
+                  {studyFields.map((cyc, cycIndex) => (
+                    <option key={cycIndex} value={cyc.id}>
+                      {cyc.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.studyField && <div className="text-danger">{errors.studyField}</div>}
+              </div>
+            </li>
 
-        <div className="mb-3">
-          <label className="bold">{t('general.university.studyPrograms')}:</label>  
+            <li key='specializationLi'>
+              <div className='mb-3'>
+                <label className='bold' htmlFor='specialization'>
+                  {t('general.university.specialization')}:
+                </label>
+                <select
+                  id={'specializationSel'}
+                  name={`specialization`}
+                  value={formData.specialization}
+                  onChange={(cyc) => setFormData({ ...formData, specialization: cyc.target.value })}
+                  className='form-control'
+                >
+                  <option value={-1}>{t('general.management.choose')}</option>
+                  {specializations.map((cyc, cycIndex) => (
+                    <option key={cycIndex} value={cyc.id}>
+                      {cyc.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.specialization && <div className="text-danger">{errors.specialization}</div>}
+              </div>
+            </li>
 
-          <ul>
+        </ul>
+      </div>
 
-              <li key='studyCycleLi'>
-                <div className='mb-3'>
-                  <label className='bold' htmlFor='studyCycle'>
-                    {t('general.university.studyCycle')}:
-                  </label>
-                  <select
-                    id={'studyCycleSel'}
-                    name={`studyCycle`}
-                    value={formData.studyCycle}
-                    onChange={(cyc) => setFormData({ ...formData, studyCycle: cyc.target.value })}
-                    className='form-control'
-                  >
-                    <option value={-1}>{t('general.management.choose')}</option>
-                    {studyCycles.map((cyc, cycIndex) => (
-                      <option key={cycIndex} value={cyc.id}>
-                        {cyc.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </li>
-
-              <li key='studyFieldsLi'>
-                <div className='mb-3'>
-                  <label className='bold' htmlFor='studyFields'>
-                    {t('general.university.field')}:
-                  </label>
-                  <select
-                    id={'studyFieldsSel'}
-                    name={`studyFields`}
-                    value={formData.studyField}
-                    onChange={(cyc) => setFormData({ ...formData, studyField: cyc.target.value })}
-                    className='form-control'
-                  >
-                    <option value={-1}>{t('general.management.choose')}</option>
-                    {studyFields.map((cyc, cycIndex) => (
-                      <option key={cycIndex} value={cyc.id}>
-                        {cyc.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </li>
-
-              <li key='specializationLi'>
-                <div className='mb-3'>
-                  <label className='bold' htmlFor='specialization'>
-                    {t('general.university.specialization')}:
-                  </label>
-                  <select
-                    id={'specializationSel'}
-                    name={`specialization`}
-                    value={formData.specialization}
-                    onChange={(cyc) => setFormData({ ...formData, specialization: cyc.target.value })}
-                    className='form-control'
-                  >
-                    <option value={-1}>{t('general.management.choose')}</option>
-                    {specializations.map((cyc, cycIndex) => (
-                      <option key={cycIndex} value={cyc.id}>
-                        {cyc.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </li>
-
-          </ul>
-        </div>
-        {errors.edu_cycle && <div className="text-danger">{errors.edu_cycle}</div>}
-
-        <label className="bold" htmlFor="status">
-          {t('general.university.status')}:
-        </label>
-        <select
-          id="status"
-          name="status"
-          value={formData.status}
-          className="form-control"
-          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-        >
-          <option value={-1}>{t('general.management.choose')}</option>
-          {statuses.map((status) => (
-            <option key={status.id} value={status.name}>
-              {status.name}
-            </option>
-          ))}
-        </select>
-        {errors.status && <div className="text-danger">{errors.status}</div>}
+      <label className="bold" htmlFor="status">
+        {t('general.university.status')}:
+      </label>
+      <select
+        id="status"
+        name="status"
+        value={formData.status}
+        className="form-control"
+        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+      >
+        <option value={-1}>{t('general.management.choose')}</option>
+        {statuses.map((status) => (
+          <option key={status.id} value={status.name}>
+            {status.name}
+          </option>
+        ))}
+      </select>
+      {errors.status && <div className="text-danger">{errors.status}</div>}
       </form>
     </div>
   )
