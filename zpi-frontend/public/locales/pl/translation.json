@@ -182,6 +182,9 @@
     "addPerson": "Dodaj osobę"
   },
   "thesis": {
+    "deleteSuccessful": "Temat został usunięty",
+    "deleteError": "Temat nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten temat?",
     "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
     "errorOfLoadingSupervisorData": "Błąd wczytywania danych prowadzącego!",
     "peopleLimit": "Limit osób",
