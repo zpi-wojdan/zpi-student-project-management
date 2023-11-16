@@ -44,11 +44,12 @@ export type ThesisDTO = {
   descriptionPL: string;
   descriptionEN: string;
   num_people: string;
-  supervisor: Employee | null;
-  // programs: Program[] | null;
-  studyField: string;
-  specialization: string;
-  studyCycle: string;
-  status: string;
-  occupied: number;
+  supervisor: Employee | null;  // number - -1 zamiast null
+  // programs: Program[] | null;  // number[]
+  studyField: string; // out
+  specialization: string; // out
+  studyCycle: string; // number
+  status: string; // number?
+  occupied: number; // out
+  // students: string[] - indexes
 }
