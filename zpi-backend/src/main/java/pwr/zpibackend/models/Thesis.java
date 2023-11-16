@@ -60,12 +60,10 @@ public class Thesis {
     @JoinColumn(name = "thesis_id")
     @OneToMany(cascade = CascadeType.ALL)
     private List<Reservation> reservations;
+
     @CreationTimestamp
     @Column(name = "creation_date", updatable = false)
     private LocalDateTime creationTime;
-
-    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
     @JoinColumn(name = "comment_id", referencedColumnName = "id")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis")
     private List<Comment> comments;

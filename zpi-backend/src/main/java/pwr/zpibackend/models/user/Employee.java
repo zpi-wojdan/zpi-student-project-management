@@ -42,6 +42,7 @@ public class Employee {
     @ManyToOne
     private Title title;
 
+    @JoinColumn(name = "comment_id", referencedColumnName = "id")
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Comment> comments;
