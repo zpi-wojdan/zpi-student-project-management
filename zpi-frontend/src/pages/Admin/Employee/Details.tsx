@@ -52,8 +52,11 @@ const EmployeeDetails: React.FC = () => {
       })
       .catch((error) => {
         console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
         toast.error(t("employee.deleteError"));
-        navigate("/employees");
       });
     setShowDeleteConfirmation(false);
   };
