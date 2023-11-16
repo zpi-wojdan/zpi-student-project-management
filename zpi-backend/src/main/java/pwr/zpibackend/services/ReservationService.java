@@ -1,6 +1,7 @@
 package pwr.zpibackend.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
@@ -13,9 +14,12 @@ import pwr.zpibackend.repositories.ReservationRepository;
 import pwr.zpibackend.repositories.StudentRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static java.time.LocalDateTime.now;
 
 @Service
 @AllArgsConstructor
@@ -97,6 +101,17 @@ public class ReservationService {
                     reservationRepository.deleteById(id);
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
+                                if (Objects.equals(thesis.getLeader().getId(), reservation.getStudent().getId())) {
+                                    reservationRepository.findByThesis(thesis)
+                                            .stream()
+                                            .filter(res -> !Objects.equals(res.getId(), reservation.getId()))
+                                            .findFirst()
+                                            .ifPresentOrElse(res -> {
+                                                thesis.setLeader(res.getStudent());
+                                            }, () -> {
+                                                thesis.setLeader(null);
+                                            });
+                                }
                                 thesis.setOccupied(thesis.getOccupied() - 1);
                                 if (thesis.getOccupied() == 0) {
                                     thesis.setLeader(null);
@@ -106,5 +121,23 @@ public class ReservationService {
                     return reservation;
                 })
                 .orElseThrow(NotFoundException::new);
+    }
+
+    @Scheduled(cron = "0 0 3 1/1 * ? *")            // every day at 3:00 AM
+    private void removeExpiredReservations() {
+        LocalDateTime threshold = now().minusDays(1).minusHours(3); // 1 day and 3 hours ago
+        reservationRepository.findAll().stream()
+                .filter(reservation -> reservation.getReservationDate().isBefore(threshold))
+                .forEach(reservation -> {
+                    reservationRepository.delete(reservation);
+                    thesisRepository.findById(reservation.getThesis().getId())
+                            .ifPresent(thesis -> {
+                                thesis.setOccupied(thesis.getOccupied() - 1);
+                                if (thesis.getOccupied() == 0) {
+                                    thesis.setLeader(null);
+                                }
+                                thesisRepository.save(thesis);
+                            });
+                });
     }
 }

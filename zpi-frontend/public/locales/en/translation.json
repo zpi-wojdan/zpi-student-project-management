@@ -20,7 +20,9 @@
       "view": "View",
       "wrongData": "Wrong data",
       "wrongFormat": "Wrong format",
-      "yes": "Yes"
+      "yes": "Yes",
+      "annul": "Annul",
+      "accept": "Accept"
     },
     "people": {
       "adminLC": "administrator",
@@ -166,7 +168,10 @@
     "reservation": "Thesis reservation",
     "indexUsedInAnotherRow": "Index is already used in another row!",
     "wrongIndex": "Index is wrong or does not exist!",
-    "addPerson": "Add person"
+    "addPerson": "Add person",
+    "deleteSuccessful": "Reservation has ben deleted",
+    "deleteError": "Reservation cannot be deleted",
+    "deleteConfirmation": "Are you sure you want to delete this reservation?"
   },
   "thesis": {
     "supervisorNotExists": "Supervisor does not exist!",

@@ -20,7 +20,9 @@
       "view": "Widok",
       "wrongData": "Niepoprawne dane",
       "wrongFormat": "Zły format",
-      "yes": "Tak"
+      "yes": "Tak",
+      "annul": "Anuluj",
+      "accept": "Akceptuj"
     },
     "people": {
       "adminLC": "administrator",
@@ -166,7 +168,10 @@
     "reservation": "Rezerwacja tematu",
     "indexUsedInAnotherRow": "Indeks już wpisany w innym wierszu!",
     "wrongIndex": "Indeks jest niepoprawny lub nie istnieje w systemie!",
-    "addPerson": "Dodaj osobę"
+    "addPerson": "Dodaj osobę",
+    "deleteSuccessful": "Rezerwacja została anulowana",
+    "deleteError": "Rezerwacja nie może zostać anulowana!",
+    "deleteConfirmation": "Czy na pewno chcesz anulować tę rezerwację?"
   },
   "thesis": {
     "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
