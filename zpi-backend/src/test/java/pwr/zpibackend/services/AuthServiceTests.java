@@ -31,7 +31,7 @@ public class AuthServiceTests {
 
     @Test
     public void testGetUserDetailsWithNoUserFound() throws Exception {
-        String email = "123456@pwr.edu.pl";
+        String email = "123456@pwr.wroc.pl";
 
         when(studentService.getStudent(anyString())).thenReturn(null);
         when(employeeService.getEmployee(anyString())).thenReturn(null);

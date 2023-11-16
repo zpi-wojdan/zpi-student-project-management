@@ -9,7 +9,6 @@ import pwr.zpibackend.repositories.EmployeeRepository;
 import pwr.zpibackend.repositories.ThesisRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

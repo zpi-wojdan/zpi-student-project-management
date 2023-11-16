@@ -10,6 +10,7 @@ import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Student;
 
 import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
 
 @Service
 @AllArgsConstructor
@@ -22,8 +23,9 @@ public class AuthService {
         Employee employee = null;
         Student student = null;
 
-        if (!email.endsWith("pwr.edu.pl")) {
-            throw new IllegalArgumentException("Email must be from pwr.edu.pl domain");
+        if (!Pattern.matches("^[a-z0-9-]{1,50}(\\.[a-z0-9-]{1,50}){0,4}@(?:student\\.)" +
+                "?(pwr\\.edu\\.pl|pwr\\.wroc\\.pl)$", email)) {
+            throw new IllegalArgumentException("Email must be from pwr.edu.pl or pwr.wroc.pl domain");
         }
 
         String googleEmail = (String) RequestContextHolder.currentRequestAttributes()
