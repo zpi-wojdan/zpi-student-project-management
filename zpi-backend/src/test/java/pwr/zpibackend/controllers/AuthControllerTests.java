@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
 import pwr.zpibackend.models.Student;
@@ -17,9 +18,7 @@ import pwr.zpibackend.services.AuthService;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.StudentService;
 
-import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -95,7 +94,7 @@ public class AuthControllerTests {
     @Test
     void getUserDetailsOfNonExistingUser() throws Exception {
         String email = "123456@pwr.edu.pl";
-        Mockito.when(authService.getUserDetails(email)).thenThrow(NoSuchElementException.class);
+        Mockito.when(authService.getUserDetails(email)).thenThrow(NotFoundException.class);
 
         mockMvc.perform(get(BASE_URL + "/" + email + "/details").contentType("application/json"))
                 .andExpect(status().isNotFound());

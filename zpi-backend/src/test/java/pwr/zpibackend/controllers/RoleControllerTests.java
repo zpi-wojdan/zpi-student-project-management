@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Role;
 import pwr.zpibackend.services.EmployeeService;
 import pwr.zpibackend.services.RoleService;
@@ -19,7 +20,6 @@ import pwr.zpibackend.services.StudentService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -94,7 +94,7 @@ public class RoleControllerTests {
     @Test
     public void testGetRoleByIdNotFound() throws Exception {
         Long roleId = 1L;
-        Mockito.when(roleService.getRole(roleId)).thenThrow(new NoSuchElementException());
+        Mockito.when(roleService.getRole(roleId)).thenThrow(new NotFoundException());
 
         mockMvc.perform(get(BASE_URL + "/{roleId}", roleId).contentType("application/json"))
                 .andExpect(status().isNotFound());
@@ -152,7 +152,7 @@ public class RoleControllerTests {
     public void testUpdateRoleNotFound() throws Exception {
         Long roleId = 1L;
 
-        Mockito.when(roleService.updateRole(roleId, roleDTO)).thenThrow(new NoSuchElementException());
+        Mockito.when(roleService.updateRole(roleId, roleDTO)).thenThrow(new NotFoundException());
 
         String requestBody = objectMapper.writeValueAsString(roleDTO);
 
@@ -200,7 +200,7 @@ public class RoleControllerTests {
     public void testDeleteRoleNotFound() throws Exception {
         Long roleId = 2L;
 
-        Mockito.when(roleService.deleteRole(roleId)).thenThrow(new NoSuchElementException());
+        Mockito.when(roleService.deleteRole(roleId)).thenThrow(new NotFoundException());
 
         mockMvc.perform(delete(BASE_URL + "/{roleId}", roleId).contentType("application/json"))
                 .andExpect(status().isNotFound());

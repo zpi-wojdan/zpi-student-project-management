@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.exceptions.AlreadyExistsException;
+import pwr.zpibackend.exceptions.CannotDeleteException;
+import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.Employee;
 import pwr.zpibackend.models.Role;
 import pwr.zpibackend.repositories.RoleRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +61,7 @@ public class RoleServiceTests {
     public void testGetRoleByIdNotFound() {
         when(roleRepository.findById(role.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> roleService.getRole(role.getId()));
+        assertThrows(NotFoundException.class, () -> roleService.getRole(role.getId()));
     }
 
     @Test
@@ -78,7 +80,7 @@ public class RoleServiceTests {
     public void testAddRoleAlreadyExists() {
         when(roleRepository.existsByName(roleDTO.getName())).thenReturn(true);
 
-        assertThrows(IllegalArgumentException.class, () -> roleService.addRole(roleDTO));
+        assertThrows(AlreadyExistsException.class, () -> roleService.addRole(roleDTO));
     }
 
     @Test
@@ -98,7 +100,7 @@ public class RoleServiceTests {
     public void testUpdateRoleNotFound() {
         when(roleRepository.findById(role.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> roleService.updateRole(role.getId(), roleDTO));
+        assertThrows(NotFoundException.class, () -> roleService.updateRole(role.getId(), roleDTO));
     }
 
     @Test
@@ -106,7 +108,7 @@ public class RoleServiceTests {
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
         when(roleRepository.existsByName(roleDTO.getName())).thenReturn(true);
 
-        assertThrows(IllegalArgumentException.class, () -> roleService.updateRole(role.getId(), roleDTO));
+        assertThrows(AlreadyExistsException.class, () -> roleService.updateRole(role.getId(), roleDTO));
     }
 
     @Test
@@ -122,7 +124,7 @@ public class RoleServiceTests {
     public void testDeleteRoleNotFound() {
         when(roleRepository.findById(role.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> roleService.deleteRole(role.getId()));
+        assertThrows(NotFoundException.class, () -> roleService.deleteRole(role.getId()));
     }
 
     @Test
@@ -132,7 +134,7 @@ public class RoleServiceTests {
 
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 
-        assertThrows(IllegalArgumentException.class, () -> roleService.deleteRole(role.getId()));
+        assertThrows(CannotDeleteException.class, () -> roleService.deleteRole(role.getId()));
     }
 
     @Test
@@ -148,6 +150,6 @@ public class RoleServiceTests {
     public void testGetRoleByNameNotFound() {
         when(roleRepository.findByName(role.getName())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> roleService.getRoleByName(role.getName()));
+        assertThrows(NotFoundException.class, () -> roleService.getRoleByName(role.getName()));
     }
 }

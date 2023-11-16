@@ -21,7 +21,6 @@ import pwr.zpibackend.services.university.DepartmentService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,7 +110,7 @@ public class EmployeeServiceTests {
         String email = "123456@pwr.edu.pl";
         when(employeeRepository.findByMail(email)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> employeeService.getEmployee(email));
+        assertThrows(NotFoundException.class, () -> employeeService.getEmployee(email));
     }
 
     @Test
@@ -195,7 +194,7 @@ public class EmployeeServiceTests {
         when(employeeRepository.existsByMail(employeeDTO.getMail())).thenReturn(false);
         when(roleService.getRoleByName("tester")).thenReturn(null);
 
-        assertThrows(NoSuchElementException.class, () -> employeeService.addEmployee(employeeDTO));
+        assertThrows(NotFoundException.class, () -> employeeService.addEmployee(employeeDTO));
     }
 
     @Test
@@ -247,8 +246,7 @@ public class EmployeeServiceTests {
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
         when(roleService.getRoleByName("tester")).thenReturn(null);
 
-        assertThrows(NoSuchElementException.class, () -> employeeService.updateEmployee(1L,
-                employeeDTO));
+        assertThrows(NotFoundException.class, () -> employeeService.updateEmployee(1L, employeeDTO));
     }
 
     @Test
