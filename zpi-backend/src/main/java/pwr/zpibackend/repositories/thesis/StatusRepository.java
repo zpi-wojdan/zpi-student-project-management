@@ -1,7 +1,7 @@
-package pwr.zpibackend.repositories;
+package pwr.zpibackend.repositories.thesis;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pwr.zpibackend.models.Status;
+import pwr.zpibackend.models.thesis.Status;
 
 import java.util.Optional;
 

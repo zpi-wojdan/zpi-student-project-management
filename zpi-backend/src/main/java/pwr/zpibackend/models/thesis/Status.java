@@ -1,4 +1,4 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.thesis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

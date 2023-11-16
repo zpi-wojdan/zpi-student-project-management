@@ -1,12 +1,12 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.thesis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pwr.zpibackend.dto.StatusDTO;
-import pwr.zpibackend.models.Status;
-import pwr.zpibackend.services.StatusService;
+import pwr.zpibackend.dto.thesis.StatusDTO;
+import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.services.thesis.StatusService;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.models.Comment;
+import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.models.university.Title;
 

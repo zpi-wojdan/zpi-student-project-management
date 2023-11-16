@@ -1,4 +1,4 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.thesis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Thesis;
-import pwr.zpibackend.services.ThesisService;
+import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.services.thesis.ThesisService;
 
 import java.util.List;
 

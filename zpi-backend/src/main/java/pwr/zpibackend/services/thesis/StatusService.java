@@ -1,15 +1,14 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Status;
-import pwr.zpibackend.dto.StatusDTO;
-import pwr.zpibackend.repositories.StatusRepository;
+import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.dto.thesis.StatusDTO;
+import pwr.zpibackend.repositories.thesis.StatusRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor

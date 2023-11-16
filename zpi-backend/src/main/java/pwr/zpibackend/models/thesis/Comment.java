@@ -1,4 +1,4 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.thesis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Table(name = "comment")
 public class Comment {
 
-    //  make all the necessary changes inside this class, if there are any
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -36,5 +35,4 @@ public class Comment {
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     private Thesis thesis;
-
 }

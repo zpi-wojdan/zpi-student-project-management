@@ -1,17 +1,17 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
-import pwr.zpibackend.models.Reservation;
-import pwr.zpibackend.dto.ReservationDTO;
+import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.dto.thesis.ReservationDTO;
 import pwr.zpibackend.models.user.Student;
-import pwr.zpibackend.models.Thesis;
-import pwr.zpibackend.repositories.ReservationRepository;
+import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
-import pwr.zpibackend.repositories.ThesisRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
 
 import java.util.List;
 import java.util.Objects;

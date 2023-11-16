@@ -7,10 +7,11 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.models.Thesis;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
-import pwr.zpibackend.repositories.ThesisRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.services.thesis.ThesisService;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package pwr.zpibackend.models;
+package pwr.zpibackend.models.thesis;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
