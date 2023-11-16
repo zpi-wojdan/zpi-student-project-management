@@ -175,7 +175,7 @@ const ThesesTable: React.FC = () => {
               <td>
                 <button
                   className="custom-button coverall"
-                  onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}}
+                  onClick={() =>{navigate(`/public-theses/${thesis.id}`, {state: {thesis}})}}
                 >
                   <i className="bi bi-arrow-right"></i>
                 </button>

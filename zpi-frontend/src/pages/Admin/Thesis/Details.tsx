@@ -68,7 +68,7 @@ const ThesisDetails: React.FC = () => {
     api.delete(`http://localhost:8080/thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
-        navigate("/thesis");
+        navigate("/theses");
       })
       .catch((error) => {
         console.error(error);
@@ -92,7 +92,7 @@ const ThesisDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => { navigate(`/thesis/edit/${id}`, { state: { thesis } }) }}>
+        <button type="button" className="custom-button" onClick={() => { navigate(`/theses/edit/${id}`, { state: { thesis } }) }}>
           {t('thesis.edit')}
         </button>
         <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>

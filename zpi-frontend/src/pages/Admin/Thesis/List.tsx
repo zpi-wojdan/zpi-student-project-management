@@ -69,7 +69,7 @@ const ThesisList: React.FC = () => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center'>
         <div >
-          <button className="custom-button" onClick={() => { navigate('/thesis/add') }}>
+          <button className="custom-button" onClick={() => { navigate('/theses/add') }}>
             {t('thesis.add')}
           </button>
         </div>
@@ -160,7 +160,7 @@ const ThesisList: React.FC = () => {
               <td>
                 <button
                   className="custom-button coverall"
-                  onClick={() => { navigate(`/thesis/${thesis.id}`) }}
+                  onClick={() => { navigate(`/theses/${thesis.id}`) }}
                 >
                   <i className="bi bi-arrow-right"></i>
                 </button>

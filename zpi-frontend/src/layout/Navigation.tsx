@@ -31,7 +31,7 @@ const Navigation = ({ children }: NavigationProps) => {
         '/programs',
         '/cycles',
         '/departments',
-        '/thesis'
+        '/theses'
     ];
 
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
@@ -129,7 +129,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                         <>
                                             <li className="nav-item">
                                                 <NavLink className={({ isActive }) => isActive ?
-                                                    "nav-link active" : "nav-link"} to="/theses" >
+                                                    "nav-link active" : "nav-link"} to="/public-theses" >
                                                     {t('general.university.theses')}
                                                 </NavLink>
                                             </li>
@@ -138,7 +138,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                                     <Dropdown as={Nav.Item}>
                                                         <Dropdown.Toggle as={Nav.Link} className={isManagementActive ? "active" : ""}>{t('navigation.manage')}</Dropdown.Toggle>
                                                         <Dropdown.Menu>
-                                                            <Dropdown.Item as={Link} to="/thesis" className={location.pathname === '/thesis' ? "active" : ""}>
+                                                            <Dropdown.Item as={Link} to="/theses" className={location.pathname === '/thesis' ? "active" : ""}>
                                                                 {t('general.university.theses')}
                                                             </Dropdown.Item>
                                                             <Dropdown.Item as={Link} to="/students" className={location.pathname === '/students' ? "active" : ""}>

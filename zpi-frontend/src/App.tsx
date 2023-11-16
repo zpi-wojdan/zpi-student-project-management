@@ -73,8 +73,8 @@ export default function App(props: IAppProps) {
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
-                  <Route path='theses' element={<ThesesTable />} />
-                  <Route path='theses/:id' element={<ThesesDetails />} />
+                  <Route path='public-theses' element={<ThesesTable />} />
+                  <Route path='public-theses/:id' element={<ThesesDetails />} />
                 </Route>
 
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
@@ -86,10 +86,10 @@ export default function App(props: IAppProps) {
                 <Route path='employees/:mail' element={<EmployeeDetails />} />
                 <Route path='employees/add' element={<EmployeeForm/>} />
                 <Route path='employees/edit/:mail' element={<EmployeeForm/>} />
-                <Route path='thesis' element={<ThesisList />} />
-                <Route path='thesis/:id' element={<ThesisDetails />} />
-                <Route path='thesis/add' element={<AddThesisPage/>} />
-                <Route path='thesis/edit/:id' element={<UpdateThesisPage/>} />
+                <Route path='theses' element={<ThesisList />} />
+                <Route path='theses/:id' element={<ThesisDetails />} />
+                <Route path='theses/add' element={<AddThesisPage/>} />
+                <Route path='theses/edit/:id' element={<UpdateThesisPage/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
