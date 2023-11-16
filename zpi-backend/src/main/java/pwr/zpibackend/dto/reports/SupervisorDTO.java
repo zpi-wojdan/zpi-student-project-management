@@ -3,7 +3,6 @@ package pwr.zpibackend.dto.reports;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pwr.zpibackend.dto.university.TitleDTO;
 
 @Data
 @AllArgsConstructor
