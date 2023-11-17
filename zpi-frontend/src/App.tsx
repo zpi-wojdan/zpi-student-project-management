@@ -100,7 +100,7 @@ export default function App(props: IAppProps) {
                 <Route path='cycles/edit/:id' element={<StudyCycleForm />} />
                 <Route path='departments' element={<DepartmentList />} />
                 <Route path='departments/add' element={<DepartmentForm />} />
-                <Route path='departments/edit/:code' element={<DepartmentForm />} />
+                <Route path='departments/edit/:id' element={<DepartmentForm />} />
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
               </Route>

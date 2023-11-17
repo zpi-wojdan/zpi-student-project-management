@@ -118,12 +118,11 @@ public class StudentService {
         for (int i = 0; i < studentDTO.getProgramsCycles().size(); i++) {
             StudentProgramCycleDTO spcDTO = studentDTO.getProgramsCycles().get(i);
 
-            Student student = studentRepository.findByIndex(studentDTO.getIndex()).orElseThrow(NotFoundException::new);
             Program program = programRepository.findById(spcDTO.getProgramId()).orElseThrow(NotFoundException::new);
             StudyCycle cycle = studyCycleRepository.findById(spcDTO.getCycleId()).orElseThrow(NotFoundException::new);
 
             StudentProgramCycle spc = new StudentProgramCycle();
-            spc.setId(new StudentProgramCycleId(student.getId(), program.getId(), cycle.getId()));
+            spc.setId(new StudentProgramCycleId(newStudent.getId(), program.getId(), cycle.getId()));
             spc.setStudent(newStudent);
             spc.setProgram(program);
             spc.setCycle(cycle);
