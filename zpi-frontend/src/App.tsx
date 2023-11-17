@@ -42,6 +42,7 @@ import StudyFieldList from './pages/Admin/Field/List';
 import {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
+import Reports from "./pages/Admin/Reports";
 
 
 export interface IAppProps {
@@ -110,6 +111,7 @@ export default function App(props: IAppProps) {
                 <Route path='departments/edit/:id' element={<DepartmentForm />} />
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                <Route path="/reports" element={<Reports />} />
               </Route>
 
               <Route path="*" element={<Missing />} />

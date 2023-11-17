@@ -134,6 +134,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                                 </NavLink>
                                             </li>
                                             {user?.roles?.some((role: Role) => role.name === 'admin') ? (
+                                                <>
                                                 <li className="nav-item">
                                                     <Dropdown as={Nav.Item}>
                                                         <Dropdown.Toggle as={Nav.Link} className={isManagementActive ? "active" : ""}>{t('navigation.manage')}</Dropdown.Toggle>
@@ -169,6 +170,13 @@ const Navigation = ({ children }: NavigationProps) => {
                                                     </Dropdown>
 
                                                 </li>
+                                                    <li className="nav-item">
+                                                        <NavLink className={({ isActive }) => isActive ?
+                                                            "nav-link active" : "nav-link"} to="/reports">
+                                                            {t('navigation.reports')}
+                                                        </NavLink>
+                                                    </li>
+                                                </>
                                             ) : null}
                                             {user?.roles?.some((role: Role) => role.name === 'supervisor') ? (
                                                 <li className="nav-item">

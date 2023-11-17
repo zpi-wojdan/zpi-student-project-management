@@ -62,4 +62,8 @@ public class StudyFieldService {
         existingStudyField.setFaculty(facultyRepository.findByAbbreviation(updatedStudyField.getFacultyAbbr()).orElseThrow(NotFoundException::new));
         return studyFieldRepository.save(existingStudyField);
     }
+
+    public List<StudyField> getAllStudyFieldsOrderedByAbbreviationAsc() {
+        return studyFieldRepository.findAllByOrderByAbbreviationAsc();
+    }
 }
