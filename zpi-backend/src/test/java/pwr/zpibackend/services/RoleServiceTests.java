@@ -5,10 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import pwr.zpibackend.dto.RoleDTO;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.repositories.RoleRepository;
+import pwr.zpibackend.dto.user.RoleDTO;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.repositories.user.RoleRepository;
+import pwr.zpibackend.services.user.RoleService;
 
 import java.util.List;
 import java.util.NoSuchElementException;

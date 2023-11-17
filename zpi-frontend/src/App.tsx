@@ -3,7 +3,7 @@ import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
 import ReservationPage from './pages/reservation/Reservation';
 import ThesesTable from './pages/Theses/Theses';
-import ThesisDetails from './pages/Theses/ThesisDetails';
+import ThesesDetails from './pages/Theses/ThesesDetails';
 // @ts-ignore
 import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/reservation/SingleReservation';
@@ -39,6 +39,8 @@ import DepartmentList from './pages/Admin/Department/List';
 import StudyFieldForm from './pages/Admin/Field/Form';
 import StudyFieldList from './pages/Admin/Field/List';
 import {Suspense} from "react";
+import ThesisList from './pages/Admin/Thesis/List';
+import ThesisDetails from './pages/Admin/Thesis/Details';
 
 
 export interface IAppProps {
@@ -70,19 +72,23 @@ export default function App(props: IAppProps) {
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
-                  <Route path='theses' element={<ThesesTable />} />
-                  <Route path='theses/:id' element={<ThesisDetails />} />
+                  <Route path='public-theses' element={<ThesesTable />} />
+                  <Route path='public-theses/:id' element={<ThesesDetails />} />
                 </Route>
 
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
-                <Route path='students/:mail' element={<StudentDetails />} />
+                <Route path='students/:id' element={<StudentDetails />} />
                 <Route path='students/add' element={<StudentForm/>} />
-                <Route path='students/edit/:mail' element={<StudentForm/>} />
+                <Route path='students/edit/:id' element={<StudentForm/>} />
                 <Route path='employees' element={<EmployeeList />} />
-                <Route path='employees/:mail' element={<EmployeeDetails />} />
+                <Route path='employees/:id' element={<EmployeeDetails />} />
                 <Route path='employees/add' element={<EmployeeForm/>} />
-                <Route path='employees/edit/:mail' element={<EmployeeForm/>} />
+                <Route path='employees/edit/:id' element={<EmployeeForm/>} />
+                <Route path='theses' element={<ThesisList />} />
+                <Route path='theses/:id' element={<ThesisDetails />} />
+                <Route path='theses/add' element={<AddThesisPage/>} />
+                <Route path='theses/edit/:id' element={<UpdateThesisPage/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
@@ -100,7 +106,7 @@ export default function App(props: IAppProps) {
                 <Route path='cycles/edit/:id' element={<StudyCycleForm />} />
                 <Route path='departments' element={<DepartmentList />} />
                 <Route path='departments/add' element={<DepartmentForm />} />
-                <Route path='departments/edit/:code' element={<DepartmentForm />} />
+                <Route path='departments/edit/:id' element={<DepartmentForm />} />
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
               </Route>
