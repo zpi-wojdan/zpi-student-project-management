@@ -8,8 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Student;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.services.user.AuthService;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.StudentService;
 
 import java.util.NoSuchElementException;
 
@@ -31,7 +34,7 @@ public class AuthServiceTests {
 
     @Test
     public void testGetUserDetailsWithNoUserFound() throws Exception {
-        String email = "123456@pwr.edu.pl";
+        String email = "123456@pwr.wroc.pl";
 
         when(studentService.getStudent(anyString())).thenReturn(null);
         when(employeeService.getEmployee(anyString())).thenReturn(null);

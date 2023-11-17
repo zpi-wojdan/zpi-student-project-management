@@ -11,9 +11,9 @@
       "errorOfLoading": "Błąd wczytywania danych",
       "fieldIsRequired": "Pole jest wymagane.",
       "goBack": "Powrót",
-      "lack": "Brak",
       "mailExists": "Podany mail już istnieje!",
       "mailMustBePwr": "Mail musi być z domeny pwr.edu.pl",
+      "nA": "Brak",
       "no": "Nie",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
@@ -182,6 +182,9 @@
     "addPerson": "Dodaj osobę"
   },
   "thesis": {
+    "deleteSuccessful": "Temat został usunięty",
+    "deleteError": "Temat nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten temat?",
     "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
     "errorOfLoadingSupervisorData": "Błąd wczytywania danych prowadzącego!",
     "peopleLimit": "Limit osób",

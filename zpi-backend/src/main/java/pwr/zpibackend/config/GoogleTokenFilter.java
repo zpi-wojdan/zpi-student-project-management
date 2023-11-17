@@ -9,11 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.models.Student;
-import pwr.zpibackend.services.EmployeeService;
-import pwr.zpibackend.services.StudentService;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.StudentService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 public class GoogleTokenFilter extends OncePerRequestFilter {
@@ -91,7 +92,8 @@ public class GoogleTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean isEmailValid(String email) {
-        return email != null && email.endsWith("pwr.edu.pl");
+        return email != null && Pattern.matches("^[a-z0-9-]{1,50}(\\.[a-z0-9-]{1,50}){0,4}@(?:student\\.)" +
+                "?(pwr\\.edu\\.pl|pwr\\.wroc\\.pl)$", email);
     }
 
     private boolean isUserInDatabase(String email) {

@@ -156,7 +156,7 @@ const StudentList: React.FC = () => {
                 <button
                   className="custom-button coverall"
                   onClick={() => {
-                    navigate(`/students/${student.mail}`, { state: { student } })
+                    navigate(`/students/${student.id}`)
                   }}
                 >
                   <i className="bi bi-arrow-right"></i>

@@ -158,25 +158,33 @@ const ThesesTable: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '3%', textAlign: 'center'}}>#</th>
-            <th style={{ width: '70%' }}>{t('general.university.thesis')}</th>
+            <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
             <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
             <th style={{ width: '10%', textAlign: 'center'}}>{t('thesis.occupiedSeats')}</th>
+            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
           </tr>
         </thead>
         <tbody>
           {currentTheses.map((thesis, index) => (
             <tr key={thesis.id}>
               <td className="centered">{indexOfFirstItem + index + 1}</td>
-              <td><button onClick={() =>{navigate(`/theses/${thesis.id}`, {state: {thesis}})}}
-                          className="link-style btn">
+              <td>
                   {i18n.language === 'pl' ? (
                       thesis.namePL
                   ) : (
                       thesis.nameEN
                   )}
-              </button></td>
+              </td>
               <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
               <td className="centered">{thesis.occupied + "/" + thesis.numPeople}</td>
+              <td>
+                <button
+                  className="custom-button coverall"
+                  onClick={() =>{navigate(`/public-theses/${thesis.id}`, {state: {thesis}})}}
+                >
+                  <i className="bi bi-arrow-right"></i>
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
