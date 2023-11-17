@@ -253,6 +253,7 @@
     "generateSuccessful": "Report has been generated",
     "generateThesisGroupsError": "Groups of students for the zpi project not found",
     "generateStudentsWithoutThesisError": "Students without the topic of the zpi project not found",
-    "generateError": "An error occurred while generating the report"
+    "generateError": "An error occurred while generating the report",
+    "generating": "Generating report..."
   }
 }

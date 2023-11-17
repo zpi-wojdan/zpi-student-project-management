@@ -253,6 +253,7 @@
     "generateSuccessful": "Raport został wygenerowany",
     "generateThesisGroupsError": "Nie znaleziono grup studentów do projektu zpi",
     "generateStudentsWithoutThesisError": "Nie znaleziono studentów bez tematu projektu zpi",
-    "generateError": "Wystąpił błąd podczas generowania raportu"
+    "generateError": "Wystąpił błąd podczas generowania raportu",
+    "generating": "Generowanie raportu..."
   }
 }

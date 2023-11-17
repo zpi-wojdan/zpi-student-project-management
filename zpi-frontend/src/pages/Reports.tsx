@@ -44,6 +44,9 @@ const Reports = () => {
             else if (formData.studyFieldAbbr !== 'all')
                 url += `?studyFieldAbbr=${formData.studyFieldAbbr}`;
 
+            let toastId: any = null;
+            toastId = toast.info(t('reports.generating'), {autoClose: false});
+
             api.get(url, { responseType: 'blob' })
                 .then((response) => {
                     const file = new Blob([response.data], { type: 'application/pdf' });
@@ -62,10 +65,16 @@ const Reports = () => {
                     link.setAttribute('download', filename);
                     document.body.appendChild(link);
                     link.click();
+                    setTimeout(() => {
+                        toast.dismiss(toastId);
+                    }, 2000);
                     toast.success(t('reports.generateSuccessful'));
                 })
                 .catch((error) => {
                     console.error(error);
+                    setTimeout(() => {
+                        toast.dismiss(toastId);
+                    }, 2000);
                     if (error.response.status === 401 || error.response.status === 403) {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
