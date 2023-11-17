@@ -7,10 +7,10 @@ import api from "../../utils/api";
 import { Thesis, ThesisDTO } from '../../models/Thesis';
 import { Status } from '../../models/Status';
 import { StudyCycle } from '../../models/StudyCycle';
-import { Specialization } from '../../models/Specialization';
-import { StudyField } from '../../models/StudyField';
 import { Employee } from '../../models/Employee';
 import { toast } from 'react-toastify';
+import { Program } from '../../models/Program';
+import { Student } from '../../models/Student';
 
 
 function AddThesisPage() {
@@ -25,6 +25,9 @@ function AddThesisPage() {
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionPLRef = useRef<HTMLTextAreaElement | null>(null);
   const descriptionENRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
   
   const thesis = location.state?.thesis as Thesis;
   const [formData, setFormData] = useState<ThesisDTO>({
@@ -32,27 +35,26 @@ function AddThesisPage() {
     nameEN: '',
     descriptionPL: '',
     descriptionEN: '',
-    num_people: '4',
-    supervisor: null,
-    // programs: null,
-    studyField: '',
-    specialization: '',
-    studyCycle: '',
-    status: '',
-    occupied: 0,
+    num_people: 4,
+    supervisorId: -1,
+    programIds: [-1],
+    studyCycleId: -1,
+    statusId: -1,
+    students: [],
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [studyCycles, setStudyCycles] = useState<StudyCycle[]>([]);
-  const [specializations, setSpecializations] = useState<Specialization[]>([]);
-  const [studyFields, setStudyFields] = useState<StudyField[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
 
   const [supervisors, setSupervisors] = useState<Employee[]>([]);
-  const [suggestions, setSuggestions] = useState<Employee[]>([]);
+  const [supervisorSuggestions, setSupervisorSuggestions] = useState<Employee[]>([]);
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
+
+  const [cycleChosen, setCycleChosen] = useState<boolean>(false);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -89,32 +91,6 @@ function AddThesisPage() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
-    .then((response) => {
-      setSpecializations(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
-    .then((response) => {
-      setStudyFields(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     api.get('http://localhost:8080/employee')
     .then((response) => {
       setSupervisors(response.data);
@@ -125,7 +101,33 @@ function AddThesisPage() {
         handleSignOut(navigate);
       }
     });
-  });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/student')
+    .then((response) => {
+      setStudents(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/program')
+    .then((response) => {
+      setPrograms(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  }, []);
 
   // useEffect(() => {
   //     if (thesis){
@@ -148,7 +150,7 @@ function AddThesisPage() {
       setFormData((prev) => {
         return{
           ...prev,
-          num_people: String(thesis.num_people),
+          num_people: thesis.num_people,
         }
       });
     }
@@ -191,7 +193,7 @@ function AddThesisPage() {
       isValid = false;
     }
 
-    if (!formData.supervisor){
+    if (!formData.supervisorId){
       newErrors.supervisor = errorRequireText
       newErrorsKeys.supervisor = "general.management.fieldIsRequired";
       isValid = false;
@@ -203,33 +205,15 @@ function AddThesisPage() {
     //   isValid = false;
     // }
 
-    if (!formData.studyField){
-      newErrors.studyField = errorRequireText
-      newErrorsKeys.studyField = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.specialization){
-      newErrors.specialization = errorRequireText
-      newErrorsKeys.specialization = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.studyCycle){
+    if (!formData.studyCycleId){
       newErrors.studyCycle = errorRequireText
       newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
       isValid = false;
     }
 
-    if (!formData.status){
+    if (!formData.statusId){
       newErrors.status = errorRequireText
       newErrorsKeys.status = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.occupied){
-      newErrors.occupied = errorRequireText
-      newErrorsKeys.occupied = "general.management.fieldIsRequired";
       isValid = false;
     }
 
@@ -245,7 +229,7 @@ function AddThesisPage() {
       (supervisor) =>
         supervisor.mail.includes(abbrev.toLowerCase())
     );
-    setSuggestions(filteredSupervisors);
+    setSupervisorSuggestions(filteredSupervisors);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,6 +255,31 @@ function AddThesisPage() {
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
+
+  const handleCycleChange = (selectedCycleId: number) => {
+    const updatedProgramSuggestions = 1; // filter program suggestions here
+    setFormData({ ...formData, studyCycleId: selectedCycleId});
+  }
+
+  const handleProgramChange = (index: number, selectedProgramId: number) => {
+    if (!formData.programIds.includes(selectedProgramId)) {
+      const updatedPrograms = [...formData.programIds];
+      updatedPrograms[index] = selectedProgramId;
+      setFormData({ ...formData, programIds: updatedPrograms });
+    }
+  }
+
+  const handleRemove = (index: number) => {
+    const updatedPrograms = [...formData.programIds];
+    updatedPrograms.splice(index, 1);
+    setFormData({ ...formData, programIds: updatedPrograms });
+  }
+
+  const handleAddNext = () => {
+    const newProgram = [...formData.programIds];
+    newProgram.push(-1);
+    setFormData({ ...formData, programIds: newProgram });
+  }
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -498,7 +507,7 @@ function AddThesisPage() {
             className="form-control"
           />
           <datalist id="supervisorList">
-            {suggestions.map((supervisor) => (
+            {supervisorSuggestions.map((supervisor) => (
               <option key={supervisor.mail} value={supervisor.mail}>
                 {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
               </option>
@@ -508,80 +517,83 @@ function AddThesisPage() {
         {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
       </div>
 
+      <div className='mb-3'>
+        <label className='bold' htmlFor='studyCycle'>
+          {t('general.university.studyCycle')}:
+        </label>
+        <select
+          id={'studyCycleSel'}
+          name={`studyCycle`}
+          value={formData.studyCycleId}
+          onChange={(e) => {
+            const selectedCycleId = parseInt(e.target.value, 10);
+            handleCycleChange(selectedCycleId);
+          }}
+          className='form-control'
+        >
+          <option value={-1}>{t('general.management.choose')}</option>
+          {studyCycles.map((cyc, cycIndex) => (
+            <option key={cycIndex} value={cyc.id}>
+              {cyc.name}
+            </option>
+          ))}
+        </select>
+        {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
+      </div>
+
       <div className="mb-3">
         <label className="bold">{t('general.university.studyPrograms')}:</label>  
 
         <ul>
 
-            <li key='studyCycleLi'>
+          {formData.programIds.map((programId, index) => (
+            
+            <li key={index}>
               <div className='mb-3'>
-                <label className='bold' htmlFor='studyCycle'>
-                  {t('general.university.studyCycle')}:
-                </label>
                 <select
-                  id={'studyCycleSel'}
-                  name={`studyCycle`}
-                  value={formData.studyCycle}
-                  onChange={(cyc) => setFormData({ ...formData, studyCycle: cyc.target.value })}
+                  id={`programId${index}`}
+                  name={`programId${index}`}
+                  value={formData.programIds[index]} 
+                  onChange={(e) => {
+                    const selectedProgramId = parseInt(e.target.value, 10);    
+                    handleProgramChange(index, selectedProgramId);
+                  }}
                   className='form-control'
+                  disabled={formData.studyCycleId === -1}
                 >
                   <option value={-1}>{t('general.management.choose')}</option>
-                  {studyCycles.map((cyc, cycIndex) => (
-                    <option key={cycIndex} value={cyc.id}>
-                      {cyc.name}
-                    </option>
-                  ))}
+                  {programs
+                    .filter((p) =>
+                      p.studyCycles.some((cycle) => cycle.id === formData.studyCycleId)
+                    )
+                    .map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
                 </select>
-                {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
+                {errors.program && <div className="text-danger">{errors.program}</div>}
               </div>
-            </li>
-
-            <li key='studyFieldsLi'>
-              <div className='mb-3'>
-                <label className='bold' htmlFor='studyFields'>
-                  {t('general.university.field')}:
-                </label>
-                <select
-                  id={'studyFieldsSel'}
-                  name={`studyFields`}
-                  value={formData.studyField}
-                  onChange={(cyc) => setFormData({ ...formData, studyField: cyc.target.value })}
-                  className='form-control'
+              {formData.programIds.length > 1 && (
+                <button
+                  type="button"
+                  className="custom-button another-color"
+                  onClick={() => handleRemove(index)}
                 >
-                  <option value={-1}>{t('general.management.choose')}</option>
-                  {studyFields.map((cyc, cycIndex) => (
-                    <option key={cycIndex} value={cyc.id}>
-                      {cyc.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.studyField && <div className="text-danger">{errors.studyField}</div>}
-              </div>
+                  {t('general.management.delete')}
+                </button>
+              )}  
             </li>
-
-            <li key='specializationLi'>
-              <div className='mb-3'>
-                <label className='bold' htmlFor='specialization'>
-                  {t('general.university.specialization')}:
-                </label>
-                <select
-                  id={'specializationSel'}
-                  name={`specialization`}
-                  value={formData.specialization}
-                  onChange={(cyc) => setFormData({ ...formData, specialization: cyc.target.value })}
-                  className='form-control'
-                >
-                  <option value={-1}>{t('general.management.choose')}</option>
-                  {specializations.map((cyc, cycIndex) => (
-                    <option key={cycIndex} value={cyc.id}>
-                      {cyc.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.specialization && <div className="text-danger">{errors.specialization}</div>}
-              </div>
+          ))}
+            <li>
+              <button
+                type="button"
+                className="custom-button"
+                onClick={handleAddNext}
+              >
+                {t('general.management.addNext')}
+              </button>
             </li>
-
         </ul>
       </div>
 
@@ -591,13 +603,13 @@ function AddThesisPage() {
       <select
         id="status"
         name="status"
-        value={formData.status}
+        value={formData.statusId}
         className="form-control"
-        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+        onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
       >
         <option value={-1}>{t('general.management.choose')}</option>
         {statuses.map((status) => (
-          <option key={status.id} value={status.name}>
+          <option key={status.id} value={status.id}>
             {status.name}
           </option>
         ))}

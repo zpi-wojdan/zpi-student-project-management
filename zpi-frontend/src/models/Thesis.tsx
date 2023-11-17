@@ -19,7 +19,7 @@ export type Thesis = {
     status: Status;
     occupied: number;
     reservations: Reservation[];
-  }
+}
 
 export type ThesisFront = {
     id: number;
@@ -43,13 +43,10 @@ export type ThesisDTO = {
   nameEN: string;
   descriptionPL: string;
   descriptionEN: string;
-  num_people: string;
-  supervisor: Employee | null;  // number - -1 zamiast null
-  // programs: Program[] | null;  // number[]
-  studyField: string; // out
-  specialization: string; // out
-  studyCycle: string; // number
-  status: string; // number?
-  occupied: number; // out
-  // students: string[] - indexes
+  num_people: number;
+  supervisorId: number;  // jest
+  programIds: number[];
+  studyCycleId: number; // jest 
+  statusId: number; // jest
+  students: string[] // indexes, easier to read and still unique
 }
