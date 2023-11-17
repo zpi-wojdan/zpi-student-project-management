@@ -48,13 +48,11 @@ function AddThesisPage() {
   const [students, setStudents] = useState<Student[]>([]);
 
   const [programs, setPrograms] = useState<Program[]>([]);
-  const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
 
   const [supervisors, setSupervisors] = useState<Employee[]>([]);
   const [supervisorSuggestions, setSupervisorSuggestions] = useState<Employee[]>([]);
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
 
-  const [cycleChosen, setCycleChosen] = useState<boolean>(false);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -225,11 +223,25 @@ function AddThesisPage() {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const abbrev = e.target.value;
     setMailAbbrev(abbrev);
+    
     const filteredSupervisors = supervisors.filter(
       (supervisor) =>
         supervisor.mail.includes(abbrev.toLowerCase())
     );
     setSupervisorSuggestions(filteredSupervisors);
+
+    const selectedSupervisor = supervisorSuggestions.find(
+      (supervisor) => supervisor.mail.toLowerCase() === abbrev.toLowerCase()
+    );
+    console.log(selectedSupervisor);
+    if (selectedSupervisor){
+      console.log('I got a match!!!!')
+      setFormData({ ...formData, supervisorId: selectedSupervisor.id });
+    }
+    else{
+      setFormData({ ...formData, supervisorId: -1 });
+    }
+    console.log('After ifelse: ' + formData.supervisorId);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -283,6 +295,7 @@ function AddThesisPage() {
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log('In handleSubmit: ' + formData.supervisorId);
 
     if (validateForm()){
       if (thesis){
@@ -492,6 +505,46 @@ function AddThesisPage() {
         {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
       </div> */}
 
+      {/* <div className='mb-3'>
+        <label className='bold' htmlFor='supervisor'>
+          {t('general.people.supervisor')}:
+        </label>
+        <div className="dropdown">
+          <input
+            type="text"
+            id="supervisor"
+            name="supervisor"
+            value={mailAbbrev}
+            onChange={handleSearchChange}
+            list="supervisorList"
+            className="form-control"
+          />
+          {supervisorSuggestions.length > 0 && (
+            <select
+              id="supervisor"
+              name="supervisor"
+              className="form-control"
+              value={selectedSupervisor ? selectedSupervisor.mail : ''}
+              onChange={(e) => {
+                const selectedMail = e.target.value;
+                const selected = supervisorSuggestions.find((supervisor) => supervisor.mail === selectedMail);
+                if (selected) {
+                  handleSupervisorSelect(selected);
+                }
+              }}
+            >
+              <option value="">{t('general.management.choose')}</option>
+              {supervisorSuggestions.map((supervisor) => (
+                <option key={supervisor.mail} value={supervisor.mail}>
+                  {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+      </div> */}
+
       <div className='mb-3'>
         <label className='bold' htmlFor='supervisor'>
           {t('general.people.supervisor')}:
@@ -508,7 +561,10 @@ function AddThesisPage() {
           />
           <datalist id="supervisorList">
             {supervisorSuggestions.map((supervisor) => (
-              <option key={supervisor.mail} value={supervisor.mail}>
+              <option 
+                key={supervisor.mail} 
+                value={supervisor.mail}
+                >
                 {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
               </option>
             ))}
