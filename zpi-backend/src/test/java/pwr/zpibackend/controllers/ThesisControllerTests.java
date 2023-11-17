@@ -1,6 +1,5 @@
 package pwr.zpibackend.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,30 +8,26 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.NestedServletException;
 import pwr.zpibackend.config.GoogleAuthService;
-import pwr.zpibackend.controllers.ThesisController;
+import pwr.zpibackend.controllers.thesis.ThesisController;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Status;
-import pwr.zpibackend.models.Student;
-import pwr.zpibackend.models.Thesis;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudyCycle;
-import pwr.zpibackend.services.EmployeeService;
-import pwr.zpibackend.services.StudentService;
-import pwr.zpibackend.services.ThesisService;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.thesis.ThesisService;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 

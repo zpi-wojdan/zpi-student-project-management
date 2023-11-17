@@ -11,12 +11,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
-import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.controllers.user.RoleController;
+import pwr.zpibackend.dto.user.RoleDTO;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.RoleService;
+import pwr.zpibackend.services.user.StudentService;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.services.EmployeeService;
-import pwr.zpibackend.services.RoleService;
-import pwr.zpibackend.services.StudentService;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import pwr.zpibackend.dto.RoleDTO;
+import pwr.zpibackend.dto.user.RoleDTO;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.repositories.user.RoleRepository;
+import pwr.zpibackend.services.user.RoleService;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.repositories.RoleRepository;
 
 import java.util.List;
 import java.util.Optional;

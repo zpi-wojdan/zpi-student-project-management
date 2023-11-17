@@ -9,14 +9,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
+import pwr.zpibackend.controllers.user.AuthController;
 import pwr.zpibackend.exceptions.EmployeeAndStudentWithTheSameEmailException;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Role;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.services.user.AuthService;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.StudentService;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.Employee;
-import pwr.zpibackend.models.Role;
-import pwr.zpibackend.models.Student;
-import pwr.zpibackend.services.AuthService;
-import pwr.zpibackend.services.EmployeeService;
-import pwr.zpibackend.services.StudentService;
 
 import java.util.List;
 

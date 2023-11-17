@@ -1,8 +1,6 @@
 package pwr.zpibackend.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,19 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import pwr.zpibackend.config.GoogleAuthService;
-import pwr.zpibackend.exceptions.FileUploadException;
-import pwr.zpibackend.services.EmployeeService;
-import pwr.zpibackend.services.StudentService;
+import pwr.zpibackend.services.user.EmployeeService;
+import pwr.zpibackend.services.user.StudentService;
 import pwr.zpibackend.services.importing.FileUploadService;
 import pwr.zpibackend.services.importing.ImportEmployees;
 import pwr.zpibackend.services.importing.ImportStudents;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static org.mockito.Mockito.doThrow;

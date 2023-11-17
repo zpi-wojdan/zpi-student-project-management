@@ -1,38 +1,62 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Employee } from '../../../models/Employee';
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import { useTranslation } from "react-i18next";
-import api from "../../../utils/api";
+import api from '../../../utils/api';
+import handleSignOut from '../../../auth/Logout';
+import useAuth from "../../../auth/useAuth";
 
 const EmployeeDetails: React.FC = () => {
+  // @ts-ignore
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
-  const location = useLocation();
-  const employee = location.state?.employee as Employee;
   const roleLabels: { [key: string]: string } = {
     supervisor: t('general.people.supervisorLC'),
     approver: t('general.people.approverLC'),
     admin: t('general.people.adminLC'),
   };
+  
+  const { id } = useParams<{ id: string }>();
+  const [employee, setEmployee] = useState<Employee>()
+
+  useEffect(() => {
+    api.get(`http://localhost:8080/employee/${id}`)
+      .then((response) => {
+        console.log(response.data)
+        setEmployee(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+
+  }, [id]);
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-  const handleDeleteClick = (studentMail: string) => {
+  const handleDeleteClick = () => {
     setShowDeleteConfirmation(true);
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/employee/${employee.id}`)
+    api.delete(`http://localhost:8080/employee/${employee?.id}`)
       .then(() => {
         toast.success(t("employee.deleteSuccessful"));
         navigate("/employees");
       })
       .catch((error) => {
         console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
         toast.error(t("employee.deleteError"));
-        navigate("/employees");
       });
     setShowDeleteConfirmation(false);
   };
@@ -47,10 +71,10 @@ const EmployeeDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => { navigate(`/employees/edit/${employee.mail}`, { state: { employee } }) }}>
+        <button type="button" className="custom-button" onClick={() => { navigate(`/employees/edit/${employee?.id}`, { state: { employee } }) }}>
           {t('employee.edit')}
         </button>
-        <button type="button" className="custom-button" onClick={() => handleDeleteClick(employee.mail)}>
+        <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
           <i className="bi bi-trash"></i>
         </button>
         {showDeleteConfirmation && (
