@@ -19,13 +19,13 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-//    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<List<Comment>> getAllComments() {
         return new ResponseEntity<>(commentService.getAllComments(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<Comment> getCommentById(@PathVariable Long id) {
         return new ResponseEntity<>(commentService.getComment(id), HttpStatus.OK);
     }
@@ -43,22 +43,20 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<Comment> deleteComment(@PathVariable Long id) {
         return new ResponseEntity<>(commentService.deleteComment(id), HttpStatus.OK);
     }
 
     @GetMapping("/thesis/{id}")
-    //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<List<Comment>> getAllCommentsByThesisId(@PathVariable Long id) {
         return new ResponseEntity<>(commentService.getAllCommentsByThesisId(id), HttpStatus.OK);
     }
 
     @GetMapping("/author/{id}")
-    //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<List<Comment>> getAllCommentsByAuthorId(@PathVariable Long id) {
         return new ResponseEntity<>(commentService.getAllCommentsByAuthorId(id), HttpStatus.OK);
     }
-
-
 }

@@ -47,11 +47,13 @@ public class CommentService {
             else {
                 throw new NotFoundException();
             }
-            if (thesisRepository.existsById(param.getThesis().getId())) {
-                updated.setThesis(param.getThesis());
-            }
-            else {
-                throw new NotFoundException();
+
+            if (param.getThesis() != null) {
+                if (thesisRepository.existsById(param.getThesis().getId())) {
+                    updated.setThesis(param.getThesis());
+                } else {
+                    throw new NotFoundException();
+                }
             }
 
             updated.setContent(param.getContent());
