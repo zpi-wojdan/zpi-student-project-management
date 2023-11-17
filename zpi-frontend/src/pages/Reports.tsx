@@ -184,7 +184,7 @@ const Reports = () => {
                             setFormData({
                                 ...formData,
                                 facultyAbbr: e.target.value,
-                                studyFieldAbbr: "",
+                                studyFieldAbbr: e.target.value === "all" ? "all" : "",
                             });
                         }}
                         className="form-control"
@@ -214,7 +214,7 @@ const Reports = () => {
                             });
                         }}
                         className="form-control"
-                        disabled={formData.facultyAbbr === ""}
+                        disabled={formData.facultyAbbr === "" || formData.facultyAbbr === "all"}
                     >
                         <option value={""}>{t('general.management.choose')}</option>
                         {formData.facultyAbbr !== "" &&
