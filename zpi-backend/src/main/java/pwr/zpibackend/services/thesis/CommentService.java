@@ -9,6 +9,7 @@ import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,14 +21,6 @@ public class CommentService {
 
     public List<Comment> getAllComments() {
         return commentRepository.findAll();
-    }
-
-    public List<Comment> getAllCommentsByThesisId(Long id) {
-        return commentRepository.findAllByThesis_Id(id);
-    }
-
-    public List<Comment> getAllCommentsByAuthorId(Long id) {
-        return commentRepository.findAllByAuthor_Id(id);
     }
 
     public Comment getComment(Long id) {
@@ -69,13 +62,21 @@ public class CommentService {
         throw new NotFoundException();
     }
 
-    public void deleteComment(Long id) {
-        if (commentRepository.existsById(id)) {
+    public Comment deleteComment(Long id) {
+        Optional<Comment> comment = commentRepository.findById(id);
+        if (comment.isPresent()){
+            Comment deleted = comment.get();
             commentRepository.deleteById(id);
+            return deleted;
         }
-        else {
-            throw new NotFoundException();
-        }
+        throw new NotFoundException();
     }
 
+    public List<Comment> getAllCommentsByThesisId(Long id) {
+        return commentRepository.findAllByThesisId(id);
+    }
+
+    public List<Comment> getAllCommentsByAuthorId(Long id) {
+        return commentRepository.findAllByAuthorId(id);
+    }
 }
