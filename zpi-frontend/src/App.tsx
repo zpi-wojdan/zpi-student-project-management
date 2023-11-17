@@ -42,7 +42,7 @@ import StudyFieldList from './pages/Admin/Field/List';
 import {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
-import Reports from "./pages/Reports";
+import Reports from "./pages/Admin/Reports";
 
 
 export interface IAppProps {

@@ -1,12 +1,12 @@
-import useAuth from "../auth/useAuth";
+import useAuth from "../../auth/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import React, {useEffect, useState} from "react";
-import api from "../utils/api";
+import api from "../../utils/api";
 import {toast} from "react-toastify";
-import handleSignOut from "../auth/Logout";
-import {Faculty} from "../models/Faculty";
-import {StudyField} from "../models/StudyField";
+import handleSignOut from "../../auth/Logout";
+import {Faculty} from "../../models/Faculty";
+import {StudyField} from "../../models/StudyField";
 
 const Reports = () => {
     // @ts-ignore
