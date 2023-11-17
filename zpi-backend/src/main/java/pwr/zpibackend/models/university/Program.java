@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Data
 @AllArgsConstructor
@@ -38,6 +39,14 @@ public class Program {
     @JoinColumn(name = "faculty_id")
     @ManyToOne
     private Faculty faculty;
+
+    private String language() {
+        Pattern matches = Pattern.compile(
+                "^?<faculty>[A-Z0-9]{1,5}-?<studyfield>[A-Z]{1,5}-?<specialisation>[A-Z0-9]{1,5}-?<rest>[A-Z0-9]{1,6}$");
+
+        // this needs to be finished
+        return "";
+    }
 
     @Override
     public boolean equals(Object o) {

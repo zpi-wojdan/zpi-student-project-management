@@ -15,6 +15,7 @@ import pwr.zpibackend.utils.MailTemplates;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -33,7 +34,8 @@ public class MailService {
     public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, String name) {  // te liste arg pewnie też będzie można poprawić później
         try {
             // utworzenie odpowiedniego template html z danymi
-            Context context = new Context();
+            Locale locale = Locale.forLanguageTag("en");
+            Context context = new Context(locale);
             context.setVariables(Map.of(
                     "name", name,
                     "thesis", "Temat pracy dyplomowej", // tu będzie do zmiany jak się już podepnie notyfikacje
