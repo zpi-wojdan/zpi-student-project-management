@@ -40,11 +40,19 @@ public class Program {
     @ManyToOne
     private Faculty faculty;
 
-    private String language() {
-        Pattern matches = Pattern.compile(
-                "^?<faculty>[A-Z0-9]{1,5}-?<studyfield>[A-Z]{1,5}-?<specialisation>[A-Z0-9]{1,5}-?<rest>[A-Z0-9]{1,6}$");
-
-        // this needs to be finished
+    public String language() {
+        String[] parts = name.split("-");
+        int length = parts[1].length();
+        String departmentCode = parts[1];
+        String language = departmentCode.substring(length - 1);
+        if (Pattern.matches("[A-Z]", language)) {
+            switch (language) {
+                case "P":
+                    return "pl";
+                case "A":
+                    return "en";
+            }
+        }
         return "";
     }
 
