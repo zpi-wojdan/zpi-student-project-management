@@ -33,7 +33,7 @@ function ReservationPage({ }: ReservationProps) {
     }, []);
 
     const addReservationInput = () => {
-        if (thesis?.numPeople && reservations.length >= thesis?.numPeople) {
+        if (thesis?.num_people && reservations.length >= thesis?.num_people) {
             return;
         }
         setReservations([...reservations, ""]);

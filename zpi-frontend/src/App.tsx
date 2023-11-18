@@ -9,7 +9,6 @@ import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/reservation/SingleReservation';
 import {AuthProvider} from "./auth/AuthProvider";
 import AddThesisPage from './pages/Theses/AddThesis';
-import UpdateThesisPage from './pages/Theses/UpdateThesis';
 import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
@@ -67,8 +66,7 @@ export default function App(props: IAppProps) {
                   <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
                   <Route path='my' element={<ReservationPage />} />
                   <Route path='theses/add' element={<AddThesisPage />} />
-                  <Route path='theses/edit/:id' element={<UpdateThesisPage role={'employee'}
-                                                                                  mail={'john.doe@pwr.edu.pl'} />} />
+                  <Route path='theses/edit/:id' element={<AddThesisPage />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
@@ -88,7 +86,7 @@ export default function App(props: IAppProps) {
                 <Route path='theses' element={<ThesisList />} />
                 <Route path='theses/:id' element={<ThesisDetails />} />
                 <Route path='theses/add' element={<AddThesisPage/>} />
-                <Route path='theses/edit/:id' element={<UpdateThesisPage/>} />
+                <Route path='theses/edit/:id' element={<AddThesisPage/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />

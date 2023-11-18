@@ -32,7 +32,7 @@ const ThesesDetails: React.FC = () => {
           descriptionEN: thesisDb.descriptionEN,
           programs: thesisDb.programs,
           studyCycle: thesisDb.studyCycle,
-          numPeople: thesisDb.numPeople,
+          numPeople: thesisDb.num_people,
           occupied: thesisDb.occupied,
           supervisor: thesisDb.supervisor,
           status: thesisDb.status,

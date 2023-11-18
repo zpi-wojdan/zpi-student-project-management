@@ -30,6 +30,7 @@ function AddThesisPage() {
   const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
   
   const thesis = location.state?.thesis as Thesis;
+  const [thesisId, setThesisId] = useState<number>();
   const [formData, setFormData] = useState<ThesisDTO>({
     namePL: '',
     nameEN: '',
@@ -40,18 +41,22 @@ function AddThesisPage() {
     programIds: [-1],
     studyCycleId: -1,
     statusId: -1,
-    students: [],
+    students: ['', '', '', '', ''],
   });
 
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [studyCycles, setStudyCycles] = useState<StudyCycle[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
 
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
 
   const [supervisors, setSupervisors] = useState<Employee[]>([]);
   const [supervisorSuggestions, setSupervisorSuggestions] = useState<Employee[]>([]);
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
+
+  const [students, setStudents] = useState<Student[]>([]);
+  const [studentsSuggestions, setStudentsSuggestions] = useState<Student[][]>([[], [], [], [], []]);
+  const [indexAbbrev, setIndexAbbrev] = useState<string[]>(['', '', '', '', '']);
 
 
   useEffect(() => {
@@ -127,32 +132,27 @@ function AddThesisPage() {
     });
   }, []);
 
-  // useEffect(() => {
-  //     if (thesis){
-  //       setFormData((prevFormData) => {
-  //         return {
-  //           ...prevFormData,
-  //           statusName: statuses.find((status) => status.id === thesis.status.id)?.name || '',
-  //           studyCycleName: studyCycles.find((cycle) => cycle.id === thesis.studyCycle?.id)?.name || '',
-  //           // specializationAbbr: specializations.find((spec) => spec.id === thesis.specialization?.id)?.name || '',
-  //           // studyFieldAbbr = studyFields.find((field) => field.id === thesis.s)
-  //           supervisorMail: supervisors.find((supervisor) => supervisor.mail === thesis.supervisor.mail) || '',
-  //           // studyCyclesId: thesis.studyCycles.map((cycle) => cycle.id),
-  //         }
-  //       })
-  //     }
-  // }, []);
-
   useEffect(() => {
     if (thesis){
       setFormData((prev) => {
         return{
           ...prev,
+          namePL: thesis.namePL,
+          nameEN: thesis.nameEN,
+          descriptionPL: thesis.descriptionPL,
+          descriptionEN: thesis.descriptionEN,
           num_people: thesis.num_people,
-        }
+          supervisorId: thesis.supervisor.id,
+          programIds: thesis.programs.map((p) => p.id),
+          studyCycleId: thesis.studyCycle?.id,
+          statusId: thesis.status.id,
+          students: thesis.reservations.map((r) => r.student.index)
+        };
       });
+      setThesisId(thesis.id);
     }
-  }, []);
+    console.log('In useEffect: ' + thesis)
+  }, [thesis]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> =  {};
@@ -196,14 +196,20 @@ function AddThesisPage() {
       newErrorsKeys.supervisor = "general.management.fieldIsRequired";
       isValid = false;
     }
-    // // programs: null,
-    // if (!formData.num_people){
-    //   newErrors.num_people = errorRequireText
-    //   newErrorsKeys.descriptionEN = "general.management.fieldIsRequired";
-    //   isValid = false;
-    // }
+    
+    if (!formData.programIds){
+      newErrors.programIds = errorRequireText
+      newErrorsKeys.programIds = "general.management.fieldIsRequired";
+      isValid = false;
+    }
 
-    if (!formData.studyCycleId){
+    if (formData.programIds.includes(-1)){
+      newErrors.program = errorRequireText
+      newErrorsKeys.program = "general.management.fieldIsRequired";
+      isValid = false;
+    }
+
+    if (!formData.studyCycleId || formData.studyCycleId === -1){
       newErrors.studyCycle = errorRequireText
       newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
       isValid = false;
@@ -217,10 +223,11 @@ function AddThesisPage() {
 
     setErrors(newErrors);
     setErrorsKeys(newErrorsKeys);
+    console.log(isValid);
     return isValid;
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const abbrev = e.target.value;
     setMailAbbrev(abbrev);
     
@@ -243,6 +250,41 @@ function AddThesisPage() {
     }
     console.log('After ifelse: ' + formData.supervisorId);
   };
+
+  const handleIndexSearchChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    const abbrev = e.target.value;
+    setIndexAbbrev((prev) => [
+      ...prev.slice(0, index),
+      abbrev,
+      ...prev.slice(index+1),
+    ]);
+
+    const filteredStudents = students.filter(
+      (stud) => 
+        stud.index.startsWith(abbrev)
+    );
+    setStudentsSuggestions((prev) => {
+      const newSuggestions = [...prev];
+      newSuggestions[index] = filteredStudents;
+      return newSuggestions;
+    });
+    
+    const selectedStudent = studentsSuggestions[index].find(
+      (stud) => stud.index === abbrev
+    );
+    console.log(selectedStudent);
+    
+    setFormData((prev) => {
+      const newStudents = [...prev.students];
+      if (selectedStudent){
+        newStudents[index] = selectedStudent.index;
+      }
+      else{
+        newStudents[index] = '';
+      }
+      return { ...prev, students: newStudents};
+    });
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -269,7 +311,10 @@ function AddThesisPage() {
   };
 
   const handleCycleChange = (selectedCycleId: number) => {
-    const updatedProgramSuggestions = 1; // filter program suggestions here
+    const updatedProgramSuggestions = programs
+                  .filter((p) => p.studyCycles
+                  .map((c)=> c.id === selectedCycleId));
+    setProgramSuggestions(updatedProgramSuggestions);
     setFormData({ ...formData, studyCycleId: selectedCycleId});
   }
 
@@ -295,11 +340,13 @@ function AddThesisPage() {
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('In handleSubmit: ' + formData.supervisorId);
+    console.log('In handleSubmit: ');
+    console.log(formData)
+    console.log(thesis);
 
     if (validateForm()){
       if (thesis){
-        api.put(`http://localhost:8080/theses/${thesis.id}`, formData)
+        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
         .then(() => {
           navigate("/theses");
           toast.success(t("thesis.updateSuccessful"));
@@ -315,7 +362,7 @@ function AddThesisPage() {
         });
       }
       else{
-        api.post('http://localhost:8080/theses', formData)
+        api.post('http://localhost:8080/thesis', formData)
         .then(() => {
           navigate("/theses");
           toast.success(t("thesis.addSuccessful"));
@@ -323,10 +370,10 @@ function AddThesisPage() {
         .catch((error) => {
           if (error.response && error.response.status === 409) {
             const newErrors: Record<string, string> = {};
-            newErrors.index = t("student.indexExists")
+            newErrors.index = t("thesis.addError")
             setErrors(newErrors);
             const newErrorsKeys: Record<string, string> = {};
-            newErrorsKeys.index = "student.indexExists"
+            newErrorsKeys.index = "thesis.addError"
             setErrorsKeys(newErrorsKeys);
           } else {
             console.error(error);
@@ -335,16 +382,35 @@ function AddThesisPage() {
               handleSignOut(navigate);
             }
             navigate("/students");
-            toast.error(t("student.addError"));
+            toast.error(t("thesis.addError"));
           }
         })
       }
     }
   };
 
+  const generateIndices = () => Array.from(Array(formData.num_people).keys());
+
+
+  useEffect(() => {
+    const newAbrrevArray = [...indexAbbrev];
+    for (let i = formData.num_people; i < indexAbbrev.length; i++) {
+      newAbrrevArray[i] = '';
+    }
+    setIndexAbbrev(newAbrrevArray);
+
+    const newStudArray = [...studentsSuggestions];
+    for (let i = formData.num_people; i < studentsSuggestions.length; i++) {
+      studentsSuggestions[i] = [];
+    }
+    setStudentsSuggestions(newStudArray);
+
+  }, [formData.num_people]);
+
+  
   return (
-    <div>
-      <form onSubmit={(event) => handleSubmit(event)} className="form mb-5">
+    <div className='page-margin'>
+      <form onSubmit={(event) => handleSubmit(event)} className="form">
 
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
@@ -437,114 +503,7 @@ function AddThesisPage() {
         {errors.num_people && <div className="text-danger">{errors.num_people}</div>}
       </div>
 
-      {/* {/* <div className="mb-3">
-        <label className="bold" htmlFor="supervisor">
-          {t('general.people.supervisor')}:
-        </label>
-        <input 
-          type="text" 
-          id="supervisor"
-          name="supervisor"
-          value={mailAbbrev} 
-          onChange={handleSearchChange}
-          className="form-control"
-          />
-        {suggestions.length > 0 && (
-              <select
-                id="supervisor"
-                name="supervisor"
-                className="form-control"
-                value={selectedSupervisor ? selectedSupervisor.mail : ''}
-                onChange={(e) => {
-                  const selected = supervisors.find(
-                    (supervisor) => supervisor.mail === e.target.value
-                  );
-                  if (selected) {
-                    handleSupervisorSelect(selected);
-                  }
-                }}
-              >
-                <option value="">{t('general.management.choose')}</option>
-                {suggestions.map((supervisor) => (
-                  <option key={supervisor.mail} value={supervisor.mail}>
-                    {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
-                  </option>
-                ))}
-              </select>
-        )}
-        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-      </div> */}
-
-      {/* <div className='mb-3'>
-        <label className='bold' htmlFor='supervisor'>
-          {t('general.people.supervisor')}:
-        </label>
-        <div className="dropdown">
-          <input
-            type="text"
-            id="supervisor"
-            name="supervisor"
-            value={mailAbbrev}
-            onChange={handleSearchChange}
-            className="form-control"
-          />
-          {suggestions.length > 0 && (
-            <ul className="dropdown-menu form-control" style={{ display: 'block' }}>
-              {suggestions.map((supervisor) => (
-                <li
-                  key={supervisor.mail}
-                  className="dropdown-item"
-                  onClick={() => handleSupervisorSelect(supervisor)}
-                >
-                  {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-      </div> */}
-
-      {/* <div className='mb-3'>
-        <label className='bold' htmlFor='supervisor'>
-          {t('general.people.supervisor')}:
-        </label>
-        <div className="dropdown">
-          <input
-            type="text"
-            id="supervisor"
-            name="supervisor"
-            value={mailAbbrev}
-            onChange={handleSearchChange}
-            list="supervisorList"
-            className="form-control"
-          />
-          {supervisorSuggestions.length > 0 && (
-            <select
-              id="supervisor"
-              name="supervisor"
-              className="form-control"
-              value={selectedSupervisor ? selectedSupervisor.mail : ''}
-              onChange={(e) => {
-                const selectedMail = e.target.value;
-                const selected = supervisorSuggestions.find((supervisor) => supervisor.mail === selectedMail);
-                if (selected) {
-                  handleSupervisorSelect(selected);
-                }
-              }}
-            >
-              <option value="">{t('general.management.choose')}</option>
-              {supervisorSuggestions.map((supervisor) => (
-                <option key={supervisor.mail} value={supervisor.mail}>
-                  {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-      </div> */}
-
+      
       <div className='mb-3'>
         <label className='bold' htmlFor='supervisor'>
           {t('general.people.supervisor')}:
@@ -555,7 +514,7 @@ function AddThesisPage() {
             id="supervisor"
             name="supervisor"
             value={mailAbbrev}
-            onChange={handleSearchChange}
+            onChange={handleMailSearchChange}
             list="supervisorList"
             className="form-control"
           />
@@ -565,7 +524,7 @@ function AddThesisPage() {
                 key={supervisor.mail} 
                 value={supervisor.mail}
                 >
-                {supervisor.title.name} {supervisor.surname} {supervisor.name} - {supervisor.mail}
+                {supervisor.title.name} {supervisor.surname} {supervisor.name}
               </option>
             ))}
           </datalist>
@@ -618,7 +577,7 @@ function AddThesisPage() {
                   disabled={formData.studyCycleId === -1}
                 >
                   <option value={-1}>{t('general.management.choose')}</option>
-                  {programs
+                  {programSuggestions
                     .filter((p) =>
                       p.studyCycles.some((cycle) => cycle.id === formData.studyCycleId)
                     )
@@ -653,24 +612,65 @@ function AddThesisPage() {
         </ul>
       </div>
 
-      <label className="bold" htmlFor="status">
-        {t('general.university.status')}:
-      </label>
-      <select
-        id="status"
-        name="status"
-        value={formData.statusId}
-        className="form-control"
-        onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
-      >
-        <option value={-1}>{t('general.management.choose')}</option>
-        {statuses.map((status) => (
-          <option key={status.id} value={status.id}>
-            {status.name}
-          </option>
-        ))}
-      </select>
-      {errors.status && <div className="text-danger">{errors.status}</div>}
+      <div className='mb-3'>
+        <label className="bold" htmlFor="status">
+          {t('general.university.status')}:
+        </label>
+        <select
+          id="status"
+          name="status"
+          value={formData.statusId}
+          className="form-control"
+          onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
+        >
+          <option value={-1}>{t('general.management.choose')}</option>
+          {statuses.map((status) => (
+            <option key={status.id} value={status.id}>
+              {status.name}
+            </option>
+          ))}
+        </select>
+        {errors.status && <div className="text-danger">{errors.status}</div>}
+      </div>
+
+      <div className='mb-3'>
+        <label className='bold' htmlFor='students'>
+          {t('general.people.student')}:
+        </label>
+        
+        <ul>
+
+          {generateIndices().map((index) => (
+              <li key={`student${index}`}>
+                <div className="dropdown">
+                  <input
+                    type="text"
+                    id={`studentInp${index}`}
+                    name={`studentInp${index}`}
+                    value={indexAbbrev[index]}
+                    onChange={(e) => handleIndexSearchChange(e, index)}
+                    list={`studentList${index}`}
+                    className="form-control"
+                  />
+                  <datalist id={`studentList${index}`}>
+                    {studentsSuggestions[index].map((stud) => (
+                      <option 
+                        key={stud.mail} 
+                        value={stud.mail}
+                        >
+                        {stud.surname} {stud.name}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+              </li>
+
+            ))}
+
+        </ul>
+        {errors.students && <div className="text-danger">{errors.students}</div>}
+      </div>
+
       </form>
     </div>
   )

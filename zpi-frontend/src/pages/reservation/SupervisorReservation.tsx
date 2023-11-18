@@ -20,7 +20,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
 
-    const [reservations, setReservations] = useState<string[]>(Array(thesis?.numPeople || 0).fill(""));
+    const [reservations, setReservations] = useState<string[]>(Array(thesis?.num_people || 0).fill(""));
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);

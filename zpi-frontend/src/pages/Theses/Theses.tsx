@@ -29,7 +29,7 @@ const ThesesTable: React.FC = () => {
             descriptionEN: thesisDb.descriptionEN,
             programs: thesisDb.programs,
             studyCycle: thesisDb.studyCycle,
-            numPeople: thesisDb.numPeople,
+            numPeople: thesisDb.num_people,
             occupied: thesisDb.occupied,
             supervisor: thesisDb.supervisor,
             status: thesisDb.status,
@@ -88,11 +88,7 @@ const ThesesTable: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='d-flex justify-content-between  align-items-center'>
-      <div >
-          <button className="custom-button" onClick={() =>{navigate('/theses/add')}}>
-              {t('thesis.add')}
-          </button>
-      </div>
+      <div></div>
       {ITEMS_PER_PAGE.length > 1 && (
         <div className="d-flex justify-content-between">
           <div className="d-flex align-items-center">

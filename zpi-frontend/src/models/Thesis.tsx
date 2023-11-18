@@ -44,9 +44,9 @@ export type ThesisDTO = {
   descriptionPL: string;
   descriptionEN: string;
   num_people: number;
-  supervisorId: number;  // jest
+  supervisorId: number; 
   programIds: number[];
-  studyCycleId: number; // jest 
-  statusId: number; // jest
+  studyCycleId: number | undefined;
+  statusId: number;
   students: string[] // indexes, easier to read and still unique
 }
