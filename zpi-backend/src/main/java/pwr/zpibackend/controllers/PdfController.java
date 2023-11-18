@@ -27,7 +27,7 @@ public class PdfController {
 
     @GetMapping("pdf/students-without-thesis")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> generateStudentsWithThesisReport(HttpServletResponse response,
+    public ResponseEntity<String> generateStudentsWithoutThesisReport(HttpServletResponse response,
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
             throws DocumentException, IOException {
         if (pdfService.generateStudentsWithoutThesisReport(response, facultyAbbr, studyFieldAbbr))
