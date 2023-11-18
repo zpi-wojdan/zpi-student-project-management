@@ -9,7 +9,10 @@ import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
 import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.*;
+import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
@@ -36,9 +39,12 @@ public class PdfServiceTests {
     private Map<String, Map<String, List<StudentInReportsDTO>>> studentsWithoutThesisW04NIST;
     private Map<String, Map<String, List<StudentInReportsDTO>>> studentsWithoutThesisW04N;
     private Map<String, Map<String, List<StudentInReportsDTO>>> studentsWithoutThesis;
+    private Map<String, Map<String, List<ThesisGroupDTO>>> thesisGroupsW04NIST;
+    private Map<String, Map<String, List<ThesisGroupDTO>>> thesisGroupsW04N;
     private Map<String, Map<String, List<ThesisGroupDTO>>> thesisGroups;
     private List<Reservation> reservations;
     private List<Student> studentsOrdered;
+    private List<Thesis> theses;
 
     @BeforeEach
     public void setUp() {
@@ -117,6 +123,13 @@ public class PdfServiceTests {
         student4.setSurname("Doe");
         student4.setMail("222222@student.pwr.edu.pl");
 
+        Student student5 = new Student();
+        student5.setId(5L);
+        student5.setIndex("333333");
+        student5.setName("Adam");
+        student5.setSurname("White");
+        student5.setMail("333333@student.pwr.edu.pl");
+
         StudentProgramCycle studentProgramCycle1 = new StudentProgramCycle();
         studentProgramCycle1.setId(new StudentProgramCycleId(1L, 1L, 1L));
         studentProgramCycle1.setStudent(student1);
@@ -147,10 +160,18 @@ public class PdfServiceTests {
         studentProgramCycle4.setProgram(program3);
         studentProgramCycle4.setCycle(studyCycle1);
 
+        StudentProgramCycle studentProgramCycle5 = new StudentProgramCycle();
+        studentProgramCycle5.setId(new StudentProgramCycleId(5L, 1L, 1L));
+        studentProgramCycle5.setStudent(student5);
+        studentProgramCycle5.setProgram(program1);
+        studentProgramCycle5.setCycle(studyCycle1);
+
         student1.setStudentProgramCycles(Set.of(studentProgramCycle1));
         student2.setStudentProgramCycles(Set.of(studentProgramCycle2FirstProgram, studentProgramCycle2SecondProgram));
         student3.setStudentProgramCycles(Set.of(studentProgramCycle3));
         student4.setStudentProgramCycles(Set.of(studentProgramCycle4));
+        student5.setStudentProgramCycles(Set.of(studentProgramCycle5));
+
 
         StudentInReportsDTO studentInReportsDTO1 = new StudentInReportsDTO();
         studentInReportsDTO1.setIndex("123456");
@@ -192,6 +213,14 @@ public class PdfServiceTests {
         studentInReportsDTO4.setFacultyAbbreviation("W01");
         studentInReportsDTO4.setStudyFieldAbbreviation("ARCH");
 
+        StudentInReportsDTO studentInReportsDTO5 = new StudentInReportsDTO();
+        studentInReportsDTO5.setIndex("333333");
+        studentInReportsDTO5.setName("Adam");
+        studentInReportsDTO5.setSurname("White");
+        studentInReportsDTO5.setMail("333333@student.pwr.edu.pl");
+        studentInReportsDTO5.setFacultyAbbreviation("W04N");
+        studentInReportsDTO5.setStudyFieldAbbreviation("IST");
+
         studentsWithoutThesisW04NIST = Map.of(
                 "W04N", Map.of(
                         "IST", List.of(studentInReportsDTO2FirstProgram, studentInReportsDTO1)
@@ -215,12 +244,75 @@ public class PdfServiceTests {
                 )
         );
 
+        Title title1 = new Title();
+        title1.setId(1L);
+        title1.setName("dr");
+
+        Employee employee1 = new Employee();
+        employee1.setId(1L);
+        employee1.setName("Joe");
+        employee1.setSurname("Damon");
+        employee1.setMail("j.d@pwr.edu.pl");
+        employee1.setTitle(title1);
+
+        SupervisorDTO supervisorDTO1 = new SupervisorDTO();
+        supervisorDTO1.setName("Joe");
+        supervisorDTO1.setSurname("Damon");
+        supervisorDTO1.setMail("j.d@pwr.edu.pl");
+        supervisorDTO1.setTitle("dr");
+
+
+        thesisGroupsW04NIST = Map.of(
+                "W04N", Map.of(
+                        "IST", List.of(
+                                new ThesisGroupDTO("Temat 1", "W04N", "IST",
+                                        supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
+                                ),
+                                new ThesisGroupDTO("Temat 6", "W04N", "IST",
+                                        supervisorDTO1, List.of(studentInReportsDTO5)
+                                )
+                        )
+                )
+        );
+
+        thesisGroupsW04N = Map.of(
+                "W04N", Map.of(
+                        "IST", List.of(
+                                new ThesisGroupDTO("Temat 1", "W04N", "IST",
+                                        supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
+                                ),
+                                new ThesisGroupDTO("Temat 6", "W04N", "IST",
+                                        supervisorDTO1, List.of(studentInReportsDTO5)
+                                )
+                        ),
+                        "INA", List.of(
+                                new ThesisGroupDTO("Temat 4", "W04N", "INA",
+                                        supervisorDTO1, List.of(studentInReportsDTO3)
+                                )
+                        )
+                )
+        );
+
         thesisGroups = Map.of(
                 "W04N", Map.of(
                         "IST", List.of(
-                                new ThesisGroupDTO("Thesis 1", "W04N", "IST",
-                                        new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr"),
-                                        List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
+                                new ThesisGroupDTO("Temat 1", "W04N", "IST",
+                                        supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
+                                ),
+                                new ThesisGroupDTO("Temat 6", "W04N", "IST",
+                                        supervisorDTO1, List.of(studentInReportsDTO5)
+                                )
+                        ),
+                        "INA", List.of(
+                                new ThesisGroupDTO("Temat 4", "W04N", "INA",
+                                        supervisorDTO1, List.of(studentInReportsDTO3)
+                                )
+                        )
+                ),
+                "W01", Map.of(
+                        "ARCH", List.of(
+                                new ThesisGroupDTO("Temat 5", "W01", "ARCH",
+                                        supervisorDTO1, List.of(studentInReportsDTO4)
                                 )
                         )
                 )
@@ -230,12 +322,58 @@ public class PdfServiceTests {
                 new Reservation(1L, true, false, true,
                         true, null, null, student1, null),
                 new Reservation(2L, true, true, true,
-                        true, null, null, new Student(), null),
+                        true, null, null, student5, null),
                 new Reservation(3L, true, false, true,
                         true, null, null, student2, null)
         );
 
-        studentsOrdered = Arrays.asList(student3, student2, student1, student4);
+        studentsOrdered = Arrays.asList(student3, student2, student1, student4, student5);
+
+        theses = Arrays.asList(
+                // valid thesis for the report
+                new Thesis(1L, "Temat 1", "Thesis 1", "Opis1", "Description1",
+                        4, employee1, student1, List.of(program1, program2), studyCycle1, new Status(), 2,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student1, null),
+                                new Reservation(2L, true, true, true,
+                                        true, null, null, student2, null)
+                        ), null, null),
+                new Thesis(4L, "Temat 4", "Thesis 4", "Opis4", "Description4",
+                        4, employee1, student3, List.of(program2), studyCycle1, new Status(), 1,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student3, null)
+                        ), null, null),
+                new Thesis(5L, "Temat 5", "Thesis 5", "Opis5", "Description5",
+                        4, employee1, student4, List.of(program2, program3), studyCycle1, new Status(), 1,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student4, null)
+                        ), null, null),
+                new Thesis(6L, "Temat 6", "Thesis 6", "Opis6", "Description6",
+                        4, employee1, student5, List.of(program1), studyCycle1, new Status(), 1,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student5, null)
+                        ), null, null),
+                // invalid thesis for the report
+                new Thesis(2L, "Temat 2", "Thesis 2", "Opis2", "Description2",
+                        4, employee1, new Student(), List.of(program1, program2), studyCycle1, new Status(), 1,
+                        List.of(
+                                new Reservation(1L, true, false, true,
+                                        true, null, null, new Student(), null)
+                        ), null, null),
+                new Thesis(3L, "Temat 3", "Thesis 3", "Opis3", "Description3",
+                        4, employee1, null, List.of(program1, program2), studyCycle1, new Status(), 0,
+                        null, null, null),
+                new Thesis(7L, "Temat 7", "Thesis 7", "Opis7", "Description7",
+                        4, employee1, student1, List.of(program3), studyCycle1, new Status(), 0,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student1, null)
+                        ), null, null)
+        );
     }
 
     @Test
@@ -261,6 +399,17 @@ public class PdfServiceTests {
     }
 
     @Test
+    public void testGetStudentsWithoutThesisFromField() {
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        Map<String, Map<String, List<StudentInReportsDTO>>> result =
+                pdfService.getStudentsWithoutThesis(null, studyFieldAbbr);
+
+        assertEquals(studentsWithoutThesisW04NIST, result);
+    }
+
+    @Test
     public void testGetStudentsWithoutThesis() {
         when(reservationRepository.findAll()).thenReturn(reservations);
         when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
@@ -269,6 +418,46 @@ public class PdfServiceTests {
                 pdfService.getStudentsWithoutThesis(null, null);
 
         assertEquals(studentsWithoutThesis, result);
+    }
+
+    @Test
+    public void testGetThesisGroupsFromFacultyAndField() {
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        Map<String, Map<String, List<ThesisGroupDTO>>> result =
+                pdfService.getThesisGroups(facultyAbbr, studyFieldAbbr);
+
+        assertEquals(thesisGroupsW04NIST, result);
+    }
+
+    @Test
+    public void testGetThesisGroupsFromFaculty() {
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        Map<String, Map<String, List<ThesisGroupDTO>>> result =
+                pdfService.getThesisGroups(facultyAbbr, null);
+
+        assertEquals(thesisGroupsW04N, result);
+    }
+
+    @Test
+    public void testGetThesisGroupsFromField() {
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        Map<String, Map<String, List<ThesisGroupDTO>>> result =
+                pdfService.getThesisGroups(null, studyFieldAbbr);
+
+        assertEquals(thesisGroupsW04NIST, result);
+    }
+
+    @Test
+    public void testGetThesisGroups() {
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        Map<String, Map<String, List<ThesisGroupDTO>>> result =
+                pdfService.getThesisGroups(null, null);
+
+        assertEquals(thesisGroups, result);
     }
 
 }

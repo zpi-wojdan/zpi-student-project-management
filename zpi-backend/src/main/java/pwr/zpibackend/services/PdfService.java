@@ -87,13 +87,21 @@ public class PdfService {
 
     public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(String facultyAbbr, String studyFieldAbbr) {
         return thesisRepository.findAllByOrderByNamePLAsc().stream()
-                .filter(thesis -> thesis.getReservations().stream().anyMatch(Reservation::isConfirmedBySupervisor))
-                .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getFaculty() != null &&
-                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr))))
-                .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getStudyField() != null && (studyFieldAbbr == null ||
-                                program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
+                .filter(thesis -> thesis.getReservations() != null && thesis.getReservations().stream()
+                        .anyMatch(Reservation::isConfirmedBySupervisor))
+                .filter(thesis -> thesis.getPrograms() != null && thesis.getPrograms().stream()
+                        .anyMatch(program -> program.getFaculty() != null && program.getStudyField() != null &&
+                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr)) &&
+                                (studyFieldAbbr == null || program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
+                .filter(thesis -> thesis.getLeader() != null && thesis.getLeader().getStudentProgramCycles() != null &&
+                        thesis.getLeader().getStudentProgramCycles().stream()
+                                .anyMatch(studentProgramCycle -> studentProgramCycle.getProgram() != null &&
+                                        studentProgramCycle.getProgram().getFaculty() != null &&
+                                        studentProgramCycle.getProgram().getStudyField() != null &&
+                                        (facultyAbbr == null || studentProgramCycle.getProgram().getFaculty()
+                                                .getAbbreviation().equals(facultyAbbr)) &&
+                                        (studyFieldAbbr == null || studentProgramCycle.getProgram().getStudyField()
+                                                .getAbbreviation().equals(studyFieldAbbr))))
                 .map(thesis -> {
                     ThesisGroupDTO thesisGroupData = new ThesisGroupDTO();
                     thesisGroupData.setThesisNamePL(thesis.getNamePL());
@@ -106,7 +114,8 @@ public class PdfService {
                             .map(reservation -> {
                                 return setStudentData(reservation.getStudent().getName(),
                                         reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
-                                        reservation.getStudent().getMail(), null, null);
+                                        reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                        thesisGroupData.getStudyFieldAbbreviation());
                             })
                             .collect(Collectors.toList()));
                     return thesisGroupData;
