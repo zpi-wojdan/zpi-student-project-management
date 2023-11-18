@@ -42,9 +42,7 @@ public class AuthServiceTests {
         RequestContextHolder.setRequestAttributes(requestAttributes);
         when(requestAttributes.getAttribute("googleEmail", RequestAttributes.SCOPE_REQUEST)).thenReturn(email);
 
-        assertThrows(NotFoundException.class, () -> {
-            authService.getUserDetails(email);
-        });
+        assertThrows(NotFoundException.class, () -> authService.getUserDetails(email));
     }
 
     @Test
