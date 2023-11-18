@@ -1,10 +1,12 @@
 package pwr.zpibackend.services;
 
+import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpServletResponse;
 import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
@@ -18,10 +20,11 @@ import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 
+import java.io.IOException;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class PdfServiceTests {
@@ -410,7 +413,7 @@ public class PdfServiceTests {
     }
 
     @Test
-    public void testGetStudentsWithoutThesis() {
+    public void testGetStudentsWithoutThesisFromAllFaculties() {
         when(reservationRepository.findAll()).thenReturn(reservations);
         when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
 
@@ -418,6 +421,17 @@ public class PdfServiceTests {
                 pdfService.getStudentsWithoutThesis(null, null);
 
         assertEquals(studentsWithoutThesis, result);
+    }
+
+    @Test
+    public void testGetStudentsWithoutThesisDataNotFound() {
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        Map<String, Map<String, List<StudentInReportsDTO>>> result =
+                pdfService.getStudentsWithoutThesis("aa", "aa");
+
+        assertEquals(Collections.emptyMap(), result);
     }
 
     @Test
@@ -451,7 +465,7 @@ public class PdfServiceTests {
     }
 
     @Test
-    public void testGetThesisGroups() {
+    public void testGetThesisGroupsFromAllFaculties() {
         when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
 
         Map<String, Map<String, List<ThesisGroupDTO>>> result =
@@ -460,4 +474,180 @@ public class PdfServiceTests {
         assertEquals(thesisGroups, result);
     }
 
+    @Test
+    public void testGetThesisGroupsDataNotFound() {
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        Map<String, Map<String, List<ThesisGroupDTO>>> result =
+                pdfService.getThesisGroups("aa", "aa");
+
+        assertEquals(Collections.emptyMap(), result);
+    }
+
+    @Test
+    public void testGenerateThesisGroupsReportFromW04NIST() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        boolean result = pdfService.generateThesisGroupsReport(response, facultyAbbr, studyFieldAbbr);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "grupy_zpi_" + facultyAbbr + "_" + studyFieldAbbr + "_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+    }
+
+    @Test
+    public void testGenerateThesisGroupsReportFromW04N() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        boolean result = pdfService.generateThesisGroupsReport(response, facultyAbbr, null);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "grupy_zpi_" + facultyAbbr + "_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+        assertFalse(response.getHeader("Content-Disposition").contains(studyFieldAbbr));
+    }
+
+    @Test
+    public void testGenerateThesisGroupsReportFromIST() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        boolean result = pdfService.generateThesisGroupsReport(response, null, studyFieldAbbr);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "grupy_zpi_" + studyFieldAbbr + "_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+        assertFalse(response.getHeader("Content-Disposition").contains(facultyAbbr));
+    }
+
+    @Test
+    public void testGenerateThesisGroupsReportFromAllFaculties() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        boolean result = pdfService.generateThesisGroupsReport(response, null, null);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "grupy_zpi_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+        assertFalse(response.getHeader("Content-Disposition").contains(facultyAbbr));
+        assertFalse(response.getHeader("Content-Disposition").contains(studyFieldAbbr));
+    }
+
+    @Test
+    public void testGenerateThesisGroupsReportDataNotFound() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(thesisRepository.findAllByOrderByNamePLAsc()).thenReturn(theses);
+
+        boolean result = pdfService.generateThesisGroupsReport(response, "aa", "aa");
+
+        assertFalse(result);
+        assertNull(response.getContentType());
+        assertNull(response.getHeader("Content-Disposition"));
+        assertEquals(0, response.getContentAsByteArray().length);
+    }
+
+    @Test
+    public void testGenerateStudentsWithoutThesisReportFROMW40NIST() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        boolean result = pdfService.generateStudentsWithoutThesisReport(response, facultyAbbr, studyFieldAbbr);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "studenci_bez_tematu_zpi_" + facultyAbbr + "_" + studyFieldAbbr + "_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+    }
+
+    @Test
+    public void testGenerateStudentsWithoutThesisReportFromW04N() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        boolean result = pdfService.generateStudentsWithoutThesisReport(response, facultyAbbr, null);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "studenci_bez_tematu_zpi_" + facultyAbbr + "_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+        assertFalse(response.getHeader("Content-Disposition").contains(studyFieldAbbr));
+    }
+
+    @Test
+    public void testGenerateStudentsWithoutThesisReportFromIST() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        boolean result = pdfService.generateStudentsWithoutThesisReport(response, null, studyFieldAbbr);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "studenci_bez_tematu_zpi_" + studyFieldAbbr + "_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+        assertFalse(response.getHeader("Content-Disposition").contains(facultyAbbr));
+    }
+
+    @Test
+    public void testGenerateStudentsWithoutThesisReportFromAllFaculties() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        boolean result = pdfService.generateStudentsWithoutThesisReport(response, null, null);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "studenci_bez_tematu_zpi_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+        assertFalse(response.getHeader("Content-Disposition").contains(facultyAbbr));
+        assertFalse(response.getHeader("Content-Disposition").contains(studyFieldAbbr));
+    }
+
+    @Test
+    public void testGenerateStudentsWithoutThesisReportDataNotFound() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        when(reservationRepository.findAll()).thenReturn(reservations);
+        when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
+
+        boolean result = pdfService.generateStudentsWithoutThesisReport(response, "aa", "aa");
+
+        assertFalse(result);
+        assertNull(response.getContentType());
+        assertNull(response.getHeader("Content-Disposition"));
+        assertEquals(0, response.getContentAsByteArray().length);
+    }
 }
