@@ -3,13 +3,19 @@ package pwr.zpibackend.services.thesis;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +27,7 @@ public class ThesisService {
     private final ThesisRepository thesisRepository;
     private final EmployeeRepository employeeRepository;
     private final StatusRepository statusRepository;
+    private final CommentRepository commentRepository;
 
     public List<Thesis> getAllTheses() {
         return thesisRepository.findAll();
@@ -78,12 +85,33 @@ public class ThesisService {
     }
 
     //  brakowało metody do usuwania tematu
+    //  co z rozłączaniem z employee/studentem itp? dobrze to jest?
+    @Transactional
     public Thesis deleteThesis(Long id) {
         Optional<Thesis> thesis = thesisRepository.findById(id);
         if (thesis.isPresent()){
-            Thesis deleted = thesis.get();
+            Thesis deletedThesis = thesis.get();
+
+            Status status = deletedThesis.getStatus();
+            if (status != null){
+                status.getTheses().remove(deletedThesis);
+                deletedThesis.setStatus(null);
+            }
+
+            deletedThesis.setPrograms(null);
+            deletedThesis.setSupervisor(null);
+            deletedThesis.setLeader(null);
+            deletedThesis.setStudyCycle(null);
+            deletedThesis.setReservations(null);
+
+            List<Comment> comments = deletedThesis.getComments();
+            if (comments != null) {
+                comments.forEach(comment -> commentRepository.deleteById(comment.getId()));
+            }
+            deletedThesis.setComments(null);
+
             thesisRepository.deleteById(id);
-            return deleted;
+            return deletedThesis;
         }
         throw new NotFoundException();
     }
