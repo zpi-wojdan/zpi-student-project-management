@@ -19,6 +19,7 @@ import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
+import pwr.zpibackend.services.reports.PdfService;
 
 import java.io.IOException;
 import java.util.*;

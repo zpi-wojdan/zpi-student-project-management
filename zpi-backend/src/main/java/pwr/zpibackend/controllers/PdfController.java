@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
-import pwr.zpibackend.services.PdfService;
+import pwr.zpibackend.services.reports.PdfService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
