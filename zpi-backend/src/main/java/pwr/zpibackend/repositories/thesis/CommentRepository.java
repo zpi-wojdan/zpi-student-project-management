@@ -12,6 +12,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c WHERE c.thesis.Id = :thesisId")
     List<Comment> findAllByThesisId(@Param("thesisId") Long thesisId);
+
     @Query("SELECT c FROM Comment c WHERE c.author.id = :authorId")
     List<Comment> findAllByAuthorId(@Param("authorId") Long authorId);
 }

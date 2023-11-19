@@ -2,12 +2,13 @@ package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pwr.zpibackend.dto.thesis.CommentDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,44 +25,46 @@ public class CommentService {
     }
 
     public Comment getComment(Long id) {
-        return commentRepository.findById(id).orElseThrow();
+        return commentRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("comment with id " + id + " does not exist")
+        );
     }
 
-    public Comment addComment(Comment comment) {
+    public Comment addComment(CommentDTO comment) {
         Comment newComment = new Comment();
-        newComment.setAuthor(comment.getAuthor());
-        newComment.setThesis(comment.getThesis());
         newComment.setContent(comment.getContent());
-        newComment.setCreationTime(comment.getCreationTime());
-        commentRepository.saveAndFlush(newComment);
+        newComment.setCreationTime(LocalDateTime.now());
+
+        newComment.setThesis(
+                thesisRepository.findById(comment.getThesisId())
+                        .orElseThrow(NotFoundException::new)
+        );
+        newComment.setAuthor(
+                employeeRepository.findById(comment.getAuthorId())
+                        .orElseThrow(NotFoundException::new)
+        );
+
+        commentRepository.save(newComment);
         return newComment;
     }
 
-    public Comment updateComment(Long id, Comment param){
-        if(commentRepository.existsById(id)){
-            Comment updated = commentRepository.findById(id).get();
+    public Comment updateComment(Long id, CommentDTO param){
+        Comment existing = commentRepository.findById(id).orElse(null);
+        if (existing != null){
+            existing.setThesis(
+                    thesisRepository.findById(param.getThesisId())
+                            .orElseThrow(NotFoundException::new)
+            );
+            existing.setAuthor(
+                    employeeRepository.findById(param.getAuthorId())
+                            .orElseThrow(NotFoundException::new)
+            );
 
-            if (employeeRepository.existsById(param.getAuthor().getId())) {
-                updated.setAuthor(param.getAuthor());
-            }
-            else {
-                throw new NotFoundException();
-            }
-
-            if (param.getThesis() != null) {
-                if (thesisRepository.existsById(param.getThesis().getId())) {
-                    updated.setThesis(param.getThesis());
-                } else {
-                    throw new NotFoundException();
-                }
-            }
-
-            updated.setContent(param.getContent());
-            updated.setCreationTime(param.getCreationTime());
-            commentRepository.saveAndFlush(updated);
-            return updated;
+            existing.setCreationTime(LocalDateTime.now());
+            existing.setContent(param.getContent());
+            return commentRepository.save(existing);
         }
-        throw new NotFoundException();
+        throw new NotFoundException("comment with id " + id + " does not exist");
     }
 
     public Comment deleteComment(Long id) {
