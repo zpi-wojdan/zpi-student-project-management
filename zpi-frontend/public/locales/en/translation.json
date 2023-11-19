@@ -204,7 +204,12 @@
     "reportThesis": "Report thesis",
     "saveDraft": "Save draft",
     "saveChanges": "Save changes",
-    "readyForApproval": "Send for approval"
+    "readyForApproval": "Send for approval",
+    "downloadDeclaration": "Download declaration",
+    "downloadSuccessful": "Declaration has been generated",
+    "downloadNoDataError": "Data for the declaration not found",
+    "downloadError": "An error occurred while generating the declaration",
+    "generating": "Generating declaration..."
   },
   "uploadFiles": {
     "fileName": "Source file name",

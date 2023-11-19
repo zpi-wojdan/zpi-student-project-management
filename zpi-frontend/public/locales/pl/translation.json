@@ -204,7 +204,12 @@
     "reportThesis": "Zgłoś temat",
     "saveDraft": "Zapisz wersję roboczą",
     "saveChanges": "Zapisz zmiany",
-    "readyForApproval": "Prześlij do akceptacji"
+    "readyForApproval": "Prześlij do akceptacji",
+    "downloadDeclaration": "Pobierz deklarację",
+    "downloadSuccessful": "Deklaracja została wygenerowana",
+    "downloadNoDataError": "Nie znaleziono danych do deklaracji",
+    "downloadError": "Wystąpił błąd podczas generowania deklaracji",
+    "generating": "Generowanie deklaracji..."
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",

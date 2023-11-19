@@ -1,12 +1,9 @@
 import React, { ReactNode, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
-import { Role } from "../models/Role";
-import { useTranslation } from "react-i18next";
 import { Role } from "../models/Role";
 import { useTranslation } from "react-i18next";
 

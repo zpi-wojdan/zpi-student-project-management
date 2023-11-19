@@ -81,7 +81,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
 
   const whichButtonsToShow = (user: Student & Employee) => {
     const indexLeader = students.findIndex((stu) => stu.id === thesis.leader?.id)
-    if (user?.role.name === "student") {
+    if (user?.role?.name === "student") {
       if (user?.mail === thesis.leader?.mail) {
         let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].confirmedByLeader);
         newShowButtons[indexLeader] = false;
@@ -95,7 +95,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
       newShowButtonDelete[students.findIndex((stu) => stu.mail === user.mail)] = true;
       setShowButtonDelete(newShowButtonDelete)
 
-    } else if (user?.role.name === "supervisor" && user?.mail === thesis.supervisor.mail) {
+    } else if (user?.role?.name === "supervisor" && user?.mail === thesis.supervisor.mail) {
       const newShowButtonsSupervisor = thesis.reservations.every((res) => res.readyForApproval);
       setShowButtonsSupervisor(newShowButtonsSupervisor);
     } else {
