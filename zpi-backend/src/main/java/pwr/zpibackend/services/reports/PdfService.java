@@ -1,4 +1,4 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.reports;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
-import pwr.zpibackend.models.Reservation;
-import pwr.zpibackend.models.Student;
-import pwr.zpibackend.models.Thesis;
+import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudyField;
 import pwr.zpibackend.models.university.StudentProgramCycle;
-import pwr.zpibackend.repositories.ReservationRepository;
-import pwr.zpibackend.repositories.StudentRepository;
-import pwr.zpibackend.repositories.ThesisRepository;
+import pwr.zpibackend.repositories.thesis.ReservationRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
@@ -87,13 +87,21 @@ public class PdfService {
 
     public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(String facultyAbbr, String studyFieldAbbr) {
         return thesisRepository.findAllByOrderByNamePLAsc().stream()
-                .filter(thesis -> thesis.getReservations().stream().anyMatch(Reservation::isConfirmedBySupervisor))
-                .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getFaculty() != null &&
-                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr))))
-                .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getStudyField() != null && (studyFieldAbbr == null ||
-                                program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
+                .filter(thesis -> thesis.getReservations() != null && thesis.getReservations().stream()
+                        .anyMatch(Reservation::isConfirmedBySupervisor))
+                .filter(thesis -> thesis.getPrograms() != null && thesis.getPrograms().stream()
+                        .anyMatch(program -> program.getFaculty() != null && program.getStudyField() != null &&
+                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr)) &&
+                                (studyFieldAbbr == null || program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
+                .filter(thesis -> thesis.getLeader() != null && thesis.getLeader().getStudentProgramCycles() != null &&
+                        thesis.getLeader().getStudentProgramCycles().stream()
+                                .anyMatch(studentProgramCycle -> studentProgramCycle.getProgram() != null &&
+                                        studentProgramCycle.getProgram().getFaculty() != null &&
+                                        studentProgramCycle.getProgram().getStudyField() != null &&
+                                        (facultyAbbr == null || studentProgramCycle.getProgram().getFaculty()
+                                                .getAbbreviation().equals(facultyAbbr)) &&
+                                        (studyFieldAbbr == null || studentProgramCycle.getProgram().getStudyField()
+                                                .getAbbreviation().equals(studyFieldAbbr))))
                 .map(thesis -> {
                     ThesisGroupDTO thesisGroupData = new ThesisGroupDTO();
                     thesisGroupData.setThesisNamePL(thesis.getNamePL());
@@ -106,7 +114,8 @@ public class PdfService {
                             .map(reservation -> {
                                 return setStudentData(reservation.getStudent().getName(),
                                         reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
-                                        reservation.getStudent().getMail(), null, null);
+                                        reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                        thesisGroupData.getStudyFieldAbbreviation());
                             })
                             .collect(Collectors.toList()));
                     return thesisGroupData;

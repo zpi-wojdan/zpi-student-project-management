@@ -26,9 +26,7 @@ import pwr.zpibackend.services.user.StudentService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -127,7 +125,7 @@ public class EmployeeControllerTests {
     @Test
     public void testGetEmployeeByIdNotFound() throws Exception {
         Long id = 1L;
-        Mockito.when(employeeService.getEmployee(id)).thenThrow(new NoSuchElementException());
+        Mockito.when(employeeService.getEmployee(id)).thenThrow(new NotFoundException());
 
         mockMvc.perform(get(BASE_URL + "/{id}", id).contentType("application/json"))
                 .andExpect(status().isNotFound());
@@ -197,7 +195,7 @@ public class EmployeeControllerTests {
         employeeDTO.getRoles().clear();
         employeeDTO.getRoles().add(new RoleDTO("tester"));
 
-        Mockito.when(employeeService.addEmployee(employeeDTO)).thenThrow(new NoSuchElementException());
+        Mockito.when(employeeService.addEmployee(employeeDTO)).thenThrow(new NotFoundException());
 
         String requestBody = objectMapper.writeValueAsString(employeeDTO);
 

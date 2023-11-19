@@ -62,7 +62,7 @@ public class Thesis {
     private List<Reservation> reservations;
 
     @CreationTimestamp
-    @Column(name = "creation_date", updatable = false)
+    @Column(name = "creation_time", updatable = false)
     private LocalDateTime creationTime;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis")
     private List<Comment> comments;
