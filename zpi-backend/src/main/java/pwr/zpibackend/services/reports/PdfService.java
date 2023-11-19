@@ -2,7 +2,9 @@ package pwr.zpibackend.services.reports;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.html.WebColors;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -41,6 +43,7 @@ public class PdfService {
     private static final float spacing = 10f;
     private static final float padding = 5f;
     private static final Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 18);
+    private static final Font smallerTitleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 15);
     private static final Font tableHeaderFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 12,
             Font.NORMAL, Color.WHITE);
     private static final Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250", 12);
@@ -48,6 +51,7 @@ public class PdfService {
     private static final Color headerColor = WebColors.getRGBColor("#9A342D");
     private static final String thesisGroupsReportName = "grupy_zpi";
     private static final String studentsWithoutThesisReportName = "studenci_bez_tematu_zpi";
+    private static final String thesisDeclarationName = "deklaracja_zpi";
 
 
     public Map<String, Map<String, List<StudentInReportsDTO>>> getStudentsWithoutThesis(String facultyAbbr,
@@ -391,6 +395,84 @@ public class PdfService {
                 .orElse(null);
     }
 
+    private void createDeclarationContent(ThesisGroupDTO thesisGroupData, Document document, PdfWriter writer) throws DocumentException,
+            IOException {
+        // put image in left upper corner
+        Image image = Image.getInstance("src/main/resources/images/logo.png");
+        float width = 200.0f;
+        float height = 200.0f;
+        image.scaleToFit(width, height);
+        float x = document.left();
+        float y = document.top() - image.getScaledHeight();
+        image.setAbsolutePosition(x, y);
+        document.add(image);
+
+        Paragraph p = new Paragraph("Wrocław, " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()), dataFont);
+        p.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(p);
+
+        Paragraph space = new Paragraph();
+        space.setSpacingBefore(50);
+        document.add(space);
+
+        Paragraph faculty = new Paragraph("Wydział: " + thesisGroupData.getFacultyAbbreviation(), dataFont);
+        document.add(faculty);
+        Paragraph studyField = new Paragraph("Kierunek: " + thesisGroupData.getStudyFieldAbbreviation(), dataFont);
+        document.add(studyField);
+        Paragraph supervisor = new Paragraph("Opiekun: " + thesisGroupData.getSupervisor().getTitle() + " " +
+                thesisGroupData.getSupervisor().getName() + " " + thesisGroupData.getSupervisor().getSurname(), dataFont);
+        document.add(supervisor);
+        Paragraph department = new Paragraph("Katedra: " + thesisGroupData.getSupervisor().getDepartmentCode() +
+                " - " + thesisGroupData.getSupervisor().getDepartmentName(), dataFont);
+        document.add(department);
+
+        space = new Paragraph();
+        space.setSpacingBefore(50);
+        document.add(space);
+
+        Paragraph title = new Paragraph("Deklaracja realizacji Zespołowego Przedsięwzięcia Inżynierskiego",
+                smallerTitleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+
+        space = new Paragraph();
+        space.setSpacingBefore(50);
+        document.add(space);
+
+        Paragraph thesisNamePL = new Paragraph("Temat pracy (PL): " + thesisGroupData.getThesisNamePL(), dataFont);
+        document.add(thesisNamePL);
+        Paragraph thesisNameEN = new Paragraph("Temat pracy (EN): " + thesisGroupData.getThesisNameEN(), dataFont);
+        document.add(thesisNameEN);
+
+        space = new Paragraph();
+        space.setSpacingBefore(30);
+        document.add(space);
+
+        Paragraph info = new Paragraph("Podpisy należy złożyć po prawej stronie obok swojego nazwiska:", dataFont);
+        document.add(info);
+
+        space = new Paragraph();
+        space.setSpacingBefore(20);
+        document.add(space);
+
+        for(StudentInReportsDTO student : thesisGroupData.getStudents()) {
+            Paragraph studentData = new Paragraph("Student: " + student.getName() + " " + student.getSurname() +
+                    " (" + student.getIndex() + ")", dataFont);
+            document.add(studentData);
+
+            space = new Paragraph();
+            space.setSpacingBefore(20);
+            document.add(space);
+        }
+
+        PdfContentByte cb = writer.getDirectContent();
+        cb.beginText();
+        cb.setFontAndSize(dataFont.getBaseFont(), 12);
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Podpis opiekuna", document.right() - 50,
+                document.bottom() + 50, 0);
+        cb.endText();
+    }
+
     public boolean generateThesisDeclaration(HttpServletResponse response, Long thesisId) throws DocumentException,
             IOException {
         ThesisGroupDTO thesisGroupData = getThesisGroupDataById(thesisId);
@@ -398,19 +480,12 @@ public class PdfService {
         if (thesisGroupData == null)
             return false;
         else {
-            setResponseHeaders(response, thesisGroupsReportName, null, null);
+            setResponseHeaders(response, thesisDeclarationName, null, null);
             Document document = new Document(PageSize.A4);
-            PdfWriter.getInstance(document, response.getOutputStream());
+            PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
 
             document.open();
-
-            Paragraph p = new Paragraph("Lista grup studentów wraz z przypisanymi prowadzącymi" +
-                    "\ni tematem projektu zpi", titleFont);
-            p.setAlignment(Paragraph.ALIGN_CENTER);
-
-            document.add(p);
-            document.add(Chunk.NEWLINE);
-
+            createDeclarationContent(thesisGroupData, document, writer);
             document.close();
             return true;
         }
