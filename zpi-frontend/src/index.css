@@ -95,6 +95,29 @@ code {
   font-weight: bold;
 }
 
+.input-wrapper {
+  position: relative;
+  display: flex;
+  padding: 5px 5px;
+  margin-top: 10px;
+  width: 50%;
+}
+
+.searchbar {
+  padding: 5px 30px 5px 10px;
+  width: 100%
+}
+
+.clear-search {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 /* Custom button */
 .custom-button {
   display: inline-block;

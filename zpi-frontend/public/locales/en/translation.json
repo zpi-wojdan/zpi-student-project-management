@@ -20,7 +20,9 @@
       "view": "View",
       "wrongData": "Wrong data",
       "wrongFormat": "Wrong format",
-      "yes": "Yes"
+      "yes": "Yes",
+      "search": "Search",
+      "noSearchData": "No search results"
     },
     "people": {
       "adminLC": "administrator",

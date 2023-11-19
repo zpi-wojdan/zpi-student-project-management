@@ -20,7 +20,9 @@
       "view": "Widok",
       "wrongData": "Niepoprawne dane",
       "wrongFormat": "Zły format",
-      "yes": "Tak"
+      "yes": "Tak",
+      "search": "Wyszukaj",
+      "noSearchData": "Brak wyników wyszukiwania"
     },
     "people": {
       "adminLC": "administrator",
