@@ -269,10 +269,10 @@ public class PdfServiceTests {
         thesisGroupsW04NIST = Map.of(
                 "W04N", Map.of(
                         "IST", List.of(
-                                new ThesisGroupDTO("Temat 1", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
                                 ),
-                                new ThesisGroupDTO("Temat 6", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 6", "Thesis 6", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO5)
                                 )
                         )
@@ -282,15 +282,15 @@ public class PdfServiceTests {
         thesisGroupsW04N = Map.of(
                 "W04N", Map.of(
                         "IST", List.of(
-                                new ThesisGroupDTO("Temat 1", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
                                 ),
-                                new ThesisGroupDTO("Temat 6", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 6", "Thesis 6", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO5)
                                 )
                         ),
                         "INA", List.of(
-                                new ThesisGroupDTO("Temat 4", "W04N", "INA",
+                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "INA",
                                         supervisorDTO1, List.of(studentInReportsDTO3)
                                 )
                         )
@@ -300,22 +300,22 @@ public class PdfServiceTests {
         thesisGroups = Map.of(
                 "W04N", Map.of(
                         "IST", List.of(
-                                new ThesisGroupDTO("Temat 1", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
                                 ),
-                                new ThesisGroupDTO("Temat 6", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 6", "Thesis 6", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO5)
                                 )
                         ),
                         "INA", List.of(
-                                new ThesisGroupDTO("Temat 4", "W04N", "INA",
+                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "INA",
                                         supervisorDTO1, List.of(studentInReportsDTO3)
                                 )
                         )
                 ),
                 "W01", Map.of(
                         "ARCH", List.of(
-                                new ThesisGroupDTO("Temat 5", "W01", "ARCH",
+                                new ThesisGroupDTO("Temat 5", "Thesis 5", "W01", "ARCH",
                                         supervisorDTO1, List.of(studentInReportsDTO4)
                                 )
                         )

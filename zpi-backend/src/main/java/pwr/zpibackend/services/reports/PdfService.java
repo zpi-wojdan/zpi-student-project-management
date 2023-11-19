@@ -12,12 +12,9 @@ import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
 import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.university.*;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.university.Faculty;
-import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.university.StudyField;
-import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
@@ -88,7 +85,7 @@ public class PdfService {
     public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(String facultyAbbr, String studyFieldAbbr) {
         return thesisRepository.findAllByOrderByNamePLAsc().stream()
                 .filter(thesis -> thesis.getReservations() != null && thesis.getReservations().stream()
-                        .anyMatch(Reservation::isConfirmedBySupervisor))
+                        .allMatch(Reservation::isConfirmedBySupervisor))
                 .filter(thesis -> thesis.getPrograms() != null && thesis.getPrograms().stream()
                         .anyMatch(program -> program.getFaculty() != null && program.getStudyField() != null &&
                                 (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr)) &&
@@ -105,6 +102,7 @@ public class PdfService {
                 .map(thesis -> {
                     ThesisGroupDTO thesisGroupData = new ThesisGroupDTO();
                     thesisGroupData.setThesisNamePL(thesis.getNamePL());
+                    thesisGroupData.setThesisNameEN(thesis.getNameEN());
 
                     setFacultyData(thesis, thesisGroupData, facultyAbbr);
                     setStudyFieldData(thesis, thesisGroupData, studyFieldAbbr);
@@ -146,6 +144,11 @@ public class PdfService {
         supervisor.setSurname(thesis.getSupervisor().getSurname());
         supervisor.setMail(thesis.getSupervisor().getMail());
         supervisor.setTitle(thesis.getSupervisor().getTitle().getName());
+        Department department = thesis.getSupervisor().getDepartment();
+        if(department != null) {
+            supervisor.setDepartmentCode(department.getCode());
+            supervisor.setDepartmentName(department.getName());
+        }
         thesisGroupData.setSupervisor(supervisor);
     }
 
@@ -311,8 +314,8 @@ public class PdfService {
     }
 
     private void writeThesisGroupsDataToTheDocument(Map<String, Map<String, List<ThesisGroupDTO>>>
-                                                        studentsWithoutThesis, Document document) {
-        for (Map.Entry<String, Map<String, List<ThesisGroupDTO>>> facultyEntry : studentsWithoutThesis.entrySet()) {
+                                                        thesisGroups, Document document) {
+        for (Map.Entry<String, Map<String, List<ThesisGroupDTO>>> facultyEntry : thesisGroups.entrySet()) {
             for (Map.Entry<String, List<ThesisGroupDTO>> studyFieldEntry : facultyEntry.getValue().entrySet()) {
                 Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(), sectionFont);
                 document.add(p);
@@ -335,9 +338,9 @@ public class PdfService {
 
     public boolean generateThesisGroupsReport(HttpServletResponse response, String facultyAbbr,
                                                        String studyFieldAbbr) throws DocumentException, IOException {
-        Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups = getThesisGroups(facultyAbbr, studyFieldAbbr);
+        Map<String, Map<String, List<ThesisGroupDTO>>> thesisGroups = getThesisGroups(facultyAbbr, studyFieldAbbr);
 
-        if (getThesisGroups.isEmpty())
+        if (thesisGroups.isEmpty())
             return false;
         else {
             setResponseHeaders(response, thesisGroupsReportName, facultyAbbr, studyFieldAbbr);
@@ -353,7 +356,61 @@ public class PdfService {
             document.add(p);
             document.add(Chunk.NEWLINE);
 
-            writeThesisGroupsDataToTheDocument(getThesisGroups, document);
+            writeThesisGroupsDataToTheDocument(thesisGroups, document);
+            document.close();
+            return true;
+        }
+    }
+
+    public ThesisGroupDTO getThesisGroupDataById(Long id) {
+        return thesisRepository.findById(id)
+                .map(thesis -> {
+                    if (thesis.getReservations().isEmpty() || thesis.getLeader() == null ||
+                            thesis.getLeader().getStudentProgramCycles() == null ||
+                            thesis.getReservations().stream().anyMatch(reservation ->
+                                    !reservation.isConfirmedBySupervisor())) {
+                        return null;
+                    }
+                    ThesisGroupDTO thesisGroupData = new ThesisGroupDTO();
+                    thesisGroupData.setThesisNamePL(thesis.getNamePL());
+                    thesisGroupData.setThesisNameEN(thesis.getNameEN());
+                    setSupervisorData(thesis, thesisGroupData);
+                    setFacultyData(thesis, thesisGroupData, null);
+                    setStudyFieldData(thesis, thesisGroupData, null);
+
+                    thesisGroupData.setStudents(thesis.getReservations().stream()
+                            .map(reservation -> {
+                                return setStudentData(reservation.getStudent().getName(),
+                                        reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
+                                        reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                        thesisGroupData.getStudyFieldAbbreviation());
+                            })
+                            .collect(Collectors.toList()));
+                    return thesisGroupData;
+                })
+                .orElse(null);
+    }
+
+    public boolean generateThesisDeclaration(HttpServletResponse response, Long thesisId) throws DocumentException,
+            IOException {
+        ThesisGroupDTO thesisGroupData = getThesisGroupDataById(thesisId);
+
+        if (thesisGroupData == null)
+            return false;
+        else {
+            setResponseHeaders(response, thesisGroupsReportName, null, null);
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, response.getOutputStream());
+
+            document.open();
+
+            Paragraph p = new Paragraph("Lista grup studentów wraz z przypisanymi prowadzącymi" +
+                    "\ni tematem projektu zpi", titleFont);
+            p.setAlignment(Paragraph.ALIGN_CENTER);
+
+            document.add(p);
+            document.add(Chunk.NEWLINE);
+
             document.close();
             return true;
         }
