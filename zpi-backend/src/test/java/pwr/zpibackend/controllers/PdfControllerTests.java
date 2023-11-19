@@ -221,4 +221,16 @@ public class PdfControllerTests {
 
         verify(pdfService, times(1)).getThesisGroupDataById(id);
     }
+
+    @Test
+    public void testGetThesisGroupDataNotFound() throws Exception {
+        Long id = 1L;
+        when(pdfService.getThesisGroupDataById(id)).thenReturn(null);
+
+        mockMvc.perform(get(BASE_URL + "/data/thesis-declaration/" + id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+
+        verify(pdfService, times(1)).getThesisGroupDataById(id);
+    }
 }
