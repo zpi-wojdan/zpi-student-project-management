@@ -23,7 +23,7 @@ public class PdfController {
     private final PdfService pdfService;
 
     @GetMapping("pdf/students-without-thesis")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> generateStudentsWithoutThesisReport(HttpServletResponse response,
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
             throws DocumentException, IOException {
@@ -34,7 +34,7 @@ public class PdfController {
     }
 
     @GetMapping("pdf/thesis-groups")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> generateThesisGroupsReport(HttpServletResponse response,
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr)
             throws DocumentException, IOException {
@@ -45,7 +45,7 @@ public class PdfController {
     }
 
     @GetMapping("pdf/thesis-declaration/{id}")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> generateThesisDeclaration(HttpServletResponse response, @PathVariable Long id)
             throws DocumentException, IOException {
         if (pdfService.generateThesisDeclaration(response, id))
@@ -55,21 +55,21 @@ public class PdfController {
     }
 
     @GetMapping("data/students-without-thesis")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, Map<String, List<StudentInReportsDTO>>>> getStudentsWithoutThesis(
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {
         return new ResponseEntity<>(pdfService.getStudentsWithoutThesis(facultyAbbr, studyFieldAbbr), HttpStatus.OK);
     }
 
     @GetMapping("data/thesis-groups")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, Map<String, List<ThesisGroupDTO>>>> getThesisGroups(
             @RequestParam(required = false) String facultyAbbr, @RequestParam(required = false) String studyFieldAbbr) {
         return new ResponseEntity<>(pdfService.getThesisGroups(facultyAbbr, studyFieldAbbr), HttpStatus.OK);
     }
 
     @GetMapping("data/thesis-declaration/{id}")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ThesisGroupDTO> getThesisGroupData(@PathVariable Long id) {
         ThesisGroupDTO thesisGroupDTO = pdfService.getThesisGroupDataById(id);
         if(thesisGroupDTO != null)

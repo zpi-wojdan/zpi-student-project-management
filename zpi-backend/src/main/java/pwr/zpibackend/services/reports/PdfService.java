@@ -49,6 +49,9 @@ public class PdfService {
     private static final Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250", 12);
     private static final Font sectionFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
     private static final Color headerColor = WebColors.getRGBColor("#9A342D");
+    private static final String imageLogoPath = "src/main/resources/images/logo.png";
+
+    private static final float imageSize = 200.0f;
     private static final String thesisGroupsReportName = "grupy_zpi";
     private static final String studentsWithoutThesisReportName = "studenci_bez_tematu_zpi";
     private static final String thesisDeclarationName = "deklaracja_zpi";
@@ -74,11 +77,9 @@ public class PdfService {
                                     (studyField != null && (studyFieldAbbr == null ||
                                             studyField.getAbbreviation().equals(studyFieldAbbr)));
                         })
-                        .map(program -> {
-                            return setStudentData(student.getName(), student.getSurname(), student.getIndex(),
-                                    student.getMail(), program.getFaculty().getAbbreviation(),
-                                    program.getStudyField().getAbbreviation());
-                        }))
+                        .map(program -> setStudentData(student.getName(), student.getSurname(), student.getIndex(),
+                                student.getMail(), program.getFaculty().getAbbreviation(),
+                                program.getStudyField().getAbbreviation())))
                 .collect(Collectors.groupingBy(StudentInReportsDTO::getFacultyAbbreviation,
                         TreeMap::new,
                         Collectors.groupingBy(StudentInReportsDTO::getStudyFieldAbbreviation,
@@ -113,12 +114,10 @@ public class PdfService {
                     setSupervisorData(thesis, thesisGroupData);
 
                     thesisGroupData.setStudents(thesis.getReservations().stream()
-                            .map(reservation -> {
-                                return setStudentData(reservation.getStudent().getName(),
-                                        reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
-                                        reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
-                                        thesisGroupData.getStudyFieldAbbreviation());
-                            })
+                            .map(reservation -> setStudentData(reservation.getStudent().getName(),
+                                    reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
+                                    reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                    thesisGroupData.getStudyFieldAbbreviation()))
                             .collect(Collectors.toList()));
                     return thesisGroupData;
                 })
@@ -383,92 +382,94 @@ public class PdfService {
                     setStudyFieldData(thesis, thesisGroupData, null);
 
                     thesisGroupData.setStudents(thesis.getReservations().stream()
-                            .map(reservation -> {
-                                return setStudentData(reservation.getStudent().getName(),
-                                        reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
-                                        reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
-                                        thesisGroupData.getStudyFieldAbbreviation());
-                            })
+                            .map(reservation -> setStudentData(reservation.getStudent().getName(),
+                                    reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
+                                    reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                    thesisGroupData.getStudyFieldAbbreviation()))
                             .collect(Collectors.toList()));
                     return thesisGroupData;
                 })
                 .orElse(null);
     }
 
-    private void createDeclarationContent(ThesisGroupDTO thesisGroupData, Document document, PdfWriter writer) throws DocumentException,
-            IOException {
-        // put image in left upper corner
-        Image image = Image.getInstance("src/main/resources/images/logo.png");
-        float width = 200.0f;
-        float height = 200.0f;
-        image.scaleToFit(width, height);
+
+    private void addSpace(Document document, float size) throws DocumentException {
+        Paragraph space = new Paragraph();
+        space.setSpacingBefore(size);
+        document.add(space);
+    }
+
+    private void createDeclarationContent(ThesisGroupDTO thesisGroupData, String language, Document document,
+                                          PdfWriter writer) throws DocumentException, IOException {
+        Image image = Image.getInstance(imageLogoPath);
+        image.scaleToFit(imageSize, imageSize);
         float x = document.left();
         float y = document.top() - image.getScaledHeight();
         image.setAbsolutePosition(x, y);
         document.add(image);
 
-        Paragraph p = new Paragraph("Wrocław, " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()), dataFont);
+        Paragraph p = new Paragraph("Wrocław, " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()),
+                dataFont);
         p.setAlignment(Paragraph.ALIGN_RIGHT);
         document.add(p);
+        addSpace(document, 50);
 
-        Paragraph space = new Paragraph();
-        space.setSpacingBefore(50);
-        document.add(space);
-
-        Paragraph faculty = new Paragraph("Wydział: " + thesisGroupData.getFacultyAbbreviation(), dataFont);
+        String facultyText = language.equals("pl") ? "Wydział" : "Faculty";
+        Paragraph faculty = new Paragraph(facultyText + ": " + thesisGroupData.getFacultyAbbreviation(), dataFont);
         document.add(faculty);
-        Paragraph studyField = new Paragraph("Kierunek: " + thesisGroupData.getStudyFieldAbbreviation(), dataFont);
+
+        String studyFieldText = language.equals("pl") ? "Kierunek" : "Study field";
+        Paragraph studyField = new Paragraph(studyFieldText + ": " + thesisGroupData.getStudyFieldAbbreviation(),
+                dataFont);
         document.add(studyField);
-        Paragraph supervisor = new Paragraph("Opiekun: " + thesisGroupData.getSupervisor().getTitle() + " " +
-                thesisGroupData.getSupervisor().getName() + " " + thesisGroupData.getSupervisor().getSurname(), dataFont);
+
+        String supervisorText = language.equals("pl") ? "Opiekun" : "Supervisor";
+        Paragraph supervisor = new Paragraph(supervisorText + ": " + thesisGroupData.getSupervisor().getTitle() +
+                " " + thesisGroupData.getSupervisor().getName() + " " + thesisGroupData.getSupervisor().getSurname(),
+                dataFont);
         document.add(supervisor);
-        Paragraph department = new Paragraph("Katedra: " + thesisGroupData.getSupervisor().getDepartmentCode() +
-                " - " + thesisGroupData.getSupervisor().getDepartmentName(), dataFont);
+
+        String departmentText = language.equals("pl") ? "Katedra" : "Department";
+        Paragraph department = new Paragraph(departmentText + ": " +
+                thesisGroupData.getSupervisor().getDepartmentCode() + " - " +
+                thesisGroupData.getSupervisor().getDepartmentName(), dataFont);
         document.add(department);
+        addSpace(document, 50);
 
-        space = new Paragraph();
-        space.setSpacingBefore(50);
-        document.add(space);
-
-        Paragraph title = new Paragraph("Deklaracja realizacji Zespołowego Przedsięwzięcia Inżynierskiego",
-                smallerTitleFont);
+        String titleText = language.equals("pl") ? "Deklaracja realizacji Zespołowego Przedsięwzięcia Inżynierskiego" :
+                "Declaration of the Team Engineering Project realization";
+        Paragraph title = new Paragraph(titleText, smallerTitleFont);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
+        addSpace(document, 50);
 
-        space = new Paragraph();
-        space.setSpacingBefore(50);
-        document.add(space);
-
-        Paragraph thesisNamePL = new Paragraph("Temat pracy (PL): " + thesisGroupData.getThesisNamePL(), dataFont);
+        String thesisNameText = language.equals("pl") ? "Temat pracy" : "Topic";
+        Paragraph thesisNamePL = new Paragraph(thesisNameText + " (PL): " + thesisGroupData.getThesisNamePL(),
+                dataFont);
         document.add(thesisNamePL);
-        Paragraph thesisNameEN = new Paragraph("Temat pracy (EN): " + thesisGroupData.getThesisNameEN(), dataFont);
+        Paragraph thesisNameEN = new Paragraph(thesisNameText + " (EN): " + thesisGroupData.getThesisNameEN(),
+                dataFont);
         document.add(thesisNameEN);
+        addSpace(document, 30);
 
-        space = new Paragraph();
-        space.setSpacingBefore(30);
-        document.add(space);
-
-        Paragraph info = new Paragraph("Podpisy należy złożyć po prawej stronie obok swojego nazwiska:", dataFont);
+        String infoText = language.equals("pl") ? "Podpisy należy złożyć po prawej stronie obok swojego nazwiska" :
+                "Signatures should be placed on the right side next to your name";
+        Paragraph info = new Paragraph(infoText + ":", dataFont);
         document.add(info);
-
-        space = new Paragraph();
-        space.setSpacingBefore(20);
-        document.add(space);
+        addSpace(document, 20);
 
         for(StudentInReportsDTO student : thesisGroupData.getStudents()) {
             Paragraph studentData = new Paragraph("Student: " + student.getName() + " " + student.getSurname() +
                     " (" + student.getIndex() + ")", dataFont);
             document.add(studentData);
-
-            space = new Paragraph();
-            space.setSpacingBefore(20);
-            document.add(space);
+            addSpace(document, 20);
         }
 
         PdfContentByte cb = writer.getDirectContent();
         cb.beginText();
         cb.setFontAndSize(dataFont.getBaseFont(), 12);
-        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Podpis opiekuna", document.right() - 50,
+        String signatureText = language.equals("pl") ? "Podpis opiekuna" : "Supervisor's signature";
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, signatureText, document.right() - 50,
                 document.bottom() + 50, 0);
         cb.endText();
     }
@@ -485,7 +486,9 @@ public class PdfService {
             PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
 
             document.open();
-            createDeclarationContent(thesisGroupData, document, writer);
+            createDeclarationContent(thesisGroupData, "pl", document, writer);
+            document.newPage();
+            createDeclarationContent(thesisGroupData, "en", document, writer);
             document.close();
             return true;
         }
