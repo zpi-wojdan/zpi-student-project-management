@@ -137,11 +137,11 @@ const StudentDetails: React.FC = () => {
                           </li>
                           <li>
                             <p><span className="bold">{t('general.university.faculty')} - </span>
-                              <span>{studentProgramCycle.program.studyField.faculty.name}</span></p>
+                              <span>{studentProgramCycle.program.studyField ? studentProgramCycle.program.studyField.faculty.name : studentProgramCycle.program.specialization.studyField.faculty.name}</span></p>
                           </li>
                           <li>
                             <p><span className="bold">{t('general.university.field')} - </span>
-                              <span>{studentProgramCycle.program.studyField.name}</span></p>
+                              <span>{studentProgramCycle.program.studyField ? studentProgramCycle.program.studyField.name : studentProgramCycle.program.specialization.studyField.name}</span></p>
                           </li>
                           <li>
                             <p><span className="bold">{t('general.university.specialization')} - </span>

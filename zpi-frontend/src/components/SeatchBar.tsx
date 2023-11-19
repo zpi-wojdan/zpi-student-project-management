@@ -3,11 +3,10 @@ import React from 'react';
 interface SearchBarProps {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  clearSearch: () => void;
   placeholder: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm, clearSearch, placeholder }) => (
+const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm, placeholder }) => (
   <div className='input-wrapper'>
     <input
       type='text'
@@ -17,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm, clearS
       className='searchbar'
     />
     {searchTerm && (
-      <button className='clear-search' onClick={clearSearch}>
+      <button className='clear-input' onClick={() => setSearchTerm("")}>
         <i className="bi bi-x"></i>
       </button>
     )}

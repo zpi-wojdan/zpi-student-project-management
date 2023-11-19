@@ -74,6 +74,11 @@ code {
   text-align: center;
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+}
+
 .pagination .text {
   padding: 5px 5px;
   margin: 10px 0px;
@@ -95,6 +100,7 @@ code {
   font-weight: bold;
 }
 
+/* Search bar */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -108,7 +114,7 @@ code {
   width: 100%
 }
 
-.clear-search {
+.clear-input {
   position: absolute;
   top: 50%;
   right: 15px;
@@ -116,6 +122,43 @@ code {
   background: none;
   border: none;
   cursor: pointer;
+}
+
+/*Filters */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -350px;
+  width: 350px;
+  height: 100%;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  transition: left 0.3s ease;
+  z-index: 100;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-button {
+  position: fixed;
+  top: 25%;
+  left: 0;
+  padding: 10px !important;
+  writing-mode: vertical-lr;
+  white-space: nowrap;
+  transition: left 0.3s ease;
+  width: 40px;
+}
+
+.sidebar-button:hover {
+  text-decoration: none;
+}
+
+.sidebar-button.open {
+  left: 350px;
 }
 
 /* Custom button */

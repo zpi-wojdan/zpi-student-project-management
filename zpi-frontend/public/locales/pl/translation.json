@@ -22,7 +22,10 @@
       "wrongFormat": "Zły format",
       "yes": "Tak",
       "search": "Wyszukaj",
-      "noSearchData": "Brak wyników wyszukiwania"
+      "noSearchData": "Brak wyników wyszukiwania",
+      "filtration": "Filtrowanie",
+      "filter": "Filtruj",
+      "filterClear": "Wyczyść filtry"
     },
     "people": {
       "adminLC": "administrator",
