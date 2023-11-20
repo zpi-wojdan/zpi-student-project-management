@@ -1,4 +1,4 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.thesis;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

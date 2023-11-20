@@ -1,9 +1,10 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.thesis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -198,6 +199,20 @@ class ThesisControllerTests {
         } catch (NestedServletException e) {
             assertThat(e.getRootCause()).isInstanceOf(NotFoundException.class);
         }
+    }
+
+    @Test
+    public void testAddThesisBadRequest() throws Exception{
+        String requestBody = asJsonString(thesis);
+
+        Mockito.when(thesisService.addThesis(any(Thesis.class))).thenThrow(new IllegalArgumentException());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        verify(thesisService).addThesis(any(Thesis.class));
     }
 
     @Test

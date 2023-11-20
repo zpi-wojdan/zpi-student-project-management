@@ -1,4 +1,4 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.thesis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
