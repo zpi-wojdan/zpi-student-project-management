@@ -20,6 +20,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+  
+    @JoinColumn(name="author_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Employee author;
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -27,12 +31,10 @@ public class Comment {
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @JoinColumn(name="author_id", referencedColumnName = "id", nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Employee author;
-
     @JoinColumn(name="thesis_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     private Thesis thesis;
 }
+
+

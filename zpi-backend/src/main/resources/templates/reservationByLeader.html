@@ -1,3 +1,4 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <table class="body-wrap"
        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; width: 100%; background-color: #F6F6F6; margin: 0;">
     <tbody>
@@ -27,8 +28,9 @@
                                 <tbody>
                                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                     <td class="content-block"
-                                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                                        Witaj <strong
+                                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;"
+                                        th:text="#{greeting}">
+                                         <strong
                                             style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"
                                             th:text="${name}"></strong>,
                                     </td>
@@ -36,9 +38,9 @@
                                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                     <td class="content-block"
                                         style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                                        <p>Rezerwacja została za Ciebie złożona na temat: <strong th:text="${thesis}"></strong>.</p>
-                                        <p>Wymagane jest potwierdzenie rezerwacji w ciągu <strong>24 godzin</strong> od rezerwacji!</p>
-                                        <p>Kliknij niżej, aby wyświetlić swoją rezerwację:</p>
+                                        <p th:text="#{reservationByLeader}">: <strong th:text="${thesis}"></strong>.</p>
+                                        <p th:text="#{reservationConfirmation}"></p>
+                                        <p th:text="#{reservationButtonAnnotation}"></p>
                                     </td>
                                 </tr>
                                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; text-align: center">
@@ -46,8 +48,9 @@
                                         style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px; text-align: center;">
                                         <a class="btn-primary"
                                            style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 5px; text-transform: capitalize; background-color: #9A342D; margin: 0; border-color: #9A342D; border-style: solid; border-width: 8px 16px;"
-                                           th:href="${url}">
-                                            Wyświetl rezerwację!</a>
+                                           th:href="${url}"
+                                           th:text="#{reservationButton}">
+                                            </a>
                                     </td>
                                 </tr>
                                 </tbody>
