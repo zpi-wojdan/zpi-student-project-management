@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.util.NestedServletException;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.thesis.ThesisController;
+import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Status;
@@ -60,6 +61,7 @@ class ThesisControllerTests {
 
     private List<Thesis> theses;
     private Thesis thesis;
+    private ThesisDTO thesisDTO;
 
     @BeforeEach
     public void setUp() {
@@ -142,6 +144,20 @@ class ThesisControllerTests {
         return thesisToAdd;
     }
 
+    public static ThesisDTO createTestThesisDTO(Long supervisorId){
+        ThesisDTO thesisToAdd = new ThesisDTO();
+        thesisToAdd.setNamePL("Test Thesis PL");
+        thesisToAdd.setNameEN("Test Thesis EN");
+        thesisToAdd.setDescriptionPL("Test Description PL");
+        thesisToAdd.setDescriptionEN("Test Description EN");
+        thesisToAdd.setNumPeople(5);
+        thesisToAdd.setSupervisorId(supervisorId);
+        thesisToAdd.setProgramIds(List.of(0L));
+        thesisToAdd.setStudyCycleId(0L);
+        thesisToAdd.setStatusId(0L);
+        return thesisToAdd;
+    }
+
     public static void assertTestData(Thesis addedThesis, Employee supervisor, Student leader){
         assertThat(addedThesis.getNamePL()).isEqualTo("Test Thesis PL");
         assertThat(addedThesis.getNameEN()).isEqualTo("Test Thesis EN");
@@ -161,7 +177,7 @@ class ThesisControllerTests {
         Student leader = new Student();
         Thesis thesisToAdd = createTestThesis(supervisor, leader);
 
-        doReturn(thesisToAdd).when(thesisService).addThesis(any(Thesis.class));
+        doReturn(thesisToAdd).when(thesisService).addThesis(any(ThesisDTO.class));
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .post("/thesis")
                         .content(asJsonString(thesisToAdd))
@@ -179,16 +195,13 @@ class ThesisControllerTests {
 
     @Test
     public void testAddThesisFailure() throws Exception {
-        Employee supervisor = new Employee();
-        Student leader = new Student();
-        Thesis thesisToAdd = createTestThesis(supervisor, leader);
+        ThesisDTO thesisDTO = createTestThesisDTO(0L);
 
-
-        doThrow(NotFoundException.class).when(thesisService).addThesis(any(Thesis.class));
+        doThrow(NotFoundException.class).when(thesisService).addThesis(any(ThesisDTO.class));
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .post("/thesis")
-                    .content(asJsonString(thesisToAdd))
+                    .content(asJsonString(thesisDTO))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
         } catch (NestedServletException e) {
@@ -201,18 +214,21 @@ class ThesisControllerTests {
         Employee supervisor = new Employee();
         Student leader = new Student();
         Thesis existingThesis = createTestThesis(supervisor, leader);
+        ThesisDTO thesisDTO = createTestThesisDTO(0L);
+        thesisDTO.setDescriptionEN("UPDATED DESCRIPTION");
+        thesisDTO.setNamePL("UPDATED NAME");
         existingThesis.setId(1L);
-        existingThesis.setLeader(null);
-        existingThesis.setNamePL("PREVIOUS DATA");
+        existingThesis.setNamePL("UPDATED NAME");
+        existingThesis.setDescriptionEN("UPDATED DESCRIPTION");
 
         Thesis updatedThesis = createTestThesis(supervisor, leader);
         updatedThesis.setId(1L);
 
-        doReturn(updatedThesis).when(thesisService).updateThesis(1L, updatedThesis);
+        doReturn(updatedThesis).when(thesisService).updateThesis(1L, thesisDTO);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .put("/thesis/1")
-                        .content(asJsonString(updatedThesis))
+                        .content(asJsonString(thesisDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -231,13 +247,14 @@ class ThesisControllerTests {
         Employee supervisor = new Employee();
         Student leader = new Student();
         Thesis updatedThesis = createTestThesis(supervisor, leader);
+        ThesisDTO thesisDTO = createTestThesisDTO(0L);
         updatedThesis.setId(1L);
 
-        doThrow(NotFoundException.class).when(thesisService).updateThesis(1L, updatedThesis);
+        doThrow(NotFoundException.class).when(thesisService).updateThesis(1L, thesisDTO);
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/thesis/1")
-                    .content(asJsonString(updatedThesis))
+                    .content(asJsonString(thesisDTO))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
         } catch (NestedServletException e) {

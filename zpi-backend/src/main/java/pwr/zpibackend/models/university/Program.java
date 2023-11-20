@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Data
 @AllArgsConstructor
@@ -38,6 +39,22 @@ public class Program {
     @JoinColumn(name = "faculty_id")
     @ManyToOne
     private Faculty faculty;
+
+    public String language() {
+        String[] parts = name.split("-");
+        int length = parts[1].length();
+        String departmentCode = parts[1];
+        String language = departmentCode.substring(length - 1);
+        if (Pattern.matches("[A-Z]", language)) {
+            switch (language) {
+                case "P":
+                    return "pl";
+                case "A":
+                    return "en";
+            }
+        }
+        return "";
+    }
 
     @Override
     public boolean equals(Object o) {

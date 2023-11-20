@@ -1,8 +1,10 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.reports;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.html.WebColors;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -12,12 +14,9 @@ import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
 import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.university.*;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.university.Faculty;
-import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.university.StudyField;
-import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
@@ -44,13 +43,18 @@ public class PdfService {
     private static final float spacing = 10f;
     private static final float padding = 5f;
     private static final Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 18);
+    private static final Font smallerTitleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 15);
     private static final Font tableHeaderFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250", 12,
             Font.NORMAL, Color.WHITE);
     private static final Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250", 12);
     private static final Font sectionFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
     private static final Color headerColor = WebColors.getRGBColor("#9A342D");
+    private static final String imageLogoPath = "src/main/resources/images/logo.png";
+
+    private static final float imageSize = 200.0f;
     private static final String thesisGroupsReportName = "grupy_zpi";
     private static final String studentsWithoutThesisReportName = "studenci_bez_tematu_zpi";
+    private static final String thesisDeclarationName = "deklaracja_zpi";
 
 
     public Map<String, Map<String, List<StudentInReportsDTO>>> getStudentsWithoutThesis(String facultyAbbr,
@@ -73,11 +77,9 @@ public class PdfService {
                                     (studyField != null && (studyFieldAbbr == null ||
                                             studyField.getAbbreviation().equals(studyFieldAbbr)));
                         })
-                        .map(program -> {
-                            return setStudentData(student.getName(), student.getSurname(), student.getIndex(),
-                                    student.getMail(), program.getFaculty().getAbbreviation(),
-                                    program.getStudyField().getAbbreviation());
-                        }))
+                        .map(program -> setStudentData(student.getName(), student.getSurname(), student.getIndex(),
+                                student.getMail(), program.getFaculty().getAbbreviation(),
+                                program.getStudyField().getAbbreviation())))
                 .collect(Collectors.groupingBy(StudentInReportsDTO::getFacultyAbbreviation,
                         TreeMap::new,
                         Collectors.groupingBy(StudentInReportsDTO::getStudyFieldAbbreviation,
@@ -87,27 +89,35 @@ public class PdfService {
 
     public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(String facultyAbbr, String studyFieldAbbr) {
         return thesisRepository.findAllByOrderByNamePLAsc().stream()
-                .filter(thesis -> thesis.getReservations().stream().anyMatch(Reservation::isConfirmedBySupervisor))
-                .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getFaculty() != null &&
-                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr))))
-                .filter(thesis -> thesis.getPrograms().stream()
-                        .anyMatch(program -> program.getStudyField() != null && (studyFieldAbbr == null ||
-                                program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
+                .filter(thesis -> thesis.getReservations() != null && !thesis.getReservations().isEmpty()
+                        && thesis.getReservations().stream().allMatch(Reservation::isConfirmedBySupervisor))
+                .filter(thesis -> thesis.getPrograms() != null && thesis.getPrograms().stream()
+                        .anyMatch(program -> program.getFaculty() != null && program.getStudyField() != null &&
+                                (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr)) &&
+                                (studyFieldAbbr == null || program.getStudyField().getAbbreviation().equals(studyFieldAbbr))))
+                .filter(thesis -> thesis.getLeader() != null && thesis.getLeader().getStudentProgramCycles() != null &&
+                        thesis.getLeader().getStudentProgramCycles().stream()
+                                .anyMatch(studentProgramCycle -> studentProgramCycle.getProgram() != null &&
+                                        studentProgramCycle.getProgram().getFaculty() != null &&
+                                        studentProgramCycle.getProgram().getStudyField() != null &&
+                                        (facultyAbbr == null || studentProgramCycle.getProgram().getFaculty()
+                                                .getAbbreviation().equals(facultyAbbr)) &&
+                                        (studyFieldAbbr == null || studentProgramCycle.getProgram().getStudyField()
+                                                .getAbbreviation().equals(studyFieldAbbr))))
                 .map(thesis -> {
                     ThesisGroupDTO thesisGroupData = new ThesisGroupDTO();
                     thesisGroupData.setThesisNamePL(thesis.getNamePL());
+                    thesisGroupData.setThesisNameEN(thesis.getNameEN());
 
                     setFacultyData(thesis, thesisGroupData, facultyAbbr);
                     setStudyFieldData(thesis, thesisGroupData, studyFieldAbbr);
                     setSupervisorData(thesis, thesisGroupData);
 
                     thesisGroupData.setStudents(thesis.getReservations().stream()
-                            .map(reservation -> {
-                                return setStudentData(reservation.getStudent().getName(),
-                                        reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
-                                        reservation.getStudent().getMail(), null, null);
-                            })
+                            .map(reservation -> setStudentData(reservation.getStudent().getName(),
+                                    reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
+                                    reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                    thesisGroupData.getStudyFieldAbbreviation()))
                             .collect(Collectors.toList()));
                     return thesisGroupData;
                 })
@@ -137,6 +147,11 @@ public class PdfService {
         supervisor.setSurname(thesis.getSupervisor().getSurname());
         supervisor.setMail(thesis.getSupervisor().getMail());
         supervisor.setTitle(thesis.getSupervisor().getTitle().getName());
+        Department department = thesis.getSupervisor().getDepartment();
+        if(department != null) {
+            supervisor.setDepartmentCode(department.getCode());
+            supervisor.setDepartmentName(department.getName());
+        }
         thesisGroupData.setSupervisor(supervisor);
     }
 
@@ -302,8 +317,8 @@ public class PdfService {
     }
 
     private void writeThesisGroupsDataToTheDocument(Map<String, Map<String, List<ThesisGroupDTO>>>
-                                                        studentsWithoutThesis, Document document) {
-        for (Map.Entry<String, Map<String, List<ThesisGroupDTO>>> facultyEntry : studentsWithoutThesis.entrySet()) {
+                                                        thesisGroups, Document document) {
+        for (Map.Entry<String, Map<String, List<ThesisGroupDTO>>> facultyEntry : thesisGroups.entrySet()) {
             for (Map.Entry<String, List<ThesisGroupDTO>> studyFieldEntry : facultyEntry.getValue().entrySet()) {
                 Paragraph p = new Paragraph(facultyEntry.getKey() + " - " + studyFieldEntry.getKey(), sectionFont);
                 document.add(p);
@@ -326,9 +341,9 @@ public class PdfService {
 
     public boolean generateThesisGroupsReport(HttpServletResponse response, String facultyAbbr,
                                                        String studyFieldAbbr) throws DocumentException, IOException {
-        Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups = getThesisGroups(facultyAbbr, studyFieldAbbr);
+        Map<String, Map<String, List<ThesisGroupDTO>>> thesisGroups = getThesisGroups(facultyAbbr, studyFieldAbbr);
 
-        if (getThesisGroups.isEmpty())
+        if (thesisGroups.isEmpty())
             return false;
         else {
             setResponseHeaders(response, thesisGroupsReportName, facultyAbbr, studyFieldAbbr);
@@ -344,7 +359,137 @@ public class PdfService {
             document.add(p);
             document.add(Chunk.NEWLINE);
 
-            writeThesisGroupsDataToTheDocument(getThesisGroups, document);
+            writeThesisGroupsDataToTheDocument(thesisGroups, document);
+            document.close();
+            return true;
+        }
+    }
+
+    public ThesisGroupDTO getThesisGroupDataById(Long id) {
+        return thesisRepository.findById(id)
+                .map(thesis -> {
+                    if (thesis.getReservations() == null || thesis.getReservations().isEmpty() ||
+                            thesis.getLeader() == null || thesis.getLeader().getStudentProgramCycles() == null ||
+                            thesis.getLeader().getStudentProgramCycles().isEmpty() ||
+                            thesis.getReservations().stream().anyMatch(reservation ->
+                                    !reservation.isConfirmedBySupervisor())) {
+                        return null;
+                    }
+                    ThesisGroupDTO thesisGroupData = new ThesisGroupDTO();
+                    thesisGroupData.setThesisNamePL(thesis.getNamePL());
+                    thesisGroupData.setThesisNameEN(thesis.getNameEN());
+                    setSupervisorData(thesis, thesisGroupData);
+                    setFacultyData(thesis, thesisGroupData, null);
+                    setStudyFieldData(thesis, thesisGroupData, null);
+
+                    thesisGroupData.setStudents(thesis.getReservations().stream()
+                            .map(reservation -> setStudentData(reservation.getStudent().getName(),
+                                    reservation.getStudent().getSurname(), reservation.getStudent().getIndex(),
+                                    reservation.getStudent().getMail(), thesisGroupData.getFacultyAbbreviation(),
+                                    thesisGroupData.getStudyFieldAbbreviation()))
+                            .collect(Collectors.toList()));
+                    return thesisGroupData;
+                })
+                .orElse(null);
+    }
+
+
+    private void addSpace(Document document, float size) throws DocumentException {
+        Paragraph space = new Paragraph();
+        space.setSpacingBefore(size);
+        document.add(space);
+    }
+
+    private void createDeclarationContent(ThesisGroupDTO thesisGroupData, String language, Document document,
+                                          PdfWriter writer) throws DocumentException, IOException {
+        Image image = Image.getInstance(imageLogoPath);
+        image.scaleToFit(imageSize, imageSize);
+        float x = document.left();
+        float y = document.top() - image.getScaledHeight();
+        image.setAbsolutePosition(x, y);
+        document.add(image);
+
+        Paragraph p = new Paragraph("Wrocław, " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()),
+                dataFont);
+        p.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(p);
+        addSpace(document, 50);
+
+        String facultyText = language.equals("pl") ? "Wydział" : "Faculty";
+        Paragraph faculty = new Paragraph(facultyText + ": " + thesisGroupData.getFacultyAbbreviation(), dataFont);
+        document.add(faculty);
+
+        String studyFieldText = language.equals("pl") ? "Kierunek" : "Study field";
+        Paragraph studyField = new Paragraph(studyFieldText + ": " + thesisGroupData.getStudyFieldAbbreviation(),
+                dataFont);
+        document.add(studyField);
+
+        String supervisorText = language.equals("pl") ? "Opiekun" : "Supervisor";
+        Paragraph supervisor = new Paragraph(supervisorText + ": " + thesisGroupData.getSupervisor().getTitle() +
+                " " + thesisGroupData.getSupervisor().getName() + " " + thesisGroupData.getSupervisor().getSurname(),
+                dataFont);
+        document.add(supervisor);
+
+        String departmentText = language.equals("pl") ? "Katedra" : "Department";
+        Paragraph department = new Paragraph(departmentText + ": " +
+                thesisGroupData.getSupervisor().getDepartmentCode() + " - " +
+                thesisGroupData.getSupervisor().getDepartmentName(), dataFont);
+        document.add(department);
+        addSpace(document, 50);
+
+        String titleText = language.equals("pl") ? "Deklaracja realizacji Zespołowego Przedsięwzięcia Inżynierskiego" :
+                "Declaration of the Team Engineering Project realization";
+        Paragraph title = new Paragraph(titleText, smallerTitleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+        addSpace(document, 50);
+
+        String thesisNameText = language.equals("pl") ? "Temat pracy" : "Topic";
+        Paragraph thesisNamePL = new Paragraph(thesisNameText + " (PL): " + thesisGroupData.getThesisNamePL(),
+                dataFont);
+        document.add(thesisNamePL);
+        Paragraph thesisNameEN = new Paragraph(thesisNameText + " (EN): " + thesisGroupData.getThesisNameEN(),
+                dataFont);
+        document.add(thesisNameEN);
+        addSpace(document, 30);
+
+        String infoText = language.equals("pl") ? "Podpisy należy złożyć po prawej stronie obok swojego nazwiska" :
+                "Signatures should be placed on the right side next to your name";
+        Paragraph info = new Paragraph(infoText + ":", dataFont);
+        document.add(info);
+        addSpace(document, 20);
+
+        for(StudentInReportsDTO student : thesisGroupData.getStudents()) {
+            Paragraph studentData = new Paragraph("Student: " + student.getName() + " " + student.getSurname() +
+                    " (" + student.getIndex() + ")", dataFont);
+            document.add(studentData);
+            addSpace(document, 20);
+        }
+
+        PdfContentByte cb = writer.getDirectContent();
+        cb.beginText();
+        cb.setFontAndSize(dataFont.getBaseFont(), 12);
+        String signatureText = language.equals("pl") ? "Podpis opiekuna" : "Supervisor's signature";
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, signatureText, document.right() - 50,
+                document.bottom() + 50, 0);
+        cb.endText();
+    }
+
+    public boolean generateThesisDeclaration(HttpServletResponse response, Long thesisId) throws DocumentException,
+            IOException {
+        ThesisGroupDTO thesisGroupData = getThesisGroupDataById(thesisId);
+
+        if (thesisGroupData == null)
+            return false;
+        else {
+            setResponseHeaders(response, thesisDeclarationName, null, null);
+            Document document = new Document(PageSize.A4);
+            PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+
+            document.open();
+            createDeclarationContent(thesisGroupData, "pl", document, writer);
+            document.newPage();
+            createDeclarationContent(thesisGroupData, "en", document, writer);
             document.close();
             return true;
         }
