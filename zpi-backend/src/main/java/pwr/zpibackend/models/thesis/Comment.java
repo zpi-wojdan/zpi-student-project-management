@@ -20,7 +20,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-  
+
     @JoinColumn(name="author_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Employee author;
@@ -36,5 +36,3 @@ public class Comment {
     @JsonIgnore
     private Thesis thesis;
 }
-
-
