@@ -51,6 +51,7 @@ public class PdfControllerTests {
     private String studyFieldAbbr;
     private Map<String, Map<String, List<StudentInReportsDTO>>> studentsWithoutThesis;
     private Map<String, Map<String, List<ThesisGroupDTO>>> thesisGroups;
+    private ThesisGroupDTO thesisGroup;
 
     @BeforeEach
     public void setUp() {
@@ -68,18 +69,19 @@ public class PdfControllerTests {
                 )
         );
 
+        thesisGroup = new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
+                new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr",
+                        "K035", "Katedra 1"),
+                List.of(new StudentInReportsDTO("123456", "John", "Doe",
+                                "123456@student.pwr.edu.pl", "W04N", "IST"),
+                        new StudentInReportsDTO("121212", "Adam", "Smith",
+                                "121212@student.pwr.edu.pl", "W04N", "IST")
+                )
+        );
+
         thesisGroups = Map.of(
                 "W04N", Map.of(
-                        "IST", List.of(
-                                new ThesisGroupDTO("Topic 1", "Thesis 1", "W04N", "IST",
-                                        new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr", null, null),
-                                        List.of(new StudentInReportsDTO("123456", "John", "Doe",
-                                                "123456@student.pwr.edu.pl", "W04N", "IST"),
-                                        new StudentInReportsDTO("121212", "Adam", "Smith",
-                                                "121212@student.pwr.edu.pl", "W04N", "IST")
-                                        )
-                                )
-                        )
+                        "IST", List.of(thesisGroup)
                 )
         );
     }
@@ -149,6 +151,34 @@ public class PdfControllerTests {
     }
 
     @Test
+    public void testGenerateThesisDeclaration() throws Exception {
+        Long id = 1L;
+        when(pdfService.generateThesisDeclaration(any(HttpServletResponse.class), eq(id))).thenReturn(true);
+
+        mockMvc.perform(get(BASE_URL + "/pdf/thesis-declaration/" + id))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Declaration generated successfully"));
+
+        verify(pdfService, times(1)).generateThesisDeclaration(
+                any(HttpServletResponse.class), eq(id)
+        );
+    }
+
+    @Test
+    public void testGenerateThesisDeclarationFailed() throws Exception {
+        Long id = 1L;
+        when(pdfService.generateThesisDeclaration(any(HttpServletResponse.class), eq(id))).thenReturn(false);
+
+        mockMvc.perform(get(BASE_URL + "/pdf/thesis-declaration/" + id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Thesis group not found"));
+
+        verify(pdfService, times(1)).generateThesisDeclaration(
+                any(HttpServletResponse.class), eq(id)
+        );
+    }
+
+    @Test
     public void testGetStudentsWithoutThesis() throws Exception {
         when(pdfService.getStudentsWithoutThesis(facultyAbbr, studyFieldAbbr)).thenReturn(studentsWithoutThesis);
 
@@ -176,5 +206,31 @@ public class PdfControllerTests {
                 .andExpect(content().json(returnedJson));
 
         verify(pdfService, times(1)).getThesisGroups(facultyAbbr, studyFieldAbbr);
+    }
+
+    @Test
+    public void testGetThesisGroupData() throws Exception {
+        Long id = 1L;
+        when(pdfService.getThesisGroupDataById(id)).thenReturn(thesisGroup);
+
+        String returnedJson = objectMapper.writeValueAsString(thesisGroup);
+
+        mockMvc.perform(get(BASE_URL + "/data/thesis-declaration/" + id))
+                .andExpect(status().isOk())
+                .andExpect(content().json(returnedJson));
+
+        verify(pdfService, times(1)).getThesisGroupDataById(id);
+    }
+
+    @Test
+    public void testGetThesisGroupDataNotFound() throws Exception {
+        Long id = 1L;
+        when(pdfService.getThesisGroupDataById(id)).thenReturn(null);
+
+        mockMvc.perform(get(BASE_URL + "/data/thesis-declaration/" + id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+
+        verify(pdfService, times(1)).getThesisGroupDataById(id);
     }
 }

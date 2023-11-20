@@ -89,8 +89,8 @@ public class PdfService {
 
     public Map<String, Map<String, List<ThesisGroupDTO>>> getThesisGroups(String facultyAbbr, String studyFieldAbbr) {
         return thesisRepository.findAllByOrderByNamePLAsc().stream()
-                .filter(thesis -> thesis.getReservations() != null && thesis.getReservations().stream()
-                        .allMatch(Reservation::isConfirmedBySupervisor))
+                .filter(thesis -> thesis.getReservations() != null && !thesis.getReservations().isEmpty()
+                        && thesis.getReservations().stream().allMatch(Reservation::isConfirmedBySupervisor))
                 .filter(thesis -> thesis.getPrograms() != null && thesis.getPrograms().stream()
                         .anyMatch(program -> program.getFaculty() != null && program.getStudyField() != null &&
                                 (facultyAbbr == null || program.getFaculty().getAbbreviation().equals(facultyAbbr)) &&
@@ -368,8 +368,9 @@ public class PdfService {
     public ThesisGroupDTO getThesisGroupDataById(Long id) {
         return thesisRepository.findById(id)
                 .map(thesis -> {
-                    if (thesis.getReservations().isEmpty() || thesis.getLeader() == null ||
-                            thesis.getLeader().getStudentProgramCycles() == null ||
+                    if (thesis.getReservations() == null || thesis.getReservations().isEmpty() ||
+                            thesis.getLeader() == null || thesis.getLeader().getStudentProgramCycles() == null ||
+                            thesis.getLeader().getStudentProgramCycles().isEmpty() ||
                             thesis.getReservations().stream().anyMatch(reservation ->
                                     !reservation.isConfirmedBySupervisor())) {
                         return null;
