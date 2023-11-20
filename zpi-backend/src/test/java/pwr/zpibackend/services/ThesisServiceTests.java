@@ -2,20 +2,24 @@ package pwr.zpibackend.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.services.thesis.ThesisService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +37,8 @@ public class ThesisServiceTests {
     private EmployeeRepository employeeRepository;
     @Mock
     private StatusRepository statusRepository;
+    @Mock
+    private CommentRepository commentRepository;
 
     @InjectMocks
     private ThesisService thesisService;
@@ -89,30 +95,6 @@ public class ThesisServiceTests {
         assertThrows(NotFoundException.class, () -> thesisService.getThesis(thesisId));
     }
 
-//    @Test
-//    public void testAddThesis() throws NotFoundException {
-//        Thesis thesisToAdd = mock(Thesis.class);
-//        when(thesisRepository.save(thesisToAdd)).thenReturn(thesis);
-//
-//        Thesis result = thesisService.addThesis(thesisToAdd);
-//
-//        assertEquals(thesis, result);
-//    }
-//    @Test
-//    public void testAddThesis() throws NotFoundException {
-//        Thesis thesisToAdd = mock(Thesis.class);
-//        Employee supervisor = new Employee();
-//        supervisor.setId(1L);
-//
-//        when(employeeRepository.findById(supervisor.getId())).thenReturn(Optional.of(supervisor));
-//        when(thesisToAdd.getSupervisor()).thenReturn(supervisor);
-//        when(thesisRepository.save(thesisToAdd)).thenReturn(thesis);
-//
-//        Thesis result = thesisService.addThesis(thesisToAdd);
-//
-//        assertEquals(thesis, result);
-//    }
-
     @Test
     public void testAddThesis() throws NotFoundException {
         Thesis thesisToAdd = new Thesis();
@@ -134,7 +116,6 @@ public class ThesisServiceTests {
 
         thesis.setPrograms(List.of(new Program()));
         thesis.setStatus(new Status(1, "Draft"));
-
         thesisToAdd.setSupervisor(supervisor);
 
         Thesis result = thesisService.addThesis(thesisToAdd);
@@ -150,12 +131,33 @@ public class ThesisServiceTests {
     @Test
     public void testUpdateThesis() throws NotFoundException {
         Long thesisId = 1L;
-        Thesis thesisToUpdate = mock(Thesis.class);
+        Thesis thesisToUpdate = new Thesis();
+        Employee supervisor = new Employee();
+        supervisor.setId(1L);
+
+        when(employeeRepository.existsById(supervisor.getId())).thenReturn(true);
+        when(employeeRepository.findById(supervisor.getId())).thenReturn(Optional.of(supervisor));
+        when(thesisRepository.existsById(thesisId)).thenReturn(true);
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
-        when(thesisRepository.save(thesisToUpdate)).thenReturn(thesis);
+        when(thesisRepository.saveAndFlush(any(Thesis.class))).thenAnswer(invocation -> {
+            Thesis savedThesis = invocation.getArgument(0);
+            savedThesis.setId(thesisId);
+            savedThesis.setNamePL("XD");
+            return savedThesis;
+        });
+
+        thesisToUpdate.setNamePL("Thesis 1 PL");
+        thesisToUpdate.setNameEN("Thesis 1 EN");
+        thesisToUpdate.setDescriptionPL("Description 1");
+        thesisToUpdate.setDescriptionEN("Description 1");
+        thesisToUpdate.setNumPeople(4);
+        thesisToUpdate.setSupervisor(supervisor);
+
+        thesis.setPrograms(List.of(new Program()));
+        thesis.setStatus(new Status(1, "Draft"));
 
         Thesis result = thesisService.updateThesis(thesisId, thesisToUpdate);
-
+        System.out.println(result.getNamePL());
         assertEquals(thesis, result);
     }
 
@@ -171,11 +173,14 @@ public class ThesisServiceTests {
     @Test
     public void testDeleteThesis() throws NotFoundException {
         Long thesisId = 1L;
-        when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
+        Thesis thesisToDelete = new Thesis();
+        when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesisToDelete));
+        when(commentRepository.existsById(anyLong())).thenReturn(true);
+        doNothing().when(commentRepository).deleteById(anyLong());
+        doNothing().when(thesisRepository).deleteById(thesisId);
 
         Thesis result = thesisService.deleteThesis(thesisId);
-
-        assertEquals(thesis, result);
+        assertEquals(thesisToDelete, result);
     }
 
     @Test
@@ -232,6 +237,16 @@ public class ThesisServiceTests {
     }
 
     @Test
+    public void testGetAllThesesForEmployeeByStatusIdNotFound() {
+        Long empId = 1L;
+        Long statId = 1L;
+        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId)).thenReturn(Collections.emptyList());
+
+        assertEquals(thesisService.getAllThesesForEmployeeByStatusId(empId, statId), Collections.emptyList());
+    }
+
+
+    @Test
     public void testGetAllThesesForEmployee() {
         Long empId = 1L;
         when(thesisRepository.findAllByEmployeeId(empId)).thenReturn(theses);
@@ -239,6 +254,14 @@ public class ThesisServiceTests {
         List<Thesis> result = thesisService.getAllThesesForEmployee(empId);
 
         assertEquals(theses, result);
+    }
+
+    @Test
+    public void testGetAllThesesForEmployeeNotFound() {
+        Long empId = 1L;
+        when(thesisRepository.findAllByEmployeeId(empId)).thenReturn(Collections.emptyList());
+
+        assertEquals(thesisService.getAllThesesForEmployee(empId), Collections.emptyList());
     }
 
 
