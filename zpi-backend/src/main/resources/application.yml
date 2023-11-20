@@ -68,5 +68,17 @@ spring:
       host:
         res_leader: ${VERIFY_RES_LEADER_URL}
 
+  messages:
+    basename: messages
+    encoding: UTF-8
+
+  thymeleaf:
+    encoding: UTF-8
+    cache: false
+    mode: HTML
+
+  web:
+    locale: pl_PL
+
 frontend:
   url: ${FRONTEND_URL}

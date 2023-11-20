@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     Reservation findByStudent_Mail(String mail);
-
     Optional<Reservation> findByThesis(Thesis thesis);
 }
