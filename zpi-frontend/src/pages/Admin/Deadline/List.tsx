@@ -45,7 +45,7 @@ const DeadlineList: React.FC = () => {
     const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length > 1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
     const indexOfLastItem = itemsPerPage === 'All' ? deadlines.length : currentPage * parseInt(itemsPerPage, 10);
     const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-    const currentFaculties = deadlines.slice(indexOfFirstItem, indexOfLastItem);
+    const currentDeadlines = deadlines.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(deadlines.length / parseInt(itemsPerPage, 10));
 
     const handlePageChange = (newPage: number) => {
@@ -174,7 +174,7 @@ const DeadlineList: React.FC = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {currentFaculties.map((deadline, index) => (
+                {currentDeadlines.map((deadline, index) => (
                     <React.Fragment key={deadline.id}>
                         <tr>
                             <td className="centered">{indexOfFirstItem + index + 1}</td>
