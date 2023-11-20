@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
@@ -68,8 +67,8 @@ export default function App(props: IAppProps) {
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
                   <Route path='my' element={<ReservationPage />} />
-                  <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
-                  <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'}
+                  <Route path='theses/add' element={<AddThesisPage />} />
+                  <Route path='theses/edit/:id' element={<UpdateThesisPage role={'employee'}
                                                                                   mail={'john.doe@pwr.edu.pl'} />} />
                 </Route>
 
