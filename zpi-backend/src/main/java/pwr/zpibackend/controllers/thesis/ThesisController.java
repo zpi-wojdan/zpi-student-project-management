@@ -43,4 +43,34 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.updateThesis(id, param), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+    public ResponseEntity<Thesis> deleteThesis(@PathVariable Long id) throws NotFoundException {
+        return new ResponseEntity<>(thesisService.deleteThesis(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/status/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllThesesByStatusId(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.getAllThesesByStatusId(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/status/exclude/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable Long id) throws NotFoundException {
+        return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusId(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{empId}/{statId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusId(@PathVariable Long empId,
+                                                                        @PathVariable Long statId) {
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusId(empId, statId), HttpStatus.OK);
+    }
+
+    @GetMapping("/employee/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllThesesForEmployee(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployee(id), HttpStatus.OK);
+    }
 }

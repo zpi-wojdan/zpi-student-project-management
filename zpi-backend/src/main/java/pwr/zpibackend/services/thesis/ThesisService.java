@@ -4,17 +4,26 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.models.thesis.Comment;
+import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.models.user.Student;
+import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +34,7 @@ public class ThesisService {
     private final ProgramRepository programRepository;
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
+    private final CommentRepository commentRepository;
 
     public List<Thesis> getAllTheses() {
         return thesisRepository.findAll();
@@ -86,6 +96,64 @@ public class ThesisService {
             return updated;
         }
         throw new NotFoundException();
+    }
+
+    //  brakowało metody do usuwania tematu
+    //  co z rozłączaniem z employee/studentem itp? dobrze to jest?
+    @Transactional
+    public Thesis deleteThesis(Long id) {
+        Optional<Thesis> thesis = thesisRepository.findById(id);
+        if (thesis.isPresent()){
+            Thesis deletedThesis = thesis.get();
+
+            Status status = deletedThesis.getStatus();
+            if (status != null){
+                status.getTheses().remove(deletedThesis);
+                deletedThesis.setStatus(null);
+            }
+
+            deletedThesis.setPrograms(null);
+            deletedThesis.setSupervisor(null);
+            deletedThesis.setLeader(null);
+            deletedThesis.setStudyCycle(null);
+            deletedThesis.setReservations(null);
+
+            List<Comment> comments = deletedThesis.getComments();
+            if (comments != null) {
+                comments.forEach(comment -> commentRepository.deleteById(comment.getId()));
+            }
+            deletedThesis.setComments(null);
+
+            thesisRepository.deleteById(id);
+            return deletedThesis;
+        }
+        throw new NotFoundException();
+    }
+
+    //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
+    public List<Thesis> getAllThesesByStatusId(Long id) {
+        return thesisRepository.findAllByStatusId(id);
+    }
+
+    //  np na zwrócenie wszystkich tematów, które nie są draftami
+    public List<Thesis> getAllThesesExcludingStatusId(Long id){
+        Optional<Status> excludedStatus = statusRepository.findById(id);
+        if (excludedStatus.isEmpty()) {
+            throw new NotFoundException();
+        }
+        return thesisRepository.findAll().stream()
+                .filter(thesis -> !id.equals(thesis.getStatus().getId()))
+                .collect(Collectors.toList());
+    }
+
+    //  np na zwrócenie wszystkich draftów danego pracownika
+    public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
+        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId);
+    }
+
+    //  np na zwrócenie wszystkich tematów danego pracownika
+    public List<Thesis> getAllThesesForEmployee(Long id) {
+        return thesisRepository.findAllByEmployeeId(id);
     }
 
 }

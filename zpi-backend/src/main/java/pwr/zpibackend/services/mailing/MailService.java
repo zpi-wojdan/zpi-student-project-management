@@ -3,7 +3,6 @@ package pwr.zpibackend.services.mailing;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -15,6 +14,7 @@ import pwr.zpibackend.utils.MailTemplates;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -33,7 +33,8 @@ public class MailService {
     public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, String name) {  // te liste arg pewnie też będzie można poprawić później
         try {
             // utworzenie odpowiedniego template html z danymi
-            Context context = new Context();
+            Locale locale = Locale.forLanguageTag("en");        // tu wstawic póżniej program.language() ze studenta
+            Context context = new Context(locale);
             context.setVariables(Map.of(
                     "name", name,
                     "thesis", "Temat pracy dyplomowej", // tu będzie do zmiany jak się już podepnie notyfikacje
@@ -55,7 +56,7 @@ public class MailService {
 
             javaMailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
