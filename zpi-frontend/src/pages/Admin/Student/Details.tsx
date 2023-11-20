@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Student } from '../../../models/Student';
-import { Faculty } from '../../../models/Faculty';
+import { Student } from '../../../models/user/Student';
+import { Faculty } from '../../../models/university/Faculty';
 import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";

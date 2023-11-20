@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
-import { Role } from "../models/Role";
+import { Role } from "../models/user/Role";
 import { useTranslation } from "react-i18next";
 
 type NavigationProps = {} & {

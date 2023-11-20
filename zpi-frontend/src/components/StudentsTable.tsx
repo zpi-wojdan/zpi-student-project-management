@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from "js-cookie";
-import { Employee } from '../models/Employee';
-import { Student } from '../models/Student';
-import { ThesisFront } from '../models/Thesis';
+import { Employee } from '../models/user/Employee';
+import { Student } from '../models/user/Student';
+import { ThesisFront } from '../models/thesis/Thesis';
 import {useTranslation} from "react-i18next";
 
 type StudentTableProps = {

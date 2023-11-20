@@ -1,8 +1,8 @@
-import { Employee } from "./Employee";
+import { Employee } from "../user/Employee";
 import { Reservation } from "./Reservation";
-import { Program } from "./Program";
-import { Student } from "./Student";
-import { StudyCycle } from "./StudyCycle";
+import { Program } from "../university/Program";
+import { Student } from "../user/Student";
+import { StudyCycle } from "../university/StudyCycle";
 import { Status, StatusDTO } from "./Status";
 
 export type Thesis = {
