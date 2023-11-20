@@ -417,3 +417,11 @@ VALUES
     ((SELECT id FROM employee WHERE mail = 'william.khan@pwr.edu.pl'LIMIT 1), 'Unfortunately, this doesnt align with our goals.', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający rodzica w organizacji aktywnego spędzania czasu z dzieckiem'LIMIT 1)),
     ((SELECT id FROM employee WHERE mail = 'ava.bryant@pwr.edu.pl'LIMIT 1), 'Great work on the IoT system!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający integrację oraz komunikację webowych i mobilnych aplikacji IoT'LIMIT 1)),
     ((SELECT id FROM employee WHERE mail = 'sophia.cooper@pwr.edu.pl'LIMIT 1), 'Congratulations on the simulator!', NOW(), (SELECT id FROM thesis WHERE name_pl = 'Symulator pracy robota sprzątającego w środowisku wirtualnym'LIMIT 1));
+
+
+INSERT INTO deadline(name_pl, name_en, deadline_date)
+VALUES
+    ('Zgłaszanie tematów przez prowadzących', 'Submitting topics by supervisors', '2024-04-01'),
+    ('Rozpatrywanie tematów przez zatwierdzających', 'Reviewing topics by approvers', '2024-04-10'),
+    ('Rezerwowanie tematów przez studentów', 'Reserving topics by students', '2024-05-15'),
+    ('Zaniesienie wydrukowanej i podpisanej deklaracji tematu do dziekanatu', 'Submitting signed declaration to the department secretary', '2024-05-31');
