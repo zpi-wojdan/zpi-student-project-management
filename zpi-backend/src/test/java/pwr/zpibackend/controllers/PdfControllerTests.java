@@ -71,8 +71,8 @@ public class PdfControllerTests {
         thesisGroups = Map.of(
                 "W04N", Map.of(
                         "IST", List.of(
-                                new ThesisGroupDTO("Thesis 1", "W04N", "IST",
-                                        new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr"),
+                                new ThesisGroupDTO("Topic 1", "Thesis 1", "W04N", "IST",
+                                        new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr", null, null),
                                         List.of(new StudentInReportsDTO("123456", "John", "Doe",
                                                 "123456@student.pwr.edu.pl", "W04N", "IST"),
                                         new StudentInReportsDTO("121212", "Adam", "Smith",
