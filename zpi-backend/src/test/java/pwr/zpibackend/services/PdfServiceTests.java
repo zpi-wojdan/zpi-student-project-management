@@ -55,6 +55,11 @@ public class PdfServiceTests {
         facultyAbbr = "W04N";
         studyFieldAbbr = "IST";
 
+        Department department1 = new Department();
+        department1.setId(1L);
+        department1.setCode("K035");
+        department1.setName("Katedra 1");
+
         StudyCycle studyCycle1 = new StudyCycle();
         studyCycle1.setId(1L);
         studyCycle1.setName("2020/21");
@@ -258,13 +263,15 @@ public class PdfServiceTests {
         employee1.setSurname("Damon");
         employee1.setMail("j.d@pwr.edu.pl");
         employee1.setTitle(title1);
+        employee1.setDepartment(department1);
 
         SupervisorDTO supervisorDTO1 = new SupervisorDTO();
         supervisorDTO1.setName("Joe");
         supervisorDTO1.setSurname("Damon");
         supervisorDTO1.setMail("j.d@pwr.edu.pl");
         supervisorDTO1.setTitle("dr");
-
+        supervisorDTO1.setDepartmentCode("K035");
+        supervisorDTO1.setDepartmentName("Katedra 1");
 
         thesisGroupsW04NIST = Map.of(
                 "W04N", Map.of(
@@ -272,7 +279,7 @@ public class PdfServiceTests {
                                 new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
                                 ),
-                                new ThesisGroupDTO("Temat 6", "Thesis 6", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO5)
                                 )
                         )
@@ -285,12 +292,12 @@ public class PdfServiceTests {
                                 new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
                                 ),
-                                new ThesisGroupDTO("Temat 6", "Thesis 6", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO5)
                                 )
                         ),
                         "INA", List.of(
-                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "INA",
+                                new ThesisGroupDTO("Temat 2", "Thesis 2", "W04N", "INA",
                                         supervisorDTO1, List.of(studentInReportsDTO3)
                                 )
                         )
@@ -303,19 +310,19 @@ public class PdfServiceTests {
                                 new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO1, studentInReportsDTO2FirstProgram)
                                 ),
-                                new ThesisGroupDTO("Temat 6", "Thesis 6", "W04N", "IST",
+                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "IST",
                                         supervisorDTO1, List.of(studentInReportsDTO5)
                                 )
                         ),
                         "INA", List.of(
-                                new ThesisGroupDTO("Temat 4", "Thesis 4", "W04N", "INA",
+                                new ThesisGroupDTO("Temat 2", "Thesis 2", "W04N", "INA",
                                         supervisorDTO1, List.of(studentInReportsDTO3)
                                 )
                         )
                 ),
                 "W01", Map.of(
                         "ARCH", List.of(
-                                new ThesisGroupDTO("Temat 5", "Thesis 5", "W01", "ARCH",
+                                new ThesisGroupDTO("Temat 3", "Thesis 3", "W01", "ARCH",
                                         supervisorDTO1, List.of(studentInReportsDTO4)
                                 )
                         )
@@ -343,39 +350,73 @@ public class PdfServiceTests {
                                 new Reservation(2L, true, true, true,
                                         true, null, null, student2, null)
                         ), null, null),
-                new Thesis(4L, "Temat 4", "Thesis 4", "Opis4", "Description4",
+                new Thesis(2L, "Temat 2", "Thesis 2", "Opis2", "Description2",
                         4, employee1, student3, List.of(program2), studyCycle1, new Status(), 1,
                         List.of(
                                 new Reservation(1L, true, true, true,
                                         true, null, null, student3, null)
                         ), null, null),
-                new Thesis(5L, "Temat 5", "Thesis 5", "Opis5", "Description5",
+                new Thesis(3L, "Temat 3", "Thesis 3", "Opis3", "Description3",
                         4, employee1, student4, List.of(program2, program3), studyCycle1, new Status(), 1,
                         List.of(
                                 new Reservation(1L, true, true, true,
                                         true, null, null, student4, null)
                         ), null, null),
-                new Thesis(6L, "Temat 6", "Thesis 6", "Opis6", "Description6",
+                new Thesis(4L, "Temat 4", "Thesis 4", "Opis4", "Description4",
                         4, employee1, student5, List.of(program1), studyCycle1, new Status(), 1,
                         List.of(
                                 new Reservation(1L, true, true, true,
                                         true, null, null, student5, null)
                         ), null, null),
+
                 // invalid thesis for the report
-                new Thesis(2L, "Temat 2", "Thesis 2", "Opis2", "Description2",
-                        4, employee1, new Student(), List.of(program1, program2), studyCycle1, new Status(), 1,
+
+                // thesis with reservation not confirmed by supervisor
+                new Thesis(5L, "Temat 5", "Thesis 5", "Opis5", "Description5",
+                        4, employee1, student1, List.of(program1, program2), studyCycle1, new Status(), 1,
                         List.of(
                                 new Reservation(1L, true, false, true,
-                                        true, null, null, new Student(), null)
+                                        true, null, null, student1, null),
+                                new Reservation(2L, true, true, true,
+                                        true, null, null, student2, null)
                         ), null, null),
-                new Thesis(3L, "Temat 3", "Thesis 3", "Opis3", "Description3",
-                        4, employee1, null, List.of(program1, program2), studyCycle1, new Status(), 0,
+                // thesis without reservations
+                new Thesis(6L, "Temat 3", "Thesis 6", "Opis6", "Description6",
+                        4, employee1, new Student(), List.of(program1, program2), studyCycle1, new Status(), 0,
                         null, null, null),
+                // thesis with different programs for leader and thesis
                 new Thesis(7L, "Temat 7", "Thesis 7", "Opis7", "Description7",
                         4, employee1, student1, List.of(program3), studyCycle1, new Status(), 0,
                         List.of(
                                 new Reservation(1L, true, true, true,
                                         true, null, null, student1, null)
+                        ), null, null),
+                // thesis without leader
+                new Thesis(8L, "Temat 8", "Thesis 8", "Opis8", "Description8",
+                        4, employee1, null, List.of(program2), studyCycle1, new Status(), 1,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student3, null)
+                        ), null, null),
+                // thesis with empty list of reservations
+                new Thesis(9L, "Temat 9", "Thesis 9", "Opis9", "Description9",
+                        4, employee1, student1, List.of(program1, program2), studyCycle1, new Status(), 0,
+                        new ArrayList<>(), null, null),
+                // thesis with leader without program cycles
+                new Thesis(10L, "Temat 10", "Thesis 10", "Opis10", "Description10",
+                        4, employee1, new Student(), List.of(program1, program2), studyCycle1, new Status(), 0,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student3, null)
+                        ), null, null),
+                // thesis with leader with empty list of program cycles
+                new Thesis(11L, "Temat 11", "Thesis 11", "Opis11", "Description11",
+                        4, employee1, new Student(11L, "123456@student.pwr.edu.pl", "John",
+                        "Doe", "123456", "STU", null, new HashSet<>()),
+                        List.of(program1, program2), studyCycle1, new Status(), 0,
+                        List.of(
+                                new Reservation(1L, true, true, true,
+                                        true, null, null, student3, null)
                         ), null, null)
         );
     }
@@ -645,6 +686,117 @@ public class PdfServiceTests {
         when(studentRepository.findAllByOrderByIndexAsc()).thenReturn(studentsOrdered);
 
         boolean result = pdfService.generateStudentsWithoutThesisReport(response, "aa", "aa");
+
+        assertFalse(result);
+        assertNull(response.getContentType());
+        assertNull(response.getHeader("Content-Disposition"));
+        assertEquals(0, response.getContentAsByteArray().length);
+    }
+
+    @Test
+    public void testGetThesisGroupDataById() {
+        Long id = 1L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(0)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertEquals(thesisGroups.get("W04N").get("IST").get(0), result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdReservationsIsNull() {
+        Long id = 6L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(5)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdEmptyReservations() {
+        Long id = 9L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(8)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdWithoutLeader() {
+        Long id = 8L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(7)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdWithLeaderWithoutProgramCycles() {
+        Long id = 10L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(9)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdWithLeaderWithEmptyProgramCycles() {
+        Long id = 11L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(10)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdReservationNotConfirmedBySupervisor() {
+        Long id = 5L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(4)));
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetThesisGroupDataByIdNotFound() {
+        Long id = 1001L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.empty());
+
+        ThesisGroupDTO result = pdfService.getThesisGroupDataById(id);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGenerateThesisDeclaration() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Long id = 1L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.ofNullable(theses.get(0)));
+
+        boolean result = pdfService.generateThesisDeclaration(response, id);
+
+        assertTrue(result);
+        assertEquals("application/pdf", response.getContentType());
+        assertTrue(response.containsHeader("Content-Disposition"));
+        assertTrue(response.getHeader("Content-Disposition").startsWith("attachment; filename="));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        String expectedFilename = "deklaracja_zpi_";
+        assertTrue(response.getHeader("Content-Disposition").contains(expectedFilename));
+    }
+
+    @Test
+    public void testGenerateThesisDeclarationDataNotFound() throws DocumentException, IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Long id = 1001L;
+        when(thesisRepository.findById(id)).thenReturn(Optional.empty());
+
+        boolean result = pdfService.generateThesisDeclaration(response, id);
 
         assertFalse(result);
         assertNull(response.getContentType());
