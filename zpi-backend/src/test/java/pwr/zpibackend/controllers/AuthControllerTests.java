@@ -17,9 +17,9 @@ import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.services.user.AuthService;
 import pwr.zpibackend.services.user.EmployeeService;
 import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -95,7 +95,7 @@ public class AuthControllerTests {
     @Test
     void getUserDetailsOfNonExistingUser() throws Exception {
         String email = "123456@pwr.edu.pl";
-        Mockito.when(authService.getUserDetails(email)).thenThrow(NoSuchElementException.class);
+        Mockito.when(authService.getUserDetails(email)).thenThrow(NotFoundException.class);
 
         mockMvc.perform(get(BASE_URL + "/" + email + "/details").contentType("application/json"))
                 .andExpect(status().isNotFound());

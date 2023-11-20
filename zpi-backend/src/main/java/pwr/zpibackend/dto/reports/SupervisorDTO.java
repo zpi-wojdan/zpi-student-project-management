@@ -12,4 +12,6 @@ public class SupervisorDTO {
     private String name;
     private String surname;
     private String title;
+    private String departmentCode;
+    private String departmentName;
 }

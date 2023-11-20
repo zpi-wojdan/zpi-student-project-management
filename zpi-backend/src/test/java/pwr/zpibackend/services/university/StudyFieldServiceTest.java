@@ -36,6 +36,8 @@ public class StudyFieldServiceTest {
 
     private StudyField studyField;
     private StudyFieldDTO studyFieldDTO;
+    private List<StudyField> studyFields;
+    private List<StudyField> orderedStudyFields;
 
     @BeforeEach
     public void setup() {
@@ -44,6 +46,14 @@ public class StudyFieldServiceTest {
         studyField.setAbbreviation("TEST");
         studyField.setName("Test Study Field");
 
+        StudyField studyField2 = new StudyField();
+        studyField2.setId(2L);
+        studyField2.setAbbreviation("Another");
+        studyField2.setName("Another Study Field");
+
+        studyFields = List.of(studyField, studyField2);
+        orderedStudyFields = List.of(studyField2, studyField);
+
         studyFieldDTO = new StudyFieldDTO();
         studyFieldDTO.setAbbreviation("TEST");
         studyFieldDTO.setName("Test Study Field");
@@ -51,12 +61,12 @@ public class StudyFieldServiceTest {
 
     @Test
     public void testGetAllStudyFields() {
-        when(studyFieldRepository.findAll()).thenReturn(List.of(studyField));
+        when(studyFieldRepository.findAll()).thenReturn(studyFields);
 
         List<StudyField> result = studyFieldService.getAllStudyFields();
 
-        assertEquals(1, result.size());
-        assertEquals(studyField, result.get(0));
+        assertEquals(2, result.size());
+        assertEquals(studyFields, result);
     }
 
     @Test
@@ -130,5 +140,15 @@ public class StudyFieldServiceTest {
         when(studyFieldRepository.findById(studyField.getId())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> studyFieldService.updateStudyField(studyField.getId(), updatedStudyFieldDTO));
+    }
+
+    @Test
+    public void testGetAllStudyFieldsOrderedByAbbreviationAsc() {
+        when(studyFieldRepository.findAllByOrderByAbbreviationAsc()).thenReturn(orderedStudyFields);
+
+        List<StudyField> result = studyFieldService.getAllStudyFieldsOrderedByAbbreviationAsc();
+
+        assertEquals(2, result.size());
+        assertEquals(orderedStudyFields, result);
     }
 }
