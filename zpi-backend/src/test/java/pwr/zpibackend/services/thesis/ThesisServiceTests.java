@@ -32,7 +32,6 @@ public class ThesisServiceTests {
 
     @Mock
     private ThesisRepository thesisRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
     @Mock
@@ -72,6 +71,7 @@ public class ThesisServiceTests {
 
         List<Thesis> result = thesisService.getAllTheses();
 
+        assertEquals(1, result.size());
         assertEquals(theses, result);
     }
 
@@ -157,7 +157,6 @@ public class ThesisServiceTests {
         thesis.setStatus(new Status(1, "Draft"));
 
         Thesis result = thesisService.updateThesis(thesisId, thesisToUpdate);
-        System.out.println(result.getNamePL());
         assertEquals(thesis, result);
     }
 
