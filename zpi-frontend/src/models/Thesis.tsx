@@ -37,3 +37,16 @@ export type ThesisFront = {
   students: Student[];
   reservations: Reservation[];
 }
+
+export type ThesisDTO = {
+  namePL: string;
+  nameEN: string;
+  descriptionPL: string;
+  descriptionEN: string;
+  num_people: number;
+  supervisorId: number;  // jest
+  programIds: number[];
+  studyCycleId: number; // jest 
+  statusId: number; // jest
+  students: string[] // indexes, easier to read and still unique
+}
