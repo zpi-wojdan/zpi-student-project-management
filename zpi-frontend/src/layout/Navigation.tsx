@@ -1,12 +1,9 @@
 import React, { ReactNode, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
-import { Role } from "../models/Role";
-import { useTranslation } from "react-i18next";
 import { Role } from "../models/Role";
 import { useTranslation } from "react-i18next";
 
@@ -170,6 +167,9 @@ const Navigation = ({ children }: NavigationProps) => {
                                                             </Dropdown.Item>
                                                             <Dropdown.Item as={Link} to="/departments" className={location.pathname === '/departments' ? "active" : ""}>
                                                                 {t('general.university.departments')}
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item as={Link} to="/deadlines" className={location.pathname === '/deadlines' ? "active" : ""}>
+                                                                {t('general.university.deadlines')}
                                                             </Dropdown.Item>
                                                         </Dropdown.Menu>
                                                     </Dropdown>

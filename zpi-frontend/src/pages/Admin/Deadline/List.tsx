@@ -1,29 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Faculty } from '../models/Faculty';
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../components/DeleteConfirmation';
-import handleSignOut from "../auth/Logout";
-import useAuth from "../auth/useAuth";
+import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
-import api from "../utils/api";
+import api from "../../../utils/api";
+import {Deadline} from "../../../models/Deadline";
 
-const HomePage: React.FC = () => {
+const DeadlineList: React.FC = () => {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
     const { i18n, t } = useTranslation();
     const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
-    const [faculties, setFaculties] = useState<Faculty[]>([]);
+    const [deadlines, setDeadlines] = useState<Deadline[]>([]);
     const [refreshList, setRefreshList] = useState(false);
 
     useEffect(() => {
-        api.get('http://localhost:8080/faculty')
+        api.get('http://localhost:8080/deadline/ordered')
             .then((response) => {
-                const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
-                    return a.abbreviation.localeCompare(b.abbreviation);
-                });
-                setFaculties(sortedFaculties);
+                setDeadlines(response.data);
                 const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
                     if (itemPerPage === 'All') {
                         return true;
@@ -46,10 +43,10 @@ const HomePage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [inputValue, setInputValue] = useState(currentPage);
     const [itemsPerPage, setItemsPerPage] = useState((ITEMS_PER_PAGE.length > 1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]);
-    const indexOfLastItem = itemsPerPage === 'All' ? faculties.length : currentPage * parseInt(itemsPerPage, 10);
+    const indexOfLastItem = itemsPerPage === 'All' ? deadlines.length : currentPage * parseInt(itemsPerPage, 10);
     const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-    const currentFaculties = faculties.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(faculties.length / parseInt(itemsPerPage, 10));
+    const currentFaculties = deadlines.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(deadlines.length / parseInt(itemsPerPage, 10));
 
     const handlePageChange = (newPage: number) => {
         if (!newPage || newPage < 1) {
@@ -69,17 +66,17 @@ const HomePage: React.FC = () => {
     };
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    const [facultyToDelete, setFacultyToDelete] = useState<number | null>(null);
+    const [deadlineToDelete, setDeadlineToDelete] = useState<number | null>(null);
 
     const handleDeleteClick = (facultyId: number) => {
         setShowDeleteConfirmation(true);
-        setFacultyToDelete(facultyId);
+        setDeadlineToDelete(facultyId);
     };
 
     const handleConfirmDelete = () => {
-        api.delete(`http://localhost:8080/faculty/${facultyToDelete}`)
+        api.delete(`http://localhost:8080/deadline/${deadlineToDelete}`)
             .then(() => {
-                toast.success(t('faculty.deleteSuccessful'));
+                toast.success(t('deadline.deleteSuccessful'));
                 setRefreshList(!refreshList);
             })
             .catch((error) => {
@@ -88,7 +85,7 @@ const HomePage: React.FC = () => {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
-                toast.error(t('faculty.deleteError'));
+                toast.error(t('deadline.deleteError'));
             });
         setShowDeleteConfirmation(false);
     };
@@ -101,8 +98,8 @@ const HomePage: React.FC = () => {
         <div className='page-margin'>
             <div className='d-flex justify-content-between  align-items-center'>
                 <div >
-                    <button className="custom-button" onClick={() => { navigate('/faculties/add') }}>
-                        {t('faculty.add')}
+                    <button className="custom-button" onClick={() => { navigate('/deadlines/add') }}>
+                        {t('deadline.add')}
                     </button>
                 </div>
                 {ITEMS_PER_PAGE.length > 1 && (
@@ -170,24 +167,30 @@ const HomePage: React.FC = () => {
                 <thead>
                 <tr>
                     <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '15%', textAlign: 'center' }}>{t('general.university.abbreviation')}</th>
-                    <th style={{ width: '62%' }}>{t('general.university.name')}</th>
+                    <th style={{ width: '62%' }}>{t('deadline.activity')}</th>
+                    <th style={{ width: '15%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
                     <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
                     <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
                 </tr>
                 </thead>
                 <tbody>
-                {currentFaculties.map((faculty, index) => (
-                    <React.Fragment key={faculty.abbreviation}>
+                {currentFaculties.map((deadline, index) => (
+                    <React.Fragment key={deadline.id}>
                         <tr>
                             <td className="centered">{indexOfFirstItem + index + 1}</td>
-                            <td className="centered">{faculty.abbreviation}</td>
-                            <td>{faculty.name}</td>
+                            <td>
+                                {i18n.language === 'pl' ? (
+                                    deadline.namePL
+                                ) : (
+                                    deadline.nameEN
+                                )}
+                            </td>
+                            <td className="centered">{new Date(deadline.deadlineDate).toLocaleDateString()}</td>
                             <td>
                                 <button
                                     className="custom-button coverall"
                                     onClick={() => {
-                                        navigate(`/faculties/edit/${faculty.abbreviation}`, { state: { faculty } });
+                                        navigate(`/deadlines/edit/${deadline.id}`, { state: { deadline } });
                                     }}
                                 >
                                     <i className="bi bi-arrow-right"></i>
@@ -196,13 +199,13 @@ const HomePage: React.FC = () => {
                             <td>
                                 <button
                                     className="custom-button coverall"
-                                    onClick={() => handleDeleteClick(faculty.id)}
+                                    onClick={() => handleDeleteClick(deadline.id)}
                                 >
                                     <i className="bi bi-trash"></i>
                                 </button>
                             </td>
                         </tr>
-                        {facultyToDelete === faculty.id && showDeleteConfirmation && (
+                        {deadlineToDelete === deadline.id && showDeleteConfirmation && (
                             <tr>
                                 <td colSpan={5}>
                                     <DeleteConfirmation
@@ -210,7 +213,7 @@ const HomePage: React.FC = () => {
                                         onClose={handleCancelDelete}
                                         onConfirm={handleConfirmDelete}
                                         onCancel={handleCancelDelete}
-                                        questionText={t('faculty.deleteConfirmation')}
+                                        questionText={t('deadline.deleteConfirmation')}
                                     />
                                 </td>
                             </tr>
@@ -261,4 +264,4 @@ const HomePage: React.FC = () => {
     );
 };
 
-export default HomePage;
+export default DeadlineList;

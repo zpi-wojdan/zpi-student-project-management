@@ -43,6 +43,8 @@ import {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
 import Reports from "./pages/Admin/Reports";
+import DeadlineList from "./pages/Admin/Deadline/List";
+import DeadlineForm from "./pages/Admin/Deadline/Form";
 
 
 export interface IAppProps {
@@ -51,7 +53,7 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
 
   return (
-      <Suspense fallback="loading">
+      <Suspense fallback="loading..">
         <AuthProvider>
           <BrowserRouter>
             <Navigation>
@@ -109,6 +111,9 @@ export default function App(props: IAppProps) {
                 <Route path='departments' element={<DepartmentList />} />
                 <Route path='departments/add' element={<DepartmentForm />} />
                 <Route path='departments/edit/:id' element={<DepartmentForm />} />
+                <Route path='deadlines' element={<DeadlineList />} />
+                <Route path='deadlines/add' element={<DeadlineForm />} />
+                <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
