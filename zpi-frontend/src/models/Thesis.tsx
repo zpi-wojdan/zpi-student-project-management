@@ -48,5 +48,4 @@ export type ThesisDTO = {
   programIds: number[];
   studyCycleId: number | undefined;
   statusId: number;
-  students: string[] // indexes, easier to read and still unique
 }
