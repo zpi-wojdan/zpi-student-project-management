@@ -30,22 +30,31 @@ public class FacultyServiceTest {
     private FacultyService facultyService;
 
     private Faculty faculty;
+    private List<Faculty> faculties;
+    private List<Faculty> orderedFaculties;
 
     @BeforeEach
     public void setup() {
         faculty = new Faculty();
-        faculty.setAbbreviation("W4");
+        faculty.setAbbreviation("W04");
         faculty.setName("Wydział Elektroniki");
+
+        Faculty faculty2 = new Faculty();
+        faculty2.setAbbreviation("W02");
+        faculty2.setName("Wydział Chemiczny");
+
+        faculties = List.of(faculty, faculty2);
+        orderedFaculties = List.of(faculty2, faculty);
     }
 
     @Test
     public void testGetAllFaculties() {
-        when(facultyRepository.findAll()).thenReturn(List.of(faculty));
+        when(facultyRepository.findAll()).thenReturn(faculties);
 
         List<Faculty> result = facultyService.getAllFaculties();
 
-        assertEquals(1, result.size());
-        assertEquals(faculty, result.get(0));
+        assertEquals(2, result.size());
+        assertEquals(faculties, result);
     }
 
     @Test
@@ -120,5 +129,15 @@ public class FacultyServiceTest {
         when(facultyRepository.findById(faculty.getId())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> facultyService.updateFaculty(faculty.getId(), updatedFaculty));
+    }
+
+    @Test
+    public void testGetAllFacultiesOrderedByAbbreviationAsc() {
+        when(facultyRepository.findAllByOrderByAbbreviationAsc()).thenReturn(orderedFaculties);
+
+        List<Faculty> result = facultyService.getAllFacultiesOrderedByAbbreviationAsc();
+
+        assertEquals(2, result.size());
+        assertEquals(orderedFaculties, result);
     }
 }

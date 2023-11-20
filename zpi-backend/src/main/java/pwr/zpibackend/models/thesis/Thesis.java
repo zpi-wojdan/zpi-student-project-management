@@ -1,6 +1,8 @@
 package pwr.zpibackend.models.thesis;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -60,9 +62,8 @@ public class Thesis {
     @JoinColumn(name = "thesis_id")
     @OneToMany(cascade = CascadeType.ALL)
     private List<Reservation> reservations;
-
     @CreationTimestamp
-    @Column(name = "creation_date", updatable = false)
+    @Column(name = "creation_time", updatable = false)
     private LocalDateTime creationTime;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis")
     private List<Comment> comments;
