@@ -12,7 +12,7 @@ import pwr.zpibackend.utils.MailTemplates;
 
 import java.util.List;
 
-import static pwr.zpibackend.utils.MailTemplates.RESERVATION_LEADER;
+import static pwr.zpibackend.utils.MailTemplates.RESERVATION_LEADER_PL;
 
 // ten kontroler jest tylko na czas testów jak coś
 
@@ -29,7 +29,7 @@ public class MailController {
         String text = objectNode.get("text").asText();
         String name = objectNode.get("name").asText();
         String page = "1";
-        mailService.sendHtmlMailMessage(to, page, RESERVATION_LEADER, name);
+        mailService.sendHtmlMailMessage(to, page, RESERVATION_LEADER_PL, name);
     }
 
     @PostMapping("/group")
@@ -40,6 +40,6 @@ public class MailController {
         String subject = objectNode.get("subject").asText();
         String text = objectNode.get("text").asText();
         String page = "1";
-        mailService.sendHtmlMailGroupMessage(recipients, page, RESERVATION_LEADER, names);
+        mailService.sendHtmlMailGroupMessage(recipients, page, RESERVATION_LEADER_PL, names);
     }
 }

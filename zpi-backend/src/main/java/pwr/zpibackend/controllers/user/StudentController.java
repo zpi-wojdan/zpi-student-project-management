@@ -30,6 +30,12 @@ public class StudentController {
         return new ResponseEntity<>(studentService.getStudent(id), HttpStatus.OK);
     }
 
+    @GetMapping("/index/{index}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_SUPERVISOR')")
+    public ResponseEntity<Student> getStudentByIndex(@PathVariable String index) {
+        return new ResponseEntity<>(studentService.getStudent(index + "@student.pwr.edu.pl"), HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Student> addStudent(@RequestBody StudentDTO student)

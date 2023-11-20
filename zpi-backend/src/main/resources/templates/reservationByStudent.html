@@ -27,8 +27,9 @@
                 <tbody>
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td class="content-block"
-                      style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                    Witaj <strong
+                      style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;"
+                      th:text="#{greeting}">
+                     <strong
                           style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"
                           th:text="${name}"></strong>,
                   </td>
@@ -36,9 +37,9 @@
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td class="content-block"
                       style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                    <p>Nowa rezerwacja na temat: <strong th:text="${thesis}"></strong>.</p>
-                    <p>Do Twojej grupy dopisała się nowa osoba! Wymagane jest Twoje potwierdzenie w ciągu <strong>24 godzin</strong> od rezerwacji.</p>
-                    <p>Kliknij niżej, aby wyświetlić nową rezerwację:</p>
+                    <p th:text="#{reservationByStudent}">: <strong th:text="${thesis}"></strong>.</p>
+                    <p th:text="#{reservationConfirmation}"></p>
+                    <p th:text="#{reservationButtonAnnotation}"></p>
                   </td>
                 </tr>
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; text-align: center">
@@ -46,8 +47,9 @@
                       style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px; text-align: center;">
                     <a class="btn-primary"
                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 5px; text-transform: capitalize; background-color: #9A342D; margin: 0; border-color: #9A342D; border-style: solid; border-width: 8px 16px;"
-                       th:href="${url}">
-                      Wyświetl rezerwację!</a>
+                       th:href="${url}"
+                       th:text="#{reservationButton}">
+                      </a>
                   </td>
                 </tr>
                 </tbody>
