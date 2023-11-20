@@ -36,6 +36,7 @@
       "mail": "Mail",
       "name": "Name",
       "roles": "Roles",
+      "role": "Role",
       "student": "Student",
       "students": "Students",
       "supervisorLC": "supervisor",
