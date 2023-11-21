@@ -5,8 +5,8 @@ import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { Student } from '../../models/user/Student';
-import { Thesis } from '../../models//thesis/Thesis';
-import { useTranslation } from "react-i18next";
+import { Thesis } from '../../models/thesis/Thesis';
+import {useTranslation} from "react-i18next";
 import api from "../../utils/api";
 
 type SupervisorReservationProps = {
@@ -113,7 +113,12 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                 };
                 console.log(JSON.stringify(responseBody));
 
-                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody))
+                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                
+                })
                     .then(response => {
                         if (response.status === 201) {
                             console.log(`Reservation ${reservation} created successfully`);
@@ -132,7 +137,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
 
             if (allReservationsSuccessful) {
                 toast.success(t('reservation.reservationSuccessful'));
-                navigate("/theses/" + thesis.id)
+                navigate("/public-theses/" + thesis.id)
             } else {
                 toast.error(t('reservation.reservationError'));
             }

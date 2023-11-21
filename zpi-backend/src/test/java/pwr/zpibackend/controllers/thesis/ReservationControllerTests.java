@@ -1,4 +1,4 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.thesis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +50,7 @@ public class ReservationControllerTests {
     @BeforeEach
     public void setUp() {
         reservationDTO = new ReservationDTO();
-        reservationDTO.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
+        reservationDTO.setReservationDate(LocalDateTime.now());
         reservationDTO.setThesisId(1L);
         reservationDTO.setStudent(new Student());
         reservationDTO.setConfirmedByLeader(false);

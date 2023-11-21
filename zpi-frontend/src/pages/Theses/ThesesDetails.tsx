@@ -10,6 +10,8 @@ import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
 import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
+import {Reservation} from "../../models/thesis/Reservation";
+import {toast} from "react-toastify";
 
 const ThesesDetails: React.FC = () => {
   // @ts-ignore
@@ -38,7 +40,7 @@ const ThesesDetails: React.FC = () => {
           status: thesisDb.status,
           leader: thesisDb.leader,
           students: thesisDb.reservations.map((reservation) => reservation.student).sort((a, b) => a.index.localeCompare(b.index)),
-          reservations: thesisDb.reservations.sort((a,b) => a.student.index.localeCompare(b.student.index)),
+          reservations: thesisDb.reservations.sort((a, b) => a.student.index.localeCompare(b.student.index)),
         };
         setThesis(thesis);
       })
@@ -57,7 +59,6 @@ const ThesesDetails: React.FC = () => {
     api.get('http://localhost:8080/program')
       .then((response) => {
         setPrograms(response.data);
-        console.log(programs);
       })
       .catch((error) => {
         console.error(error);
@@ -93,14 +94,64 @@ const ThesesDetails: React.FC = () => {
           );
 
           if (response.status === 200) {
+            toast.success(t('thesis.readyForApproval'));
             console.log('All users reservations sent for approval successfully');
           }
         } catch (error) {
+          toast.error(t('thesis.readyForApprovalError'));
           console.error(`Failed to update reservations for reservation: ${reservation}`, error);
         }
       }
     }
   };
+
+  const downloadDeclaration = () => {
+    let url = 'http://localhost:8080/report/pdf/thesis-declaration/' + thesis?.id;
+
+    let toastId: any = null;
+    toastId = toast.info(t('thesis.generating'), {autoClose: false});
+
+    api.get(url, { responseType: 'blob' })
+        .then((response) => {
+          const file = new Blob([response.data], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          const link = document.createElement('a');
+          link.href = fileURL;
+
+          const contentDisposition = response.headers['content-disposition'];
+          let filename = 'report.pdf';
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename=(.+)/i);
+            if (filenameMatch.length === 2)
+              filename = filenameMatch[1];
+          }
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
+
+          setTimeout(() => {
+            toast.dismiss(toastId);
+          }, 2000);
+          toast.success(t('thesis.downloadSuccessful'));
+        })
+
+        .catch((error) => {
+          console.error(error);
+          setTimeout(() => {
+            toast.dismiss(toastId);
+          }, 2000);
+
+          if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+          else if (error.response.status === 404) {
+              toast.error(t('thesis.downloadNoDataError'));
+          }
+          else
+            toast.error(t('thesis.downloadError'));
+        });
+  }
 
   return (
     <div className='page-margin'>
@@ -108,7 +159,18 @@ const ThesesDetails: React.FC = () => {
         <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
+
+          {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
+              (user?.mail === thesis?.supervisor.mail ||
+                  thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
+              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
+              (
+                  <button className="col-sm-2 custom-button m-3" onClick={downloadDeclaration}>
+                      {t('thesis.downloadDeclaration')}
+                  </button>
+              ) : null}
+
+          {(thesis && thesis?.occupied < thesis?.numPeople && user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
           user?.mail === thesis?.supervisor.mail) ?
           (
             <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
@@ -190,15 +252,19 @@ const ThesesDetails: React.FC = () => {
               ) : (
                 <></>
               )}
-              {thesis?.leader?.mail === user?.mail && thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) && (
-                <button
-                  type="button"
-                  className="col-sm-2 btn btn-primary m-3"
-                  onClick={handleReadyForApproval}
-                >
-                  {t('thesis.readyForApproval')}
-                </button>
-              )}
+              {thesis?.leader?.mail === user?.mail &&
+                thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) &&
+                thesis?.reservations?.length >= 3 &&
+                thesis?.reservations.some(r => !r.readyForApproval) &&
+                (
+                  <button
+                    type="button"
+                    className="col-sm-2 custom-button m-3"
+                    onClick={handleReadyForApproval}
+                  >
+                    {t('thesis.readyForApproval')}
+                  </button>
+                )}
 
             </div>
           </div>

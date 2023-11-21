@@ -45,7 +45,7 @@ public class PdfController {
     }
 
     @GetMapping("pdf/thesis-declaration/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_SUPERVISOR')")
     public ResponseEntity<String> generateThesisDeclaration(HttpServletResponse response, @PathVariable Long id)
             throws DocumentException, IOException {
         if (pdfService.generateThesisDeclaration(response, id))
@@ -69,7 +69,7 @@ public class PdfController {
     }
 
     @GetMapping("data/thesis-declaration/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STUDENT', 'ROLE_SUPERVISOR')")
     public ResponseEntity<ThesisGroupDTO> getThesisGroupData(@PathVariable Long id) {
         ThesisGroupDTO thesisGroupDTO = pdfService.getThesisGroupDataById(id);
         if(thesisGroupDTO != null)

@@ -40,8 +40,10 @@ import StudyFieldList from './pages/Admin/Field/List';
 import {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
-import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
 import Reports from "./pages/Admin/Reports";
+import DeadlineList from "./pages/Admin/Deadline/List";
+import DeadlineForm from "./pages/Admin/Deadline/Form";
+import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
 
 
 export interface IAppProps {
@@ -50,7 +52,7 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
 
   return (
-      <Suspense fallback="loading">
+      <Suspense fallback="loading..">
         <AuthProvider>
           <BrowserRouter>
             <Navigation>
@@ -110,6 +112,46 @@ export default function App(props: IAppProps) {
                   <Route path="/file/student" element={<UploadStudentFilePage />} />
                   <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
                 </Route>
+=========
+              <Route element={<RequireAuth allowedRoles={['admin']} />}>
+                <Route path='students' element={<StudentList />} />
+                <Route path='students/:id' element={<StudentDetails />} />
+                <Route path='students/add' element={<StudentForm/>} />
+                <Route path='students/edit/:id' element={<StudentForm/>} />
+                <Route path='employees' element={<EmployeeList />} />
+                <Route path='employees/:id' element={<EmployeeDetails />} />
+                <Route path='employees/add' element={<EmployeeForm/>} />
+                <Route path='employees/edit/:id' element={<EmployeeForm/>} />
+                <Route path='theses' element={<ThesisList />} />
+                <Route path='theses/:id' element={<ThesisDetails />} />
+                <Route path='theses/add' element={<AddThesisPage/>} />
+                <Route path='theses/edit/:id' element={<UpdateThesisPage/>} />
+                <Route path='faculties' element={<FacultyList />} />
+                <Route path='faculties/add' element={<FacultyForm />} />
+                <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
+                <Route path='fields' element={<StudyFieldList />} />
+                <Route path='fields/add' element={<StudyFieldForm />} />
+                <Route path='fields/edit/:abbr' element={<StudyFieldForm />} />
+                <Route path='specializations' element={<SpecializationList />} />
+                <Route path='specializations/add' element={<SpecializationForm />} />
+                <Route path='specializations/edit/:abbr' element={<SpecializationForm />} />
+                <Route path='programs' element={<ProgramList />} />
+                <Route path='programs/add' element={<ProgramForm />} />
+                <Route path='programs/edit/:id' element={<ProgramForm />} />
+                <Route path='cycles' element={<StudyCycleList />} />
+                <Route path='cycles/add' element={<StudyCycleForm />} />
+                <Route path='cycles/edit/:id' element={<StudyCycleForm />} />
+                <Route path='departments' element={<DepartmentList />} />
+                <Route path='departments/add' element={<DepartmentForm />} />
+                <Route path='departments/edit/:id' element={<DepartmentForm />} />
+                <Route path='deadlines' element={<DeadlineList />} />
+                <Route path='deadlines/add' element={<DeadlineForm />} />
+                <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
+                <Route path="/file/student" element={<UploadStudentFilePage />} />
+                <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                <Route path="/reports" element={<Reports />} />
+              </Route>
+>>>>>>>>> Temporary merge branch 2
 
               <Route path="*" element={<Missing />} />
         </Routes>

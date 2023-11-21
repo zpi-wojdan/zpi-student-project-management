@@ -37,6 +37,7 @@ function AddThesisPageAdmin() {
     descriptionPL: '',
     descriptionEN: '',
     numPeople: 4,
+    numPeople: 4,
     supervisorId: -1,
     programIds: [-1],
     studyCycleId: -1,
@@ -143,6 +144,7 @@ function AddThesisPageAdmin() {
           nameEN: thesis.nameEN,
           descriptionPL: thesis.descriptionPL,
           descriptionEN: thesis.descriptionEN,
+          numPeople: thesis.numPeople,
           numPeople: thesis.numPeople,
           supervisorId: thesis.supervisor.id,
           programIds: thesis.programs.map((p) => p.id),
@@ -487,6 +489,7 @@ function AddThesisPageAdmin() {
 
       <div className="mb-3">
         <label className="bold" htmlFor="numPeople">
+        <label className="bold" htmlFor="numPeople">
           {t('thesis.peopleLimit')}:
         </label>
         <input
@@ -499,6 +502,7 @@ function AddThesisPageAdmin() {
           min={3}
           max={5}
         />
+        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
         {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
       </div>
 

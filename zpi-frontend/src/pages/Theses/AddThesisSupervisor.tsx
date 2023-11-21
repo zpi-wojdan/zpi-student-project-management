@@ -68,7 +68,6 @@ function AddThesisPageSupervisor() {
       if (!formData.supervisorId || formData.supervisorId === -1){
         const cookieId = u?.id ?? -1;
         setFormData({ ...formData, supervisorId: cookieId });
-      }
     }
   }, [])
 
@@ -426,6 +425,7 @@ function AddThesisPageSupervisor() {
 
       <div className="mb-3">
         <label className="bold" htmlFor="numPeople">
+        <label className="bold" htmlFor="numPeople">
           {t('thesis.peopleLimit')}:
         </label>
         <input
@@ -438,6 +438,7 @@ function AddThesisPageSupervisor() {
           min={3}
           max={5}
         />
+        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
         {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
       </div>
 

@@ -9,6 +9,7 @@ import { Department } from '../../../models/university/Department';
 import { Role } from '../../../models/user/Role';
 import { Title } from './Form';
 import SearchBar from '../../../components/SeatchBar';
+import { Department } from '../../../models/university/Department';
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
@@ -58,7 +59,10 @@ const EmployeeList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/departments')
       .then((response) => {
-        setAvailableDepartments(response.data);
+        const sortedDepartments = response.data.sort((a: Department, b: Department) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableDepartments(sortedDepartments);
       })
       .catch((error) => {
         console.error(error);
@@ -72,6 +76,9 @@ const EmployeeList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/title')
       .then((response) => {
+        const sortedTitles = response.data.sort((a: Title, b: Title) => {
+          return a.name.localeCompare(b.name);
+        });
         setAvailableTitles(response.data);
       })
       .catch((error) => {
@@ -201,6 +208,7 @@ const EmployeeList: React.FC = () => {
             ))}
           </select>
         </div>
+        <hr className="my-4" />
         <div className="mb-4">
           <label className="bold" htmlFor="role">
             {t('general.people.role')}:
@@ -222,6 +230,7 @@ const EmployeeList: React.FC = () => {
             ))}
           </select>
         </div>
+        <hr className="my-4" />
         <div className="mb-4">
           <label className="bold" htmlFor="title">
             {t('general.title')}:
@@ -243,7 +252,8 @@ const EmployeeList: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="d-flex justify-content-center mt-5">
+        <hr className="my-4" />
+        <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
             onClick={() => {
               setSelectedDepartmentCode("");
