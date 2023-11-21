@@ -5,8 +5,8 @@ import React, {useEffect, useState} from "react";
 import api from "../../utils/api";
 import {toast} from "react-toastify";
 import handleSignOut from "../../auth/Logout";
-import {Faculty} from "../../models/Faculty";
-import {StudyField} from "../../models/StudyField";
+import {Faculty} from "../../models/university/Faculty";
+import {StudyField} from "../../models/university/StudyField";
 
 const Reports = () => {
     // @ts-ignore

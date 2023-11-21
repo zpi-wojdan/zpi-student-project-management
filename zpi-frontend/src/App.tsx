@@ -123,8 +123,6 @@ export default function App(props: IAppProps) {
                 <Route path='employees/edit/:id' element={<EmployeeForm/>} />
                 <Route path='theses' element={<ThesisList />} />
                 <Route path='theses/:id' element={<ThesisDetails />} />
-                <Route path='theses/add' element={<AddThesisPage/>} />
-                <Route path='theses/edit/:id' element={<UpdateThesisPage/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
