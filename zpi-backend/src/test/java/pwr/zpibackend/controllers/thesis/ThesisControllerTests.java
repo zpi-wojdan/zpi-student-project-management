@@ -218,14 +218,14 @@ class ThesisControllerTests {
     public void testAddThesisBadRequest() throws Exception{
         String requestBody = asJsonString(thesis);
 
-        Mockito.when(thesisService.addThesis(any(Thesis.class))).thenThrow(new IllegalArgumentException());
+        Mockito.when(thesisService.addThesis(any(ThesisDTO.class))).thenThrow(new IllegalArgumentException());
 
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
 
-        verify(thesisService).addThesis(any(Thesis.class));
+        verify(thesisService).addThesis(any(ThesisDTO.class));
     }
 
     @Test

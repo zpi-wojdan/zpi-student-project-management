@@ -84,10 +84,12 @@ public class ThesisService {
             updated.setSupervisor(employeeRepository.findById(
                     thesis.getSupervisorId()).orElseThrow(NotFoundException::new)
             );
+            List<Program> programList = new ArrayList<>();
             thesis.getProgramIds().forEach(programId -> {
                 Program program = programRepository.findById(programId).orElseThrow(NotFoundException::new);
-                updated.getPrograms().add(program);
+                programList.add(program);
             });
+            updated.setPrograms(programList);
             updated.setStudyCycle(studyCycleRepository.findById(
                     thesis.getStudyCycleId()).orElseThrow(NotFoundException::new)
             );
