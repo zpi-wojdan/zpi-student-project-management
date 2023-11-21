@@ -39,6 +39,7 @@
       "mail": "Mail",
       "name": "Imię",
       "roles": "Role",
+      "role": "Rola",
       "student": "Student",
       "students": "Studenci",
       "supervisorLC": "prowadzący",

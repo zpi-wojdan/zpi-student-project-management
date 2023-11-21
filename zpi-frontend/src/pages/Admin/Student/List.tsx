@@ -37,7 +37,6 @@ const StudentList: React.FC = () => {
   }, []);
 
   // Filtrowanie
-
   const [filteredStudents, setFilteredStudents] = useState<Student[]>(students);
 
   const [availableFaculties, setAvailableFaculties] = useState<Faculty[]>([]);
