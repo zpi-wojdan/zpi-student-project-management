@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import StudentTable from '../../components/StudentsTable';
-import { ThesisFront, Thesis } from '../../models/Thesis';
-import { Program } from '../../models/Program';
+import { ThesisFront, Thesis } from '../../models/thesis/Thesis';
+import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
-import { Employee } from '../../models/Employee';
-import { Student } from '../../models/Student';
+import { Employee } from '../../models/user/Employee';
+import { Student } from '../../models/user/Student';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
 import handleSignOut from "../../auth/Logout";

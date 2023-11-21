@@ -1,4 +1,4 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.user;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

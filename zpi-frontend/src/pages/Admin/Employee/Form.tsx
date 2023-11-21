@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { EmployeeDTO } from '../../../models/Employee';
+import { EmployeeDTO } from '../../../models/user/Employee';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import { Role, RoleDTO } from '../../../models/Role';
-import { Department } from '../../../models/Department';
+import { Role, RoleDTO } from '../../../models/user/Role';
+import { Department } from '../../../models/university/Department';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 

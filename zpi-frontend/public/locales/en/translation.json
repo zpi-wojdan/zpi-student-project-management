@@ -11,6 +11,7 @@
       "edit": "Edit",
       "errorOfLoading": "Error of loading data",
       "fieldIsRequired": "This field is required.",
+      "fieldIsOptional": "This field is not required.",
       "goBack": "Go back",
       "mailExists": "Given mail already exists!",
       "mailMustBePwr": "Mail must be from the pwr.edu.pl domain",

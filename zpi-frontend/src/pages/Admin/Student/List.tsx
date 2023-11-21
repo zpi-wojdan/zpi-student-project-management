@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Student } from '../../../models/Student';
+import { Student } from '../../../models/user/Student';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";

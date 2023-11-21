@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StudyField, StudyFieldDTO } from '../../../models/StudyField';
+import { StudyField, StudyFieldDTO } from '../../../models/university/StudyField';
 import { toast } from 'react-toastify';
-import { Faculty } from '../../../models/Faculty';
+import { Faculty } from '../../../models/university/Faculty';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import api from '../../../utils/api';

@@ -1,4 +1,4 @@
-import { Student } from "./Student";
+import { Student } from "../user/Student";
 import { Thesis } from "./Thesis";
 
 export type Reservation = {

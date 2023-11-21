@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Thesis } from '../../../models/Thesis';
+import { Thesis } from '../../../models/thesis/Thesis';
 import api from '../../../utils/api';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";

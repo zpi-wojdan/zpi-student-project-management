@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StudyCycle } from '../../../models/StudyCycle';
+import { StudyCycle } from '../../../models/university/StudyCycle';
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";

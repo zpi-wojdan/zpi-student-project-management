@@ -4,9 +4,9 @@ import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-import { Student } from '../../models/Student';
-import { Thesis } from '../../models/Thesis';
-import { useTranslation } from "react-i18next";
+import { Student } from '../../models/user/Student';
+import { Thesis } from '../../models/thesis/Thesis';
+import {useTranslation} from "react-i18next";
 import api from "../../utils/api";
 
 type SupervisorReservationProps = {

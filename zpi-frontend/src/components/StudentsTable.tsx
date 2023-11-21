@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from "js-cookie";
-import { Employee } from '../models/Employee';
-import { Student } from '../models/Student';
-import { ThesisFront } from '../models/Thesis';
+import { Employee } from '../models/user/Employee';
+import { Student } from '../models/user/Student';
+import { ThesisFront } from '../models/thesis/Thesis';
 import { useTranslation } from "react-i18next";
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
-import { Reservation } from '../models/Reservation';
+import { Reservation } from '../models/thesis/Reservation';
 import DeleteConfirmation from './DeleteConfirmation';
 
 type StudentTableProps = {

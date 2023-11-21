@@ -11,6 +11,7 @@
       "edit": "Edytuj",
       "errorOfLoading": "Błąd wczytywania danych",
       "fieldIsRequired": "Pole jest wymagane.",
+      "fieldIsOptional": "Pole nie jest wymagane.",
       "goBack": "Powrót",
       "mailExists": "Podany mail już istnieje!",
       "mailMustBePwr": "Mail musi być z domeny pwr.edu.pl",

@@ -22,7 +22,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
         return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
     }
