@@ -81,6 +81,8 @@ public class ThesisService {
             updated.setDescriptionEN(thesis.getDescriptionEN());
             updated.setNumPeople(thesis.getNumPeople());
 
+            updated.getPrograms().clear();
+
             updated.setSupervisor(employeeRepository.findById(
                     thesis.getSupervisorId()).orElseThrow(NotFoundException::new)
             );
