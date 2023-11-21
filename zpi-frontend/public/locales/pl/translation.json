@@ -23,7 +23,12 @@
       "wrongFormat": "Zły format",
       "yes": "Tak",
       "annul": "Anuluj",
-      "accept": "Akceptuj"
+      "accept": "Akceptuj",
+      "search": "Wyszukaj",
+      "noSearchData": "Brak wyników wyszukiwania",
+      "filtration": "Filtrowanie",
+      "filter": "Filtruj",
+      "filterClear": "Wyczyść filtry"
     },
     "people": {
       "adminLC": "administrator",
@@ -34,6 +39,7 @@
       "mail": "Mail",
       "name": "Imię",
       "roles": "Role",
+      "role": "Rola",
       "student": "Student",
       "students": "Studenci",
       "supervisorLC": "prowadzący",
@@ -43,6 +49,8 @@
     "university": {
       "abbreviation": "Skrót",
       "code": "Kod",
+      "deadline": "Termin",
+      "deadlines": "Terminy",
       "department": "Katedra",
       "departments": "Katedry",
       "description": "Opis",
@@ -264,5 +272,20 @@
     "generateStudentsWithoutThesisError": "Nie znaleziono studentów bez tematu projektu zpi",
     "generateError": "Wystąpił błąd podczas generowania raportu",
     "generating": "Generowanie raportu..."
+  },
+  "deadline": {
+    "activity": "Czynność",
+    "deadline": "Termin zakończenia",
+    "deleteSuccessful": "Termin został usunięty",
+    "deleteError": "Termin nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten termin?",
+    "add": "Dodaj termin",
+    "save": "Zapisz termin",
+    "addSuccessful": "Termin został dodany",
+    "addError": "Termin nie został dodany",
+    "updateSuccessful": "Termin został zaktualizowany",
+    "updateError": "Termin nie został zaktualizowany",
+    "activityExists": "Podana czynność już istnieje!",
+    "dateInPast": "Termin zakończenia nie może być w przeszłości!"
   }
 }
