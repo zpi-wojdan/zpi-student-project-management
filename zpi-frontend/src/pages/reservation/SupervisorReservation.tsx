@@ -113,7 +113,12 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                 };
                 console.log(JSON.stringify(responseBody));
 
-                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody))
+                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                
+                })
                     .then(response => {
                         if (response.status === 201) {
                             console.log(`Reservation ${reservation} created successfully`);
