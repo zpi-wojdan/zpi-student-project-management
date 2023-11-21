@@ -1,5 +1,5 @@
 import { Role } from "./Role";
-import { StudentProgramCycle, StudentProgramCycleDTO } from "./StudentProgramCycle";
+import { StudentProgramCycle, StudentProgramCycleDTO } from "../StudentProgramCycle";
 
 export type Student = {
   id: number;

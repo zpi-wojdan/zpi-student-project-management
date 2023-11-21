@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
-import { Role } from "../models/Role";
+import { Role } from "../models/user/Role";
 import { useTranslation } from "react-i18next";
 
 type NavigationProps = {} & {
@@ -31,7 +31,8 @@ const Navigation = ({ children }: NavigationProps) => {
         '/programs',
         '/cycles',
         '/departments',
-        '/theses'
+        '/theses',
+        '/deadlines'
     ];
 
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
@@ -167,6 +168,9 @@ const Navigation = ({ children }: NavigationProps) => {
                                                             </Dropdown.Item>
                                                             <Dropdown.Item as={Link} to="/departments" className={location.pathname === '/departments' ? "active" : ""}>
                                                                 {t('general.university.departments')}
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item as={Link} to="/deadlines" className={location.pathname === '/deadlines' ? "active" : ""}>
+                                                                {t('general.university.deadlines')}
                                                             </Dropdown.Item>
                                                         </Dropdown.Menu>
                                                     </Dropdown>

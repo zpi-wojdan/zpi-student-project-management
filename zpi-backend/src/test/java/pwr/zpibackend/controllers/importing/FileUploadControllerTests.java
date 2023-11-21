@@ -1,4 +1,4 @@
-package pwr.zpibackend.controllers;
+package pwr.zpibackend.controllers.importing;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import pwr.zpibackend.config.GoogleAuthService;
+import pwr.zpibackend.controllers.FileUploadController;
 import pwr.zpibackend.services.user.EmployeeService;
 import pwr.zpibackend.services.user.StudentService;
 import pwr.zpibackend.services.importing.FileUploadService;

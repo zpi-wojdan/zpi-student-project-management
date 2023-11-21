@@ -1,4 +1,4 @@
-import { Department } from "./Department";
+import { Department } from "../university/Department";
 import { Role, RoleDTO } from "./Role";
 import { Title, TitleDTO } from "./Title";
 

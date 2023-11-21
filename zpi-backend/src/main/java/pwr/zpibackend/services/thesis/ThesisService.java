@@ -102,13 +102,16 @@ public class ThesisService {
     //  co z rozłączaniem z employee/studentem itp? dobrze to jest?
     @Transactional
     public Thesis deleteThesis(Long id) {
-        Optional<Thesis> thesis = thesisRepository.findById(id);
-        if (thesis.isPresent()){
-            Thesis deletedThesis = thesis.get();
+        Optional<Thesis> thesisOptional = thesisRepository.findById(id);
+        if (thesisOptional.isPresent()) {
+            Thesis deletedThesis = thesisOptional.get();
 
             Status status = deletedThesis.getStatus();
-            if (status != null){
-                status.getTheses().remove(deletedThesis);
+            if (status != null) {
+                List<Thesis> theses = status.getTheses();
+                if (theses != null) {
+                    theses.remove(deletedThesis);
+                }
                 deletedThesis.setStatus(null);
             }
 
@@ -116,11 +119,15 @@ public class ThesisService {
             deletedThesis.setSupervisor(null);
             deletedThesis.setLeader(null);
             deletedThesis.setStudyCycle(null);
-            deletedThesis.setReservations(null);
 
             List<Comment> comments = deletedThesis.getComments();
             if (comments != null) {
-                comments.forEach(comment -> commentRepository.deleteById(comment.getId()));
+                comments.forEach(comment -> {
+                    Long commentId = comment.getId();
+                    if (commentId != null && commentRepository.existsById(commentId)) {
+                        commentRepository.deleteById(commentId);
+                    }
+                });
             }
             deletedThesis.setComments(null);
 
@@ -129,6 +136,7 @@ public class ThesisService {
         }
         throw new NotFoundException();
     }
+
 
     //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
     public List<Thesis> getAllThesesByStatusId(Long id) {

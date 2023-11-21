@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Student } from '../../../models/Student';
-import { Faculty } from '../../../models/Faculty';
+import { Student } from '../../../models/user/Student';
+import { Faculty } from '../../../models/university/Faculty';
 import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";
@@ -137,11 +137,11 @@ const StudentDetails: React.FC = () => {
                           </li>
                           <li>
                             <p><span className="bold">{t('general.university.faculty')} - </span>
-                              <span>{studentProgramCycle.program.studyField.faculty.name}</span></p>
+                              <span>{studentProgramCycle.program.studyField ? studentProgramCycle.program.studyField.faculty.name : studentProgramCycle.program.specialization.studyField.faculty.name}</span></p>
                           </li>
                           <li>
                             <p><span className="bold">{t('general.university.field')} - </span>
-                              <span>{studentProgramCycle.program.studyField.name}</span></p>
+                              <span>{studentProgramCycle.program.studyField ? studentProgramCycle.program.studyField.name : studentProgramCycle.program.specialization.studyField.name}</span></p>
                           </li>
                           <li>
                             <p><span className="bold">{t('general.university.specialization')} - </span>

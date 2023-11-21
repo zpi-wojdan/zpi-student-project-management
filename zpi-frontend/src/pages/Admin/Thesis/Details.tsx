@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Thesis } from '../../../models/Thesis';
-import { Program } from '../../../models/Program';
+import { Thesis } from '../../../models/thesis/Thesis';
+import { Program } from '../../../models/university/Program';
 import api from '../../../utils/api';
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";

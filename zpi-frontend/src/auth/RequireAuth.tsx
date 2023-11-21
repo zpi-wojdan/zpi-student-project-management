@@ -1,6 +1,6 @@
 import {Navigate, Outlet, useLocation, useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
-import {Role} from "../models/Role";
+import {Role} from "../models/user/Role";
 import React, {useEffect} from "react";
 import useAuth from "./useAuth";
 
