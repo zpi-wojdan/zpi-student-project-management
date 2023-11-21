@@ -124,6 +124,28 @@ input[type="number"]::-webkit-outer-spin-button {
   cursor: pointer;
 }
 
+/* Slider */
+/* Dodaj styl dla zaznaczonej części suwaka (kolor czerwony) */
+.custom-slider{
+  border-color: #9A342D;
+}
+.custom-slider .rc-slider-track {
+  background-color: #9A342D;
+}
+
+.custom-slider .rc-slider-handle {
+  background-color: #9A342D;
+  border-color: #9A342D;
+}
+.custom-slider .rc-slider-handle-dragging {
+  box-shadow: 0 0 0 5px #888888 !important;
+  border-color: #888888 !important;
+}
+
+.custom-slider .rc-slider-rail {
+  background-color: #ccc;
+}
+
 /*Filters */
 .sidebar {
   position: fixed;
@@ -136,6 +158,7 @@ input[type="number"]::-webkit-outer-spin-button {
   border-right: 1px solid #ccc;
   transition: left 0.3s ease;
   z-index: 100;
+  overflow-y: auto;
 }
 
 .sidebar.open {
@@ -159,6 +182,13 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .sidebar-button.open {
   left: 350px;
+}
+
+.supervisor-checkbox-list {
+  height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
 /* Custom button */

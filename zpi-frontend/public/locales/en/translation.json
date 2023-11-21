@@ -25,7 +25,8 @@
       "noSearchData": "No search results",
       "filtration": "Filtration",
       "filter": "Filter",
-      "filterClear": "Clear filters"
+      "filterClear": "Clear filters",
+      "vacancies": "Vacancies"
     },
     "people": {
       "adminLC": "administrator",
