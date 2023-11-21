@@ -218,7 +218,12 @@
     "addSuccessful": "Temat został dodany",
     "addError": "Temat nie został dodany",
     "updateSuccessful": "Temat został zaktualizowany",
-    "updateError": "Temat nie został zaktualizowany"
+    "updateError": "Temat nie został zaktualizowany",
+    "downloadDeclaration": "Pobierz deklarację",
+    "downloadSuccessful": "Deklaracja została wygenerowana",
+    "downloadNoDataError": "Nie znaleziono danych do deklaracji",
+    "downloadError": "Wystąpił błąd podczas generowania deklaracji",
+    "generating": "Generowanie deklaracji..."
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",

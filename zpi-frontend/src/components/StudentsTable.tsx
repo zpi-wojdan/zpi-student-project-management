@@ -91,11 +91,11 @@ function StudentTable({ students, thesis }: StudentTableProps) {
           let newShowButtons = showButtons.map((s, i) => user?.index === students[i].index && !thesis.reservations[i].confirmedByStudent);
           setShowButtons(newShowButtons);
         }
-  
+
         const newShowButtonDelete = [...showButtonDelete];
         newShowButtonDelete[students.findIndex((stu) => stu.mail === user.mail)] = true;
         setShowButtonDelete(newShowButtonDelete)
-  
+
       } else if (user.roles && user.roles.some(role => role.name === "supervisor") && user.mail === thesis.supervisor.mail) {
         const newShowButtonsSupervisor = thesis.reservations.every((res) => res.readyForApproval);
         setShowButtonsSupervisor(newShowButtonsSupervisor);
