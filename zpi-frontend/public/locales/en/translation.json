@@ -23,7 +23,12 @@
       "wrongFormat": "Wrong format",
       "yes": "Yes",
       "annul": "Annul",
-      "accept": "Accept"
+      "accept": "Accept",
+      "search": "Search",
+      "noSearchData": "No search results",
+      "filtration": "Filtration",
+      "filter": "Filter",
+      "filterClear": "Clear filters"
     },
     "people": {
       "adminLC": "administrator",
