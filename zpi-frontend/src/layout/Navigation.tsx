@@ -31,7 +31,8 @@ const Navigation = ({ children }: NavigationProps) => {
         '/programs',
         '/cycles',
         '/departments',
-        '/theses'
+        '/theses',
+        '/deadlines'
     ];
 
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
