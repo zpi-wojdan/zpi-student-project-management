@@ -13,8 +13,7 @@ import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.services.user.AuthService;
 import pwr.zpibackend.services.user.EmployeeService;
 import pwr.zpibackend.services.user.StudentService;
-
-import java.util.NoSuchElementException;
+import pwr.zpibackend.exceptions.NotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,9 +42,7 @@ public class AuthServiceTests {
         RequestContextHolder.setRequestAttributes(requestAttributes);
         when(requestAttributes.getAttribute("googleEmail", RequestAttributes.SCOPE_REQUEST)).thenReturn(email);
 
-        assertThrows(NoSuchElementException.class, () -> {
-            authService.getUserDetails(email);
-        });
+        assertThrows(NotFoundException.class, () -> authService.getUserDetails(email));
     }
 
     @Test
@@ -88,18 +85,14 @@ public class AuthServiceTests {
         RequestContextHolder.setRequestAttributes(requestAttributes);
         when(requestAttributes.getAttribute("googleEmail", RequestAttributes.SCOPE_REQUEST)).thenReturn(email);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            authService.getUserDetails(email);
-        });
+        assertThrows(IllegalArgumentException.class, () -> authService.getUserDetails(email));
     }
 
     @Test
     public void testGetUserDetailsWithTokenEmailMismatch() {
         String email = "123456@pwr.edu.pl";
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            authService.getUserDetails(email);
-        });
+        assertThrows(IllegalArgumentException.class, () -> authService.getUserDetails(email));
     }
 
     @Test
@@ -113,8 +106,6 @@ public class AuthServiceTests {
         RequestContextHolder.setRequestAttributes(requestAttributes);
         when(requestAttributes.getAttribute("googleEmail", RequestAttributes.SCOPE_REQUEST)).thenReturn(email);
 
-        assertThrows(EmployeeAndStudentWithTheSameEmailException.class, () -> {
-            authService.getUserDetails(email);
-        });
+        assertThrows(EmployeeAndStudentWithTheSameEmailException.class, () -> authService.getUserDetails(email));
     }
 }

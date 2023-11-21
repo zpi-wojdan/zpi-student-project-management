@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
@@ -42,6 +41,7 @@ import StudyFieldList from './pages/Admin/Field/List';
 import {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
+import Reports from "./pages/Admin/Reports";
 
 
 export interface IAppProps {
@@ -59,7 +59,7 @@ export default function App(props: IAppProps) {
                 <Route path='login' element={<LoginPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
 
-                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                <Route element={<RequireAuth allowedRoles={['student', 'admin']} />}>
                   <Route path='reservation' element={<ReservationPage />} />
                   <Route path='single-reservation' element={<SingleReservationPage />} />
                 </Route>
@@ -67,8 +67,8 @@ export default function App(props: IAppProps) {
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
                   <Route path='my' element={<ReservationPage />} />
-                  <Route path='addthesis' element={<AddThesisPage role={'admin'} mail={'john.doe@pwr.edu.pl'} />} />
-                  <Route path='updatethesis/:thesisId' element={<UpdateThesisPage role={'employee'}
+                  <Route path='theses/add' element={<AddThesisPage />} />
+                  <Route path='theses/edit/:id' element={<UpdateThesisPage role={'employee'}
                                                                                   mail={'john.doe@pwr.edu.pl'} />} />
                 </Route>
 
@@ -110,6 +110,7 @@ export default function App(props: IAppProps) {
                 <Route path='departments/edit/:id' element={<DepartmentForm />} />
                 <Route path="/file/student" element={<UploadStudentFilePage />} />
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                <Route path="/reports" element={<Reports />} />
               </Route>
 
               <Route path="*" element={<Missing />} />

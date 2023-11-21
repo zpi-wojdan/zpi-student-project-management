@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { Student } from '../../models/Student';
 import { Thesis } from '../../models/Thesis';
 import api from '../../utils/api';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 type ReservationProps = {
 }
@@ -27,8 +27,9 @@ function ReservationPage({ }: ReservationProps) {
     const [user, setUser] = useState<Student>();
 
     useEffect(() => {
-        setUser(JSON.parse(Cookies.get("user") || "{}"));
-        reservations[0] = user?.index || "";
+        const userCookies = JSON.parse(Cookies.get("user") || "{}");
+        setUser(userCookies);
+        reservations[0] = userCookies.index || "";
         setReservations(reservations);
     }, []);
 
@@ -104,7 +105,7 @@ function ReservationPage({ }: ReservationProps) {
             newErrors[index] = false;
         }
 
-        await api.get(`http://localhost:8080/student/${reservation}@student.pwr.edu.pl`)
+        await api.get(`http://localhost:8080/student/index/${reservation}`)
             .then(response => {
                 newStudents[index] = response.data as Student;
             })
@@ -166,11 +167,16 @@ function ReservationPage({ }: ReservationProps) {
     };
 
     return (
-        <div className="container">
-            <button type="button" className="btn btn-secondary m-2" onClick={() => navigate(-1)}>
-                &larr; {t('general.management.goBack')}
-            </button>
-            <h1>{t('reservation.reservation')}:</h1>
+        <div className="container page-margin">
+            <div className="d-flex">
+                <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+                    &larr; {t('general.management.goBack')}
+                </button>
+                <button type="submit" className="custom-button" onClick={handleSubmit}>
+                    {t('general.management.reserve')}
+                </button>
+            </div>
+            <h1 className='my-3'>{t('reservation.reservation')}:</h1>
             <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
                 {reservations.map((reservation, index) => (
@@ -185,7 +191,7 @@ function ReservationPage({ }: ReservationProps) {
                                 value={reservation}
                                 onChange={(e) => handleReservationChange(index, e.target.value)}
                                 onBlur={() => handleReservationBlur(index)}
-                                placeholder="Indeks"
+                                placeholder={t('general.people.index')}
                             />
                             {index > 1 ? (
                                 <button type="button" className="btn btn-sm ml-2" onClick={() => removeReservationInput(index)}>
@@ -202,7 +208,7 @@ function ReservationPage({ }: ReservationProps) {
                                     students[index].name + ' ' + students[index].surname
                                     : (errors[index] ?
                                         (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
-                                                t('reservation.wrongIndex')
+                                            t('reservation.wrongIndex')
                                         ) : ''
                                     )}
                             </p>
@@ -210,17 +216,17 @@ function ReservationPage({ }: ReservationProps) {
 
                     </div>
                 ))}
+
                 <div className="row justify-content-center">
+                    <div className="col-sm-1"></div>
                     <div className="col-sm-6">
                         <div className="form-group row justify-content-center">
-                            <button type="button" className="col-sm-3 btn btn-primary m-2" onClick={addReservationInput}>
+                            <button type="button" className="col-sm-3 m-2 custom-button another-color" onClick={addReservationInput}>
                                 {t('reservation.addPerson')}
-                            </button>
-                            <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
-                                {t('general.management.reserve')}
                             </button>
                         </div>
                     </div>
+                    <div className="col-sm-5"></div>
                 </div>
             </form>
         </div>

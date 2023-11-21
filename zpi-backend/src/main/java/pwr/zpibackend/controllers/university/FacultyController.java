@@ -49,4 +49,10 @@ public class FacultyController {
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
         return ResponseEntity.ok(facultyService.deleteFaculty(id));
     }
+
+    @GetMapping("/ordered")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Faculty>> getAllFacultiesOrderedByAbbreviation() {
+        return ResponseEntity.ok(facultyService.getAllFacultiesOrderedByAbbreviationAsc());
+    }
 }
