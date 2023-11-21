@@ -52,7 +52,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
                 if (response.status === 201) {
                     console.log(`Reservation ${reservation} created successfully`);
                     toast.success(t('reservation.reservationSuccessful'));
-                    navigate("/theses/" + thesis.id)
+                    navigate("/public-theses/" + thesis.id)
                 }
             })
             .catch(error => {

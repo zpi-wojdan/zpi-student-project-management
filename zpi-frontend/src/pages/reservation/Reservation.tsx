@@ -159,7 +159,7 @@ function ReservationPage({ }: ReservationProps) {
 
             if (allReservationsSuccessful) {
                 toast.success(t('reservation.reservationSuccessful'));
-                navigate("/theses/" + thesis.id)
+                navigate("/public-theses/" + thesis.id)
             } else {
                 toast.error(t('reservation.reservationError'));
             }

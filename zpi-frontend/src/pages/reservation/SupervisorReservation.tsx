@@ -137,7 +137,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
 
             if (allReservationsSuccessful) {
                 toast.success(t('reservation.reservationSuccessful'));
-                navigate("/theses/" + thesis.id)
+                navigate("/public-theses/" + thesis.id)
             } else {
                 toast.error(t('reservation.reservationError'));
             }
