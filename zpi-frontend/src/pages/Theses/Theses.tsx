@@ -29,7 +29,7 @@ const ThesesTable: React.FC = () => {
             descriptionEN: thesisDb.descriptionEN,
             programs: thesisDb.programs,
             studyCycle: thesisDb.studyCycle,
-            numPeople: thesisDb.num_people,
+            numPeople: thesisDb.numPeople,
             occupied: thesisDb.occupied,
             supervisor: thesisDb.supervisor,
             status: thesisDb.status,

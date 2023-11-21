@@ -36,7 +36,7 @@ function AddThesisPageAdmin() {
     nameEN: '',
     descriptionPL: '',
     descriptionEN: '',
-    num_people: 4,
+    numPeople: 4,
     supervisorId: -1,
     programIds: [-1],
     studyCycleId: -1,
@@ -52,6 +52,7 @@ function AddThesisPageAdmin() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeeSuggestions, setEmployeeSuggestions] = useState<Employee[]>([]);
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
+  const [user, setUser] = useState<Employee | null>(null);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -60,6 +61,10 @@ function AddThesisPageAdmin() {
     });
     setErrors(newErrors);
   }, [i18n.language]);
+
+  useEffect(() => {
+    setUser(JSON.parse(Cookies.get("user") || "{}"));
+  }, [])
 
   useEffect(() => {
     api.get('http://localhost:8080/status')
@@ -130,7 +135,7 @@ function AddThesisPageAdmin() {
           nameEN: thesis.nameEN,
           descriptionPL: thesis.descriptionPL,
           descriptionEN: thesis.descriptionEN,
-          num_people: thesis.num_people,
+          numPeople: thesis.numPeople,
           supervisorId: thesis.supervisor.id,
           programIds: thesis.programs.map((p) => p.id),
           studyCycleId: thesis.studyCycle?.id,
@@ -147,6 +152,12 @@ function AddThesisPageAdmin() {
     let isValid = true;
 
     const errorRequireText = t('general.management.fieldIsRequired');
+    const errorBigNumberText = t('general.management.numberTooBig');
+    const errorSmallNumberText = t('general.management.numberTooSmall');
+    const mailDoesNotExist = t('employee.doesNotExist');
+    const mailPwrText = t('general.management.mailMustBePwr');
+
+    const mailRegex = /^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$/;
 
     if (!formData.namePL){
       newErrors.namePL = errorRequireText
@@ -160,46 +171,83 @@ function AddThesisPageAdmin() {
       isValid = false;
     }
 
-    if (!formData.descriptionPL){
-      newErrors.descriptionPL = errorRequireText
-      newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
-      isValid = false;
+    const name = statuses.find((s) => s.id === formData.statusId);
+    if (!name || name.name !== 'Draft'){
+      if (!formData.descriptionPL){
+        newErrors.descriptionPL = errorRequireText
+        newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.numPeople){
+        newErrors.numPeople = errorRequireText
+        newErrorsKeys.numPeople = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (formData.numPeople > 5){
+        newErrors.numPeople = errorBigNumberText
+        newErrorsKeys.numPeople = "general.management.numberTooBig";
+        isValid = false;
+      }
+  
+      if (formData.numPeople < 3){
+        newErrors.numPeople = errorSmallNumberText
+        newErrorsKeys.numPeople = "general.management.numberTooSmall";
+        isValid = false;
+      }
+      
+      if ((!formData.supervisorId || formData.supervisorId === -1) &&
+            mailAbbrev.trim() === ''){
+        newErrors.supervisor = errorRequireText
+        newErrorsKeys.supervisor = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      else if (formData.supervisorId === -1 &&
+            (!employees.some(emp => emp.mail === mailAbbrev ||
+              !mailRegex.test(mailAbbrev)))){
+        newErrors.supervisor = mailDoesNotExist
+        newErrorsKeys.supervisor = "employee.doesNotExist";
+        isValid = false;
+      }
+      
+      if (!formData.programIds){
+        newErrors.programIds = errorRequireText
+        newErrorsKeys.programIds = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (formData.programIds.includes(-1)){
+        newErrors.program = errorRequireText
+        newErrorsKeys.program = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.studyCycleId || formData.studyCycleId === -1){
+        newErrors.studyCycle = errorRequireText
+        newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.statusId){
+        newErrors.status = errorRequireText
+        newErrorsKeys.status = "general.management.fieldIsRequired";
+        isValid = false;
+      }
     }
-
-    if (!formData.num_people){
-      newErrors.num_people = errorRequireText
-      newErrorsKeys.num_people = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.supervisorId){
-      newErrors.supervisor = errorRequireText
-      newErrorsKeys.supervisor = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-    
-    if (!formData.programIds){
-      newErrors.programIds = errorRequireText
-      newErrorsKeys.programIds = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (formData.programIds.includes(-1)){
-      newErrors.program = errorRequireText
-      newErrorsKeys.program = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.studyCycleId || formData.studyCycleId === -1){
-      newErrors.studyCycle = errorRequireText
-      newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.statusId){
-      newErrors.status = errorRequireText
-      newErrorsKeys.status = "general.management.fieldIsRequired";
-      isValid = false;
+    else{
+      if (!formData.supervisorId || formData.supervisorId === -1){
+        if (user === null){
+          const cookieUser = JSON.parse(Cookies.get("user") || "{}");
+          setFormData({ ...formData, supervisorId: cookieUser?.id })
+          setUser(cookieUser);
+          setMailAbbrev(cookieUser?.mail);
+        }
+        else{
+          setFormData({ ...formData, supervisorId: user?.id })
+          setMailAbbrev(user?.name);
+        }
+      }
     }
 
     setErrors(newErrors);
@@ -228,7 +276,7 @@ function AddThesisPageAdmin() {
     }
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNumPeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -328,9 +376,18 @@ function AddThesisPageAdmin() {
     }
   };
 
+  const statusPolishLabels: { [key:string]:string } = {
+    "Draft": t('status.draft'),
+    "Pending approval": t('status.pending'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed')
+  }
+
   return (
     <div className='page-margin'>
-      <form onSubmit={(event) => handleSubmit(event)} className="form">
+      <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
 
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
@@ -409,20 +466,20 @@ function AddThesisPageAdmin() {
       </div>
 
       <div className="mb-3">
-        <label className="bold" htmlFor="num_people">
+        <label className="bold" htmlFor="numPeople">
           {t('thesis.peopleLimit')}:
         </label>
         <input
           type="number"
           className="form-control"
-          id="num_people"
-          name="num_people"
-          value={formData.num_people}
-          onChange={handleInputChange}
+          id="numPeople"
+          name="numPeople"
+          value={formData.numPeople}
+          onChange={handleNumPeopleChange}
           min={3}
           max={5}
         />
-        {errors.num_people && <div className="text-danger">{errors.num_people}</div>}
+        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
       </div>
 
       
@@ -550,7 +607,7 @@ function AddThesisPageAdmin() {
           <option value={-1}>{t('general.management.choose')}</option>
           {statuses.map((status) => (
             <option key={status.id} value={status.id}>
-              {status.name}
+              {statusPolishLabels[status.name] || status.name}
             </option>
           ))}
         </select>
