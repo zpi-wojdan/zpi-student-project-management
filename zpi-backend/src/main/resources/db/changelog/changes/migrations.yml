@@ -618,3 +618,13 @@ databaseChangeLog:
                     type: date
                     constraints:
                         nullable: false
+  - changeSet:
+      id: alter_table_thesis_add_nulls
+      author: Piotr
+      changes:
+        - dropNotNullConstraint:
+            tableName: thesis
+            columnName: cycle_id
+        - dropColumn:
+            tableName: thesis
+            columnName: comment_id
