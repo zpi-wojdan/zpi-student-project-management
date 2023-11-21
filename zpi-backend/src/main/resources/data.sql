@@ -432,7 +432,7 @@ VALUES
     ('Zgłaszanie tematów przez prowadzących', 'Submitting topics by supervisors', '2024-04-01'),
     ('Rozpatrywanie tematów przez zatwierdzających', 'Reviewing topics by approvers', '2024-04-10'),
     ('Rezerwowanie tematów przez studentów', 'Reserving topics by students', '2024-05-15'),
-    ('Zaniesienie wydrukowanej i podpisanej deklaracji tematu do dziekanatu', 'Submitting signed declaration to the department secretary', '2024-05-31');
+    ('Zaniesienie wydrukowanej i podpisanej deklaracji tematu do dziekanatu', 'Bringing signed declaration to the department secretary', '2024-05-31');
 
 
 INSERT INTO reservation (student_id, thesis_id, is_confirmed_by_leader, is_confirmed_by_supervisor, is_confirmed_by_student, is_ready_for_approval, reservation_date, sent_for_approval_date)

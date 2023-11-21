@@ -3,6 +3,7 @@ package pwr.zpibackend.controllers.university;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.DeadlineDTO;
 import pwr.zpibackend.models.university.Deadline;
@@ -33,16 +34,19 @@ public class DeadlineController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Deadline> addDeadline(@RequestBody DeadlineDTO deadline) {
         return new ResponseEntity<>(deadlineService.addDeadline(deadline), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Deadline> updateDeadline(@PathVariable Long id, @RequestBody DeadlineDTO updatedDeadline) {
         return ResponseEntity.ok(deadlineService.updateDeadline(id, updatedDeadline));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Deadline> deleteDeadline(@PathVariable Long id) {
         return ResponseEntity.ok(deadlineService.deleteDeadline(id));
     }
