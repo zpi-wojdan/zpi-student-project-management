@@ -344,16 +344,16 @@ function AddThesisPageSupervisor() {
 
   return (
     <div className='page-margin'>
-      <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
+      <form noValidate onSubmit={(event) => (handleSubmit(event))} id="thesis-form" className="form">
 
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
             &larr; {t('general.management.goBack')}
           </button>
-          <button type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
+          <button id="save-button" type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
             {thesis ? t('general.management.save') : t('general.management.add')}
           </button>
-          <button type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
+          <button id="save-draft-button" type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
             {thesis ? t('general.management.save') : t('general.management.addAsDraft')}
           </button>
       </div>
