@@ -357,14 +357,30 @@ INSERT INTO student_program_cycle (student_id, program_id, cycle_id)
 VALUES
     ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '998090@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '456789@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '567890@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '789012@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '890123@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2022/23-Z')),
+
     ((SELECT id FROM student WHERE mail = '234567@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '123450@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '987654@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+
     ((SELECT id FROM student WHERE mail = '345678@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '456789@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTA-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '567890@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '876543@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '765432@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '654321@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+
     ((SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-CBEP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '789012@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-INAP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2022/23-Z'));
+    ((SELECT id FROM student WHERE mail = '901234@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+
+    ((SELECT id FROM student WHERE mail = '100918@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '211017@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '322116@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '433215@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-TELP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '544314@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-TELP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '655413@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-INAP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'));
 
 
 
@@ -437,29 +453,49 @@ VALUES
 
 INSERT INTO reservation (student_id, thesis_id, is_confirmed_by_leader, is_confirmed_by_supervisor, is_confirmed_by_student, is_ready_for_approval, reservation_date, sent_for_approval_date)
 VALUES
-    ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-17 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-19 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '456789@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-19 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '567890@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-19 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '789012@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-16 12:00:00', TIMESTAMP '2023-11-19 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '890123@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-16 17:00:00', TIMESTAMP '2023-11-19 12:00:00'),
+
     ((SELECT id FROM student WHERE mail = '234567@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Aplikacja do ewidencji świadczonych usług oraz pracy'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 13:00:00', TIMESTAMP '2023-11-18 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '123450@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Aplikacja do ewidencji świadczonych usług oraz pracy'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 13:00:00', TIMESTAMP '2023-11-18 12:00:00'),
+    ((SELECT id FROM student WHERE mail = '987654@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Aplikacja do ewidencji świadczonych usług oraz pracy'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 13:00:00', TIMESTAMP '2023-11-18 12:00:00'),
+
     ((SELECT id FROM student WHERE mail = '345678@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-11 12:00:00', TIMESTAMP '2023-11-18 13:00:00'),
-    ((SELECT id FROM student WHERE mail = '456789@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 17:00:00', TIMESTAMP '2023-11-16 12:00:00'),
-    ((SELECT id FROM student WHERE mail = '567890@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-16 13:00:00'),
+    ((SELECT id FROM student WHERE mail = '876543@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-11 12:00:00', TIMESTAMP '2023-11-18 13:00:00'),
+    ((SELECT id FROM student WHERE mail = '765432@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-11 12:00:00', TIMESTAMP '2023-11-18 13:00:00'),
+    ((SELECT id FROM student WHERE mail = '654321@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-12 18:00:00', TIMESTAMP '2023-11-18 13:00:00'),
+
     ((SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii'LIMIT 1), true, false, true, false, TIMESTAMP '2023-11-15 17:00:00', null),
-    ((SELECT id FROM student WHERE mail = '901234@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii'LIMIT 1), true, false, true, false, TIMESTAMP '2023-11-15 17:00:00', null),
-    ((SELECT id FROM student WHERE mail = '789012@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-17 12:00:00'),
-    ((SELECT id FROM student WHERE mail = '890123@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-16 12:00:00', TIMESTAMP '2023-11-17 13:00:00');
+    ((SELECT id FROM student WHERE mail = '901234@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii'LIMIT 1), true, false, true, false, TIMESTAMP '2023-11-15 17:00:00', null);
 
 
 UPDATE thesis
-SET leader = (SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'LIMIT 1)
+SET
+    leader = (SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'LIMIT 1),
+    num_people = 5,
+    occupied = 5
 WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków';
 
 UPDATE thesis
-SET leader = (SELECT id FROM student WHERE mail = '345678@student.pwr.edu.pl'LIMIT 1)
-WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa';
-
-UPDATE thesis
-SET leader = (SELECT id FROM student WHERE mail = '234567@student.pwr.edu.pl'LIMIT 1)
+SET
+    leader = (SELECT id FROM student WHERE mail = '234567@student.pwr.edu.pl'LIMIT 1),
+    num_people = 3,
+    occupied = 3
 WHERE name_pl = 'Aplikacja do ewidencji świadczonych usług oraz pracy';
 
 UPDATE thesis
-SET leader = (SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'LIMIT 1)
+SET
+    leader = (SELECT id FROM student WHERE mail = '345678@student.pwr.edu.pl'LIMIT 1),
+    num_people = 4,
+    occupied = 4
+WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa';
+
+UPDATE thesis
+SET
+    leader = (SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'LIMIT 1),
+    num_people = 4,
+    occupied = 2
 WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii';
