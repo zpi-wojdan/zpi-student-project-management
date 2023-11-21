@@ -110,8 +110,8 @@ const ThesesDetails: React.FC = () => {
         <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
-          user?.mail === thesis?.supervisor.mail && thesis?.occupied < thesis?.numPeople) ?
+        {(thesis && thesis?.occupied < thesis?.numPeople && user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
+          user?.mail === thesis?.supervisor.mail) ?
           (
             <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
               if (user?.role?.name === 'student') {
