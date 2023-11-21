@@ -5,8 +5,8 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
-import { Department } from '../../../models/Department';
-import { Role } from '../../../models/Role';
+import { Department } from '../../../models/university/Department';
+import { Role } from '../../../models/user/Role';
 import { Title } from './Form';
 import SearchBar from '../../../components/SeatchBar';
 

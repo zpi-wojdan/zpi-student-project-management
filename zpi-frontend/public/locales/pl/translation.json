@@ -17,8 +17,6 @@
       "mailMustBePwr": "Mail musi być z domeny pwr.edu.pl lub pwr.wroc.pl",
       "nA": "Brak",
       "no": "Nie",
-      "numberTooBig": "Wartość nie może być większa niż: ",
-      "numberTooSmall": "Wartość nie może być mniejsza niż: ",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
       "view": "Widok",
@@ -118,7 +116,8 @@
     "updateSuccessful": "Pracownik został zaktualizowany",
     "updateError": "Pracownik nie został zaktualizowany",
     "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę.",
-    "import": "Importuj pracowników"
+    "import": "Importuj pracowników",
+    "cantBecomeASupervisor": "Dany pracownik nie może zostać promotorem."
   },
   "student": {
     "add": "Dodaj studenta",
@@ -226,7 +225,9 @@
     "addSuccessful": "Temat został dodany",
     "addError": "Temat nie został dodany",
     "updateSuccessful": "Temat został zaktualizowany",
-    "updateError": "Temat nie został zaktualizowany"
+    "updateError": "Temat nie został zaktualizowany",
+    "numPeopleTooBig": "Wartość nie może być większa niż: 5",
+    "numPeopleTooSmall": "Wartość nie może być mniejsza niż: 3"
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",

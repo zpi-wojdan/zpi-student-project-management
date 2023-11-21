@@ -63,7 +63,14 @@ function AddThesisPageAdmin() {
   }, [i18n.language]);
 
   useEffect(() => {
-    setUser(JSON.parse(Cookies.get("user") || "{}"));
+    if (user === null){
+      const u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+      if (!formData.supervisorId || formData.supervisorId === -1){
+        const cookieId = u?.id ?? -1;
+        setFormData({ ...formData, supervisorId: cookieId });
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -83,6 +90,19 @@ function AddThesisPageAdmin() {
     api.get('http://localhost:8080/studycycle')
     .then((response) => {
       setStudyCycles(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/program')
+    .then((response) => {
+      setPrograms(response.data);
     })
     .catch((error) => {
       if (error.response.status === 401 || error.response.status ===403){
@@ -113,18 +133,6 @@ function AddThesisPageAdmin() {
     }
   }, [employees, formData.supervisorId])
 
-  useEffect(() => {
-    api.get('http://localhost:8080/program')
-    .then((response) => {
-      setPrograms(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (thesis){
@@ -152,20 +160,20 @@ function AddThesisPageAdmin() {
     let isValid = true;
 
     const errorRequireText = t('general.management.fieldIsRequired');
-    const errorBigNumberText = t('general.management.numberTooBig');
-    const errorSmallNumberText = t('general.management.numberTooSmall');
-    const mailDoesNotExist = t('employee.doesNotExist');
-    const mailPwrText = t('general.management.mailMustBePwr');
+    const errorBigNumberText = t('thesis.numPeopleTooBig');
+    const errorSmallNumberText = t('thesis.numPeopleTooSmall');
+    const mailDoesNotExistText = t('employee.doesNotExist');
+    const regularEmployeeAsSupervisorText = t('employee.cantBecomeASupervisor');
 
     const mailRegex = /^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$/;
 
-    if (!formData.namePL){
+    if (!formData.namePL || formData.namePL === ''){
       newErrors.namePL = errorRequireText
       newErrorsKeys.namePL = "general.management.fieldIsRequired";
       isValid = false;
     }
 
-    if (!formData.nameEN){
+    if (!formData.nameEN || formData.nameEN === ''){
       newErrors.nameEN = errorRequireText
       newErrorsKeys.nameEN = "general.management.fieldIsRequired";
       isValid = false;
@@ -173,7 +181,7 @@ function AddThesisPageAdmin() {
 
     const name = statuses.find((s) => s.id === formData.statusId);
     if (!name || name.name !== 'Draft'){
-      if (!formData.descriptionPL){
+      if (!formData.descriptionPL || formData.namePL === ''){
         newErrors.descriptionPL = errorRequireText
         newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
         isValid = false;
@@ -187,13 +195,13 @@ function AddThesisPageAdmin() {
   
       if (formData.numPeople > 5){
         newErrors.numPeople = errorBigNumberText
-        newErrorsKeys.numPeople = "general.management.numberTooBig";
+        newErrorsKeys.numPeople = "thesis.numPeopleTooBig";
         isValid = false;
       }
   
       if (formData.numPeople < 3){
         newErrors.numPeople = errorSmallNumberText
-        newErrorsKeys.numPeople = "general.management.numberTooSmall";
+        newErrorsKeys.numPeople = "thesis.numPeopleTooSmall";
         isValid = false;
       }
       
@@ -204,22 +212,23 @@ function AddThesisPageAdmin() {
         isValid = false;
       }
       else if (formData.supervisorId === -1 &&
-            (!employees.some(emp => emp.mail === mailAbbrev ||
+            (!employees.some(e => e.mail === mailAbbrev ||
               !mailRegex.test(mailAbbrev)))){
-        newErrors.supervisor = mailDoesNotExist
+        newErrors.supervisor = mailDoesNotExistText
         newErrorsKeys.supervisor = "employee.doesNotExist";
         isValid = false;
       }
-      
-      if (!formData.programIds){
-        newErrors.programIds = errorRequireText
-        newErrorsKeys.programIds = "general.management.fieldIsRequired";
+      else if (employees.some(e =>
+            (e.id === formData.supervisorId &&
+              !e.roles.some(r => r.name === 'supervisor')))){
+        newErrors.supervisor = regularEmployeeAsSupervisorText
+        newErrorsKeys.supervisor = "employee.cantBecomeASupervisor";
         isValid = false;
       }
-  
-      if (formData.programIds.includes(-1)){
-        newErrors.program = errorRequireText
-        newErrorsKeys.program = "general.management.fieldIsRequired";
+      
+      if (!formData.programIds || formData.programIds.includes(-1)){
+        newErrors.programIds = errorRequireText
+        newErrorsKeys.programIds = "general.management.fieldIsRequired";
         isValid = false;
       }
   
@@ -229,23 +238,33 @@ function AddThesisPageAdmin() {
         isValid = false;
       }
   
-      if (!formData.statusId){
+      if (!formData.statusId || formData.statusId === -1){
         newErrors.status = errorRequireText
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
     }
     else{
-      if (!formData.supervisorId || formData.supervisorId === -1){
-        if (user === null){
-          const cookieUser = JSON.parse(Cookies.get("user") || "{}");
-          setFormData({ ...formData, supervisorId: cookieUser?.id })
-          setUser(cookieUser);
-          setMailAbbrev(cookieUser?.mail);
+      if (!formData.statusId || formData.statusId === -1){
+        newErrors.status = errorRequireText
+        newErrorsKeys.status = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      else{
+        if (!formData.supervisorId || formData.supervisorId === -1){
+          if (user === null){
+            const cookieUser = JSON.parse(Cookies.get("user") || "{}");
+            setFormData({ ...formData, supervisorId: cookieUser?.id })
+            setUser(cookieUser);
+            setMailAbbrev(cookieUser?.mail);
+          }
+          else{
+            setFormData({ ...formData, supervisorId: user?.id })
+            setMailAbbrev(user?.name);
+          }
         }
-        else{
-          setFormData({ ...formData, supervisorId: user?.id })
-          setMailAbbrev(user?.name);
+        if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3){
+          setFormData({ ...formData, numPeople: 4 })
         }
       }
     }
@@ -253,6 +272,54 @@ function AddThesisPageAdmin() {
     setErrors(newErrors);
     setErrorsKeys(newErrorsKeys);
     return isValid;
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (validateForm()){
+      if (thesis){
+        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
+        .then(() => {
+          navigate("/theses");
+          toast.success(t("thesis.updateSuccessful"));
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+          navigate("/theses");
+          toast.error(t("thesis.updateError"));
+        });
+      }
+      else{
+        api.post('http://localhost:8080/thesis', formData)
+        .then(() => {
+          navigate("/theses");
+          toast.success(t("thesis.addSuccessful"));
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 409) {
+            const newErrors: Record<string, string> = {};
+            newErrors.index = t("thesis.addError")
+            setErrors(newErrors);
+            const newErrorsKeys: Record<string, string> = {};
+            newErrorsKeys.index = "thesis.addError"
+            setErrorsKeys(newErrorsKeys);
+          } else {
+            console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
+            navigate("/theses");
+            toast.error(t("thesis.addError"));
+          }
+        })
+      }
+    }
   };
 
   const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -327,56 +394,8 @@ function AddThesisPageAdmin() {
     newProgram.push(-1);
     setFormData({ ...formData, programIds: newProgram });
   }
-  
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
 
-    if (validateForm()){
-      if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.updateSuccessful"));
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-            handleSignOut(navigate);
-          }
-          navigate("/theses");
-          toast.error(t("thesis.updateError"));
-        });
-      }
-      else{
-        api.post('http://localhost:8080/thesis', formData)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.addSuccessful"));
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 409) {
-            const newErrors: Record<string, string> = {};
-            newErrors.index = t("thesis.addError")
-            setErrors(newErrors);
-            const newErrorsKeys: Record<string, string> = {};
-            newErrorsKeys.index = "thesis.addError"
-            setErrorsKeys(newErrorsKeys);
-          } else {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-            }
-            navigate("/theses");
-            toast.error(t("thesis.addError"));
-          }
-        })
-      }
-    }
-  };
-
-  const statusPolishLabels: { [key:string]:string } = {
+  const statusLabels: { [key:string]:string } = {
     "Draft": t('status.draft'),
     "Pending approval": t('status.pending'),
     "Rejected": t('status.rejected'),
@@ -384,6 +403,7 @@ function AddThesisPageAdmin() {
     "Assigned": t('status.assigned'),
     "Closed": t('status.closed')
   }
+
 
   return (
     <div className='page-margin'>
@@ -568,7 +588,7 @@ function AddThesisPageAdmin() {
                       </option>
                     ))}
                 </select>
-                {errors.program && <div className="text-danger">{errors.program}</div>}
+                {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
               </div>
               {formData.programIds.length > 1 && (
                 <button
@@ -607,7 +627,7 @@ function AddThesisPageAdmin() {
           <option value={-1}>{t('general.management.choose')}</option>
           {statuses.map((status) => (
             <option key={status.id} value={status.id}>
-              {statusPolishLabels[status.name] || status.name}
+              {statusLabels[status.name] || status.name}
             </option>
           ))}
         </select>

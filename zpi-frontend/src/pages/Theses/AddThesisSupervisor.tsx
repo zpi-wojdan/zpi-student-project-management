@@ -20,7 +20,7 @@ function AddThesisPageSupervisor() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState<Employee>();
+  const [user, setUser] = useState<Employee | null>(null);
 
   const namePLRef = useRef<HTMLTextAreaElement | null>(null);
   const nameENRef = useRef<HTMLTextAreaElement | null>(null);
@@ -60,29 +60,15 @@ function AddThesisPageSupervisor() {
   }, [i18n.language]);
 
   useEffect(() => {
-    if (thesis){
-      setFormData((prev) => {
-        return{
-          ...prev,
-          namePL: thesis.namePL,
-          nameEN: thesis.nameEN,
-          descriptionPL: thesis.descriptionPL,
-          descriptionEN: thesis.descriptionEN,
-          numPeople: thesis.numPeople,
-          supervisorId: thesis.supervisor.id,
-          programIds: thesis.programs.map((p) => p.id),
-          studyCycleId: thesis.studyCycle?.id,
-          statusId: thesis.status.id,
-        };
-      });
-      setThesisId(thesis.id);
-    }
-    else{
-        setUser(JSON.parse(Cookies.get("user") || "{}"));
-        const cookieId = user?.id ?? -1;
+    if (user === null){
+      const u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+      if (!formData.supervisorId || formData.supervisorId === -1){
+        const cookieId = u?.id ?? -1;
         setFormData({ ...formData, supervisorId: cookieId });
+      }
     }
-  }, [thesis]);
+  }, [])
 
   useEffect(() => {
     api.get('http://localhost:8080/status')
@@ -125,14 +111,34 @@ function AddThesisPageSupervisor() {
     });
   }, []);
 
+  useEffect(() => {
+    if (thesis){
+      setFormData((prev) => {
+        return{
+          ...prev,
+          namePL: thesis.namePL,
+          nameEN: thesis.nameEN,
+          descriptionPL: thesis.descriptionPL,
+          descriptionEN: thesis.descriptionEN,
+          numPeople: thesis.numPeople,
+          supervisorId: thesis.supervisor.id,
+          programIds: thesis.programs.map((p) => p.id),
+          studyCycleId: thesis.studyCycle?.id,
+          statusId: thesis.status.id,
+        };
+      });
+      setThesisId(thesis.id);
+    }
+  }, [thesis]);
+
   const validateForm = () => {
     const newErrors: Record<string, string> =  {};
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
     const errorRequireText = t('general.management.fieldIsRequired');
-    const errorBigNumberText = t('general.management.numberTooBig');
-    const errorSmallNumberText = t('general.management.numberTooSmall');
+    const errorBigNumberText = t('thesis.numPeopleTooBig');
+    const errorSmallNumberText = t('thesis.numPeopleTooSmall');
 
     if (!formData.namePL){
       newErrors.namePL = errorRequireText
@@ -146,58 +152,80 @@ function AddThesisPageSupervisor() {
       isValid = false;
     }
 
-    if (!formData.descriptionPL){
-      newErrors.descriptionPL = errorRequireText
-      newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
-      isValid = false;
+    const name = statuses.find((s) => s.id === formData.statusId);
+    if (!name || name.name !== 'Draft'){
+      if (!formData.descriptionPL || formData.descriptionPL === ''){
+        newErrors.descriptionPL = errorRequireText
+        newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.numPeople){
+        newErrors.numPeople = errorRequireText
+        newErrorsKeys.numPeople = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      console.log(formData.numPeople)
+      console.log(formData.supervisorId)
+  
+      if (formData.numPeople > 5){
+        newErrors.numPeople = errorBigNumberText
+        newErrorsKeys.numPeople = "thesis.numPeopleTooBig";
+        isValid = false;
+      }
+  
+      if (formData.numPeople < 3){
+        newErrors.numPeople = errorSmallNumberText
+        newErrorsKeys.numPeople = "thesis.numPeopleTooSmall";
+        isValid = false;
+      }
+  
+      if (!formData.supervisorId || formData.supervisorId === -1){
+        newErrors.supervisor = errorRequireText
+        newErrorsKeys.supervisor = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      
+      if (!formData.programIds || formData.programIds.includes(-1)){
+        newErrors.programIds = errorRequireText
+        newErrorsKeys.programIds = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.studyCycleId || formData.studyCycleId === -1){
+        newErrors.studyCycle = errorRequireText
+        newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.statusId || formData.statusId === -1){
+        newErrors.status = errorRequireText
+        newErrorsKeys.status = "general.management.fieldIsRequired";
+        isValid = false;
+      }
     }
-
-    if (!formData.numPeople){
-      newErrors.numPeople = errorRequireText
-      newErrorsKeys.numPeople = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (formData.numPeople > 5){
-      newErrors.numPeople = errorBigNumberText
-      newErrorsKeys.numPeople = "general.management.numberTooBig";
-      isValid = false;
-    }
-
-    if (formData.numPeople < 5){
-      newErrors.numPeople = errorSmallNumberText
-      newErrorsKeys.numPeople = "general.management.numberTooSmall";
-      isValid = false;
-    }
-
-    if (!formData.supervisorId){
-      newErrors.supervisor = errorRequireText
-      newErrorsKeys.supervisor = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-    
-    if (!formData.programIds){
-      newErrors.programIds = errorRequireText
-      newErrorsKeys.programIds = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (formData.programIds.includes(-1)){
-      newErrors.program = errorRequireText
-      newErrorsKeys.program = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.studyCycleId || formData.studyCycleId === -1){
-      newErrors.studyCycle = errorRequireText
-      newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.statusId){
-      newErrors.status = errorRequireText
-      newErrorsKeys.status = "general.management.fieldIsRequired";
-      isValid = false;
+    else{
+      console.log(formData)
+      if (!formData.statusId || formData.statusId === -1){
+        newErrors.status = errorRequireText
+        newErrorsKeys.status = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      else{
+        if (!formData.supervisorId || formData.supervisorId === -1){
+            if (user === null){
+              const cookieUser = JSON.parse(Cookies.get("user") || "{}");
+              setFormData({ ...formData, supervisorId: cookieUser?.id })
+              setUser(cookieUser);
+            }
+            else{
+              setFormData({ ...formData, supervisorId: user?.id })
+            }
+        }
+        if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3){
+          setFormData({ ...formData, numPeople: 4 })
+        }
+      }
     }
 
     setErrors(newErrors);
@@ -205,18 +233,60 @@ function AddThesisPageSupervisor() {
     return isValid;
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (validateForm()){
+      if (thesis){
+        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
+        .then(() => {
+          navigate("/my");
+          toast.success(t("thesis.updateSuccessful"));
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+          navigate("/my");
+          toast.error(t("thesis.updateError"));
+        });
+      }
+      else{
+        api.post('http://localhost:8080/thesis', formData)
+        .then(() => {
+          navigate("/my");
+          toast.success(t("thesis.addSuccessful"));
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 409) {
+            const newErrors: Record<string, string> = {};
+            newErrors.index = t("thesis.addError")
+            setErrors(newErrors);
+            const newErrorsKeys: Record<string, string> = {};
+            newErrorsKeys.index = "thesis.addError"
+            setErrorsKeys(newErrorsKeys);
+          } else {
+            console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
+            navigate("/my");
+            toast.error(t("thesis.addError"));
+          }
+        })
+      }
+    }
+  };
+
+  const handleNumPeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
       [name]: value,
     });
-  };
-
-  const handleInvalid = (event: React.FormEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const input = event.target as HTMLInputElement;
-    input.setCustomValidity('');
   };
 
   const handleTextAreaChange = (
@@ -262,54 +332,16 @@ function AddThesisPageSupervisor() {
     newProgram.push(-1);
     setFormData({ ...formData, programIds: newProgram });
   }
-  
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
 
-    if (validateForm()){
-      if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.updateSuccessful"));
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-            handleSignOut(navigate);
-          }
-          navigate("/theses");
-          toast.error(t("thesis.updateError"));
-        });
-      }
-      else{
-        api.post('http://localhost:8080/thesis', formData)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.addSuccessful"));
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 409) {
-            const newErrors: Record<string, string> = {};
-            newErrors.index = t("thesis.addError")
-            setErrors(newErrors);
-            const newErrorsKeys: Record<string, string> = {};
-            newErrorsKeys.index = "thesis.addError"
-            setErrorsKeys(newErrorsKeys);
-          } else {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-            }
-            navigate("/theses");
-            toast.error(t("thesis.addError"));
-          }
-        })
-      }
-    }
-  };
+  const statusLabels: { [key:string]:string } = {
+    "Draft": t('status.draft'),
+    "Pending approval": t('status.pending'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed')
+  }
+
 
   return (
     <div className='page-margin'>
@@ -401,7 +433,7 @@ function AddThesisPageSupervisor() {
           id="numPeople"
           name="numPeople"
           value={formData.numPeople}
-          onChange={handleInputChange}
+          onChange={handleNumPeopleChange}
           min={3}
           max={5}
         />
@@ -521,7 +553,7 @@ function AddThesisPageSupervisor() {
           <option value={-1}>{t('general.management.choose')}</option>
           {statuses.map((status) => (
             <option key={status.id} value={status.id}>
-              {status.name}
+              {statusLabels[status.name] || status.name}
             </option>
           ))}
         </select>

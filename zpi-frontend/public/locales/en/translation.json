@@ -17,8 +17,6 @@
       "mailMustBePwr": "Mail must originate from either the pwr.edu.pl or pwr.wroc.pl domain",
       "nA": "N/A",
       "no": "No",
-      "numberTooBig": "Value can't be bigger than: ",
-      "numberTooSmall": "Value can't be smaller than: ",
       "reserve": "Reserve",
       "save": "Save",
       "view": "View",
@@ -118,7 +116,8 @@
     "updateSuccessful": "Employee has been updated",
     "updateError": "Employee has not been updated",
     "rolesRequired": "Employee must have at least one role.",
-    "import": "Import employees"
+    "import": "Import employees",
+    "cantBecomeASupervisor": "This employee can't become a supervisor."
   },
   "student": {
     "add": "Add student",
@@ -226,7 +225,9 @@
     "addSuccessful": "Thesis has been added",
     "addError": "Thesis has not been added",
     "updateSuccessful": "Thesis has been updated",
-    "updateError": "Thesis has not been updated"
+    "updateError": "Thesis has not been updated",
+    "numPeopleTooBig": "Value can't be bigger than: 5",
+    "numPeopleTooSmall": "Value can't be smaller than: 3"
   },
   "uploadFiles": {
     "fileName": "Source file name",
