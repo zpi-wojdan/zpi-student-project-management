@@ -8,11 +8,12 @@ import { useTranslation } from "react-i18next";
 import SearchBar from '../../../components/SeatchBar';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { Employee } from '../../../models/Employee';
-import { Faculty } from '../../../models/Faculty';
-import { Specialization } from '../../../models/Specialization';
-import { StudyCycle } from '../../../models/StudyCycle';
-import { StudyField } from '../../../models/StudyField';
+import { Faculty } from '../../../models/university/Faculty';
+import { Specialization } from '../../../models/university/Specialization';
+import { StudyCycle } from '../../../models/university/StudyCycle';
+import { StudyField } from '../../../models/university/StudyField';
+import { Employee } from '../../../models/user/Employee';
+
 
 const ThesisList: React.FC = () => {
   // @ts-ignore
@@ -64,7 +65,7 @@ const ThesisList: React.FC = () => {
   const [submittedSpecializationAbbr, setSubmittedSpecializationAbbr] = useState<string>("");
   const availableStatuses: { [key: string]: string } = {
     Draft: t('status.draft'),
-    "Pending approval": t('status.pendingApproval'),
+    "Pending approval": t('status.pending'),
     Rejected: t('status.rejected'),
     Approved: t('status.approved'),
     Assigned: t('status.assigned'),

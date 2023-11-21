@@ -6,9 +6,9 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
-import { Faculty } from '../../../models/Faculty';
-import { StudyField } from '../../../models/StudyField';
-import { Specialization } from '../../../models/Specialization';
+import { Faculty } from '../../../models/university/Faculty';
+import { Specialization } from '../../../models/university/Specialization';
+import { StudyField } from '../../../models/university/StudyField';
 
 const StudentList: React.FC = () => {
   // @ts-ignore

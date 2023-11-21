@@ -6,13 +6,14 @@ import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import SearchBar from '../../components/SeatchBar';
-import { Employee } from '../../models/Employee';
-import { Faculty } from '../../models/Faculty';
-import { StudyField } from '../../models/StudyField';
-import { Specialization } from '../../models/Specialization';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { StudyCycle } from '../../models/StudyCycle';
+import { Role } from '../../models/user/Role';
+import { Faculty } from '../../models/university/Faculty';
+import { Specialization } from '../../models/university/Specialization';
+import { StudyCycle } from '../../models/university/StudyCycle';
+import { StudyField } from '../../models/university/StudyField';
+import { Employee } from '../../models/user/Employee';
 
 
 const ThesesTable: React.FC = () => {
@@ -88,7 +89,7 @@ const ThesesTable: React.FC = () => {
     api.get('http://localhost:8080/employee')
       .then((response) => {
         const supervisors = response.data
-          .filter((employee: Employee) => employee.roles.some((role) => role.name === 'supervisor'))
+          .filter((employee: Employee) => employee.roles.some((role:Role) => role.name === 'supervisor'))
           .sort((a: Employee, b: Employee) => a.surname.localeCompare(b.surname));;
         setAvailableSupervisor(supervisors);
       })

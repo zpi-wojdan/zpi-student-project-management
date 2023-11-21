@@ -222,12 +222,12 @@
   },
   "status": {
     "draft": "Draft",
-    "pendingApproval": "Pending approval",
+    "pending": "Pending approval",
     "rejected": "Rejected",
     "approved": "Approved",
     "assigned": "Assigned",
     "closed": "Closed"
-  },  
+  },
   "uploadFiles": {
     "fileName": "Source file name",
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",

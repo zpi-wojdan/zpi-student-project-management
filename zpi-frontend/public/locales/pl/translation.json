@@ -249,11 +249,11 @@
     "recordsSaved": "Liczba zapisanych rekordów: "
   },
   "status": {
-    "draft": "Szkic",
-    "pendingApproval": "Oczekuje na zatwierdzenie",
+    "draft": "Wersja robocza",
+    "pending": "Oczekuje na zatwierdzenie",
     "rejected": "Odrzucony",
     "approved": "Zatwierdzony",
-    "assigned": "Przypisany",
+    "assigned": "Przydzielony",
     "closed": "Zamknięty"
   },
   "login": {
