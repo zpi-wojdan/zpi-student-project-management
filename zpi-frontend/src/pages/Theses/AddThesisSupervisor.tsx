@@ -37,7 +37,7 @@ function AddThesisPageSupervisor() {
     nameEN: '',
     descriptionPL: '',
     descriptionEN: '',
-    num_people: 4,
+    numPeople: 4,
     supervisorId: -1,
     programIds: [-1],
     studyCycleId: -1,
@@ -68,7 +68,7 @@ function AddThesisPageSupervisor() {
           nameEN: thesis.nameEN,
           descriptionPL: thesis.descriptionPL,
           descriptionEN: thesis.descriptionEN,
-          num_people: thesis.num_people,
+          numPeople: thesis.numPeople,
           supervisorId: thesis.supervisor.id,
           programIds: thesis.programs.map((p) => p.id),
           studyCycleId: thesis.studyCycle?.id,
@@ -150,9 +150,9 @@ function AddThesisPageSupervisor() {
       isValid = false;
     }
 
-    if (!formData.num_people){
-      newErrors.num_people = errorRequireText
-      newErrorsKeys.num_people = "general.management.fieldIsRequired";
+    if (!formData.numPeople){
+      newErrors.numPeople = errorRequireText
+      newErrorsKeys.numPeople = "general.management.fieldIsRequired";
       isValid = false;
     }
 
@@ -372,20 +372,20 @@ function AddThesisPageSupervisor() {
       </div>
 
       <div className="mb-3">
-        <label className="bold" htmlFor="num_people">
+        <label className="bold" htmlFor="numPeople">
           {t('thesis.peopleLimit')}:
         </label>
         <input
           type="number"
           className="form-control"
-          id="num_people"
-          name="num_people"
-          value={formData.num_people}
+          id="numPeople"
+          name="numPeople"
+          value={formData.numPeople}
           onChange={handleInputChange}
           min={3}
           max={5}
         />
-        {errors.num_people && <div className="text-danger">{errors.num_people}</div>}
+        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
       </div>
 
       

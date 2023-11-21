@@ -11,7 +11,7 @@ export type Thesis = {
     nameEN: string;
     descriptionPL: string;
     descriptionEN: string;
-    num_people: number;
+    numPeople: number;
     supervisor: Employee;
     leader: Student | null;
     programs: Program[];
@@ -43,7 +43,7 @@ export type ThesisDTO = {
   nameEN: string;
   descriptionPL: string;
   descriptionEN: string;
-  num_people: number;
+  numPeople: number;
   supervisorId: number; 
   programIds: number[];
   studyCycleId: number | undefined;
