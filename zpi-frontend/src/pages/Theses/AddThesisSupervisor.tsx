@@ -45,6 +45,8 @@ function AddThesisPageSupervisor() {
   });
 
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [isDraft, setIsDraft] = useState<boolean>();
+
   const [studyCycles, setStudyCycles] = useState<StudyCycle[]>([]);
 
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -140,6 +142,18 @@ function AddThesisPageSupervisor() {
     const errorBigNumberText = t('thesis.numPeopleTooBig');
     const errorSmallNumberText = t('thesis.numPeopleTooSmall');
 
+    var id: number | undefined = -1;
+    if (isDraft){
+      id = statuses.find(s => s.name === 'Draft')?.id;
+    }
+    else{
+      id = statuses.find(s => s.name === 'Pending approval')?.id;
+    }
+    if (id){
+      setFormData({ ...formData, statusId: id })
+    }
+    const name = statuses.find((s) => s.id === id);
+
     if (!formData.namePL){
       newErrors.namePL = errorRequireText
       newErrorsKeys.namePL = "general.management.fieldIsRequired";
@@ -152,7 +166,6 @@ function AddThesisPageSupervisor() {
       isValid = false;
     }
 
-    const name = statuses.find((s) => s.id === formData.statusId);
     if (!name || name.name !== 'Draft'){
       if (!formData.descriptionPL || formData.descriptionPL === ''){
         newErrors.descriptionPL = errorRequireText
@@ -165,8 +178,6 @@ function AddThesisPageSupervisor() {
         newErrorsKeys.numPeople = "general.management.fieldIsRequired";
         isValid = false;
       }
-      console.log(formData.numPeople)
-      console.log(formData.supervisorId)
   
       if (formData.numPeople > 5){
         newErrors.numPeople = errorBigNumberText
@@ -205,7 +216,6 @@ function AddThesisPageSupervisor() {
       }
     }
     else{
-      console.log(formData)
       if (!formData.statusId || formData.statusId === -1){
         newErrors.status = errorRequireText
         newErrorsKeys.status = "general.management.fieldIsRequired";
@@ -235,7 +245,6 @@ function AddThesisPageSupervisor() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (validateForm()){
       if (thesis){
         api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
@@ -333,29 +342,21 @@ function AddThesisPageSupervisor() {
     setFormData({ ...formData, programIds: newProgram });
   }
 
-  const statusLabels: { [key:string]:string } = {
-    "Draft": t('status.draft'),
-    "Pending approval": t('status.pending'),
-    "Rejected": t('status.rejected'),
-    "Approved": t('status.approved'),
-    "Assigned": t('status.assigned'),
-    "Closed": t('status.closed')
-  }
-
-
   return (
     <div className='page-margin'>
       <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
 
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-          &larr; {t('general.management.goBack')}
+            &larr; {t('general.management.goBack')}
           </button>
-          <button type="submit" className="custom-button">
-          {thesis ? t('general.management.save') : t('general.management.add')}
+          <button type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
+            {thesis ? t('general.management.save') : t('general.management.add')}
+          </button>
+          <button type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
+            {thesis ? t('general.management.save') : t('general.management.addAsDraft')}
           </button>
       </div>
-
 
       <div className="mb-3">
         <label className="bold" htmlFor="namePL">
@@ -539,7 +540,7 @@ function AddThesisPageSupervisor() {
         </ul>
       </div>
 
-      <div className='mb-3'>
+      {/* <div className='mb-3'>
         <label className="bold" htmlFor="status">
           {t('general.university.status')}:
         </label>
@@ -558,7 +559,7 @@ function AddThesisPageSupervisor() {
           ))}
         </select>
         {errors.status && <div className="text-danger">{errors.status}</div>}
-      </div>
+      </div> */}
 
       </form>
     </div>
