@@ -41,12 +41,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest(CommentController.class)
 @AutoConfigureMockMvc(addFilters = false)
-//@ContextConfiguration(classes = JacksonConfig.class)
 public class CommentControllerTests {
     private static final String BASE_URL = "/thesis/comment";
-
     @Autowired
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
     @MockBean
     private GoogleAuthService googleAuthService;
     @MockBean
@@ -89,9 +87,8 @@ public class CommentControllerTests {
         commentList.add(comment2);
     }
 
-    public static String asJsonString(final Object obj) {
+    public String asJsonString(final Object obj) {
         try {
-            objectMapper.findAndRegisterModules();
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -6,14 +6,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
+import pwr.zpibackend.repositories.university.ProgramRepository;
+import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.services.thesis.ThesisService;
@@ -38,6 +42,10 @@ public class ThesisServiceTests {
     private StatusRepository statusRepository;
     @Mock
     private CommentRepository commentRepository;
+    @Mock
+    private ProgramRepository programRepository;
+    @Mock
+    private StudyCycleRepository studyCycleRepository;
 
     @InjectMocks
     private ThesisService thesisService;
@@ -97,33 +105,49 @@ public class ThesisServiceTests {
 
     @Test
     public void testAddThesis() throws NotFoundException {
-        Thesis thesisToAdd = new Thesis();
-        Employee supervisor = new Employee();
-        supervisor.setId(1L);
+        ThesisDTO thesisDTO = new ThesisDTO();
+        Employee employee = mock(Employee.class);
+        Program program = mock(Program.class);
+        Status status = mock(Status.class);
+        StudyCycle studyCycle = mock(StudyCycle.class);
 
-        when(employeeRepository.findById(supervisor.getId())).thenReturn(Optional.of(supervisor));
+
+        when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(employee));
         when(thesisRepository.saveAndFlush(any(Thesis.class))).thenAnswer(invocation -> {
             Thesis savedThesis = invocation.getArgument(0);
             savedThesis.setId(1L);
             return savedThesis;
         });
+        when(programRepository.findById(any(Long.class))).thenReturn(Optional.of(program));
+        when(statusRepository.findById(any(Long.class))).thenReturn(Optional.of(status));
+        when(studyCycleRepository.findById(any(Long.class))).thenReturn(Optional.of(studyCycle));
 
-        thesisToAdd.setNamePL("Thesis 1 PL");
-        thesisToAdd.setNameEN("Thesis 1 EN");
-        thesisToAdd.setDescriptionPL("Description 1");
-        thesisToAdd.setDescriptionEN("Description 1");
-        thesisToAdd.setNumPeople(4);
+        thesis.setId(1L);
+        thesis.setNamePL("Thesis 1 PL");
+        thesis.setNameEN("Thesis 1 EN");
+        thesis.setDescriptionPL("Description 1");
+        thesis.setDescriptionEN("Description 1");
+        thesis.setNumPeople(4);
+        thesis.setSupervisor(employee);
+        thesis.setPrograms(List.of(program));
+        thesis.setStatus(status);
+        thesis.setStudyCycle(studyCycle);
 
-        thesis.setPrograms(List.of(new Program()));
-        thesis.setStatus(new Status(1, "Draft"));
-        thesisToAdd.setSupervisor(supervisor);
+        thesisDTO.setNamePL("Thesis 1 PL");
+        thesisDTO.setNameEN("Thesis 1 EN");
+        thesisDTO.setDescriptionPL("Description 1");
+        thesisDTO.setDescriptionEN("Description 1");
+        thesisDTO.setNumPeople(4);
+        thesisDTO.setProgramIds(List.of(1L));
+        thesisDTO.setStudyCycleId(1L);
+        thesisDTO.setStatusId(1L);
+        thesisDTO.setSupervisorId(1L);
 
-        Thesis result = thesisService.addThesis(thesisToAdd);
+        Thesis result = thesisService.addThesis(thesisDTO);
 
         verify(thesisRepository).saveAndFlush(any(Thesis.class));
 
-        assertNotNull(result.getId());
-        assertEquals(thesisToAdd, result);
+        assertEquals(thesis, result);
     }
 
 
@@ -131,42 +155,56 @@ public class ThesisServiceTests {
     @Test
     public void testUpdateThesis() throws NotFoundException {
         Long thesisId = 1L;
-        Thesis thesisToUpdate = new Thesis();
-        Employee supervisor = new Employee();
-        supervisor.setId(1L);
+        ThesisDTO thesisDTO = new ThesisDTO();
+        Employee employee = mock(Employee.class);
+        Program program = mock(Program.class);
+        Status status = mock(Status.class);
+        StudyCycle studyCycle = mock(StudyCycle.class);
 
-        when(employeeRepository.existsById(supervisor.getId())).thenReturn(true);
-        when(employeeRepository.findById(supervisor.getId())).thenReturn(Optional.of(supervisor));
         when(thesisRepository.existsById(thesisId)).thenReturn(true);
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
+        when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(employee));
         when(thesisRepository.saveAndFlush(any(Thesis.class))).thenAnswer(invocation -> {
             Thesis savedThesis = invocation.getArgument(0);
-            savedThesis.setId(thesisId);
-            savedThesis.setNamePL("XD");
+            savedThesis.setId(1L);
             return savedThesis;
         });
+        when(programRepository.findById(any(Long.class))).thenReturn(Optional.of(program));
+        when(statusRepository.findById(any(Long.class))).thenReturn(Optional.of(status));
+        when(studyCycleRepository.findById(any(Long.class))).thenReturn(Optional.of(studyCycle));
 
-        thesisToUpdate.setNamePL("Thesis 1 PL");
-        thesisToUpdate.setNameEN("Thesis 1 EN");
-        thesisToUpdate.setDescriptionPL("Description 1");
-        thesisToUpdate.setDescriptionEN("Description 1");
-        thesisToUpdate.setNumPeople(4);
-        thesisToUpdate.setSupervisor(supervisor);
+        thesis.setId(1L);
+        thesis.setNamePL("Thesis 1 PL");
+        thesis.setNameEN("Thesis 1 EN");
+        thesis.setDescriptionPL("Description 1");
+        thesis.setDescriptionEN("Description 1");
+        thesis.setNumPeople(4);
+        thesis.setSupervisor(employee);
+        thesis.setPrograms(List.of(program));
+        thesis.setStatus(status);
+        thesis.setStudyCycle(studyCycle);
 
-        thesis.setPrograms(List.of(new Program()));
-        thesis.setStatus(new Status(1, "Draft"));
+        thesisDTO.setNamePL("Thesis 1 PL");
+        thesisDTO.setNameEN("Thesis 1 EN");
+        thesisDTO.setDescriptionPL("Description 1");
+        thesisDTO.setDescriptionEN("Description 1");
+        thesisDTO.setNumPeople(4);
+        thesisDTO.setProgramIds(List.of(1L));
+        thesisDTO.setStudyCycleId(1L);
+        thesisDTO.setStatusId(1L);
+        thesisDTO.setSupervisorId(1L);
 
-        Thesis result = thesisService.updateThesis(thesisId, thesisToUpdate);
+        Thesis result = thesisService.updateThesis(thesisId, thesisDTO);
         assertEquals(thesis, result);
     }
 
     @Test
     public void testUpdateThesisNotFound() {
         Long thesisId = 1L;
-        Thesis thesisToUpdate = mock(Thesis.class);
+        ThesisDTO thesisDTO = mock(ThesisDTO.class);
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> thesisService.updateThesis(thesisId, thesisToUpdate));
+        assertThrows(NotFoundException.class, () -> thesisService.updateThesis(thesisId, thesisDTO));
     }
 
     @Test
