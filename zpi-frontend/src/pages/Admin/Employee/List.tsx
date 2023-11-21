@@ -58,7 +58,10 @@ const EmployeeList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/departments')
       .then((response) => {
-        setAvailableDepartments(response.data);
+        const sortedDepartments = response.data.sort((a: Department, b: Department) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableDepartments(sortedDepartments);
       })
       .catch((error) => {
         console.error(error);
@@ -72,6 +75,9 @@ const EmployeeList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/title')
       .then((response) => {
+        const sortedTitles = response.data.sort((a: Title, b: Title) => {
+          return a.name.localeCompare(b.name);
+        });
         setAvailableTitles(response.data);
       })
       .catch((error) => {

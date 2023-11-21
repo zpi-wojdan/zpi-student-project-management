@@ -52,7 +52,10 @@ const StudentList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/faculty')
       .then((response) => {
-        setAvailableFaculties(response.data);
+        const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableFaculties(sortedFaculties);
       })
       .catch((error) => {
         console.error(error);
@@ -66,7 +69,10 @@ const StudentList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/studyfield')
       .then((response) => {
-        setAvailableFields(response.data);
+        const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableFields(sortedStudyFields);
       })
       .catch((error) => {
         console.error(error)
@@ -80,7 +86,10 @@ const StudentList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/specialization')
       .then((response) => {
-        setAvailableSpecializations(response.data);
+        const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableSpecializations(sortedSpecializations);
       })
       .catch((error) => {
         console.error(error)
