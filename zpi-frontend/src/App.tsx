@@ -41,6 +41,7 @@ import {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
+import Reports from "./pages/Admin/Reports";
 
 
 export interface IAppProps {
@@ -58,7 +59,7 @@ export default function App(props: IAppProps) {
                 <Route path='login' element={<LoginPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
 
-                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                <Route element={<RequireAuth allowedRoles={['student', 'admin']} />}>
                   <Route path='reservation' element={<ReservationPage />} />
                   <Route path='single-reservation' element={<SingleReservationPage />} />
                 </Route>

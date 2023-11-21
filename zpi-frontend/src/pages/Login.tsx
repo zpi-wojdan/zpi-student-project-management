@@ -99,7 +99,7 @@ const LoginPage = () => {
                     <Col md={6} className="d-none d-md-block">
                         <div className="login-image">
                             <img
-                                src="images/login-img.JPG"
+                                src="/images/login-img.JPG"
                                 alt={t('login.imageAlt')}
                             />
                         </div>

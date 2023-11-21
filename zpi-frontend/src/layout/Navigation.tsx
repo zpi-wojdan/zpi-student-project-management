@@ -47,46 +47,47 @@ const Navigation = ({ children }: NavigationProps) => {
         <>
             <div className='container-fluid p-0'>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light p-0">
-                    <div className="container">
+                    <div className="container collapse navbar-collapse">
                         <div className="me-auto"></div>
 
-                        <ul className="navbar-nav mw-auto">
+
+                        <ul className="navbar-nav">
                             {isLoggedIn ? (
-                                <li className="nav-item">
+                                <li className="nav-item mx-0">
                                     <div className="nav-link">{user.name} {user.surname}</div>
                                 </li>
                             ) : null}
-                            <li className="nav-item">
-                                <div className="nav-link">|</div>
+                            <li className="nav-item mx-0">
+                                <div className="nav-link mx-0">|</div>
                             </li>
-                            <li className="nav-item">
+                            <li className="nav-item mx-0">
                                 <Link
-                                    className={`nav-link ${i18n.language === 'pl' ? 'lang-link-active' : ''}`}
+                                    className={`mx-0 nav-link ${i18n.language === 'pl' ? 'lang-link-active' : ''}`}
                                     onClick={() => onChangeLang('pl')}
                                     to={location.pathname}
                                 >
                                     PL
                                 </Link>
                             </li>
-                            <li className="nav-item">
-                                <div className="nav-link">&bull;</div>
+                            <li className="nav-item mx-0">
+                                <div className="nav-link mx-0">&bull;</div>
                             </li>
-                            <li className="nav-item">
+                            <li className="nav-item mx-0">
                                 <Link
-                                    className={`nav-link ${i18n.language === 'en' ? 'lang-link-active' : ''}`}
+                                    className={`mx-0 nav-link ${i18n.language === 'en' ? 'lang-link-active' : ''}`}
                                     onClick={() => onChangeLang('en')}
                                     to={location.pathname}
                                 >
                                     EN
                                 </Link>
                             </li>
-                            <li className="nav-item">
-                                <div className="nav-link">|</div>
+                            <li className="nav-item mx-0">
+                                <div className="nav-link mx-0">|</div>
                             </li>
-                            <li className="nav-item">
+                            <li className="nav-item mx-0">
                                 {isLoggedIn ? (
                                     <Link
-                                        className="nav-link"
+                                        className="nav-link mx-0"
                                         to="login"
                                         onClick={signOut}
                                     >
@@ -94,7 +95,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                     </Link>
                                 ) : (
                                     <NavLink
-                                        className={({ isActive }) => isActive ? "nav-link active" :
+                                        className={({ isActive }) => isActive ? "nav-link active mx-0" :
                                             "nav-link"}
                                         to="login"
                                     >
@@ -107,9 +108,10 @@ const Navigation = ({ children }: NavigationProps) => {
                 </nav>
             </div>
             <img
-                src="images/logo-pwr-2016/logo PWr kolor poziom ang  bez tla.png"
+                src="/images/logo PWr kolor poziom ang  bez tla.png"
                 alt={t('navigation.imageAlt')}
-                className='w-25 my-3 ps-4 pe-5'
+                className='my-3 ps-4 pe-5'
+                style={{ height: '8vh' }}
             />
             <div className='container'>
                 <div className={`container p-0 ${isLoginPage ? 'd-none' : ''}`}>
@@ -134,6 +136,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                                 </NavLink>
                                             </li>
                                             {user?.roles?.some((role: Role) => role.name === 'admin') ? (
+                                                <>
                                                 <li className="nav-item">
                                                     <Dropdown as={Nav.Item}>
                                                         <Dropdown.Toggle as={Nav.Link} className={isManagementActive ? "active" : ""}>{t('navigation.manage')}</Dropdown.Toggle>
@@ -169,6 +172,13 @@ const Navigation = ({ children }: NavigationProps) => {
                                                     </Dropdown>
 
                                                 </li>
+                                                    <li className="nav-item">
+                                                        <NavLink className={({ isActive }) => isActive ?
+                                                            "nav-link active" : "nav-link"} to="/reports">
+                                                            {t('navigation.reports')}
+                                                        </NavLink>
+                                                    </li>
+                                                </>
                                             ) : null}
                                             {user?.roles?.some((role: Role) => role.name === 'supervisor') ? (
                                                 <li className="nav-item">

@@ -37,11 +37,10 @@ const ThesesDetails: React.FC = () => {
           supervisor: thesisDb.supervisor,
           status: thesisDb.status,
           leader: thesisDb.leader,
-          students: thesisDb.reservations.map((reservation) => reservation.student),
-          reservations: thesisDb.reservations,
+          students: thesisDb.reservations.map((reservation) => reservation.student).sort((a, b) => a.index.localeCompare(b.index)),
+          reservations: thesisDb.reservations.sort((a,b) => a.student.index.localeCompare(b.student.index)),
         };
         setThesis(thesis);
-        console.log(thesis);
       })
       .catch((error) => {
         console.error(error);
@@ -81,7 +80,6 @@ const ThesesDetails: React.FC = () => {
 
   useEffect(() => {
     setUser(JSON.parse(Cookies.get("user") || "{}"));
-    console.log(user);
   }, []);
 
   const handleReadyForApproval = async () => {
@@ -107,13 +105,13 @@ const ThesesDetails: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='row d-flex justify-content-between'>
-        <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
+        <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
         {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
           user?.mail === thesis?.supervisor.mail) ?
           (
-            <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
+            <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
               if (user?.role?.name === 'student') {
                 if (thesis?.reservations.length === 0) {
                   navigate('/reservation', { state: { thesis: thesis } })
@@ -188,7 +186,7 @@ const ThesesDetails: React.FC = () => {
               <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
                 {thesis.occupied + "/" + thesis.numPeople}</span></p>
               {thesis.students.length > 0 ? (
-                <StudentTable students={thesis.students} thesis={thesis} role={"student"} />
+                <StudentTable students={thesis.students} thesis={thesis} />
               ) : (
                 <></>
               )}

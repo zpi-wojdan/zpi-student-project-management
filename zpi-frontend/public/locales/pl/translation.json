@@ -4,6 +4,7 @@
       "abbreviationExists": "Podany skrót już istnieje!",
       "add": "Dodaj",
       "addNext": "Dodaj następny",
+      "all": "Wszystkie",
       "choose": "Wybierz",
       "delete": "Usuń",
       "details": "Szczegóły",
@@ -23,7 +24,14 @@
       "view": "Widok",
       "wrongData": "Niepoprawne dane",
       "wrongFormat": "Zły format",
-      "yes": "Tak"
+      "yes": "Tak",
+      "annul": "Anuluj",
+      "accept": "Akceptuj",
+      "search": "Wyszukaj",
+      "noSearchData": "Brak wyników wyszukiwania",
+      "filtration": "Filtrowanie",
+      "filter": "Filtruj",
+      "filterClear": "Wyczyść filtry"
     },
     "people": {
       "adminLC": "administrator",
@@ -34,6 +42,7 @@
       "mail": "Mail",
       "name": "Imię",
       "roles": "Role",
+      "role": "Rola",
       "student": "Student",
       "students": "Studenci",
       "supervisorLC": "prowadzący",
@@ -69,7 +78,8 @@
     "home": "Strona główna",
     "manage": "Zarządzaj",
     "myTheses": "Moje tematy",
-    "imageAlt": "Logo Politechniki Wrocławskiej"
+    "imageAlt": "Logo Politechniki Wrocławskiej",
+    "reports": "Raporty"
   },
   "cycle": {
     "deleteSuccessful": "Cykl został usunięty",
@@ -183,7 +193,10 @@
     "reservation": "Rezerwacja tematu",
     "indexUsedInAnotherRow": "Indeks już wpisany w innym wierszu!",
     "wrongIndex": "Indeks jest niepoprawny lub nie istnieje w systemie!",
-    "addPerson": "Dodaj osobę"
+    "addPerson": "Dodaj osobę",
+    "deleteSuccessful": "Rezerwacja została anulowana",
+    "deleteError": "Rezerwacja nie może zostać anulowana!",
+    "deleteConfirmation": "Czy na pewno chcesz anulować tę rezerwację?"
   },
   "status": {
     "draft": "Wersja robocza",
@@ -258,5 +271,16 @@
   "unauthorizedPage": {
     "title": "Brak dostępu",
     "description": "Nie masz uprawnień do wyświetlenia tej strony."
+  },
+  "reports": {
+    "reportType": "Typ raportu",
+    "thesisGroups": "Grupy studentów do projektu zpi",
+    "studentsWithoutThesis": "Studenci bez tematu projektu zpi",
+    "generate": "Generuj raport",
+    "generateSuccessful": "Raport został wygenerowany",
+    "generateThesisGroupsError": "Nie znaleziono grup studentów do projektu zpi",
+    "generateStudentsWithoutThesisError": "Nie znaleziono studentów bez tematu projektu zpi",
+    "generateError": "Wystąpił błąd podczas generowania raportu",
+    "generating": "Generowanie raportu..."
   }
 }
