@@ -40,18 +40,18 @@ public class DeadlineServiceTests {
         deadline.setId(1L);
         deadline.setNamePL("Czynnosc 1");
         deadline.setNameEN("Activity 1");
-        deadline.setDeadlineDate(LocalDate.of(2023, 11, 20));
+        deadline.setDeadlineDate(LocalDate.now());
 
         Deadline deadline2 = new Deadline();
         deadline2.setId(2L);
         deadline2.setNamePL("Czynnosc 2");
         deadline2.setNameEN("Activity 2");
-        deadline2.setDeadlineDate(LocalDate.of(2023, 11, 19));
+        deadline2.setDeadlineDate(LocalDate.now());
 
         deadlineDTO = new DeadlineDTO();
         deadlineDTO.setNamePL("Czynnosc 3");
         deadlineDTO.setNameEN("Activity 3");
-        deadlineDTO.setDeadlineDate(LocalDate.of(2023, 11, 20));
+        deadlineDTO.setDeadlineDate(LocalDate.now());
 
         deadlines = List.of(deadline, deadline2);
         orderedDeadlines = List.of(deadline2, deadline);
