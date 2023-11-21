@@ -476,26 +476,30 @@ UPDATE thesis
 SET
     leader = (SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'LIMIT 1),
     num_people = 5,
-    occupied = 5
+    occupied = 5,
+    status = (SELECT id FROM status WHERE name = 'Assigned')
 WHERE name_pl = 'Mobilna aplikacja dla miłośników starych zamków';
 
 UPDATE thesis
 SET
     leader = (SELECT id FROM student WHERE mail = '234567@student.pwr.edu.pl'LIMIT 1),
     num_people = 3,
-    occupied = 3
+    occupied = 3,
+    status = (SELECT id FROM status WHERE name = 'Assigned')
 WHERE name_pl = 'Aplikacja do ewidencji świadczonych usług oraz pracy';
 
 UPDATE thesis
 SET
     leader = (SELECT id FROM student WHERE mail = '345678@student.pwr.edu.pl'LIMIT 1),
     num_people = 4,
-    occupied = 4
+    occupied = 4,
+    status = (SELECT id FROM status WHERE name = 'Assigned')
 WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa';
 
 UPDATE thesis
 SET
     leader = (SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'LIMIT 1),
     num_people = 4,
-    occupied = 2
+    occupied = 2,
+    status = (SELECT id FROM status WHERE name = 'Approved')
 WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii';
