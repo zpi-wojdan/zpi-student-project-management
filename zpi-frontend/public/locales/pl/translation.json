@@ -29,7 +29,8 @@
       "noSearchData": "Brak wyników wyszukiwania",
       "filtration": "Filtrowanie",
       "filter": "Filtruj",
-      "filterClear": "Wyczyść filtry"
+      "filterClear": "Wyczyść filtry",
+      "vacancies": "Wolne miejsca"
     },
     "people": {
       "adminLC": "administrator",
@@ -246,6 +247,14 @@
     "wrongEmails": "Niepoprawne adresy email",
     "invalidData": "Brakujące dane w systemie",
     "recordsSaved": "Liczba zapisanych rekordów: "
+  },
+  "status": {
+    "draft": "Wersja robocza",
+    "pending": "Oczekuje na zatwierdzenie",
+    "rejected": "Odrzucony",
+    "approved": "Zatwierdzony",
+    "assigned": "Przydzielony",
+    "closed": "Zamknięty"
   },
   "login": {
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",

@@ -27,9 +27,10 @@
       "accept": "Accept",
       "search": "Search",
       "noSearchData": "No search results",
-      "filtration": "Filtration",
+      "filtration": "Filtering",
       "filter": "Filter",
-      "filterClear": "Clear filters"
+      "filterClear": "Clear filters",
+      "vacancies": "Vacancies"
     },
     "people": {
       "adminLC": "administrator",
@@ -218,6 +219,14 @@
     "addError": "Thesis has not been added",
     "updateSuccessful": "Thesis has been updated",
     "updateError": "Thesis has not been updated"
+  },
+  "status": {
+    "draft": "Draft",
+    "pending": "Pending approval",
+    "rejected": "Rejected",
+    "approved": "Approved",
+    "assigned": "Assigned",
+    "closed": "Closed"
   },
   "uploadFiles": {
     "fileName": "Source file name",

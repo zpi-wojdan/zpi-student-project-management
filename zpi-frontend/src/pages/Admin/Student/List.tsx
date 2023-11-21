@@ -6,9 +6,9 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
-import { Faculty } from '../../../models/Faculty';
-import { StudyField } from '../../../models/StudyField';
-import { Specialization } from '../../../models/Specialization';
+import { Faculty } from '../../../models/university/Faculty';
+import { Specialization } from '../../../models/university/Specialization';
+import { StudyField } from '../../../models/university/StudyField';
 
 const StudentList: React.FC = () => {
   // @ts-ignore
@@ -52,7 +52,10 @@ const StudentList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/faculty')
       .then((response) => {
-        setAvailableFaculties(response.data);
+        const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableFaculties(sortedFaculties);
       })
       .catch((error) => {
         console.error(error);
@@ -66,7 +69,10 @@ const StudentList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/studyfield')
       .then((response) => {
-        setAvailableFields(response.data);
+        const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableFields(sortedStudyFields);
       })
       .catch((error) => {
         console.error(error)
@@ -80,7 +86,10 @@ const StudentList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/specialization')
       .then((response) => {
-        setAvailableSpecializations(response.data);
+        const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
+          return a.name.localeCompare(b.name);
+        });
+        setAvailableSpecializations(sortedSpecializations);
       })
       .catch((error) => {
         console.error(error)
@@ -262,7 +271,8 @@ const StudentList: React.FC = () => {
                 ))}
           </select>
         </div>
-        <div className="d-flex justify-content-center mt-5">
+        <hr className="my-4" />
+        <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
             onClick={() => {
               setSelectedFacultyAbbr("");
