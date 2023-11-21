@@ -262,7 +262,8 @@ const StudentList: React.FC = () => {
                 ))}
           </select>
         </div>
-        <div className="d-flex justify-content-center mt-5">
+        <hr className="my-4" />
+        <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
             onClick={() => {
               setSelectedFacultyAbbr("");

@@ -201,6 +201,7 @@ const EmployeeList: React.FC = () => {
             ))}
           </select>
         </div>
+        <hr className="my-4" />
         <div className="mb-4">
           <label className="bold" htmlFor="role">
             {t('general.people.role')}:
@@ -222,6 +223,7 @@ const EmployeeList: React.FC = () => {
             ))}
           </select>
         </div>
+        <hr className="my-4" />
         <div className="mb-4">
           <label className="bold" htmlFor="title">
             {t('general.title')}:
@@ -243,7 +245,8 @@ const EmployeeList: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="d-flex justify-content-center mt-5">
+        <hr className="my-4" />
+        <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
             onClick={() => {
               setSelectedDepartmentCode("");
