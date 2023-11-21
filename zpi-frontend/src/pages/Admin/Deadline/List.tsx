@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../components/DeleteConfirmation';
-import handleSignOut from "../auth/Logout";
-import useAuth from "../auth/useAuth";
+import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import handleSignOut from "../../../auth/Logout";
+import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
-import api from "../utils/api";
-import {Deadline} from "../models/Deadline";
+import api from "../../../utils/api";
+import {Deadline} from "../../../models/Deadline";
 
-const HomePage: React.FC = () => {
+const DeadlineList: React.FC = () => {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
@@ -65,9 +65,43 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [deadlineToDelete, setDeadlineToDelete] = useState<number | null>(null);
+
+    const handleDeleteClick = (facultyId: number) => {
+        setShowDeleteConfirmation(true);
+        setDeadlineToDelete(facultyId);
+    };
+
+    const handleConfirmDelete = () => {
+        api.delete(`http://localhost:8080/deadline/${deadlineToDelete}`)
+            .then(() => {
+                toast.success(t('deadline.deleteSuccessful'));
+                setRefreshList(!refreshList);
+            })
+            .catch((error) => {
+                console.error(error);
+                if (error.response.status === 401 || error.response.status === 403) {
+                    setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                    handleSignOut(navigate);
+                }
+                toast.error(t('deadline.deleteError'));
+            });
+        setShowDeleteConfirmation(false);
+    };
+
+    const handleCancelDelete = () => {
+        setShowDeleteConfirmation(false);
+    };
+
     return (
         <div className='page-margin'>
             <div className='d-flex justify-content-between  align-items-center'>
+                <div >
+                    <button className="custom-button" onClick={() => { navigate('/deadlines/add') }}>
+                        {t('deadline.add')}
+                    </button>
+                </div>
                 {ITEMS_PER_PAGE.length > 1 && (
                     <div className="d-flex justify-content-between">
                         <div className="d-flex align-items-center">
@@ -133,8 +167,10 @@ const HomePage: React.FC = () => {
                 <thead>
                 <tr>
                     <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '72%' }}>{t('deadline.activity')}</th>
-                    <th style={{ width: '25%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
+                    <th style={{ width: '62%' }}>{t('deadline.activity')}</th>
+                    <th style={{ width: '15%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
+                    <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
+                    <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -150,7 +186,38 @@ const HomePage: React.FC = () => {
                                 )}
                             </td>
                             <td className="centered">{new Date(deadline.deadlineDate).toLocaleDateString()}</td>
+                            <td>
+                                <button
+                                    className="custom-button coverall"
+                                    onClick={() => {
+                                        navigate(`/deadlines/edit/${deadline.id}`, { state: { deadline } });
+                                    }}
+                                >
+                                    <i className="bi bi-arrow-right"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    className="custom-button coverall"
+                                    onClick={() => handleDeleteClick(deadline.id)}
+                                >
+                                    <i className="bi bi-trash"></i>
+                                </button>
+                            </td>
                         </tr>
+                        {deadlineToDelete === deadline.id && showDeleteConfirmation && (
+                            <tr>
+                                <td colSpan={5}>
+                                    <DeleteConfirmation
+                                        isOpen={showDeleteConfirmation}
+                                        onClose={handleCancelDelete}
+                                        onConfirm={handleConfirmDelete}
+                                        onCancel={handleCancelDelete}
+                                        questionText={t('deadline.deleteConfirmation')}
+                                    />
+                                </td>
+                            </tr>
+                        )}
                     </React.Fragment>
                 ))}
                 </tbody>
@@ -197,4 +264,4 @@ const HomePage: React.FC = () => {
     );
 };
 
-export default HomePage;
+export default DeadlineList;

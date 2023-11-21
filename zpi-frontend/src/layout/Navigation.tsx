@@ -31,7 +31,8 @@ const Navigation = ({ children }: NavigationProps) => {
         '/programs',
         '/cycles',
         '/departments',
-        '/theses'
+        '/theses',
+        '/deadlines'
     ];
 
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
@@ -167,6 +168,9 @@ const Navigation = ({ children }: NavigationProps) => {
                                                             </Dropdown.Item>
                                                             <Dropdown.Item as={Link} to="/departments" className={location.pathname === '/departments' ? "active" : ""}>
                                                                 {t('general.university.departments')}
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item as={Link} to="/deadlines" className={location.pathname === '/deadlines' ? "active" : ""}>
+                                                                {t('general.university.deadlines')}
                                                             </Dropdown.Item>
                                                         </Dropdown.Menu>
                                                     </Dropdown>
