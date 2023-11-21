@@ -234,6 +234,14 @@
     "invalidData": "Brakujące dane w systemie",
     "recordsSaved": "Liczba zapisanych rekordów: "
   },
+  "status": {
+    "draft": "Szkic",
+    "pendingApproval": "Oczekuje na zatwierdzenie",
+    "rejected": "Odrzucony",
+    "approved": "Zatwierdzony",
+    "assigned": "Przypisany",
+    "closed": "Zamknięty"
+  },
   "login": {
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
     "accessDenied": "Zaloguj sie, aby uzyskać dostęp do tej strony.",
