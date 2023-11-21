@@ -4,11 +4,12 @@ import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-import { Employee } from '../../models/Employee';
-import { Student } from '../../models/Student';
-import { Thesis } from '../../models/Thesis';
-import {useTranslation} from "react-i18next";
+import { Employee } from '../../models/user/Employee';
+import { Student } from '../../models/user/Student';
+import { Thesis } from '../../models/thesis/Thesis';
+import { useTranslation } from "react-i18next";
 import api from "../../utils/api";
+import { use } from 'i18next';
 
 type SingleReservationProps = {
 }
@@ -25,49 +26,59 @@ function SingleReservationPage({ }: SingleReservationProps) {
     const [user, setUser] = useState<Student & Employee>();
 
     useEffect(() => {
-        setUser(JSON.parse(Cookies.get("user") || "{}"));
-        setReservation(user?.index || "");
+        const userCookies = JSON.parse(Cookies.get("user") || "{}");
+        setUser(userCookies);
+        setReservation(userCookies.index || "");
     }, []);
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
 
-            const responseBody = {
-                thesisId: thesis.id,
-                student: user,
-                reservationDate: new Date(),
-                confirmedByStudent: true,
-            };
-            console.log(JSON.stringify(responseBody));
+        const responseBody = {
+            thesisId: thesis.id,
+            student: user,
+            reservationDate: new Date(),
+            confirmedByStudent: true,
+        };
+        console.log(JSON.stringify(responseBody));
 
-            const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody))
-                .then(response => {
-                    if (response.status === 201) {
-                        console.log(`Reservation ${reservation} created successfully`);
-                        toast.success(t('reservation.reservationSuccessful'));
-                        navigate("/theses/" + thesis.id)
-                    }
-                })
-                .catch(error => {
-                    console.error(`Failed to submit reservation ${reservation}`);
-                    console.error(error)
-                    if (error.response.status === 401 || error.response.status === 403) {
-                        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-                        handleSignOut(navigate);
-                    }
-                    toast.error(t('reservation.reservationError'));
-                });
+        const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    console.log(`Reservation ${reservation} created successfully`);
+                    toast.success(t('reservation.reservationSuccessful'));
+                    navigate("/public-theses/" + thesis.id)
+                }
+            })
+            .catch(error => {
+                console.error(`Failed to submit reservation ${reservation}`);
+                console.error(error)
+                if (error.response.status === 401 || error.response.status === 403) {
+                    setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                    handleSignOut(navigate);
+                }
+                toast.error(t('reservation.reservationError'));
+            });
     };
 
     return (
-        <div className="container">
-            <button type="button" className="btn btn-secondary m-2" onClick={() => navigate(-1)}>
-                &larr; {t('general.management.goBack')}
-            </button>
-            <h1>{t('reservation.reservation')}:</h1>
+        <div className="container page-margin">
+            <div className="d-flex">
+                <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+                    &larr; {t('general.management.goBack')}
+                </button>
+                <button type="submit" className="custom-button" onClick={handleSubmit}>
+                    {t('general.management.reserve')}
+                </button>
+            </div>
+            <h1 className='my-3'>{t('reservation.reservation')}:</h1>
             <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
-
                 <div className="form-group row justify-content-center">
                     <label htmlFor={`reservation`} className="col-sm-2 col-form-label">
                         {t('general.people.student')}:</label>
@@ -81,18 +92,9 @@ function SingleReservationPage({ }: SingleReservationProps) {
                         />
                     </div>
                 </div>
-
-                <div className="row justify-content-center">
-                    <div className="col-sm-6">
-                        <div className="form-group row justify-content-center">
-                            <button type="submit" className="col-sm-3 btn btn-success m-2" onClick={handleSubmit}>
-                                {t('general.management.reserve')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </form>
         </div>
+
     );
 
 }

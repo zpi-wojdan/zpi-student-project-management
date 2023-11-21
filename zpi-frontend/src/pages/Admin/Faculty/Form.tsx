@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Faculty, FacultyDTO } from '../../../models/Faculty';
+import { Faculty, FacultyDTO } from '../../../models/university/Faculty';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import StudentTable from '../../components/StudentsTable';
-import { ThesisFront, Thesis } from '../../models/Thesis';
-import { Program } from '../../models/Program';
+import { ThesisFront, Thesis } from '../../models/thesis/Thesis';
+import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
-import { Employee } from '../../models/Employee';
-import { Student } from '../../models/Student';
+import { Employee } from '../../models/user/Employee';
+import { Student } from '../../models/user/Student';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
 import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
+import { toast } from 'react-toastify';
 
 const ThesesDetails: React.FC = () => {
   // @ts-ignore
@@ -37,11 +38,10 @@ const ThesesDetails: React.FC = () => {
           supervisor: thesisDb.supervisor,
           status: thesisDb.status,
           leader: thesisDb.leader,
-          students: thesisDb.reservations.map((reservation) => reservation.student),
-          reservations: thesisDb.reservations,
+          students: thesisDb.reservations.map((reservation) => reservation.student).sort((a, b) => a.index.localeCompare(b.index)),
+          reservations: thesisDb.reservations.sort((a, b) => a.student.index.localeCompare(b.student.index)),
         };
         setThesis(thesis);
-        console.log(thesis);
       })
       .catch((error) => {
         console.error(error);
@@ -58,7 +58,6 @@ const ThesesDetails: React.FC = () => {
     api.get('http://localhost:8080/program')
       .then((response) => {
         setPrograms(response.data);
-        console.log(programs);
       })
       .catch((error) => {
         console.error(error);
@@ -81,7 +80,6 @@ const ThesesDetails: React.FC = () => {
 
   useEffect(() => {
     setUser(JSON.parse(Cookies.get("user") || "{}"));
-    console.log(user);
   }, []);
 
   const handleReadyForApproval = async () => {
@@ -95,9 +93,11 @@ const ThesesDetails: React.FC = () => {
           );
 
           if (response.status === 200) {
+            toast.success(t('thesis.readyForApproval'));
             console.log('All users reservations sent for approval successfully');
           }
         } catch (error) {
+          toast.error(t('thesis.readyForApprovalError'));
           console.error(`Failed to update reservations for reservation: ${reservation}`, error);
         }
       }
@@ -107,13 +107,13 @@ const ThesesDetails: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='row d-flex justify-content-between'>
-        <button type="button" className="col-sm-2 btn btn-secondary m-3" onClick={() => navigate(-1)}>
+        <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        {(user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
+        {(thesis && thesis?.occupied < thesis?.numPeople && user?.role?.name === 'student' || user?.roles?.some(role => role.name === 'supervisor') &&
           user?.mail === thesis?.supervisor.mail) ?
           (
-            <button type="button" className="col-sm-2 btn btn-primary m-3" onClick={() => {
+            <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
               if (user?.role?.name === 'student') {
                 if (thesis?.reservations.length === 0) {
                   navigate('/reservation', { state: { thesis: thesis } })
@@ -188,19 +188,23 @@ const ThesesDetails: React.FC = () => {
               <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
                 {thesis.occupied + "/" + thesis.numPeople}</span></p>
               {thesis.students.length > 0 ? (
-                <StudentTable students={thesis.students} thesis={thesis} role={"student"} />
+                <StudentTable students={thesis.students} thesis={thesis} />
               ) : (
                 <></>
               )}
-              {thesis?.leader?.mail === user?.mail && thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) && (
-                <button
-                  type="button"
-                  className="col-sm-2 btn btn-primary m-3"
-                  onClick={handleReadyForApproval}
-                >
-                  {t('thesis.readyForApproval')}
-                </button>
-              )}
+              {thesis?.leader?.mail === user?.mail &&
+                thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) &&
+                thesis?.reservations?.length >= 3 &&
+                thesis?.reservations.some(r => !r.readyForApproval) &&
+                (
+                  <button
+                    type="button"
+                    className="col-sm-2 custom-button m-3"
+                    onClick={handleReadyForApproval}
+                  >
+                    {t('thesis.readyForApproval')}
+                  </button>
+                )}
 
             </div>
           </div>

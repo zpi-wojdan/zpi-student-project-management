@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { StudentDTO } from '../../../models/Student';
-import { Program } from '../../../models/Program';
+import { StudentDTO } from '../../../models/user/Student';
+import { Program } from '../../../models/university/Program';
 import { toast } from 'react-toastify';
-import { StudyCycle } from '../../../models/StudyCycle';
+import { StudyCycle } from '../../../models/university/StudyCycle';
 import { StudentProgramCycle, StudentProgramCycleDTO } from '../../../models/StudentProgramCycle';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";

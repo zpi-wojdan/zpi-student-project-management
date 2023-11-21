@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StudyCycle, StudyCycleDTO } from '../../../models/StudyCycle';
+import { StudyCycle, StudyCycleDTO } from '../../../models/university/StudyCycle';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";

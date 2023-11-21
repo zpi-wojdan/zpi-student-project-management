@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Department, DepartmentDTO } from '../../../models/Department';
+import { Department, DepartmentDTO } from '../../../models/university/Department';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import { Faculty } from '../../../models/Faculty';
+import { Faculty } from '../../../models/university/Faculty';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 

@@ -49,4 +49,10 @@ public class StudyFieldController {
     public ResponseEntity<StudyField> deleteStudyField(@PathVariable Long id){
         return ResponseEntity.ok(studyFieldService.deleteStudyField(id));
     }
+
+    @GetMapping("/ordered")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<StudyField>> getAllStudyFieldsOrderedByAbbreviation(){
+        return ResponseEntity.ok(studyFieldService.getAllStudyFieldsOrderedByAbbreviationAsc());
+    }
 }

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Specialization, SpecializationDTO } from '../../../models/Specialization';
+import { Specialization, SpecializationDTO } from '../../../models/university/Specialization';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import { StudyField } from '../../../models/StudyField';
-import { Faculty } from '../../../models/Faculty';
+import { StudyField } from '../../../models/university/StudyField';
+import { Faculty } from '../../../models/university/Faculty';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 

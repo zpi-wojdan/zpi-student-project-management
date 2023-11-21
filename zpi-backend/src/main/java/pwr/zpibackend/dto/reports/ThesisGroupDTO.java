@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ThesisGroupDTO {
     private String thesisNamePL;
+    private String thesisNameEN;
     private String facultyAbbreviation;
     private String studyFieldAbbreviation;
     private SupervisorDTO supervisor;

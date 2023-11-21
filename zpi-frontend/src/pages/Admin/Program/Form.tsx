@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Program, ProgramDTO } from '../../../models/Program';
+import { Program, ProgramDTO } from '../../../models/university/Program';
 import { toast } from 'react-toastify';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
-import { StudyField } from '../../../models/StudyField';
-import { Faculty } from '../../../models/Faculty';
-import { StudyCycle } from '../../../models/StudyCycle';
+import { StudyField } from '../../../models/university/StudyField';
+import { Faculty } from '../../../models/university/Faculty';
+import { StudyCycle } from '../../../models/university/StudyCycle';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
-import { Specialization } from '../../../models/Specialization';
+import { Specialization } from '../../../models/university/Specialization';
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
@@ -58,6 +58,7 @@ const ProgramForm: React.FC = () => {
 
     if (validateForm()) {
       if (program) {
+        console.log(formData)
         api.put(`http://localhost:8080/program/${programId}`, formData)
           .then(() => {
             navigate("/programs")

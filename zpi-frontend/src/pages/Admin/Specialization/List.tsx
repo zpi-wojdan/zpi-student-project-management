@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Specialization } from '../../../models/Specialization';
+import { Specialization } from '../../../models/university/Specialization';
 import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import handleSignOut from "../../../auth/Logout";
