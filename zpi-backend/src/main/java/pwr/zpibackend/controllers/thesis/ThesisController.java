@@ -57,7 +57,7 @@ public class ThesisController {
 
     @GetMapping("/status/exclude/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusId(id), HttpStatus.OK);
     }
 

@@ -30,10 +30,10 @@ public class ReservationService {
 
     public Reservation addReservation(ReservationDTO reservation) {
         if (reservation.getThesisId() == null || reservation.getStudent() == null || reservation.getReservationDate() == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Thesis, student and reservation date must be provided.");
         }
         if (reservationRepository.findByStudent_Mail(reservation.getStudent().getMail()) != null) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Reservation for this student already exists.");
         }
 
         Reservation newReservation = new Reservation();
@@ -63,7 +63,7 @@ public class ReservationService {
                 newReservation.setThesis(thesis);
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Thesis with id " + reservation.getThesisId() + " does not exist.");
         }
         reservationRepository.saveAndFlush(newReservation);
         return newReservation;
@@ -78,7 +78,7 @@ public class ReservationService {
         if (reservation.isPresent()) {
             return reservation.get();
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("Reservation with id " + id + " does not exist.");
         }
     }
 
@@ -92,7 +92,7 @@ public class ReservationService {
                     reservation.setSentForApprovalDate(newReservation.getSentForApprovalDate());
                     return reservationRepository.save(reservation);
                 })
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " does not exist."));
     }
 
     public Reservation deleteReservation(Long id) {
@@ -120,7 +120,7 @@ public class ReservationService {
                             });
                     return reservation;
                 })
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " does not exist."));
     }
 
     @Scheduled(cron = "0 0 3 * * ?")            // every day at 3:00 AM

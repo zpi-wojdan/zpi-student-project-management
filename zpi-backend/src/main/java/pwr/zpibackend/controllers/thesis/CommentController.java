@@ -33,7 +33,7 @@ public class CommentController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
-    public ResponseEntity<Comment> addComment(@RequestBody CommentDTO comment) throws NotFoundException {
+    public ResponseEntity<Comment> addComment(@RequestBody CommentDTO comment) {
         return new ResponseEntity<>(commentService.addComment(comment), HttpStatus.CREATED);
     }
 

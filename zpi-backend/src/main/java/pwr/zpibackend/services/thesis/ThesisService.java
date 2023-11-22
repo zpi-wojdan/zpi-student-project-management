@@ -42,13 +42,15 @@ public class ThesisService {
 
     public Thesis getThesis(Long id) {
         return thesisRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Thesis with id " + id + " does not exist"));
     }
 
     public Thesis addThesis(ThesisDTO thesis) {
         Employee supervisor = employeeRepository
                 .findById(thesis.getSupervisorId())
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(
+                        () -> new NotFoundException("Employee with id " + thesis.getSupervisorId() + " does not exist")
+                );
 
         Thesis newThesis = new Thesis();
         newThesis.setNamePL(thesis.getNamePL());
@@ -59,13 +61,16 @@ public class ThesisService {
         newThesis.setSupervisor(supervisor);
         newThesis.setPrograms(new ArrayList<>());
         thesis.getProgramIds().forEach(programId -> {
-            Program program = programRepository.findById(programId).orElseThrow(NotFoundException::new);
+            Program program = programRepository.findById(programId).orElseThrow(
+                    () -> new NotFoundException("Program with id " + programId + " does not exist"));
             newThesis.getPrograms().add(program);
         });
         newThesis.setStudyCycle(studyCycleRepository.findById(
-                thesis.getStudyCycleId()).orElseThrow(NotFoundException::new)
+                thesis.getStudyCycleId()).orElseThrow(
+                        () -> new NotFoundException("StudyCycle with id " + thesis.getStudyCycleId() + " does not exist"))
         );
-        newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
+        newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(
+                () -> new NotFoundException("Status with id " + thesis.getStatusId() + " does not exist")));
         newThesis.setOccupied(0);
 
         thesisRepository.saveAndFlush(newThesis);
@@ -82,18 +87,22 @@ public class ThesisService {
             updated.setNumPeople(thesis.getNumPeople());
 
             updated.setSupervisor(employeeRepository.findById(
-                    thesis.getSupervisorId()).orElseThrow(NotFoundException::new)
+                    thesis.getSupervisorId()).orElseThrow(
+                    () -> new NotFoundException("Employee with id " + thesis.getSupervisorId() + " does not exist"))
             );
             List<Program> programList = new ArrayList<>();
             thesis.getProgramIds().forEach(programId -> {
-                Program program = programRepository.findById(programId).orElseThrow(NotFoundException::new);
+                Program program = programRepository.findById(programId).orElseThrow(
+                        () -> new NotFoundException("Program with id " + programId + " does not exist"));
                 programList.add(program);
             });
             updated.setPrograms(programList);
             updated.setStudyCycle(studyCycleRepository.findById(
-                    thesis.getStudyCycleId()).orElseThrow(NotFoundException::new)
+                    thesis.getStudyCycleId()).orElseThrow(
+                    () -> new NotFoundException("StudyCycle with id " + thesis.getStudyCycleId() + " does not exist"))
             );
-            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
+            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(
+                    () -> new NotFoundException("Status with id " + thesis.getStatusId() + " does not exist")));
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
@@ -136,7 +145,7 @@ public class ThesisService {
             thesisRepository.deleteById(id);
             return deletedThesis;
         }
-        throw new NotFoundException();
+        throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
 
@@ -149,7 +158,7 @@ public class ThesisService {
     public List<Thesis> getAllThesesExcludingStatusId(Long id){
         Optional<Status> excludedStatus = statusRepository.findById(id);
         if (excludedStatus.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("Status with id " + id + " does not exist");
         }
         return thesisRepository.findAll().stream()
                 .filter(thesis -> !id.equals(thesis.getStatus().getId()))

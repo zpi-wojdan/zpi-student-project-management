@@ -22,12 +22,12 @@ public class FacultyService {
 
     public Faculty getFacultyByAbbreviation(String abbreviation) {
         return facultyRepository.findByAbbreviation(abbreviation)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Faculty with abbreviation " + abbreviation + " does not exist"));
     }
 
     public Faculty saveFaculty(FacultyDTO faculty) {
         if (facultyRepository.existsByAbbreviation(faculty.getAbbreviation())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Faculty with abbreviation " + faculty.getAbbreviation() + " already exists");
         }
         Faculty newFaculty = new Faculty();
         newFaculty.setAbbreviation(faculty.getAbbreviation());
@@ -37,7 +37,7 @@ public class FacultyService {
 
     public Faculty deleteFaculty(Long id) {
         Faculty faculty = facultyRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Faculty with id " + id + " does not exist"));
         facultyRepository.delete(faculty);
         return faculty;
     }
@@ -45,11 +45,11 @@ public class FacultyService {
     public Faculty updateFaculty(Long id, FacultyDTO faculty) {
         if (facultyRepository.existsByAbbreviation(faculty.getAbbreviation())) {
             if (!(facultyRepository.findByAbbreviation(faculty.getAbbreviation()).get().getId() == id)) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Faculty with abbreviation " + faculty.getAbbreviation() + " already exists");
             }
         }
         Faculty existingFaculty = facultyRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Faculty with id " + id + " does not exist"));
         existingFaculty.setAbbreviation(faculty.getAbbreviation());
         existingFaculty.setName(faculty.getName());
         return facultyRepository.saveAndFlush(existingFaculty);
