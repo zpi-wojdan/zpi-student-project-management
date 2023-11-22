@@ -7,15 +7,17 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import SearchBar from '../../../components/SeatchBar';
 
 const StudyFieldList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
-  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [studyFields, setStudyFields] = useState<StudyField[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+  const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
+  const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
 
   useEffect(() => {
     api.get('http://localhost:8080/studyfield')
@@ -24,15 +26,6 @@ const StudyFieldList: React.FC = () => {
           return a.abbreviation.localeCompare(b.abbreviation);
         });
         setStudyFields(sortedStudyFields);
-        const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
-          if (itemPerPage === 'All') {
-            return true;
-          } else {
-            const perPageValue = parseInt(itemPerPage, 10);
-            return perPageValue < response.data.length;
-          }
-        });
-        setITEMS_PER_PAGE(filteredItemsPerPage);
       })
       .catch((error) => {
         console.error(error);
@@ -43,14 +36,45 @@ const StudyFieldList: React.FC = () => {
       });
   }, [refreshList]);
 
+  // Wyszukiwanie
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [afterSearchStudyFields, setAfterSearchTheses] = useState<StudyField[]>(studyFields);
+
+  useEffect(() => {
+    const searchText = searchTerm.toLowerCase();
+    const filteredList = studyFields.filter((field) => {
+      return (
+        field.abbreviation.toLowerCase().includes(searchText) ||
+        field.name.toLowerCase().includes(searchText)
+      );
+    });
+    setAfterSearchTheses(() => filteredList);
+
+    // Aktualizacja ustawień paginacji
+    const filteredItemsPerPage = ITEMS_PER_PAGE.filter((itemPerPage) => {
+      if (itemPerPage === 'All') {
+        return true;
+      } else {
+        const perPageValue = parseInt(itemPerPage, 10);
+        return perPageValue < filteredList.length;
+      }
+    });
+    setCurrentITEMS_PER_PAGE(() => filteredItemsPerPage);
+
+    handlePageChange(1);
+    setItemsPerPage((filteredItemsPerPage.includes(chosenItemsPerPage)) ? chosenItemsPerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
+
+  }, [searchTerm, studyFields]);
+
+  // Paginacja
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState(currentPage);
-  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE[0]);
-  //(ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]
-  const indexOfLastItem = itemsPerPage === 'All' ? studyFields.length : currentPage * parseInt(itemsPerPage, 10);
+  const [itemsPerPage, setItemsPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
+  const [chosenItemsPerPage, setChosenItemsPerPage] = useState(itemsPerPage);
+  const indexOfLastItem = itemsPerPage === 'All' ? afterSearchStudyFields.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-  const currentStudyFields = studyFields.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(studyFields.length / parseInt(itemsPerPage, 10));
+  const currentStudyFields = afterSearchStudyFields.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(afterSearchStudyFields.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
     if (!newPage || newPage < 1) {
@@ -100,13 +124,18 @@ const StudyFieldList: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-between  align-items-center'>
-        <div >
+      <div >
           <button className="custom-button" onClick={() => { navigate('/fields/add') }}>
             {t('field.add')}
           </button>
         </div>
-        {ITEMS_PER_PAGE.length > 1 && (
+      <div className='d-flex justify-content-between  align-items-center'>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          placeholder={t('general.management.search')}
+        />
+        {currentITEMS_PER_PAGE.length > 1 && (
           <div className="d-flex justify-content-between">
             <div className="d-flex align-items-center">
               <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
@@ -114,10 +143,11 @@ const StudyFieldList: React.FC = () => {
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(e.target.value);
+                  setChosenItemsPerPage(e.target.value);
                   handlePageChange(1);
                 }}
               >
-                {ITEMS_PER_PAGE.map((value) => (
+                {currentITEMS_PER_PAGE.map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
@@ -167,6 +197,11 @@ const StudyFieldList: React.FC = () => {
           </div>
         )}
       </div>
+      {afterSearchStudyFields.length === 0 ? (
+        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
+        </div>
+      ) : (
       <table className="custom-table">
         <thead>
           <tr>
@@ -220,7 +255,8 @@ const StudyFieldList: React.FC = () => {
           ))}
         </tbody>
       </table>
-      {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
+      )}
+      {currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
         <div className="pagination">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
