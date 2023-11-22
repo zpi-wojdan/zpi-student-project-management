@@ -27,23 +27,25 @@ public class StudyFieldService {
 
     public StudyField getStudyFieldByAbbreviation(String abbreviation) {
         return studyFieldRepository.findByAbbreviation(abbreviation)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Study field with abbreviation " + abbreviation + " does not exist"));
     }
 
     public StudyField saveStudyField(StudyFieldDTO studyField) {
         if (studyFieldRepository.existsByAbbreviation(studyField.getAbbreviation())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Study field with abbreviation " + studyField.getAbbreviation() + " already exists");
         }
         StudyField newStudyField = new StudyField();
         newStudyField.setAbbreviation(studyField.getAbbreviation());
         newStudyField.setName(studyField.getName());
-        newStudyField.setFaculty(facultyRepository.findByAbbreviation(studyField.getFacultyAbbr()).orElseThrow(NotFoundException::new));
+        newStudyField.setFaculty(facultyRepository.findByAbbreviation(studyField.getFacultyAbbr()).orElseThrow(
+                () -> new NotFoundException("Faculty with abbreviation " + studyField.getFacultyAbbr() + " does not exist")
+        ));
         return studyFieldRepository.save(newStudyField);
     }
 
     public StudyField deleteStudyField(Long id) {
         StudyField studyField = studyFieldRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Study field with id " + id + " does not exist"));
         studyField.setFaculty(null);
         studyFieldRepository.delete(studyField);
         return studyField;
@@ -56,10 +58,12 @@ public class StudyFieldService {
             }
         }
         StudyField existingStudyField = studyFieldRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Study field with id " + id + " does not exist"));
         existingStudyField.setAbbreviation(updatedStudyField.getAbbreviation());
         existingStudyField.setName(updatedStudyField.getName());
-        existingStudyField.setFaculty(facultyRepository.findByAbbreviation(updatedStudyField.getFacultyAbbr()).orElseThrow(NotFoundException::new));
+        existingStudyField.setFaculty(facultyRepository.findByAbbreviation(updatedStudyField.getFacultyAbbr()).orElseThrow(
+                () -> new NotFoundException("Faculty with abbreviation " + updatedStudyField.getFacultyAbbr() + " does not exist")
+        ));
         return studyFieldRepository.save(existingStudyField);
     }
 

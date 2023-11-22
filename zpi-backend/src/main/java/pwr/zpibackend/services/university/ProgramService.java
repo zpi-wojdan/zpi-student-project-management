@@ -30,36 +30,38 @@ public class ProgramService {
 
     public Program getProgramById(Long id) {
         return programRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Program with id " + id + " does not exist"));
     }
 
     public Program saveProgram(ProgramDTO program) {
         if (programRepository.findByName(program.getName()).isPresent()) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Program with name " + program.getName() + " already exists");
         }
         Program newProgram = new Program();
         newProgram.setName(program.getName());
         if (program.getSpecializationAbbr() != null && !program.getSpecializationAbbr().equals("")) {
             Specialization specialization = specializationRepository.findByAbbreviation(program.getSpecializationAbbr())
-                    .orElseThrow(NotFoundException::new);
+                    .orElseThrow(() -> new NotFoundException("Specialization with abbreviation " + program.getSpecializationAbbr() + " does not exist"));
             newProgram.setSpecialization(specialization);
         } else {
             if (program.getStudyFieldAbbr() != null && !program.getStudyFieldAbbr().equals("")) {
                 StudyField studyField = studyFieldRepository.findByAbbreviation(program.getStudyFieldAbbr())
-                        .orElseThrow(NotFoundException::new);
+                        .orElseThrow(() -> new NotFoundException("Study field with abbreviation " + program.getStudyFieldAbbr() + " does not exist"));
                 newProgram.setStudyField(studyField);
             } else {
                 throw new IllegalArgumentException("Program must have either study field or specialization");
             }
         }
         newProgram.setStudyCycles(studyCycleRepository.findAllById(program.getStudyCycleIds()));
-        newProgram.setFaculty(facultyRepository.findById(program.getFacultyId()).orElseThrow(NotFoundException::new));
+        newProgram.setFaculty(facultyRepository.findById(program.getFacultyId()).orElseThrow(
+                () -> new NotFoundException("Faculty with id " + program.getFacultyId() + " does not exist")
+        ));
         return programRepository.saveAndFlush(newProgram);
     }
 
     public Program deleteProgram(Long id) {
         Program program = programRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Program with id " + id + " does not exist"));
         program.setStudyField(null);
         program.setSpecialization(null);
         program.setStudyCycles(null);
@@ -70,27 +72,29 @@ public class ProgramService {
     public Program updateProgram(Long id, ProgramDTO updatedProgram) {
         if (programRepository.findByName(updatedProgram.getName()).isPresent()) {
             if (!(Objects.equals(programRepository.findByName(updatedProgram.getName()).get().getId(), id))) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Program with name " + updatedProgram.getName() + " already exists");
             }
         }
         Program existingProgram = programRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Program with id " + id + " does not exist"));
         existingProgram.setName(updatedProgram.getName());
         if (updatedProgram.getSpecializationAbbr() != null && !updatedProgram.getSpecializationAbbr().equals("")) {
             Specialization specialization = specializationRepository.findByAbbreviation(updatedProgram.getSpecializationAbbr())
-                    .orElseThrow(NotFoundException::new);
+                    .orElseThrow(() -> new NotFoundException("Specialization with abbreviation " + updatedProgram.getSpecializationAbbr() + " does not exist"));
             existingProgram.setSpecialization(specialization);
         } else {
             if (updatedProgram.getStudyFieldAbbr() != null && !updatedProgram.getStudyFieldAbbr().equals("")) {
                 StudyField studyField = studyFieldRepository.findByAbbreviation(updatedProgram.getStudyFieldAbbr())
-                        .orElseThrow(NotFoundException::new);
+                        .orElseThrow(() -> new NotFoundException("Study field with abbreviation " + updatedProgram.getStudyFieldAbbr() + " does not exist"));
                 existingProgram.setStudyField(studyField);
             } else {
                 throw new IllegalArgumentException("Program must have either study field or specialization");
             }
         }
         existingProgram.setStudyCycles(studyCycleRepository.findAllById(updatedProgram.getStudyCycleIds()));
-        existingProgram.setFaculty(facultyRepository.findById(updatedProgram.getFacultyId()).orElseThrow(NotFoundException::new));
+        existingProgram.setFaculty(facultyRepository.findById(updatedProgram.getFacultyId()).orElseThrow(
+                () -> new NotFoundException("Faculty with id " + updatedProgram.getFacultyId() + " does not exist")
+        ));
         return programRepository.saveAndFlush(existingProgram);
     }
 }
