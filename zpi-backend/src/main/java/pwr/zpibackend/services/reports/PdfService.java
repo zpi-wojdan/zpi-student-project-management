@@ -147,11 +147,6 @@ public class PdfService {
         supervisor.setSurname(thesis.getSupervisor().getSurname());
         supervisor.setMail(thesis.getSupervisor().getMail());
         supervisor.setTitle(thesis.getSupervisor().getTitle().getName());
-        Department department = thesis.getSupervisor().getDepartment();
-        if(department != null) {
-            supervisor.setDepartmentCode(department.getCode());
-            supervisor.setDepartmentName(department.getName());
-        }
         thesisGroupData.setSupervisor(supervisor);
     }
 
@@ -430,12 +425,6 @@ public class PdfService {
                 " " + thesisGroupData.getSupervisor().getName() + " " + thesisGroupData.getSupervisor().getSurname(),
                 dataFont);
         document.add(supervisor);
-
-        String departmentText = language.equals("pl") ? "Katedra" : "Department";
-        Paragraph department = new Paragraph(departmentText + ": " +
-                thesisGroupData.getSupervisor().getDepartmentCode() + " - " +
-                thesisGroupData.getSupervisor().getDepartmentName(), dataFont);
-        document.add(department);
         addSpace(document, 50);
 
         String titleText = language.equals("pl") ? "Deklaracja realizacji Zespołowego Przedsięwzięcia Inżynierskiego" :
