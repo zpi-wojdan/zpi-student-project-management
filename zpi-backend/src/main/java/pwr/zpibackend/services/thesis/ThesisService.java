@@ -106,7 +106,7 @@ public class ThesisService {
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
-        throw new NotFoundException();
+        throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
     //  brakowało metody do usuwania tematu

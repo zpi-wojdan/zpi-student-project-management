@@ -43,7 +43,7 @@ public class AuthService {
         } catch (Exception ignored) {}
 
         if (employee != null && student != null) {
-            throw new EmployeeAndStudentWithTheSameEmailException("Employee and student with the same email: " + email + " found");
+            throw new EmployeeAndStudentWithTheSameEmailException(email);
         } else if (employee != null) {
             return employee;
         } else if (student != null) {

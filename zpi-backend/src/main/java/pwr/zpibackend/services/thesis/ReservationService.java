@@ -63,7 +63,7 @@ public class ReservationService {
                 newReservation.setThesis(thesis);
             }
         } else {
-            throw new IllegalArgumentException("Thesis with id " + reservation.getThesisId() + " does not exist.");
+            throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
         }
         reservationRepository.saveAndFlush(newReservation);
         return newReservation;

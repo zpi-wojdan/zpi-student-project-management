@@ -55,16 +55,4 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = getErrorDetails(e, request);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorDetails> handleAuthenticationException(AuthenticationException e, WebRequest request) {
-        ErrorDetails errorDetails = getErrorDetails(e, request);
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException e, WebRequest request) {
-        ErrorDetails errorDetails = getErrorDetails(e, request);
-        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
-    }
 }
