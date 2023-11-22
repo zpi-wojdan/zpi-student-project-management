@@ -49,8 +49,8 @@ public class PdfService {
     private static final Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250", 12);
     private static final Font sectionFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
     private static final Color headerColor = WebColors.getRGBColor("#9A342D");
-    private static final String imageLogoPath = "src/main/resources/images/logo.png";
-
+    private static final String imageLogoPlPath = "src/main/resources/images/logoPl.png";
+    private static final String imageLogoEnPath = "src/main/resources/images/logoEn.png";
     private static final float imageSize = 200.0f;
     private static final String thesisGroupsReportName = "grupy_zpi";
     private static final String studentsWithoutThesisReportName = "studenci_bez_tematu_zpi";
@@ -402,7 +402,8 @@ public class PdfService {
 
     private void createDeclarationContent(ThesisGroupDTO thesisGroupData, String language, Document document,
                                           PdfWriter writer) throws DocumentException, IOException {
-        Image image = Image.getInstance(imageLogoPath);
+        String imagePath = language.equals("pl") ? imageLogoPlPath : imageLogoEnPath;
+        Image image = Image.getInstance(imagePath);
         image.scaleToFit(imageSize, imageSize);
         float x = document.left();
         float y = document.top() - image.getScaledHeight();
