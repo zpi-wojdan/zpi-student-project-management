@@ -93,7 +93,10 @@ function StudentTable({ students, thesis }: StudentTableProps) {
         }
 
         const newShowButtonDelete = [...showButtonDelete];
-        newShowButtonDelete[students.findIndex((stu) => stu.mail === user.mail)] = true;
+        const thisStudent = students.find((stu) => stu.mail === user.mail);
+        if (thisStudent && thesis.reservations.every((res) => !res.readyForApproval)) {
+          newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;
+        }
         setShowButtonDelete(newShowButtonDelete)
 
       } else if (user.roles && user.roles.some(role => role.name === "supervisor") && user.mail === thesis.supervisor.mail) {
