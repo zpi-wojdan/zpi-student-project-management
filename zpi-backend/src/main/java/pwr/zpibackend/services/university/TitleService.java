@@ -9,7 +9,6 @@ import pwr.zpibackend.models.university.Title;
 import pwr.zpibackend.repositories.university.TitleRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service

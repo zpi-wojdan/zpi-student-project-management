@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class ProgramServiceTest {
+public class ProgramServiceTests {
 
     @MockBean
     private ProgramRepository programRepository;
