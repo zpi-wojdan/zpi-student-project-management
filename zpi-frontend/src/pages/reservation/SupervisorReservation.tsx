@@ -162,35 +162,48 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
             <h1 className='my-3'>{t('reservation.reservation')}:</h1>
             <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
-                {reservations.map((reservation, index) => (
-                    <div key={index} className="form-group row justify-content-center">
-                        <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">
-                            {t('general.people.student')} {index + 1}:</label>
-                        <div className="col-sm-4 d-flex">
-                            <input
-                                id={`reservation-${index}`}
-                                type="text"
-                                className={`form-control ${errors[index] ? "is-invalid" : ""}`}
-                                value={reservation}
-                                onChange={(e) => handleReservationChange(index, e.target.value)}
-                                onBlur={() => handleReservationBlur(index)}
-                                placeholder={t('general.people.index')}
-                            />
-                        </div>
-                        <div className="col-sm-6">
-                            <p className={errors[index] ? "col-form-label text-danger" : "col-form-label"}>
-                                {students[index] && students[index].name !== undefined ?
-                                    students[index].name + ' ' + students[index].surname
-                                    : (errors[index] ?
-                                        (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
-                                            t('reservation.wrongIndex')
-                                        ) : ''
-                                    )}
-                            </p>
-                        </div>
-
-                    </div>
-                ))}
+            <table className="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col" style={{ width: '10%' }}></th>
+                            <th scope="col" style={{ width: '30%' }}></th>
+                            <th scope="col" style={{ width: '60%' }}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reservations.map((reservation, index) => (
+                            <tr key={index}>
+                                <td>
+                                    <label htmlFor={`reservation-${index}`} className="col-form-label">
+                                        {t('general.people.student')} {index + 1}:
+                                    </label>
+                                </td>
+                                <td>
+                                    <input
+                                        id={`reservation-${index}`}
+                                        type="text"
+                                        className={`form-control ${errors[index] ? "is-invalid" : ""}`}
+                                        value={reservation}
+                                        onChange={(e) => handleReservationChange(index, e.target.value)}
+                                        onBlur={() => handleReservationBlur(index)}
+                                        placeholder={t('general.people.index')}
+                                    />
+                                </td>
+                                <td>
+                                    <p className={errors[index] ? "col-form-label text-danger" : "col-form-label mb-0"}>
+                                        {students[index] && students[index].name !== undefined ?
+                                            students[index].name + ' ' + students[index].surname
+                                            : (errors[index] ?
+                                                (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
+                                                    t('reservation.wrongIndex')
+                                                ) : ''
+                                            )}
+                                    </p>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </form>
         </div>
     );
