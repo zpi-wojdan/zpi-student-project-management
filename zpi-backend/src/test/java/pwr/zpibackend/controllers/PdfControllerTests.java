@@ -70,8 +70,7 @@ public class PdfControllerTests {
         );
 
         thesisGroup = new ThesisGroupDTO("Temat 1", "Thesis 1", "W04N", "IST",
-                new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr",
-                        "K035", "Katedra 1"),
+                new SupervisorDTO("j.d@pwr.edu.pl", "Joe", "Damon", "dr"),
                 List.of(new StudentInReportsDTO("123456", "John", "Doe",
                                 "123456@student.pwr.edu.pl", "W04N", "IST"),
                         new StudentInReportsDTO("121212", "Adam", "Smith",
