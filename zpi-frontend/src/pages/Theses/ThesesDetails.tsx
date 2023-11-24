@@ -174,8 +174,8 @@ const ThesesDetails: React.FC = () => {
           user?.role?.name === 'student' &&
           user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
           user?.roles?.some(role => role.name === 'supervisor') &&
-          user?.mail === thesis?.supervisor.mail ||
-          user?.roles?.some(role => role.name === 'admin'))) ?
+          user?.mail === thesis?.supervisor.mail ) ||
+          user?.roles?.some(role => role.name === 'admin')) ?
           (
             <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
               if (user?.role?.name === 'student') {
