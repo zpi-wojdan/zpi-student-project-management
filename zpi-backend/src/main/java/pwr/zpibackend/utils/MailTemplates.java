@@ -11,7 +11,7 @@ import java.util.Map;
 public enum MailTemplates {
     RESERVATION_LEADER("reservationByLeader", "Nowa rezerwacja", "New reservation"),
     RESERVATION_STUDENT("reservationByStudent", "Nowa rezerwacja", "New reservation"),
-    RESERVATION_SUPERVISOR("reservationBySupervisor", "Nowa rezerwacja", "New reservation"),
+    RESERVATION_SUPERVISOR("reservationBySupervisorOrAdmin", "Nowa rezerwacja", "New reservation"),
     RESERVATION_SENT_TO_SUPERVISOR("reservationSentToSupervisor", "Grupa zapisana na temat pracy dyplomowej", "Group assigned to thesis"),
     RESERVATION_CANCELED("reservationCanceled", "Rezerwacja anulowana", "Reservation canceled"),
     THESIS_ADDED("thesisAdded", "Nowy temat pracy dyplomowej", "New thesis added");
