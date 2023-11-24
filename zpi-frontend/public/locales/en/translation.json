@@ -304,7 +304,7 @@
     "dateInPast": "Deadline cannot be in the past!"
   },
   "home":{
-    "welcome": "Welcome to the ZPI Helper website!",
+    "welcome": "Welcome to ZPI Helper website!",
     "schedule": "Schedule"
   }
 }
