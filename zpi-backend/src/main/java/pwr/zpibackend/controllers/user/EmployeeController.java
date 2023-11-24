@@ -33,13 +33,6 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
 
-    @GetMapping("/match/{prefix}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Employee>> getEmployeesByPrefix(@PathVariable String prefix) {
-        List<Employee> matchingEmployees = employeeService.getEmployeesByPrefix(prefix.toLowerCase());
-        return new ResponseEntity<>(matchingEmployees, HttpStatus.OK);
-    }
-
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) throws NotFoundException {

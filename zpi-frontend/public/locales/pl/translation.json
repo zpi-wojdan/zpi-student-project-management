@@ -201,14 +201,6 @@
     "deleteError": "Rezerwacja nie może zostać anulowana!",
     "deleteConfirmation": "Czy na pewno chcesz anulować tę rezerwację?"
   },
-  "status": {
-    "draft": "Wersja robocza",
-    "pending": "Oczekuje na zatwierdzenie",
-    "rejected": "Odrzucony",
-    "approved": "Zatwierdzony",
-    "assigned": "Przydzielony",
-    "closed": "Zamknięty"
-  },
   "thesis": {
     "deleteSuccessful": "Temat został usunięty",
     "deleteError": "Temat nie może zostać usunięty!",

@@ -46,6 +46,6 @@ export type ThesisDTO = {
   numPeople: number;
   supervisorId: number; 
   programIds: number[];
-  studyCycleId: number | undefined;
+  studyCycleId: number | null;
   statusId: number;
 }

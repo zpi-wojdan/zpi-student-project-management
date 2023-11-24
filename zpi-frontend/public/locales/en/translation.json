@@ -201,14 +201,6 @@
     "deleteError": "Reservation cannot be deleted",
     "deleteConfirmation": "Are you sure you want to delete this reservation?"
   },
-  "status": {
-    "draft": "Draft",
-    "pending": "Pending approval",
-    "rejected": "Rejected",
-    "approved": "Approved",
-    "assigned": "Assigned",
-    "closed": "Closed"
-  },
   "thesis": {
     "supervisorNotExists": "Supervisor does not exist!",
     "errorOfLoadingSupervisorData": "Error of loading supervisor data!",

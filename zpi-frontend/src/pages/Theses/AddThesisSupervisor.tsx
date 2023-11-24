@@ -68,6 +68,7 @@ function AddThesisPageSupervisor() {
       if (!formData.supervisorId || formData.supervisorId === -1){
         const cookieId = u?.id ?? -1;
         setFormData({ ...formData, supervisorId: cookieId });
+      }
     }
   }, [])
 
@@ -124,7 +125,7 @@ function AddThesisPageSupervisor() {
           numPeople: thesis.numPeople,
           supervisorId: thesis.supervisor.id,
           programIds: thesis.programs.map((p) => p.id),
-          studyCycleId: thesis.studyCycle?.id,
+          studyCycleId: thesis.studyCycle?.id ?? null,
           statusId: thesis.status.id,
         };
       });
@@ -132,7 +133,7 @@ function AddThesisPageSupervisor() {
     }
   }, [thesis]);
 
-  const validateForm = () => {
+  const validateForm = (): [boolean, ThesisDTO | null] => {
     const newErrors: Record<string, string> =  {};
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
@@ -141,17 +142,30 @@ function AddThesisPageSupervisor() {
     const errorBigNumberText = t('thesis.numPeopleTooBig');
     const errorSmallNumberText = t('thesis.numPeopleTooSmall');
 
-    var id: number | undefined = -1;
-    if (isDraft){
-      id = statuses.find(s => s.name === 'Draft')?.id;
+    let supervisorIndex: number = formData.supervisorId;
+    let pplCount = formData.numPeople;
+    let cycleId: number | null;
+
+    if (formData.studyCycleId && formData.studyCycleId !== -1){
+      cycleId = formData.studyCycleId;
     }
     else{
-      id = statuses.find(s => s.name === 'Pending approval')?.id;
+      cycleId = null;
     }
-    if (id){
-      setFormData({ ...formData, statusId: id })
+
+    let statusIndex: number | undefined = isDraft
+      ? statuses.find(s => s.name === 'Draft')?.id
+      : statuses.find(s => s.name === 'Pending approval')?.id;
+  
+    if (statusIndex !== undefined) {
+      setFormData({ ...formData, statusId: statusIndex });
     }
-    const name = statuses.find((s) => s.id === id);
+    else{
+      statusIndex = -1
+    }
+    
+    const filteredPrograms = formData.programIds.filter((num) => num !== -1);
+    const statusName = statuses.find((s) => s.id === statusIndex);
 
     if (!formData.namePL){
       newErrors.namePL = errorRequireText
@@ -165,7 +179,7 @@ function AddThesisPageSupervisor() {
       isValid = false;
     }
 
-    if (!name || name.name !== 'Draft'){
+    if (!statusName || statusName.name !== 'Draft'){
       if (!formData.descriptionPL || formData.descriptionPL === ''){
         newErrors.descriptionPL = errorRequireText
         newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
@@ -196,7 +210,7 @@ function AddThesisPageSupervisor() {
         isValid = false;
       }
       
-      if (!formData.programIds || formData.programIds.includes(-1)){
+      if (filteredPrograms.length === 0){
         newErrors.programIds = errorRequireText
         newErrorsKeys.programIds = "general.management.fieldIsRequired";
         isValid = false;
@@ -208,45 +222,68 @@ function AddThesisPageSupervisor() {
         isValid = false;
       }
   
-      if (!formData.statusId || formData.statusId === -1){
+      if (!statusIndex || statusIndex === -1){
         newErrors.status = errorRequireText
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
     }
     else{
-      if (!formData.statusId || formData.statusId === -1){
+      if (!statusIndex || statusIndex === -1){
         newErrors.status = errorRequireText
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
       else{
         if (!formData.supervisorId || formData.supervisorId === -1){
-            if (user === null){
-              const cookieUser = JSON.parse(Cookies.get("user") || "{}");
-              setFormData({ ...formData, supervisorId: cookieUser?.id })
-              setUser(cookieUser);
-            }
-            else{
-              setFormData({ ...formData, supervisorId: user?.id })
-            }
+          if (user === null){
+            const cookieUser = JSON.parse(Cookies.get("user") || "{}");
+            setFormData({ ...formData, supervisorId: cookieUser?.id })
+            setUser(cookieUser);
+            supervisorIndex = cookieUser?.id;
+          }
+          else{
+            setFormData({ ...formData, supervisorId: user?.id })
+            supervisorIndex = user?.id;
+          }
         }
+        
+        setFormData({ ...formData, programIds: filteredPrograms })
         if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3){
           setFormData({ ...formData, numPeople: 4 })
+          pplCount = 4;
         }
       }
     }
 
     setErrors(newErrors);
     setErrorsKeys(newErrorsKeys);
-    return isValid;
+    
+    if (!isValid) {
+      return [isValid, null];
+    }
+
+    let dto: ThesisDTO = {
+      ...formData,
+      supervisorId: supervisorIndex,
+      programIds: filteredPrograms,
+      numPeople: pplCount,
+      statusId: statusIndex ? statusIndex : formData.statusId,
+      studyCycleId: cycleId
+    }
+    return [isValid, dto];
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (validateForm()){
+
+    const [isValid, dto] = validateForm();
+    console.log(isValid)
+    console.log(dto)
+
+    if (isValid){
       if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
+        api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
         .then(() => {
           navigate("/my");
           toast.success(t("thesis.updateSuccessful"));
@@ -262,7 +299,7 @@ function AddThesisPageSupervisor() {
         });
       }
       else{
-        api.post('http://localhost:8080/thesis', formData)
+        api.post('http://localhost:8080/thesis', dto)
         .then(() => {
           navigate("/my");
           toast.success(t("thesis.addSuccessful"));
@@ -313,12 +350,15 @@ function AddThesisPageSupervisor() {
     }
   };
 
-  const handleCycleChange = (selectedCycleId: number) => {
-    const updatedProgramSuggestions = programs
+  const handleCycleChange = (selectedCycleId: number | null) => {
+    if (selectedCycleId !== null){
+      const updatedProgramSuggestions = programs
                   .filter((p) => p.studyCycles
                   .map((c)=> c.id === selectedCycleId));
-    setProgramSuggestions(updatedProgramSuggestions);
-    setFormData({ ...formData, studyCycleId: selectedCycleId});
+      setProgramSuggestions(updatedProgramSuggestions);
+      setFormData({ ...formData, studyCycleId: selectedCycleId});
+      console.log(formData.programIds)
+    }
   }
 
   const handleProgramChange = (index: number, selectedProgramId: number) => {
@@ -425,7 +465,6 @@ function AddThesisPageSupervisor() {
 
       <div className="mb-3">
         <label className="bold" htmlFor="numPeople">
-        <label className="bold" htmlFor="numPeople">
           {t('thesis.peopleLimit')}:
         </label>
         <input
@@ -438,7 +477,6 @@ function AddThesisPageSupervisor() {
           min={3}
           max={5}
         />
-        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
         {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
       </div>
 
@@ -468,9 +506,9 @@ function AddThesisPageSupervisor() {
         <select
           id={'studyCycleSel'}
           name={`studyCycle`}
-          value={formData.studyCycleId}
+          value={formData.studyCycleId || -1}
           onChange={(e) => {
-            const selectedCycleId = parseInt(e.target.value, 10);
+            const selectedCycleId = e.target.value === '-1' ? null : parseInt(e.target.value, 10);
             handleCycleChange(selectedCycleId);
           }}
           className='form-control'
@@ -516,7 +554,7 @@ function AddThesisPageSupervisor() {
                       </option>
                     ))}
                 </select>
-                {errors.program && <div className="text-danger">{errors.program}</div>}
+                {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
               </div>
               {formData.programIds.length > 1 && (
                 <button
@@ -540,28 +578,6 @@ function AddThesisPageSupervisor() {
             </li>
         </ul>
       </div>
-
-      {/* <div className='mb-3'>
-        <label className="bold" htmlFor="status">
-          {t('general.university.status')}:
-        </label>
-        <select
-          id="status"
-          name="status"
-          value={formData.statusId}
-          className="form-control"
-          onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
-        >
-          <option value={-1}>{t('general.management.choose')}</option>
-          {statuses.map((status) => (
-            <option key={status.id} value={status.id}>
-              {statusLabels[status.name] || status.name}
-            </option>
-          ))}
-        </select>
-        {errors.status && <div className="text-danger">{errors.status}</div>}
-      </div> */}
-
       </form>
     </div>
   )

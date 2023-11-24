@@ -112,7 +112,6 @@ export default function App(props: IAppProps) {
                   <Route path="/file/student" element={<UploadStudentFilePage />} />
                   <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
                 </Route>
-=========
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:id' element={<StudentDetails />} />
@@ -124,8 +123,6 @@ export default function App(props: IAppProps) {
                 <Route path='employees/edit/:id' element={<EmployeeForm/>} />
                 <Route path='theses' element={<ThesisList />} />
                 <Route path='theses/:id' element={<ThesisDetails />} />
-                <Route path='theses/add' element={<AddThesisPage/>} />
-                <Route path='theses/edit/:id' element={<UpdateThesisPage/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
@@ -151,8 +148,6 @@ export default function App(props: IAppProps) {
                 <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
               </Route>
->>>>>>>>> Temporary merge branch 2
-
               <Route path="*" element={<Missing />} />
         </Routes>
           </Navigation>

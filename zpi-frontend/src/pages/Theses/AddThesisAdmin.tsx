@@ -37,7 +37,6 @@ function AddThesisPageAdmin() {
     descriptionPL: '',
     descriptionEN: '',
     numPeople: 4,
-    numPeople: 4,
     supervisorId: -1,
     programIds: [-1],
     studyCycleId: -1,
@@ -55,6 +54,7 @@ function AddThesisPageAdmin() {
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
   const [user, setUser] = useState<Employee | null>(null);
 
+  
   useEffect(() => {
     const newErrors: Record<string, string> = {};
     Object.keys(errorKeys).forEach((key) => {
@@ -145,10 +145,9 @@ function AddThesisPageAdmin() {
           descriptionPL: thesis.descriptionPL,
           descriptionEN: thesis.descriptionEN,
           numPeople: thesis.numPeople,
-          numPeople: thesis.numPeople,
           supervisorId: thesis.supervisor.id,
           programIds: thesis.programs.map((p) => p.id),
-          studyCycleId: thesis.studyCycle?.id,
+          studyCycleId: thesis.studyCycle?.id ?? null,
           statusId: thesis.status.id,
         };
       });
@@ -156,7 +155,7 @@ function AddThesisPageAdmin() {
     }
   }, [thesis]);
 
-  const validateForm = () => {
+  const validateForm = (): [boolean, ThesisDTO | null] => {
     const newErrors: Record<string, string> =  {};
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
@@ -168,6 +167,20 @@ function AddThesisPageAdmin() {
     const regularEmployeeAsSupervisorText = t('employee.cantBecomeASupervisor');
 
     const mailRegex = /^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$/;
+
+    let supervisorIndex: number = formData.supervisorId;
+    let pplCount = formData.numPeople;
+    let cycleId: number | null;
+
+    if (formData.studyCycleId && formData.studyCycleId !== -1){
+      cycleId = formData.studyCycleId;
+    }
+    else{
+      cycleId = null;
+    }
+
+    const filteredPrograms = formData.programIds.filter((num) => num !== -1);
+    const statusName = statuses.find((s) => s.id === formData.statusId);
 
     if (!formData.namePL || formData.namePL === ''){
       newErrors.namePL = errorRequireText
@@ -181,8 +194,7 @@ function AddThesisPageAdmin() {
       isValid = false;
     }
 
-    const name = statuses.find((s) => s.id === formData.statusId);
-    if (!name || name.name !== 'Draft'){
+    if (!statusName || statusName.name !== 'Draft'){
       if (!formData.descriptionPL || formData.namePL === ''){
         newErrors.descriptionPL = errorRequireText
         newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
@@ -228,7 +240,7 @@ function AddThesisPageAdmin() {
         isValid = false;
       }
       
-      if (!formData.programIds || formData.programIds.includes(-1)){
+      if (filteredPrograms.length === 0){
         newErrors.programIds = errorRequireText
         newErrorsKeys.programIds = "general.management.fieldIsRequired";
         isValid = false;
@@ -259,29 +271,54 @@ function AddThesisPageAdmin() {
             setFormData({ ...formData, supervisorId: cookieUser?.id })
             setUser(cookieUser);
             setMailAbbrev(cookieUser?.mail);
+            supervisorIndex = cookieUser?.id;
           }
           else{
             setFormData({ ...formData, supervisorId: user?.id })
             setMailAbbrev(user?.name);
+            supervisorIndex = user?.id;
           }
         }
+        else{
+          supervisorIndex = formData.supervisorId;
+        }
+
+        setFormData({ ...formData, programIds: filteredPrograms })
         if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3){
           setFormData({ ...formData, numPeople: 4 })
+          pplCount = 4;
         }
       }
     }
 
     setErrors(newErrors);
     setErrorsKeys(newErrorsKeys);
-    return isValid;
+
+    if (!isValid) {
+      return [isValid, null];
+    }
+
+    let dto: ThesisDTO = {
+      ...formData,
+      supervisorId: supervisorIndex,
+      programIds: filteredPrograms,
+      numPeople: pplCount,
+      studyCycleId: cycleId
+    }
+
+    return [isValid, dto];
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (validateForm()){
+    const [isValid, dto] = validateForm();
+    console.log(isValid)
+    console.log(dto)
+
+    if (isValid){
       if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
+        api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
         .then(() => {
           navigate("/theses");
           toast.success(t("thesis.updateSuccessful"));
@@ -297,7 +334,7 @@ function AddThesisPageAdmin() {
         });
       }
       else{
-        api.post('http://localhost:8080/thesis', formData)
+        api.post('http://localhost:8080/thesis', dto)
         .then(() => {
           navigate("/theses");
           toast.success(t("thesis.addSuccessful"));
@@ -369,12 +406,14 @@ function AddThesisPageAdmin() {
     }
   };
 
-  const handleCycleChange = (selectedCycleId: number) => {
-    const updatedProgramSuggestions = programs
+  const handleCycleChange = (selectedCycleId: number | null) => {
+    if (selectedCycleId !== null){
+      const updatedProgramSuggestions = programs
                   .filter((p) => p.studyCycles
                   .map((c)=> c.id === selectedCycleId));
-    setProgramSuggestions(updatedProgramSuggestions);
-    setFormData({ ...formData, studyCycleId: selectedCycleId});
+      setProgramSuggestions(updatedProgramSuggestions);
+      setFormData({ ...formData, studyCycleId: selectedCycleId});
+    }
   }
 
   const handleProgramChange = (index: number, selectedProgramId: number) => {
@@ -489,7 +528,6 @@ function AddThesisPageAdmin() {
 
       <div className="mb-3">
         <label className="bold" htmlFor="numPeople">
-        <label className="bold" htmlFor="numPeople">
           {t('thesis.peopleLimit')}:
         </label>
         <input
@@ -502,7 +540,6 @@ function AddThesisPageAdmin() {
           min={3}
           max={5}
         />
-        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
         {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
       </div>
 
@@ -544,9 +581,9 @@ function AddThesisPageAdmin() {
         <select
           id={'studyCycleSel'}
           name={`studyCycle`}
-          value={formData.studyCycleId}
+          value={formData.studyCycleId || -1}
           onChange={(e) => {
-            const selectedCycleId = parseInt(e.target.value, 10);
+            const selectedCycleId = e.target.value === '' ? null : parseInt(e.target.value, 10);
             handleCycleChange(selectedCycleId);
           }}
           className='form-control'

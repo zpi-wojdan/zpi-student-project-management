@@ -62,9 +62,11 @@ public class ThesisService {
             Program program = programRepository.findById(programId).orElseThrow(NotFoundException::new);
             newThesis.getPrograms().add(program);
         });
-        newThesis.setStudyCycle(studyCycleRepository.findById(
-                thesis.getStudyCycleId()).orElseThrow(NotFoundException::new)
-        );
+
+        newThesis.setStudyCycle(thesis.getStudyCycleId().map(index ->
+                studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
+        ).orElse(null));
+
         newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
         newThesis.setOccupied(0);
 
@@ -81,8 +83,6 @@ public class ThesisService {
             updated.setDescriptionEN(thesis.getDescriptionEN());
             updated.setNumPeople(thesis.getNumPeople());
 
-            updated.getPrograms().clear();
-
             updated.setSupervisor(employeeRepository.findById(
                     thesis.getSupervisorId()).orElseThrow(NotFoundException::new)
             );
@@ -92,9 +92,11 @@ public class ThesisService {
                 programList.add(program);
             });
             updated.setPrograms(programList);
-            updated.setStudyCycle(studyCycleRepository.findById(
-                    thesis.getStudyCycleId()).orElseThrow(NotFoundException::new)
-            );
+
+            updated.setStudyCycle(thesis.getStudyCycleId().map(index ->
+                    studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
+            ).orElse(null));
+
             updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
             thesisRepository.saveAndFlush(updated);
             return updated;
