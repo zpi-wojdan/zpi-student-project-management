@@ -311,10 +311,7 @@ function AddThesisPageAdmin() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const [isValid, dto] = validateForm();
-    console.log(isValid)
-    console.log(dto)
 
     if (isValid){
       if (thesis){

@@ -276,10 +276,7 @@ function AddThesisPageSupervisor() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const [isValid, dto] = validateForm();
-    console.log(isValid)
-    console.log(dto)
 
     if (isValid){
       if (thesis){
@@ -357,7 +354,6 @@ function AddThesisPageSupervisor() {
                   .map((c)=> c.id === selectedCycleId));
       setProgramSuggestions(updatedProgramSuggestions);
       setFormData({ ...formData, studyCycleId: selectedCycleId});
-      console.log(formData.programIds)
     }
   }
 
