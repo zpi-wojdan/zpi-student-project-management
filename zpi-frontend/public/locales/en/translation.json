@@ -28,6 +28,8 @@
       "accept": "Accept",
       "search": "Search",
       "noSearchData": "No search results",
+      "noData": "No data",
+      "load": "Loading...",
       "filtration": "Filtering",
       "filter": "Filter",
       "filterClear": "Clear filters",

@@ -7,15 +7,18 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import SearchBar from '../../../components/SeatchBar';
 
 const StudyFieldList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
-  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
   const [studyFields, setStudyFields] = useState<StudyField[]>([]);
   const [refreshList, setRefreshList] = useState(false);
+  const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
+  const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     api.get('http://localhost:8080/studyfield')
@@ -24,15 +27,7 @@ const StudyFieldList: React.FC = () => {
           return a.abbreviation.localeCompare(b.abbreviation);
         });
         setStudyFields(sortedStudyFields);
-        const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
-          if (itemPerPage === 'All') {
-            return true;
-          } else {
-            const perPageValue = parseInt(itemPerPage, 10);
-            return perPageValue < response.data.length;
-          }
-        });
-        setITEMS_PER_PAGE(filteredItemsPerPage);
+        setLoaded(true);
       })
       .catch((error) => {
         console.error(error);
@@ -43,14 +38,45 @@ const StudyFieldList: React.FC = () => {
       });
   }, [refreshList]);
 
+  // Wyszukiwanie
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [afterSearchStudyFields, setAfterSearchFields] = useState<StudyField[]>(studyFields);
+
+  useEffect(() => {
+    const searchText = searchTerm.toLowerCase();
+    const filteredList = studyFields.filter((field) => {
+      return (
+        field.abbreviation.toLowerCase().includes(searchText) ||
+        field.name.toLowerCase().includes(searchText)
+      );
+    });
+    setAfterSearchFields(() => filteredList);
+
+    // Aktualizacja ustawień paginacji
+    const filteredItemsPerPage = ITEMS_PER_PAGE.filter((itemPerPage) => {
+      if (itemPerPage === 'All') {
+        return true;
+      } else {
+        const perPageValue = parseInt(itemPerPage, 10);
+        return perPageValue < filteredList.length;
+      }
+    });
+    setCurrentITEMS_PER_PAGE(() => filteredItemsPerPage);
+
+    handlePageChange(1);
+    setItemsPerPage((filteredItemsPerPage.includes(chosenItemsPerPage)) ? chosenItemsPerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
+
+  }, [searchTerm, studyFields]);
+
+  // Paginacja
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState(currentPage);
-  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE[0]);
-  //(ITEMS_PER_PAGE.length>1) ? ITEMS_PER_PAGE[1] : ITEMS_PER_PAGE[0]
-  const indexOfLastItem = itemsPerPage === 'All' ? studyFields.length : currentPage * parseInt(itemsPerPage, 10);
+  const [itemsPerPage, setItemsPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
+  const [chosenItemsPerPage, setChosenItemsPerPage] = useState(itemsPerPage);
+  const indexOfLastItem = itemsPerPage === 'All' ? afterSearchStudyFields.length : currentPage * parseInt(itemsPerPage, 10);
   const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-  const currentStudyFields = studyFields.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(studyFields.length / parseInt(itemsPerPage, 10));
+  const currentStudyFields = afterSearchStudyFields.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(afterSearchStudyFields.length / parseInt(itemsPerPage, 10));
 
   const handlePageChange = (newPage: number) => {
     if (!newPage || newPage < 1) {
@@ -100,164 +126,188 @@ const StudyFieldList: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='d-flex justify-content-between  align-items-center'>
-        <div >
-          <button className="custom-button" onClick={() => { navigate('/fields/add') }}>
-            {t('field.add')}
-          </button>
-        </div>
-        {ITEMS_PER_PAGE.length > 1 && (
-          <div className="d-flex justify-content-between">
-            <div className="d-flex align-items-center">
-              <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
-              <select
-                value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(e.target.value);
-                  handlePageChange(1);
-                }}
-              >
-                {ITEMS_PER_PAGE.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div style={{ marginLeft: '30px' }}>
-              {itemsPerPage !== 'All' && (
-                <div className="pagination">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className='custom-button'
-                  >
-                    &lt;
-                  </button>
-
-                  <input
-                    type="number"
-                    value={inputValue}
-                    onChange={(e) => {
-                      const newPage = parseInt(e.target.value, 10);
-                      setInputValue(newPage);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handlePageChange(inputValue);
-                      }
-                    }}
-                    onBlur={() => {
-                      handlePageChange(inputValue);
-                    }}
-                    className='text'
-                  />
-
-                  <span className='text'> z {totalPages}</span>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className='custom-button'
-                  >
-                    &gt;
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+      <div >
+        <button className="custom-button" onClick={() => { navigate('/fields/add') }}>
+          {t('field.add')}
+        </button>
       </div>
-      <table className="custom-table">
-        <thead>
-          <tr>
-            <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-            <th style={{ width: '15%', textAlign: 'center' }}>{t('general.university.abbreviation')}</th>
-            <th style={{ width: '62%' }}>{t('general.university.name')}</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
-            <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentStudyFields.map((studyField, index) => (
-            <React.Fragment key={studyField.abbreviation}>
-              <tr>
-                <td className="centered">{indexOfFirstItem + index + 1}</td>
-                <td className="centered">{studyField.abbreviation}</td>
-                <td>{studyField.name}</td>
-                <td>
-                  <button
-                    className="custom-button coverall"
-                    onClick={() => {
-                      navigate(`/fields/edit/${studyField.abbreviation}`, { state: { studyField } });
+      {!loaded ? (
+        <div className='info-no-data'>
+          <p>{t('general.management.load')}</p>
+        </div>
+      ) : (<React.Fragment>
+        {studyFields.length === 0 ? (
+          <div className='info-no-data'>
+            <p>{t('general.management.noData')}</p>
+          </div>
+        ) : (<React.Fragment>
+          <div className='d-flex justify-content-between  align-items-center'>
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder={t('general.management.search')}
+            />
+            {currentITEMS_PER_PAGE.length > 1 && (
+              <div className="d-flex justify-content-between">
+                <div className="d-flex align-items-center">
+                  <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(e.target.value);
+                      setChosenItemsPerPage(e.target.value);
+                      handlePageChange(1);
                     }}
                   >
-                    <i className="bi bi-arrow-right"></i>
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="custom-button coverall"
-                    onClick={() => handleDeleteClick(studyField.id)}
-                  >
-                    <i className="bi bi-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              {studyFieldToDelete === studyField.id && showDeleteConfirmation && (
+                    {currentITEMS_PER_PAGE.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ marginLeft: '30px' }}>
+                  {itemsPerPage !== 'All' && (
+                    <div className="pagination">
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className='custom-button'
+                      >
+                        &lt;
+                      </button>
+
+                      <input
+                        type="number"
+                        value={inputValue}
+                        onChange={(e) => {
+                          const newPage = parseInt(e.target.value, 10);
+                          setInputValue(newPage);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handlePageChange(inputValue);
+                          }
+                        }}
+                        onBlur={() => {
+                          handlePageChange(inputValue);
+                        }}
+                        className='text'
+                      />
+
+                      <span className='text'> z {totalPages}</span>
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className='custom-button'
+                      >
+                        &gt;
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          {afterSearchStudyFields.length === 0 ? (
+            <div className='info-no-data'>
+              <p>{t('general.management.noSearchData')}</p>
+            </div>
+          ) : (
+            <table className="custom-table">
+              <thead>
                 <tr>
-                  <td colSpan={5}>
-                    <DeleteConfirmation
-                      isOpen={showDeleteConfirmation}
-                      onClose={handleCancelDelete}
-                      onConfirm={handleConfirmDelete}
-                      onCancel={handleCancelDelete}
-                      questionText={t('field.deleteConfirmation')}
-                    />
-                  </td>
+                  <th style={{ width: '3%', textAlign: 'center' }}>#</th>
+                  <th style={{ width: '15%', textAlign: 'center' }}>{t('general.university.abbreviation')}</th>
+                  <th style={{ width: '62%' }}>{t('general.university.name')}</th>
+                  <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
+                  <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
                 </tr>
-              )}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
-      {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
-        <div className="pagination">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className='custom-button'
-          >
-            &lt;
-          </button>
+              </thead>
+              <tbody>
+                {currentStudyFields.map((studyField, index) => (
+                  <React.Fragment key={studyField.abbreviation}>
+                    <tr>
+                      <td className="centered">{indexOfFirstItem + index + 1}</td>
+                      <td className="centered">{studyField.abbreviation}</td>
+                      <td>{studyField.name}</td>
+                      <td>
+                        <button
+                          className="custom-button coverall"
+                          onClick={() => {
+                            navigate(`/fields/edit/${studyField.abbreviation}`, { state: { studyField } });
+                          }}
+                        >
+                          <i className="bi bi-arrow-right"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="custom-button coverall"
+                          onClick={() => handleDeleteClick(studyField.id)}
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    {studyFieldToDelete === studyField.id && showDeleteConfirmation && (
+                      <tr>
+                        <td colSpan={5}>
+                          <DeleteConfirmation
+                            isOpen={showDeleteConfirmation}
+                            onClose={handleCancelDelete}
+                            onConfirm={handleConfirmDelete}
+                            onCancel={handleCancelDelete}
+                            questionText={t('field.deleteConfirmation')}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='custom-button'
+              >
+                &lt;
+              </button>
 
-          <input
-            type="number"
-            value={inputValue}
-            onChange={(e) => {
-              const newPage = parseInt(e.target.value, 10);
-              setInputValue(newPage);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handlePageChange(inputValue);
-              }
-            }}
-            onBlur={() => {
-              handlePageChange(inputValue);
-            }}
-            className='text'
-          />
+              <input
+                type="number"
+                value={inputValue}
+                onChange={(e) => {
+                  const newPage = parseInt(e.target.value, 10);
+                  setInputValue(newPage);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePageChange(inputValue);
+                  }
+                }}
+                onBlur={() => {
+                  handlePageChange(inputValue);
+                }}
+                className='text'
+              />
 
-          <span className='text'> z {totalPages}</span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className='custom-button'
-          >
-            &gt;
-          </button>
-        </div>
-      )}
+              <span className='text'> z {totalPages}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='custom-button'
+              >
+                &gt;
+              </button>
+            </div>
+          )}
+        </React.Fragment>)}
+      </React.Fragment>)}
     </div>
   );
 };

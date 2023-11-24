@@ -28,6 +28,8 @@
       "accept": "Akceptuj",
       "search": "Wyszukaj",
       "noSearchData": "Brak wyników wyszukiwania",
+      "noData": "Brak danych",
+      "load": "Ładowanie...",
       "filtration": "Filtrowanie",
       "filter": "Filtruj",
       "filterClear": "Wyczyść filtry",
