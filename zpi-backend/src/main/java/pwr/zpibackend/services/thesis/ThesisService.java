@@ -21,6 +21,7 @@ import pwr.zpibackend.repositories.user.StudentRepository;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +39,17 @@ public class ThesisService {
 
     public List<Thesis> getAllTheses() {
         return thesisRepository.findAll();
+    }
+
+    public List<Thesis> getAllPublicTheses() {
+        List<Thesis> theses = new ArrayList<>();
+
+        List<String> statusNames = Arrays.asList("Approved", "Assigned", "Closed");
+        for (String statusName : statusNames) {
+            Optional<Status> status = statusRepository.findByName(statusName);
+            status.ifPresent(value -> theses.addAll(thesisRepository.findAllByStatusId(value.getId())));
+        }
+        return theses;
     }
 
     public Thesis getThesis(Long id) {
@@ -152,17 +164,6 @@ public class ThesisService {
     //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
     public List<Thesis> getAllThesesByStatusId(Long id) {
         return thesisRepository.findAllByStatusId(id);
-    }
-
-    //  np na zwrócenie wszystkich tematów, które nie są draftami
-    public List<Thesis> getAllThesesExcludingStatusId(Long id){
-        Optional<Status> excludedStatus = statusRepository.findById(id);
-        if (excludedStatus.isEmpty()) {
-            throw new NotFoundException("Status with id " + id + " does not exist");
-        }
-        return thesisRepository.findAll().stream()
-                .filter(thesis -> !id.equals(thesis.getStatus().getId()))
-                .collect(Collectors.toList());
     }
 
     //  np na zwrócenie wszystkich draftów danego pracownika
