@@ -137,6 +137,8 @@ function ReservationPage({ admin }: ReservationProps) {
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
                     confirmedByLeader: true,
+                    confirmedByStudent: admin,
+                    confirmedBySupervisor: admin,
                 };
                 console.log(JSON.stringify(responseBody));
 
