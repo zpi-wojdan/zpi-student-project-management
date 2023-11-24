@@ -20,7 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class StudyCycleServiceTest {
+public class StudyCycleServiceTests {
 
     @MockBean
     private StudyCycleRepository studyCycleRepository;

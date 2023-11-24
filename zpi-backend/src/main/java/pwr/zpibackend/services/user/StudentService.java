@@ -37,13 +37,13 @@ public class StudentService {
     @Transactional(readOnly = true)
     public Student getStudent(Long id) {
         return studentRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Student with id " + id + " does not exist"));
     }
 
     @Transactional(readOnly = true)
     public Student getStudent(String mail) {
         return studentRepository.findByMail(mail)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Student with mail " + mail + " does not exist"));
     }
 
     public boolean exists(String email) {
@@ -52,7 +52,7 @@ public class StudentService {
 
     public Student addStudent(StudentDTO student) {
         if (studentRepository.existsByIndex(student.getIndex())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Student with index " + student.getIndex() + " already exists");
         }
 
         Student newStudent = new Student();
@@ -73,7 +73,7 @@ public class StudentService {
     public Student updateStudent(Long id, StudentDTO updatedStudent) {
         if (studentRepository.existsByIndex(updatedStudent.getIndex())) {
             if (!(Objects.equals(studentRepository.findByIndex(updatedStudent.getIndex()).get().getId(), id)))
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Student with index " + updatedStudent.getIndex() + " already exists");
         }
         Student student = studentRepository.findById(id).orElseThrow(NotFoundException::new);
 
@@ -109,7 +109,7 @@ public class StudentService {
             studentRepository.deleteById(id);
             return deletedStudent;
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("Student with id " + id + " does not exist");
         }
     }
 
@@ -118,8 +118,12 @@ public class StudentService {
         for (int i = 0; i < studentDTO.getProgramsCycles().size(); i++) {
             StudentProgramCycleDTO spcDTO = studentDTO.getProgramsCycles().get(i);
 
-            Program program = programRepository.findById(spcDTO.getProgramId()).orElseThrow(NotFoundException::new);
-            StudyCycle cycle = studyCycleRepository.findById(spcDTO.getCycleId()).orElseThrow(NotFoundException::new);
+            Program program = programRepository.findById(spcDTO.getProgramId()).orElseThrow(
+                    () -> new NotFoundException("Program with id " + spcDTO.getProgramId() + " does not exist")
+            );
+            StudyCycle cycle = studyCycleRepository.findById(spcDTO.getCycleId()).orElseThrow(
+                    () -> new NotFoundException("Study cycle with id " + spcDTO.getCycleId() + " does not exist")
+            );
 
             StudentProgramCycle spc = new StudentProgramCycle();
             spc.setId(new StudentProgramCycleId(newStudent.getId(), program.getId(), cycle.getId()));

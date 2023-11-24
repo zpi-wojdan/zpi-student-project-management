@@ -22,7 +22,7 @@ public class StudyCycleService {
 
     public StudyCycle getStudyCycleById(Long id) {
         return studyCycleRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("StudyCycle with id " + id + " does not exist"));
     }
 
     public StudyCycle saveStudyCycle(StudyCycleDTO studyCycle) {
@@ -37,7 +37,7 @@ public class StudyCycleService {
 
     public StudyCycle deleteStudyCycle(Long id) {
         StudyCycle studyCycle = studyCycleRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("StudyCycle with id " + id + " does not exist"));
         studyCycleRepository.delete(studyCycle);
         return studyCycle;
     }
@@ -49,7 +49,7 @@ public class StudyCycleService {
             }
         }
         StudyCycle existingStudyCycle = studyCycleRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("StudyCycle with id " + id + " does not exist"));
         existingStudyCycle.setName(updatedStudyCycle.getName());
         return studyCycleRepository.save(existingStudyCycle);
     }

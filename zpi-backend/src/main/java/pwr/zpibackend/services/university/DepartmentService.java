@@ -30,7 +30,7 @@ public class DepartmentService {
 
     public Department addDepartment(DepartmentDTO department) {
         if (departmentRepository.existsByCode(department.getCode())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Department with code " + department.getCode() + " already exists");
         }
         System.out.println(department.getFacultyAbbreviation());
         Department newDepartment = new Department();
@@ -42,7 +42,7 @@ public class DepartmentService {
 
     public Department deleteDepartment(Long id) {
         Department department = departmentRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Department with id " + id + " does not exist"));
         departmentRepository.delete(department);
         return department;
     }
@@ -50,11 +50,11 @@ public class DepartmentService {
     public Department updateDepartment(Long id, DepartmentDTO updatedDepartment) {
         if (departmentRepository.existsByCode(updatedDepartment.getCode())) {
             if (!departmentRepository.findByCode(updatedDepartment.getCode()).get().getId().equals(id)) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Department with code " + updatedDepartment.getCode() + " already exists");
             }
         }
         Department existingDepartment = departmentRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Department with id " + id + " does not exist"));
         existingDepartment.setCode(updatedDepartment.getCode());
         existingDepartment.setName(updatedDepartment.getName());
         existingDepartment.setFaculty(facultyRepository.findByAbbreviation(updatedDepartment.getFacultyAbbreviation()).orElse(null));

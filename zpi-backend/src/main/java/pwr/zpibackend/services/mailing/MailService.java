@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class MailService {
     public static final String UTF_8_ENCODING = "UTF-8";
-    public static final String IMAGES_LOGO_PNG = "./src/main/resources/images/logo.png";
+    public static final String IMAGES_LOGO_PNG = "./src/main/resources/images/logoPl.png";
     @Value("${spring.mail.verify.host.res_leader}")
     private String host_res_leader;
     @Value("${spring.mail.username}")

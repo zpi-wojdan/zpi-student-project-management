@@ -42,13 +42,15 @@ public class ThesisService {
 
     public Thesis getThesis(Long id) {
         return thesisRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Thesis with id " + id + " does not exist"));
     }
 
     public Thesis addThesis(ThesisDTO thesis) {
         Employee supervisor = employeeRepository
                 .findById(thesis.getSupervisorId())
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(
+                        () -> new NotFoundException("Employee with id " + thesis.getSupervisorId() + " does not exist")
+                );
 
         Thesis newThesis = new Thesis();
         newThesis.setNamePL(thesis.getNamePL());
@@ -59,7 +61,8 @@ public class ThesisService {
         newThesis.setSupervisor(supervisor);
         newThesis.setPrograms(new ArrayList<>());
         thesis.getProgramIds().forEach(programId -> {
-            Program program = programRepository.findById(programId).orElseThrow(NotFoundException::new);
+            Program program = programRepository.findById(programId).orElseThrow(
+                    () -> new NotFoundException("Program with id " + programId + " does not exist"));
             newThesis.getPrograms().add(program);
         });
 
@@ -84,11 +87,13 @@ public class ThesisService {
             updated.setNumPeople(thesis.getNumPeople());
 
             updated.setSupervisor(employeeRepository.findById(
-                    thesis.getSupervisorId()).orElseThrow(NotFoundException::new)
+                    thesis.getSupervisorId()).orElseThrow(
+                    () -> new NotFoundException("Employee with id " + thesis.getSupervisorId() + " does not exist"))
             );
             List<Program> programList = new ArrayList<>();
             thesis.getProgramIds().forEach(programId -> {
-                Program program = programRepository.findById(programId).orElseThrow(NotFoundException::new);
+                Program program = programRepository.findById(programId).orElseThrow(
+                        () -> new NotFoundException("Program with id " + programId + " does not exist"));
                 programList.add(program);
             });
             updated.setPrograms(programList);
@@ -101,7 +106,7 @@ public class ThesisService {
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
-        throw new NotFoundException();
+        throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
     //  brakowało metody do usuwania tematu
@@ -140,7 +145,7 @@ public class ThesisService {
             thesisRepository.deleteById(id);
             return deletedThesis;
         }
-        throw new NotFoundException();
+        throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
 
@@ -153,7 +158,7 @@ public class ThesisService {
     public List<Thesis> getAllThesesExcludingStatusId(Long id){
         Optional<Status> excludedStatus = statusRepository.findById(id);
         if (excludedStatus.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("Status with id " + id + " does not exist");
         }
         return thesisRepository.findAll().stream()
                 .filter(thesis -> !id.equals(thesis.getStatus().getId()))

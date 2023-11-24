@@ -28,32 +28,26 @@ public class EmployeeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) throws NotFoundException {
-        try {
-            return new ResponseEntity<>(employeeService.addEmployee(employee), HttpStatus.CREATED);
-        } catch (AlreadyExistsException e) {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        }
+    public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) {
+        return new ResponseEntity<>(employeeService.addEmployee(employee), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployee)
-            throws NotFoundException {
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployee) {
         return new ResponseEntity<>(employeeService.updateEmployee(id, updatedEmployee), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Employee> deleteEmployee(@PathVariable Long id) throws NotFoundException,
-            CannotDeleteException {
+    public ResponseEntity<Employee> deleteEmployee(@PathVariable Long id) {
         return new ResponseEntity<>(employeeService.deleteEmployee(id), HttpStatus.OK);
     }
 

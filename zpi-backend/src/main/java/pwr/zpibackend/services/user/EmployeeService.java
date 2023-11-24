@@ -62,7 +62,7 @@ public class EmployeeService {
                 "?(pwr\\.edu\\.pl|pwr\\.wroc\\.pl)$", employee.getMail()))
             throw new IllegalArgumentException("Email must be from pwr.edu.pl or pwr.wroc.pl domain");
         if (exists(employee.getMail()))
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Employee with mail " + employee.getMail() + " already exists");
 
         Employee newEmployee = new Employee();
         newEmployee.setMail(employee.getMail());
@@ -120,7 +120,7 @@ public class EmployeeService {
 
     public Employee deleteEmployee(Long id) throws NotFoundException, CannotDeleteException {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Employee with id " + id + " does not exist"));
 
         try {
             employeeRepository.delete(employee);

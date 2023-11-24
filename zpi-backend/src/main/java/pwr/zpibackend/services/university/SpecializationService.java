@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class SpecialisationService {
+public class SpecializationService {
 
     private final SpecializationRepository specializationRepository;
     private final StudyFieldRepository studyFieldRepository;
@@ -25,24 +25,24 @@ public class SpecialisationService {
 
     public Specialization getSpecializationByAbbreviation(String abbreviation) {
         return specializationRepository.findByAbbreviation(abbreviation)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Specialization with abbreviation " + abbreviation + " does not exist"));
     }
 
     public Specialization saveSpecialization(SpecializationDTO specialization) {
         if (specializationRepository.existsByAbbreviation(specialization.getAbbreviation())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Specialization with abbreviation " + specialization.getAbbreviation() + " already exists");
         }
         Specialization newSpecialization = new Specialization();
         newSpecialization.setAbbreviation(specialization.getAbbreviation());
         newSpecialization.setName(specialization.getName());
         newSpecialization.setStudyField(studyFieldRepository.findByAbbreviation(specialization.getStudyFieldAbbr())
-                .orElseThrow(NotFoundException::new));
+                .orElseThrow(() -> new NotFoundException("Study field with abbreviation " + specialization.getStudyFieldAbbr() + " does not exist")));
         return specializationRepository.save(newSpecialization);
     }
 
     public Specialization deleteSpecialization(Long id) {
         Specialization specialization = specializationRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Specialization with id " + id + " does not exist"));
         specialization.setStudyField(null);
         specializationRepository.delete(specialization);
         return specialization;
@@ -53,15 +53,15 @@ public class SpecialisationService {
             if (!(Objects.equals(
                     specializationRepository.findByAbbreviation(updatedSpecialization.getAbbreviation()).get().getId(),
                     id))) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Specialization with abbreviation " + updatedSpecialization.getAbbreviation() + " already exists");
             }
         }
         Specialization existingSpecialization = specializationRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Specialization with id " + id + " does not exist"));
         existingSpecialization.setAbbreviation(updatedSpecialization.getAbbreviation());
         existingSpecialization.setName(updatedSpecialization.getName());
         existingSpecialization.setStudyField(studyFieldRepository.findByAbbreviation(updatedSpecialization.getStudyFieldAbbr())
-                .orElseThrow(NotFoundException::new));
+                .orElseThrow(() -> new NotFoundException("Study field with abbreviation " + updatedSpecialization.getStudyFieldAbbr() + " does not exist")));
         return specializationRepository.save(existingSpecialization);
     }
 }
