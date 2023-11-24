@@ -9,6 +9,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.utils.MailTemplates;
 
 import javax.mail.internet.MimeMessage;
@@ -30,15 +33,24 @@ public class MailService {
     private final TemplateEngine templateEngine;
 
     @Async
-    public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, String name) {  // te liste arg pewnie też będzie można poprawić później
+    public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, Student student,
+                                    Employee employee, Thesis thesis) {
         try {
             // utworzenie odpowiedniego template html z danymi
-            Locale locale = Locale.forLanguageTag("en");        // tu wstawic póżniej program.language() ze studenta
+            String language = thesis.getPrograms().stream().findFirst().get().language();
+            String name;
+            if (recipient.equals(student.getMail())) {
+                name = student.getName() + " " + student.getSurname();
+            } else {
+                name = employee.getName() + " " + employee.getSurname();
+            }
+
+            Locale locale = Locale.forLanguageTag(language);
             Context context = new Context(locale);
             context.setVariables(Map.of(
                     "name", name,
-                    "thesis", "Temat pracy dyplomowej", // tu będzie do zmiany jak się już podepnie notyfikacje
-                    "url", getLinkReservation(urlPath)
+                    "thesis", language.equals("pl") ? thesis.getNamePL() : thesis.getNameEN(),
+                    "url", getLinkReservation(urlPath, thesis.getId())
             ));
             String html = templateEngine.process(template.getTemplateName(), context);
 
@@ -51,19 +63,13 @@ public class MailService {
             // ustawienie parametrów wiadomości
             helper.setFrom(fromEmail);
             helper.setTo(recipient);
-            helper.setSubject(template.getSubject());
+            helper.setSubject(template.getSubject(language));
             helper.setText(html, true);
 
+            // wysłanie wiadomości
             javaMailSender.send(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-    @Async
-    public void sendHtmlMailGroupMessage(List<String> recipients, String page, MailTemplates template, List<String> names) {
-        for (int i = 0; i < recipients.size(); i++) {
-            sendHtmlMailMessage(recipients.get(i), page, template, names.get(i));
         }
     }
 
@@ -71,7 +77,7 @@ public class MailService {
         return javaMailSender.createMimeMessage();
     }
 
-    private String getLinkReservation(String page) {
-        return host_res_leader + "/" + page;
+    private String getLinkReservation(String page, Long id) {
+        return host_res_leader + "/" + page + "/" + id;
     }
 }

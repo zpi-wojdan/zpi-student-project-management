@@ -13,6 +13,8 @@ import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.services.mailing.MailService;
+import pwr.zpibackend.utils.MailTemplates;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +29,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ThesisRepository thesisRepository;
     private final StudentRepository studentRepository;
+    private final MailService mailService;
 
     public Reservation addReservation(ReservationDTO reservation) {
         if (reservation.getThesisId() == null || reservation.getStudent() == null || reservation.getReservationDate() == null) {
@@ -62,9 +65,20 @@ public class ReservationService {
                 thesis.setOccupied(thesis.getOccupied() + 1);
                 newReservation.setThesis(thesis);
             }
+
+            if (newReservation.isConfirmedByLeader() && !newReservation.isConfirmedByStudent()) {
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_LEADER, student, thesis.getSupervisor(), thesis);
+            } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_STUDENT, student, thesis.getSupervisor(), thesis);
+            } else {
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_SUPERVISOR, student, thesis.getSupervisor(), thesis);
+            }
         } else {
             throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
         }
+
+
+
         reservationRepository.saveAndFlush(newReservation);
         return newReservation;
     }
@@ -83,6 +97,7 @@ public class ReservationService {
     }
 
     public Reservation updateReservation(Reservation newReservation, Long id) {
+
         return reservationRepository.findById(id)
                 .map(reservation -> {
                     reservation.setConfirmedByLeader(newReservation.isConfirmedByLeader());
