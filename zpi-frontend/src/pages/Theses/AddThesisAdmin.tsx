@@ -75,7 +75,7 @@ function AddThesisPageAdmin() {
   }, [])
 
   useEffect(() => {
-    api.get('http://localhost:8080/status')
+    api.get('http://localhost:8080/status/exclude/Draft')
       .then((response) => {
         setStatuses(response.data);
       })
@@ -298,7 +298,7 @@ function AddThesisPageAdmin() {
       return [isValid, null];
     }
 
-    let dto: ThesisDTO = {
+    const dto: ThesisDTO = {
       ...formData,
       supervisorId: supervisorIndex,
       programIds: filteredPrograms,
@@ -434,7 +434,6 @@ function AddThesisPageAdmin() {
   }
 
   const statusLabels: { [key:string]:string } = {
-    "Draft": t('status.draft'),
     "Pending approval": t('status.pending'),
     "Rejected": t('status.rejected'),
     "Approved": t('status.approved'),

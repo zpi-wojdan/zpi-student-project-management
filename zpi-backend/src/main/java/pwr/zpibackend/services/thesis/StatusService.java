@@ -20,6 +20,10 @@ public class StatusService {
         return statusRepository.findAll();
     }
 
+    public List<Status> getAllStatusesWithoutName(String name) {
+        return statusRepository.findAllByNameNot(name);
+    }
+
     public Status getStatus(Long statusId) {
         return statusRepository.findById(statusId).orElseThrow(
                 () -> new NotFoundException("Status with id " + statusId + " does not exist")
