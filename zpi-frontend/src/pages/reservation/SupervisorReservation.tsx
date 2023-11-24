@@ -173,7 +173,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                     <tbody>
                         {reservations.map((reservation, index) => (
                             <tr key={index}>
-                                <td>
+                                <td style={{whiteSpace: "nowrap"}}>
                                     <label htmlFor={`reservation-${index}`} className="col-form-label">
                                         {t('general.people.student')} {index + 1}:
                                     </label>

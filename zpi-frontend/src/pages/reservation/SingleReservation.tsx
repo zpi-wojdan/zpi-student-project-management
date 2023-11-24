@@ -89,7 +89,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
+                            <td style={{whiteSpace: "nowrap"}}>
                                 <label htmlFor={`reservation`} className="col-sm-2 col-form-label">
                                     {t('general.people.student')}:</label>
                             </td>
