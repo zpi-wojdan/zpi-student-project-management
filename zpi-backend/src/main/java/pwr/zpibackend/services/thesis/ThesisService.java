@@ -17,6 +17,8 @@ import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
+import pwr.zpibackend.services.mailing.MailService;
+import pwr.zpibackend.utils.MailTemplates;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
+    private final MailService mailService;
 
     public List<Thesis> getAllTheses() {
         return thesisRepository.findAll();
@@ -72,6 +75,17 @@ public class ThesisService {
         newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(
                 () -> new NotFoundException("Status with id " + thesis.getStatusId() + " does not exist")));
         newThesis.setOccupied(0);
+
+        if (newThesis.getStatus().getName().equals("Pending approval")) {
+            mailService.sendHtmlMailMessage(
+                    supervisor.getMail(),
+                    "/thesis/" + newThesis.getId(),
+                    MailTemplates.THESIS_ADDED,
+                    null,
+                    supervisor,
+                    newThesis
+            );
+        }
 
         thesisRepository.saveAndFlush(newThesis);
         return newThesis;

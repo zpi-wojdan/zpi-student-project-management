@@ -67,11 +67,14 @@ public class ReservationService {
             }
 
             if (newReservation.isConfirmedByLeader() && !newReservation.isConfirmedByStudent()) {
-                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_LEADER, student, thesis.getSupervisor(), thesis);
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_LEADER,
+                        student, null, thesis);
             } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
-                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_STUDENT, student, thesis.getSupervisor(), thesis);
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_STUDENT,
+                        student, null, thesis);
             } else {
-                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_SUPERVISOR, student, thesis.getSupervisor(), thesis);
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis",
+                        MailTemplates.RESERVATION_SUPERVISOR, student, null, thesis);
             }
         } else {
             throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
@@ -100,6 +103,13 @@ public class ReservationService {
 
         return reservationRepository.findById(id)
                 .map(reservation -> {
+                    if (!reservation.isReadyForApproval() && newReservation.isReadyForApproval()) {
+                        mailService.sendHtmlMailMessage(reservation.getThesis().getSupervisor().getMail(),
+                                "thesis", MailTemplates.RESERVATION_SENT_TO_SUPERVISOR,
+                                reservation.getStudent(), reservation.getThesis().getSupervisor(),
+                                reservation.getThesis());
+                    }
+
                     reservation.setConfirmedByLeader(newReservation.isConfirmedByLeader());
                     reservation.setConfirmedBySupervisor(newReservation.isConfirmedBySupervisor());
                     reservation.setReadyForApproval(newReservation.isReadyForApproval());
@@ -146,6 +156,12 @@ public class ReservationService {
                 .filter(reservation -> reservation.getReservationDate().isBefore(threshold))
                 .forEach(reservation -> {
                     reservationRepository.delete(reservation);
+
+                    mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
+                            "thesis", MailTemplates.RESERVATION_CANCELED,
+                            reservation.getStudent(), null,
+                            reservation.getThesis());
+
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
                                 thesis.setOccupied(Math.min(thesis.getOccupied() - 1, 0));
