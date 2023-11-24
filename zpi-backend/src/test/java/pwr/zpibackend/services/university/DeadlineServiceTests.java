@@ -9,7 +9,6 @@ import pwr.zpibackend.dto.university.DeadlineDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Deadline;
-import pwr.zpibackend.models.user.Role;
 import pwr.zpibackend.repositories.university.DeadlineRepository;
 
 import java.time.LocalDate;
