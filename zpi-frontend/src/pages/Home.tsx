@@ -6,7 +6,7 @@ import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../utils/api";
-import {Deadline} from "../models/Deadline";
+import { Deadline } from "../models/Deadline";
 
 const HomePage: React.FC = () => {
     // @ts-ignore
@@ -67,6 +67,12 @@ const HomePage: React.FC = () => {
 
     return (
         <div className='page-margin'>
+            <div className='welcome'>
+                {t('home.welcome')}
+            </div>
+            <div className='schedule'>
+                {t('home.schedule')}
+            </div>
             <div className='d-flex justify-content-between  align-items-center'>
                 {ITEMS_PER_PAGE.length > 1 && (
                     <div className="d-flex justify-content-between">
@@ -131,28 +137,28 @@ const HomePage: React.FC = () => {
             </div>
             <table className="custom-table">
                 <thead>
-                <tr>
-                    <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '72%' }}>{t('deadline.activity')}</th>
-                    <th style={{ width: '25%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
-                </tr>
+                    <tr>
+                        <th style={{ width: '3%', textAlign: 'center' }}>#</th>
+                        <th style={{ width: '72%' }}>{t('deadline.activity')}</th>
+                        <th style={{ width: '25%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {currentDeadlines.map((deadline, index) => (
-                    <React.Fragment key={deadline.id}>
-                        <tr>
-                            <td className="centered">{indexOfFirstItem + index + 1}</td>
-                            <td>
-                                {i18n.language === 'pl' ? (
-                                    deadline.namePL
-                                ) : (
-                                    deadline.nameEN
-                                )}
-                            </td>
-                            <td className="centered">{new Date(deadline.deadlineDate).toLocaleDateString()}</td>
-                        </tr>
-                    </React.Fragment>
-                ))}
+                    {currentDeadlines.map((deadline, index) => (
+                        <React.Fragment key={deadline.id}>
+                            <tr>
+                                <td className="centered">{indexOfFirstItem + index + 1}</td>
+                                <td>
+                                    {i18n.language === 'pl' ? (
+                                        deadline.namePL
+                                    ) : (
+                                        deadline.nameEN
+                                    )}
+                                </td>
+                                <td className="centered">{new Date(deadline.deadlineDate).toLocaleDateString()}</td>
+                            </tr>
+                        </React.Fragment>
+                    ))}
                 </tbody>
             </table>
             {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (

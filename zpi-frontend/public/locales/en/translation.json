@@ -302,5 +302,9 @@
     "updateError": "Deadline has not been updated",
     "activityExists": "Given activity already exists!",
     "dateInPast": "Deadline cannot be in the past!"
+  },
+  "home":{
+    "welcome": "Welcome to the ZPI Helper website!",
+    "schedule": "Schedule"
   }
 }
