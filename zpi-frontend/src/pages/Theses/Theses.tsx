@@ -26,7 +26,7 @@ const ThesesTable: React.FC = () => {
   const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis')
+    api.get('http://localhost:8080/thesis/public')
       .then((response) => {
         console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
