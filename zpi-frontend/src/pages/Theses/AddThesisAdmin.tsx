@@ -316,44 +316,44 @@ function AddThesisPageAdmin() {
     if (isValid){
       if (thesis){
         api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.updateSuccessful"));
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-            handleSignOut(navigate);
-          }
-          navigate("/theses");
-          toast.error(t("thesis.updateError"));
-        });
-      }
-      else{
-        api.post('http://localhost:8080/thesis', dto)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.addSuccessful"));
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 409) {
-            const newErrors: Record<string, string> = {};
-            newErrors.index = t("thesis.addError")
-            setErrors(newErrors);
-            const newErrorsKeys: Record<string, string> = {};
-            newErrorsKeys.index = "thesis.addError"
-            setErrorsKeys(newErrorsKeys);
-          } else {
+          .then(() => {
+            navigate("/theses");
+            toast.success(t("thesis.updateSuccessful"));
+          })
+          .catch((error) => {
             console.error(error);
             if (error.response.status === 401 || error.response.status === 403) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
             navigate("/theses");
-            toast.error(t("thesis.addError"));
-          }
-        })
+            toast.error(t("thesis.updateError"));
+          });
+      }
+      else{
+        api.post('http://localhost:8080/thesis', dto)
+          .then(() => {
+            navigate("/theses");
+            toast.success(t("thesis.addSuccessful"));
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 409) {
+              const newErrors: Record<string, string> = {};
+              newErrors.index = t("thesis.addError")
+              setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.index = "thesis.addError"
+              setErrorsKeys(newErrorsKeys);
+            } else {
+              console.error(error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
+              navigate("/theses");
+              toast.error(t("thesis.addError"));
+            }
+          })
       }
     }
   };

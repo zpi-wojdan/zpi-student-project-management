@@ -32,7 +32,9 @@
       "filtration": "Filtrowanie",
       "filter": "Filtruj",
       "filterClear": "Wyczyść filtry",
-      "vacancies": "Wolne miejsca"
+      "vacancies": "Wolne miejsca",
+      "cancel": "Anuluj",
+      "send": "Wyślij"
     },
     "people": {
       "adminLC": "administrator",
@@ -208,6 +210,7 @@
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten temat?",
     "acceptConfirmation": "Czy na pewno chcesz zaakceptować ten temat?",
     "rejectConfirmation": "Czy na pewno chcesz odrzucić ten temat?",
+    "sendRejection": "Jeśli chcesz odrzucić ten temat, musisz napisać wyjaśnienie w znajdującej się poniżej sekcji komentarzy",
     "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
     "errorOfLoadingSupervisorData": "Błąd wczytywania danych prowadzącego!",
     "peopleLimit": "Limit osób",
@@ -231,7 +234,11 @@
     "downloadError": "Wystąpił błąd podczas generowania deklaracji",
     "generating": "Generowanie deklaracji...",
     "numPeopleTooBig": "Wartość nie może być większa niż: 5",
-    "numPeopleTooSmall": "Wartość nie może być mniejsza niż: 3"
+    "numPeopleTooSmall": "Wartość nie może być mniejsza niż: 3",
+    "rejectionSuccessful": "Temat został odrzucony",
+    "rejectionError": "Temat nie został odrzucony",
+    "acceptSuccesful": "Temat został zaakceptowany",
+    "acceptError": "Temat nie został zaakceptowany"
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",
@@ -314,5 +321,14 @@
   "home":{
     "welcome": "Witaj na stronie ZPI Helper!",
     "schedule": "Harmonogram"
+  },
+  "comment": {
+    "addSuccessful": "Komentarz został dodany",
+    "addError": "Komentarz nie został dodany",
+    "deleteSuccessful": "Komentarz został usunięty",
+    "deleteError": "Komentarz nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten komentarz?",
+    "updateSuccessful": "Komentarz został zaktualizowany",
+    "updateError": "Komentarz nie został zaktualizowany"
   }
 }

@@ -33,7 +33,9 @@
       "filtration": "Filtering",
       "filter": "Filter",
       "filterClear": "Clear filters",
-      "vacancies": "Vacancies"
+      "vacancies": "Vacancies",
+      "cancel": "Cancel",
+      "send": "Send"
     },
     "people": {
       "adminLC": "administrator",
@@ -211,6 +213,7 @@
     "deleteConfirmation": "Are you sure you want to delete this thesis?",
     "acceptConfirmation": "Are you sure you want to accept this thesis?",
     "rejectConfirmation": "Are you sure you want to reject this thesis?",
+    "sendRejection": "If you want to reject this thesis, you have to write an explanation in the comment section below.",
     "peopleLimit": "People limit",
     "occupiedSeats": "Occupied seats",
     "enrollStudents": "Enroll students",
@@ -230,7 +233,11 @@
     "downloadSuccessful": "Declaration has been generated",
     "downloadNoDataError": "Data for the declaration not found",
     "downloadError": "An error occurred while generating the declaration",
-    "generating": "Generating declaration..."
+    "generating": "Generating declaration...",
+    "rejectionSuccessful": "Thesis has been rejected",
+    "rejectionError": "Thesis has not been rejected",
+    "acceptSuccesful": "Thesis has been accepted",
+    "acceptError": "Thesis has not been accepted"
   },
   "status": {
     "draft": "Draft",
@@ -316,5 +323,14 @@
   "home":{
     "welcome": "Welcome to ZPI Helper website!",
     "schedule": "Schedule"
+  },
+  "comment": {
+    "addSuccessful": "Comment has been added",
+    "addError": "Comment has not been added",
+    "deleteSuccessful": "Comment has been deleted",
+    "deleteError": "Comment cannot be deleted",
+    "deleteConfirmation": "Are you sure you want to delete this comment?",
+    "updateSuccessful": "Comment has been updated",
+    "updateError": "Comment has not been updated"
   }
 }

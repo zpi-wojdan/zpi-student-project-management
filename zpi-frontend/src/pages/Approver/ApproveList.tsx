@@ -509,7 +509,7 @@ const ApproveList: React.FC = () => {
                 <td>
                   <button
                     className="custom-button coverall"
-                    onClick={() => { navigate(`/manage/${thesis.id}`, { state: { thesis } }) }}
+                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
                   >
                     <i className="bi bi-arrow-right"></i>
                   </button>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Thesis } from '../../models/thesis/Thesis';
+import { Thesis, ThesisDTO } from '../../models/thesis/Thesis';
 import { Program } from '../../models/university/Program';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
@@ -8,6 +8,10 @@ import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 import { toast } from 'react-toastify';
+import { CommentDTO, Comment } from '../../models/thesis/Comment';
+import { Status } from '../../models/thesis/Status';
+import { Employee } from '../../models/user/Employee';
+import Cookies from 'js-cookie';
 
 const ApproveDetails: React.FC = () => {
   // @ts-ignore
@@ -15,29 +19,149 @@ const ApproveDetails: React.FC = () => {
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
+
+  const [commentForm, setCommentForm] = useState<CommentDTO>({
+    content: '',
+    thesisId: -1,
+    authorId: -1 
+  });
+  const commentContentRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const [statuses, setStatuses] = useState<Status[]>([]);
+
+  const [thesisForm, setThesisForm] = useState<ThesisDTO>({
+    namePL: '',
+    nameEN: '',
+    descriptionPL: '',
+    descriptionEN: '',
+    numPeople: 4,
+    supervisorId: -1,
+    programIds: [-1],
+    studyCycleId: -1,
+    statusId: -1,
+  });
+
   const { id } = useParams<{ id: string }>();
   const [thesis, setThesis] = useState<Thesis>();
 
+  const [user, setUser] = useState<Employee>();
+
+  const [confirmClicked, setConfirmClicked] = useState(false);
+  const [rejectClicked, setRejectClicked] = useState(false);
+  const [updatedDatabase, setUpdatedDatabase] = useState(false);
+
+  useEffect(() => {
+    if (user === null){
+      const u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+    }
+  }, [])
+
   useEffect(() => {
     const response = api.get(`http://localhost:8080/thesis/${id}`)
+        .then((response) => {
+            const thesisDb = response.data as Thesis;
+            const t: Thesis = {
+                id: thesisDb.id,
+                namePL: thesisDb.namePL,
+                nameEN: thesisDb.nameEN,
+                descriptionPL: thesisDb.descriptionPL,
+                descriptionEN: thesisDb.descriptionEN,
+                programs: thesisDb.programs,
+                studyCycle: thesisDb.studyCycle,
+                numPeople: thesisDb.numPeople,
+                occupied: thesisDb.occupied,
+                supervisor: thesisDb.supervisor,
+                status: thesisDb.status,
+                leader: thesisDb.leader,
+                reservations: thesisDb.reservations.sort((a, b) => a.student.index.localeCompare(b.student.index)),
+                comments: thesisDb.comments,
+              };
+              setThesis(t);
+        })
+        .catch((error) => {
+            console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+            }
+        });
+        
+  }, [id]);
+
+  useEffect(() => {
+    if (thesis){
+      setThesisForm((prev) => {
+        return {
+          ...prev,
+          namePL: thesis.namePL,
+          nameEN: thesis.nameEN,
+          descriptionPL: thesis.descriptionPL,
+          descriptionEN: thesis.descriptionEN,
+          numPeople: thesis.numPeople,
+          supervisorId: thesis.supervisor.id,
+          programIds: thesis.programs.map((p) => p.id),
+          studyCycleId: thesis.studyCycle?.id ?? null,
+          statusId: thesis.status.id,
+        };
+      });
+    }
+  }, [thesis]);
+
+  useEffect(() => {
+    if (thesis && user){
+        setCommentForm((prev) => {
+            return {
+                ...prev,
+                thesisId: thesis.id,
+                authorId: user.id
+            };
+        });
+    }
+  }, [thesis, user]);
+
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+    Object.keys(errorKeys).forEach((key) => {
+      newErrors[key] = t(errorKeys[key]);
+    });
+    setErrors(newErrors);
+  }, [i18n.language]);
+
+  useEffect(() => {     
+    console.log('rejected');
+    api.get('http://localhost:8080/status/Rejected')
       .then((response) => {
-        setThesis(response.data);
+        setStatuses(statuses => [...statuses, response.data]);
       })
       .catch((error) => {
-        console.error(error);
+        console.error('Rejected error:', error);
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
       });
-  }, [id]);
+  
+    api.get('http://localhost:8080/status/Approved')
+      .then((response) => {
+        setStatuses(statuses => [...statuses, response.data]);
+      })
+      .catch((error) => {
+        console.error('Approved error:', error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+    }, []);
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
     api.get('http://localhost:8080/program')
       .then((response) => {
         setPrograms(response.data);
-        console.log(programs);
       })
       .catch((error) => {
         console.error(error);
@@ -61,57 +185,211 @@ const ApproveDetails: React.FC = () => {
   const [showRejectConfirmation, setShowRejectConfirmation] = useState(false);
   const [showAcceptConfirmation, setShowAcceptConfirmation] = useState(false);
 
+  const handleTextAreaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+    textareaRef: React.RefObject<HTMLTextAreaElement>
+  ) => {
+    setCommentForm({
+        ...commentForm,
+        content: event.target.value
+    });
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
+  const getApprovedStatusId = () => {
+    return statuses.find(s => s.name === 'Approved')?.id ?? -1;
+  }
+  const getRejectedStatusId = () => {
+    return statuses.find(s => s.name === 'Rejected')?.id ?? -1;
+  }
+
   const handleConfirmClick = () => {
     setShowAcceptConfirmation(true);
+    setConfirmClicked(true);
+    setRejectClicked(false);
+    setThesisForm({
+        ...thesisForm,
+        statusId: getApprovedStatusId()
+    })
   };
 
   const handleConfirmAccept = () => {
-    api.delete(`http://localhost:8080/thesis/${id}`)
-      .then(() => {
-        toast.success(t('thesis.deleteSuccessful'));
-        navigate("/theses");
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-        toast.error(t('thesis.deleteError'));
-
-      });
+    const [isValid, dto] = validateThesis();
+    if(isValid){
+        api.put(`http://localhost:8080/thesis/${id}`, dto)
+            .then(() => {
+                toast.success(t("thesis.acceptSuccesful"));
+            })
+            .catch((error) => {
+                console.error(error);
+                if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+                }
+                toast.error(t("thesis.acceptError"));
+            });
+    }
+    else{
+        toast.error(t("thesis.acceptError"));
+    }
     setShowRejectConfirmation(false);
   };
 
-  const handleCancelAccept = () => {
+  const handleConfirmCancel = () => {
     setShowAcceptConfirmation(false);
   };
 
   const handleRejectClick = () => {
     setShowRejectConfirmation(true);
+    setConfirmClicked(false);
+    setRejectClicked(true);
+    setThesisForm({
+        ...thesisForm,
+        statusId: getRejectedStatusId()
+    })
   };
 
-  const handleConfirmReject = () => {
-    api.delete(`http://localhost:8080/thesis/${id}`)
-      .then(() => {
-        toast.success(t('thesis.deleteSuccessful'));
-        navigate("/theses");
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
+  const handleRejectConfirm = () => {
+    const [thesisValid, thesisDTO] = validateThesis();
+    if(thesisValid){
+
+        const [commentValid, commentDTO] = validateComment();
+        if (commentValid){
+            api.post(`http://localhost:8080/thesis/comment`, commentDTO)
+                .then(() => {
+                    toast.success(t("comment.addSuccessful"));
+
+                    api.put(`http://localhost:8080/thesis/${id}`, thesisDTO)
+                        .then(() => {
+                            toast.success(t("thesis.rejectionSuccessful"));
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            if (error.response.status === 401 || error.response.status === 403) {
+                                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                                handleSignOut(navigate);
+                            }
+                            toast.error(t("thesis.rejectionError"));
+                        });
+
+                })
+                .catch((error) => {
+                    console.error(error);
+                    if (error.response.status === 401 || error.response.status === 403) {
+                        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                        handleSignOut(navigate);
+                    }
+                    toast.error(t("comment.addError"));
+                });
         }
-        toast.error(t('thesis.deleteError'));
-
-      });
+        else{
+            toast.error(t("thesis.rejectionError"));
+        }
+    }
+    else{
+        toast.error(t("thesis.rejectionError"));
+    }
+    setUpdatedDatabase(true);
     setShowRejectConfirmation(false);
   };
 
-  const handleCancelReject = () => {
+  const handleRejectCancel = () => {
     setShowRejectConfirmation(false);
   };
+
+  const validateComment = (): [boolean, CommentDTO | null] => {
+    const newErrors: Record<string, string> =  {};
+    const newErrorsKeys: Record<string, string> = {};
+    const errorRequireText = t('general.management.fieldIsRequired');
+    let isValid = true;
+
+    let authorIndex: number = commentForm.authorId;
+    let thesisIndex: number = commentForm.thesisId;
+
+    if (!commentForm.content || commentForm.content.length === 0){
+        newErrors.comment = errorRequireText
+        newErrorsKeys.comment = "general.management.fieldIsRequired";
+        isValid = false;
+    }
+
+    if (!authorIndex || authorIndex === -1){
+        if (!user){
+            const cookieUser = JSON.parse(Cookies.get("user") || "{}");
+            if (!cookieUser){
+                isValid = false;
+            }
+            else{
+                authorIndex = cookieUser.id;
+            }
+        }
+        else{
+            authorIndex = user.id;
+        }
+    }
+
+    if (!thesisIndex || thesisIndex === -1){
+        if (!thesis){
+            isValid = false;
+        }
+        else{
+            thesisIndex = thesis.id;
+        }
+    }
+    
+    setErrors(newErrors);
+    setErrorsKeys(newErrorsKeys);
+
+    if (!isValid){
+        return [isValid, null];
+    }
+    const dto: CommentDTO = {
+        content: commentForm.content,
+        authorId: authorIndex,
+        thesisId: thesisIndex
+    }
+    console.log(dto);
+    return [isValid, dto];
+  }
+
+  const validateThesis = (): [boolean, ThesisDTO | null] => {
+    const isValid = !thesis ||
+        !(thesis.status &&
+            (thesis.status.name === 'Rejected' || thesis.status.name === 'Approved'));
+    console.log(thesis?.status);
+    
+    let id: number;
+    if (confirmClicked && !rejectClicked){
+        id = getApprovedStatusId();
+    }
+    else if (!confirmClicked && rejectClicked){
+        id = getRejectedStatusId();
+    }
+    else{
+        id = -1;
+    }
+
+    if (isValid && thesis && id !== -1){
+        const dto: ThesisDTO = {
+            namePL: thesis.namePL,
+            nameEN: thesis.nameEN,
+            descriptionPL: thesis.descriptionPL,
+            descriptionEN: thesis.descriptionEN,
+            numPeople: thesis.numPeople,
+            supervisorId: thesis.supervisor.id,
+            programIds: thesis.programs.map(p => p.id),
+            studyCycleId: thesis.studyCycle?.id ?? null,
+            statusId: id
+        }
+        return [isValid, dto];
+    }
+    else{
+        return [isValid, null];
+    }
+  }
 
   return (
     <div className='page-margin'>
@@ -133,9 +411,9 @@ const ApproveDetails: React.FC = () => {
             <td colSpan={5}>
               <ChoiceConfirmation
                 isOpen={showAcceptConfirmation}
-                onClose={handleCancelAccept}
+                onClose={handleConfirmCancel}
                 onConfirm={handleConfirmAccept}
-                onCancel={handleCancelAccept}
+                onCancel={handleConfirmCancel}
                 questionText={t('thesis.acceptConfirmation')}
               />
             </td>
@@ -153,18 +431,35 @@ const ApproveDetails: React.FC = () => {
         {showRejectConfirmation && (
           <tr>
             <td colSpan={5}>
-              <ChoiceConfirmation
-                isOpen={showRejectConfirmation}
-                onClose={handleCancelReject}
-                onConfirm={handleConfirmReject}
-                onCancel={handleCancelReject}
-                questionText={t('thesis.rejectConfirmation')}
-              />
+                <div className='d-flex justify-content-center  align-items-center'>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <button className="custom-button" onClick={handleRejectConfirm}>{t('general.management.send')}</button>
+                        <button className="custom-button another-color" onClick={handleRejectCancel}>{t('general.management.cancel')}</button>
+                    </div>
+                </div>
             </td>
           </tr>
         )}
-
       </div>
+      {errors.comment && <div className="text-danger">{errors.comment}</div>}
+      {showRejectConfirmation && (
+        <form>
+            <div className="mb-3">
+                <label className="bold" htmlFor="comment">
+                    {t('thesis.sendRejection')}
+                </label>
+                <textarea
+                className="form-control resizable-input"
+                id="comment"
+                name="comment"
+                value={commentForm.content}
+                onChange={(event) => handleTextAreaChange(event, commentContentRef)}
+                maxLength={1000}
+                ref={commentContentRef}
+                />
+            </div>
+        </form>
+      )}
       <div>
         {thesis ? (
           <div>
@@ -201,7 +496,7 @@ const ApproveDetails: React.FC = () => {
                         <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
                       </li>
                       <li>
-                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.lack')}</span></p>
+                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.nA')}</span></p>
                       </li>
                     </ul>
                   )}
@@ -209,10 +504,22 @@ const ApproveDetails: React.FC = () => {
               ))}
             </ul>
             <p><span className="bold">{t('general.university.status')}:</span> <span>{thesis.status.name}</span></p>
+            
+            <ul>
+                {thesis.comments.map((c: Comment) => (
+                    <li key={c.id}>
+                        <div>
+                            {c.content}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+
           </div>
         ) : (
           <p>{t('general.management.errorOfLoading')} {id}</p>
         )}
+
       </div>
     </div>
   );

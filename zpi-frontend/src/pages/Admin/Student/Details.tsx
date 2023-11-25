@@ -21,7 +21,6 @@ const StudentDetails: React.FC = () => {
   useEffect(() => {
     api.get(`http://localhost:8080/student/${id}`)
       .then((response) => {
-        console.log(response.data)
         setStudent(response.data);
       })
       .catch((error) => {

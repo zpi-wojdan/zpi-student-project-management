@@ -173,6 +173,7 @@ const EmployeeForm: React.FC = () => {
   const [availableTitles, setAvailableTitles] = useState<Title[]>([]);
 
   useEffect(() => {
+    console.log('departments fetch');
     api.get('http://localhost:8080/departments')
       .then((response) => {
         setAvailableDepartments(response.data);
