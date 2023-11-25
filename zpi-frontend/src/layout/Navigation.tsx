@@ -192,6 +192,14 @@ const Navigation = ({ children }: NavigationProps) => {
                                                     </NavLink>
                                                 </li>
                                             ) : null}
+                                            {user?.roles?.some((role: Role) => role.name === 'approver') ? (
+                                                <li className="nav-item">
+                                                    <NavLink className={({ isActive }) => isActive ?
+                                                        "nav-link active" : "nav-link"} to="/manage">
+                                                        {t('navigation.manage')}
+                                                    </NavLink>
+                                                </li>
+                                            ) : null}
                                         </>
                                     ) : null}
                                 </ul>

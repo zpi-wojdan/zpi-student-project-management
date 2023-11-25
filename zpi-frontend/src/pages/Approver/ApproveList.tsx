@@ -16,7 +16,7 @@ import { StudyField } from '../../models/university/StudyField';
 import { Employee } from '../../models/user/Employee';
 
 
-const ThesesTable: React.FC = () => {
+const ApproveList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -26,7 +26,7 @@ const ThesesTable: React.FC = () => {
   const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis')
+    api.get(`http://localhost:8080/thesis/status/Pending_approval`)
       .then((response) => {
         console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
@@ -68,10 +68,6 @@ const ThesesTable: React.FC = () => {
   const [availableSupervisors, setAvailableSupervisor] = useState<Employee[]>([]);
   const [selectedSupervisors, setSelectedSupervisors] = useState<number[]>([]);
   const [submittedSupervisors, setSubmittedSupervisors] = useState<number[]>([]);
-  const [selectedMinVacancies, setSelectedMinVacancies] = useState<number>(0);
-  const [submittedMinVacancies, setSubmittedMinVacancies] = useState<number>(0);
-  const [selectedMaxVacancies, setSelectedMaxVacancies] = useState<number>(5);
-  const [submittedMaxVacancies, setSubmittedMaxVacancies] = useState<number>(5);
   const [availableCycles, setAvailableCycles] = useState<StudyCycle[]>([]);
   const [selectedCycleName, setSelectedCycleName] = useState<string>("");
   const [submittedCycleName, setSubmittedCycleName] = useState<string>("");
@@ -178,8 +174,6 @@ const ThesesTable: React.FC = () => {
       setSubmittedFacultyAbbr(selectedFacultyAbbr)
       setSubmittedFieldAbbr(selectedFieldAbbr)
       setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-      setSubmittedMinVacancies(selectedMinVacancies)
-      setSubmittedMaxVacancies(selectedMaxVacancies)
       setSubmittedCycleName(selectedCycleName)
       setSubmittedSupervisors(selectedSupervisors)
     }
@@ -187,8 +181,6 @@ const ThesesTable: React.FC = () => {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
       setSelectedSpecializationAbbr(submittedSpecializationAbbr)
-      setSelectedMinVacancies(submittedMinVacancies)
-      setSelectedMaxVacancies(submittedMaxVacancies)
       setSelectedCycleName(submittedCycleName)
       setSelectedSupervisors(submittedSupervisors)
     }
@@ -201,7 +193,6 @@ const ThesesTable: React.FC = () => {
     const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
     const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
     const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-    const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
     const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
     const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
 
@@ -209,7 +200,6 @@ const ThesesTable: React.FC = () => {
       facultyFilter(thesis) &&
       fieldFilter(thesis) &&
       specializationFilter(thesis) &&
-      vacanciesFilter(thesis) &&
       cycleFilter(thesis) &&
       supervisorFilter(thesis)
     );
@@ -307,31 +297,6 @@ const ThesesTable: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-        <hr className="my-4" />
-        <div className="mb-4">
-          <label className="bold" htmlFor="vacancies">
-            {t('general.management.vacancies')}:
-          </label>
-          <Slider
-            range
-            min={0}
-            max={5}
-            value={[selectedMinVacancies, selectedMaxVacancies]}
-            onChange={(value: number | number[]) => {
-              if (Array.isArray(value)) {
-                setSelectedMinVacancies(value[0]);
-                setSelectedMaxVacancies(value[1]);
-              } else {
-                setSelectedMinVacancies(value);
-                setSelectedMaxVacancies(value);
-              }
-            }}
-            marks={{ 0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }}
-            dots={false}
-            dotStyle={{ display: 'none' }}
-            className='mt-4 mb-5 custom-slider'
-          />
         </div>
         <hr className="my-4" />
         <div className="mb-4">
@@ -438,8 +403,6 @@ const ThesesTable: React.FC = () => {
               setSelectedFacultyAbbr("");
               setSelectedFieldAbbr("");
               setSelectedSpecializationAbbr("");
-              setSelectedMinVacancies(0);
-              setSelectedMaxVacancies(5);
               setSelectedSupervisors([])
             }}>
             {t('general.management.filterClear')}
@@ -528,7 +491,6 @@ const ThesesTable: React.FC = () => {
               <th style={{ width: '3%', textAlign: 'center' }}>#</th>
               <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
               <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
-              <th style={{ width: '10%', textAlign: 'center' }}>{t('thesis.occupiedSeats')}</th>
               <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
             </tr>
           </thead>
@@ -544,11 +506,10 @@ const ThesesTable: React.FC = () => {
                   )}
                 </td>
                 <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
-                <td className="centered">{thesis.occupied + "/" + thesis.numPeople}</td>
                 <td>
                   <button
                     className="custom-button coverall"
-                    onClick={() => { navigate(`/public-theses/${thesis.id}`, { state: { thesis } }) }}
+                    onClick={() => { navigate(`/manage/${thesis.id}`, { state: { thesis } }) }}
                   >
                     <i className="bi bi-arrow-right"></i>
                   </button>
@@ -600,4 +561,4 @@ const ThesesTable: React.FC = () => {
   );
 }
 
-export default ThesesTable;
+export default ApproveList;

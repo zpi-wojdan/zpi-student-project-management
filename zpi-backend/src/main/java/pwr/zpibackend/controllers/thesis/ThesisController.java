@@ -49,23 +49,25 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.deleteThesis(id), HttpStatus.OK);
     }
 
-    @GetMapping("/status/{id}")
+    @GetMapping("/status/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesByStatusId(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.getAllThesesByStatusId(id), HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getAllThesesByStatusName(@PathVariable String name) {
+        String realName = name.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.getAllThesesByStatusName(realName), HttpStatus.OK);
     }
 
-    @GetMapping("/status/exclude/{id}")
+    @GetMapping("/status/exclude/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusId(id), HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable String name) {
+        String realName = name.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusName(realName), HttpStatus.OK);
     }
 
-    @GetMapping("/{empId}/{statId}")
+    @GetMapping("/{empId}/{statName}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusId(@PathVariable Long empId,
-                                                                        @PathVariable Long statId) {
-        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusId(empId, statId), HttpStatus.OK);
+                                                                        @PathVariable String statName) {
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusId(empId, statName), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")

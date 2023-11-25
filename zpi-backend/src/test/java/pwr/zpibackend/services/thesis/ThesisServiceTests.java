@@ -2,13 +2,11 @@ package pwr.zpibackend.services.thesis;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
@@ -20,7 +18,6 @@ import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.services.thesis.ThesisService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +63,7 @@ public class ThesisServiceTests {
         emp.setId(1L);
         thesis.setSupervisor(emp);
         thesis.setPrograms(List.of(new Program()));
+        thesis.setStudyCycle(new StudyCycle());
         thesis.setStatus(new Status(1, "Draft"));
 
         theses = new ArrayList<>();
@@ -139,7 +137,7 @@ public class ThesisServiceTests {
         thesisDTO.setDescriptionEN("Description 1");
         thesisDTO.setNumPeople(4);
         thesisDTO.setProgramIds(List.of(1L));
-        thesisDTO.setStudyCycleId(1L);
+        thesisDTO.setStudyCycleId(Optional.of(1L));
         thesisDTO.setStatusId(1L);
         thesisDTO.setSupervisorId(1L);
 
@@ -190,7 +188,7 @@ public class ThesisServiceTests {
         thesisDTO.setDescriptionEN("Description 1");
         thesisDTO.setNumPeople(4);
         thesisDTO.setProgramIds(List.of(1L));
-        thesisDTO.setStudyCycleId(1L);
+        thesisDTO.setStudyCycleId(Optional.of(1L));
         thesisDTO.setStatusId(1L);
         thesisDTO.setSupervisorId(1L);
 
@@ -230,45 +228,45 @@ public class ThesisServiceTests {
 
     @Test
     public void testGetAllThesesByStatusId() {
-        Long statusId = 1L;
-        when(thesisRepository.findAllByStatusId(statusId)).thenReturn(theses);
+        String statusName = "Draft";
+        when(thesisRepository.findAllByStatusName(statusName)).thenReturn(theses);
 
-        List<Thesis> result = thesisService.getAllThesesByStatusId(statusId);
+        List<Thesis> result = thesisService.getAllThesesByStatusName(statusName);
 
         assertEquals(theses, result);
     }
 
     @Test
     public void testGetAllThesesExcludingStatusId() throws NotFoundException {
-        Long statusId = 1L;
+        String statusName = "Draft";
         when(thesisRepository.findAll()).thenReturn(new ArrayList<>());
-        when(statusRepository.findById(statusId)).thenReturn(Optional.of(new Status(statusId, "Draft")));
+        when(statusRepository.findByName(statusName)).thenReturn(Optional.of(new Status("Draft")));
 
-        List<Thesis> result = thesisService.getAllThesesExcludingStatusId(statusId);
-        verify(statusRepository).findById(statusId);
+        List<Thesis> result = thesisService.getAllThesesExcludingStatusName(statusName);
+        verify(statusRepository).findByName(statusName);
         verify(thesisRepository).findAll();
 
         List<Thesis> expectedResult = theses.stream()
-                .filter(thesis -> !statusId.equals(thesis.getStatus().getId()))
+                .filter(thesis -> !statusName.equals(thesis.getStatus().getName()))
                 .collect(Collectors.toList());
         assertEquals(expectedResult, new ArrayList<>());
     }
 
     @Test
     public void testGetAllThesesExcludingStatusIdNotFound() {
-        Long statusId = 1L;
-        when(statusRepository.findById(statusId)).thenReturn(Optional.empty());
+        String statusName = "Draft";
+        when(statusRepository.findByName(statusName)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> thesisService.getAllThesesExcludingStatusId(statusId));
+        assertThrows(NotFoundException.class, () -> thesisService.getAllThesesExcludingStatusName(statusName));
     }
 
     @Test
     public void testGetAllThesesForEmployeeByStatusId() {
         Long empId = 1L;
-        Long statId = 1L;
-        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId)).thenReturn(theses);
+        String statName = "Draft";
+        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName)).thenReturn(theses);
 
-        List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusId(empId, statId);
+        List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusId(empId, statName);
 
         assertEquals(theses, result);
     }
@@ -276,10 +274,10 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesForEmployeeByStatusIdNotFound() {
         Long empId = 1L;
-        Long statId = 1L;
-        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId)).thenReturn(Collections.emptyList());
+        String statName = "Draft";
+        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName)).thenReturn(Collections.emptyList());
 
-        assertEquals(thesisService.getAllThesesForEmployeeByStatusId(empId, statId), Collections.emptyList());
+        assertEquals(thesisService.getAllThesesForEmployeeByStatusId(empId, statName), Collections.emptyList());
     }
 
 

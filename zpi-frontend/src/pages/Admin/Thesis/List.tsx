@@ -5,7 +5,7 @@ import api from '../../../utils/api';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Faculty } from '../../../models/university/Faculty';

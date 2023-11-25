@@ -12,14 +12,11 @@ import java.util.List;
 @RepositoryRestResource
 public interface ThesisRepository extends JpaRepository<Thesis, Long>{
     List<Thesis> findAllByOrderByNamePLAsc();
-
-    @Query("SELECT t FROM Thesis t " +
-            "WHERE t.status.Id = :statusId")
-    List<Thesis> findAllByStatusId(@Param("statusId") Long statusId);
+    List<Thesis> findAllByStatusName(String name);
     @Query("SELECT t FROM Thesis t " +
             "WHERE t.supervisor.id = :empId " +
-            "AND t.status.Id = :statId")
-    List<Thesis> findAllByEmployeeIdAndStatusName(@Param("empId") Long empId, @Param("statId") Long statId);
+            "AND t.status.name = :statName")
+    List<Thesis> findAllByEmployeeIdAndStatusName(@Param("empId") Long empId, @Param("statName") String statName);
     @Query("SELECT t FROM Thesis t " +
             "WHERE t.supervisor.id = :empId")
     List<Thesis> findAllByEmployeeId(@Param("empId") Long empId);

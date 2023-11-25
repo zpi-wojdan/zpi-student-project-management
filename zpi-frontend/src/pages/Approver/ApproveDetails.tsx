@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Thesis } from '../../../models/thesis/Thesis';
-import { Program } from '../../../models/university/Program';
-import api from '../../../utils/api';
-import useAuth from "../../../auth/useAuth";
-import handleSignOut from "../../../auth/Logout";
+import { Thesis } from '../../models/thesis/Thesis';
+import { Program } from '../../models/university/Program';
+import api from '../../utils/api';
+import useAuth from "../../auth/useAuth";
+import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
-import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
+import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 import { toast } from 'react-toastify';
 
-const ThesisDetails: React.FC = () => {
+const ApproveDetails: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -58,13 +58,14 @@ const ThesisDetails: React.FC = () => {
     }
   };
 
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showRejectConfirmation, setShowRejectConfirmation] = useState(false);
+  const [showAcceptConfirmation, setShowAcceptConfirmation] = useState(false);
 
-  const handleDeleteClick = () => {
-    setShowDeleteConfirmation(true);
+  const handleConfirmClick = () => {
+    setShowAcceptConfirmation(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmAccept = () => {
     api.delete(`http://localhost:8080/thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
@@ -79,11 +80,37 @@ const ThesisDetails: React.FC = () => {
         toast.error(t('thesis.deleteError'));
 
       });
-    setShowDeleteConfirmation(false);
+    setShowRejectConfirmation(false);
   };
 
-  const handleCancelDelete = () => {
-    setShowDeleteConfirmation(false);
+  const handleCancelAccept = () => {
+    setShowAcceptConfirmation(false);
+  };
+
+  const handleRejectClick = () => {
+    setShowRejectConfirmation(true);
+  };
+
+  const handleConfirmReject = () => {
+    api.delete(`http://localhost:8080/thesis/${id}`)
+      .then(() => {
+        toast.success(t('thesis.deleteSuccessful'));
+        navigate("/theses");
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+        toast.error(t('thesis.deleteError'));
+
+      });
+    setShowRejectConfirmation(false);
+  };
+
+  const handleCancelReject = () => {
+    setShowRejectConfirmation(false);
   };
 
   return (
@@ -92,25 +119,51 @@ const ThesisDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => { navigate(`/theses/edit/${id}`, { state: { thesis } }) }}>
-          {t('thesis.edit')}
+        
+        <button 
+            type="button" 
+            className="custom-button" 
+            onClick={() => handleConfirmClick()}
+            disabled={showRejectConfirmation}
+        >
+          {t('general.management.accept')}
         </button>
-        <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
-          <i className="bi bi-trash"></i>
-        </button>
-        {showDeleteConfirmation && (
-          <tr>
+        {showAcceptConfirmation && (
+            <tr>
             <td colSpan={5}>
               <ChoiceConfirmation
-                isOpen={showDeleteConfirmation}
-                onClose={handleCancelDelete}
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-                questionText={t('thesis.deleteConfirmation')}
+                isOpen={showAcceptConfirmation}
+                onClose={handleCancelAccept}
+                onConfirm={handleConfirmAccept}
+                onCancel={handleCancelAccept}
+                questionText={t('thesis.acceptConfirmation')}
               />
             </td>
           </tr>
         )}
+
+        <button 
+            type="button" 
+            className="custom-button" 
+            onClick={() => handleRejectClick()}
+            disabled={showAcceptConfirmation}
+        >
+            {t('general.management.reject')}  
+        </button>
+        {showRejectConfirmation && (
+          <tr>
+            <td colSpan={5}>
+              <ChoiceConfirmation
+                isOpen={showRejectConfirmation}
+                onClose={handleCancelReject}
+                onConfirm={handleConfirmReject}
+                onCancel={handleCancelReject}
+                questionText={t('thesis.rejectConfirmation')}
+              />
+            </td>
+          </tr>
+        )}
+
       </div>
       <div>
         {thesis ? (
@@ -165,4 +218,4 @@ const ThesisDetails: React.FC = () => {
   );
 };
 
-export default ThesisDetails;
+export default ApproveDetails;

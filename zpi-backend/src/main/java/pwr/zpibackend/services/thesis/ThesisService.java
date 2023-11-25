@@ -9,17 +9,14 @@ import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.repositories.user.StudentRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -150,24 +147,24 @@ public class ThesisService {
 
 
     //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
-    public List<Thesis> getAllThesesByStatusId(Long id) {
-        return thesisRepository.findAllByStatusId(id);
+    public List<Thesis> getAllThesesByStatusName(String name) {
+        return thesisRepository.findAllByStatusName(name);
     }
 
     //  np na zwrócenie wszystkich tematów, które nie są draftami
-    public List<Thesis> getAllThesesExcludingStatusId(Long id){
-        Optional<Status> excludedStatus = statusRepository.findById(id);
+    public List<Thesis> getAllThesesExcludingStatusName(String name){
+        Optional<Status> excludedStatus = statusRepository.findByName(name);
         if (excludedStatus.isEmpty()) {
-            throw new NotFoundException("Status with id " + id + " does not exist");
+            throw new NotFoundException("Status with name " + name + " does not exist");
         }
         return thesisRepository.findAll().stream()
-                .filter(thesis -> !id.equals(thesis.getStatus().getId()))
+                .filter(thesis -> !name.equals(thesis.getStatus().getName()))
                 .collect(Collectors.toList());
     }
 
     //  np na zwrócenie wszystkich draftów danego pracownika
-    public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
-        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId);
+    public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, String statName) {
+        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName);
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
