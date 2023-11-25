@@ -1,0 +1,49 @@
+services:
+
+  backend:
+    build: 
+      context: zpi-backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - db
+    environment:
+      FRONTEND_PORT: 3000
+      FRONTEND_HOST: localhost
+      POSTRESQL_HOST: db
+      POSTRESQL_DB: zpi_db2
+      POSTRESQL_USER: postgres
+      POSTRESQL_PASSWORD: asdlkj000
+    depends_on:
+      - db
+
+  frontend:
+    build: 
+      context: zpi-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+  db:
+    image: postgres:16.1-alpine
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: asdlkj000
+      POSTGRES_DB: zpi_db2
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    networks:
+      - db
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  db:
