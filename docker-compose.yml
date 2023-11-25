@@ -1,9 +1,7 @@
 services:
 
   backend:
-    build: 
-      context: zpi-backend
-      dockerfile: Dockerfile
+    image: backend:latest
     ports:
       - 8080:8080
     networks:
@@ -19,11 +17,9 @@ services:
       - db
 
   frontend:
-    build: 
-      context: zpi-frontend
-      dockerfile: Dockerfile
+    image: frontend:latest
     ports:
-      - 3000:3000
+      - 80:3000
     depends_on:
       - backend
   db:
