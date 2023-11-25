@@ -12,7 +12,7 @@ spring:
     active: ${ACTIVE_PROFILE:dev}
 
   datasource:
-    url: jdbc:postgresql://${POSTRESQL_HOST}:${POSTRESQL_PORT}/${POSTRESQL_DB}
+    url: jdbc:postgresql://${POSTRESQL_HOST}/${POSTRESQL_DB}
     username: ${POSTRESQL_USER}
     password: ${POSTRESQL_PASSWORD}
 
