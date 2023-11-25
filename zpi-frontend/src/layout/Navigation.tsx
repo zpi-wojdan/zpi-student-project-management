@@ -36,6 +36,7 @@ const Navigation = ({ children }: NavigationProps) => {
     ];
 
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
+    const isActive = (path: string) => location.pathname.startsWith(path);
     const onChangeLang = (lang: string) => {
         console.log(lang);
         if (lang !== i18n.language) {
@@ -129,58 +130,57 @@ const Navigation = ({ children }: NavigationProps) => {
                 <div className={`container p-0 ${isLoginPage ? 'd-none' : ''}`}>
                     <nav className="navbar navbar-expand-lg navbar-light bg-light">
                         <div className="container">
-
-                            <button className="navbar-toggler" type="button" onClick={() => setShowNav(!showNav)}>
+                            <button className="navbar-toggler ms-auto" type="button" onClick={() => setShowNav(!showNav)}>
                                 <span className="navbar-toggler-icon"></span>
                             </button>
                             <div className={`collapse navbar-collapse ${showNav ? 'show' : ''}`} id="navbarNav">
-                                <ul className="navbar-nav me-auto">
+                                <ul className="navbar-nav me-auto ms-2">
                                     <li className="nav-item">
                                         <NavLink className={({ isActive }) => isActive ?
-                                            "nav-link active" : "nav-link"} to="/">{t('navigation.home')}</NavLink>
+                                            "nav-link active px-2" : "nav-link px-2"} to="/">{t('navigation.home')}</NavLink>
                                     </li>
                                     {isLoggedIn ? (
                                         <>
                                             <li className="nav-item">
                                                 <NavLink className={({ isActive }) => isActive ?
-                                                    "nav-link active" : "nav-link"} to="/public-theses" >
+                                                    "nav-link active px-2" : "nav-link px-2"} to="/public-theses" >
                                                     {t('general.university.theses')}
                                                 </NavLink>
                                             </li>
                                             {user?.roles?.some((role: Role) => role.name === 'admin') ? (
                                                 <>
                                                     <li className="nav-item">
-                                                        <Dropdown as={Nav.Item}>
-                                                            <Dropdown.Toggle as={Nav.Link} className={isManagementActive ? "active" : ""}>{t('navigation.manage')}</Dropdown.Toggle>
+                                                        <Dropdown as={Nav.Item} className="custom-dropdown">
+                                                            <Dropdown.Toggle as={Nav.Link} className={isManagementActive ? "active px-2" : "px-2"}>{t('navigation.manage')}</Dropdown.Toggle>
                                                             <Dropdown.Menu>
-                                                                <Dropdown.Item as={Link} to="/theses" className={location.pathname === '/thesis' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/theses" className={isActive('/theses') ? "active" : ""}>
                                                                     {t('general.university.theses')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/students" className={location.pathname === '/students' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/students" className={isActive('/students') ? "active" : ""}>
                                                                     {t('general.people.students')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/employees" className={location.pathname === '/employees' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/employees" className={isActive('/employees') ? "active" : ""}>
                                                                     {t('general.people.employees')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/faculties" className={location.pathname === '/faculties' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/faculties" className={isActive('/faculties') ? "active" : ""}>
                                                                     {t('general.university.faculties')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/fields" className={location.pathname === '/fields' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/fields" className={isActive('/fields') ? "active" : ""}>
                                                                     {t('general.university.fields')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/specializations" className={location.pathname === '/specializations' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/specializations" className={isActive('/specializations') ? "active" : ""}>
                                                                     {t('general.university.specializations')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/programs" className={location.pathname === '/programs' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/programs" className={isActive('/programs') ? "active" : ""}>
                                                                     {t('general.university.studyPrograms')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/cycles" className={location.pathname === '/cycles' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/cycles" className={isActive('/cycles') ? "active" : ""}>
                                                                     {t('general.university.studyCycles')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/departments" className={location.pathname === '/departments' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/departments" className={isActive('/departments') ? "active" : ""}>
                                                                     {t('general.university.departments')}
                                                                 </Dropdown.Item>
-                                                                <Dropdown.Item as={Link} to="/deadlines" className={location.pathname === '/deadlines' ? "active" : ""}>
+                                                                <Dropdown.Item as={Link} to="/deadlines" className={isActive('/deadlines') ? "active" : ""}>
                                                                     {t('general.university.deadlines')}
                                                                 </Dropdown.Item>
                                                             </Dropdown.Menu>
@@ -189,7 +189,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                                     </li>
                                                     <li className="nav-item">
                                                         <NavLink className={({ isActive }) => isActive ?
-                                                            "nav-link active" : "nav-link"} to="/reports">
+                                                            "nav-link active px-2" : "nav-link px-2"} to="/reports">
                                                             {t('navigation.reports')}
                                                         </NavLink>
                                                     </li>
@@ -198,7 +198,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                             {user?.roles?.some((role: Role) => role.name === 'supervisor') ? (
                                                 <li className="nav-item">
                                                     <NavLink className={({ isActive }) => isActive ?
-                                                        "nav-link active" : "nav-link"} to="/my">
+                                                        "nav-link active px-2" : "nav-link px-2"} to="/my">
                                                         {t('navigation.myTheses')}
                                                     </NavLink>
                                                 </li>

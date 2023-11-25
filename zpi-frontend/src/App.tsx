@@ -110,8 +110,8 @@ export default function App(props: IAppProps) {
                 <Route path='deadlines' element={<DeadlineList />} />
                 <Route path='deadlines/add' element={<DeadlineForm />} />
                 <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
-                <Route path="/file/student" element={<UploadStudentFilePage />} />
-                <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                <Route path="/students/file" element={<UploadStudentFilePage />} />
+                <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/admin-reservation" element={<ReservationPage admin={true}/>} />
               </Route>

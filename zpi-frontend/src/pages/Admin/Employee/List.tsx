@@ -272,7 +272,7 @@ const EmployeeList: React.FC = () => {
         <button className="custom-button" onClick={() => { navigate('/employees/add') }}>
           {t('employee.add')}
         </button>
-        <button className="custom-button" onClick={() => { navigate('/file/employee') }}>
+        <button className="custom-button" onClick={() => { navigate('/employees/file') }}>
           {t('employee.import')}
         </button>
       </div>
