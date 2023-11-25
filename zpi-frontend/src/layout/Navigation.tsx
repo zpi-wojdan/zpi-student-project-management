@@ -50,18 +50,15 @@ const Navigation = ({ children }: NavigationProps) => {
             <div className='container-fluid p-0'>
                 <nav className="navbar navbar-expand navbar-light bg-light p-0">
                     <div className="container collapse navbar-collapse">
-
                         <Link className="navbar-brand px-4 fs-4" to="/">ZPI Helper</Link>
-
                         <ul className="navbar-nav">
                             {isLoggedIn ? (
-                                <li className="nav-item mx-0 text-nowrap">
+                                <><li className="nav-item mx-0 text-nowrap">
                                     <div className="nav-link">{user.name} {user.surname}</div>
-                                </li>
+                                </li><li className="nav-item mx-0">
+                                        <div className="nav-link mx-0">|</div>
+                                    </li></>
                             ) : null}
-                            <li className="nav-item mx-0">
-                                <div className="nav-link mx-0">|</div>
-                            </li>
                             <li className="nav-item mx-0">
                                 <Link
                                     className={`mx-0 nav-link ${i18n.language === 'pl' ? 'lang-link-active' : ''}`}
