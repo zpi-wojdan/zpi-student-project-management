@@ -47,14 +47,14 @@ const Navigation = ({ children }: NavigationProps) => {
     return (
         <>
             <div className='container-fluid p-0'>
-                <nav className="navbar navbar-expand-lg navbar-light bg-light p-0">
+                <nav className="navbar navbar-expand navbar-light bg-light p-0">
                     <div className="container collapse navbar-collapse">
-                        <div className="me-auto"></div>
 
+                        <Link className="navbar-brand px-4 fs-4" to="/">ZPI Helper</Link>
 
                         <ul className="navbar-nav">
                             {isLoggedIn ? (
-                                <li className="nav-item mx-0">
+                                <li className="nav-item mx-0 text-nowrap">
                                     <div className="nav-link">{user.name} {user.surname}</div>
                                 </li>
                             ) : null}
@@ -108,26 +108,28 @@ const Navigation = ({ children }: NavigationProps) => {
                     </div>
                 </nav>
             </div>
-            {i18n.language=="pl" ? (
-            <img
-                src="/images/logoPl.png"
-                alt={t('navigation.imageAlt')}
-                className='my-3 ps-4 pe-5'
-                style={{ width: 'auto', height: '60px' }}
-            />
-            ) : (
-            <img
-                src="/images/logoEn.png"
-                alt={t('navigation.imageAlt')}
-                className='my-3 ps-4 pe-5'
-                style={{ width: 'auto', height: '60px' }}
-            />
-            )}
+            <div className='container'>
+                {i18n.language == "pl" ? (
+                    <img
+                        src="/images/logoPl.png"
+                        alt={t('navigation.imageAlt')}
+                        className='my-3 ps-4 pe-5'
+                        style={{ width: 'auto', height: '60px' }}
+                    />
+                ) : (
+                    <img
+                        src="/images/logoEn.png"
+                        alt={t('navigation.imageAlt')}
+                        className='my-3 ps-4 pe-5'
+                        style={{ width: 'auto', height: '60px' }}
+                    />
+                )}
+            </div>
             <div className='container'>
                 <div className={`container p-0 ${isLoginPage ? 'd-none' : ''}`}>
                     <nav className="navbar navbar-expand-lg navbar-light bg-light">
                         <div className="container">
-                            <Link className="navbar-brand" to="/">ZPI Helper</Link>
+
                             <button className="navbar-toggler" type="button" onClick={() => setShowNav(!showNav)}>
                                 <span className="navbar-toggler-icon"></span>
                             </button>
