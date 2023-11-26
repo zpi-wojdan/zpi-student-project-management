@@ -560,8 +560,9 @@ const ThesisList: React.FC = () => {
               <thead>
                 <tr>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                  <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '50%' }}>{t('general.university.thesis')}</th>
+                  <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '12%', textAlign: 'center'  }}>{t('general.university.studyCycle')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.university.status')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
                 </tr>
@@ -578,6 +579,7 @@ const ThesisList: React.FC = () => {
                       )}
                     </td>
                     <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+                    <td className="centered">{thesis.studyCycle?.name}</td>
                     <td className="centered">{thesis.status.name}</td>
                     <td>
                       <button

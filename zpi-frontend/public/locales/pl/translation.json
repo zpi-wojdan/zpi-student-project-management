@@ -68,6 +68,7 @@
       "specialization": "Specjalność",
       "specializations": "Specjalności",
       "studyCycle": "Cykl nauczania",
+      "latestStudyCycle": "Ostatni cykl nauczania",
       "studyCycles": "Cykle nauczania",
       "studyProgram": "Program studiów",
       "studyPrograms": "Programy studiów",
@@ -229,7 +230,6 @@
     "downloadNoDataError": "Nie znaleziono danych do deklaracji",
     "downloadError": "Wystąpił błąd podczas generowania deklaracji",
     "generating": "Generowanie deklaracji...",
-    "updateError": "Temat nie został zaktualizowany",
     "numPeopleTooBig": "Wartość nie może być większa niż: 5",
     "numPeopleTooSmall": "Wartość nie może być mniejsza niż: 3"
   },
