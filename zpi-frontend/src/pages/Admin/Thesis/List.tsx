@@ -211,6 +211,20 @@ const ThesisList: React.FC = () => {
     setFilteredTheses(newFilteredTheses);
   }
 
+  const filtered = () => {
+    if (selectedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr ||
+      submittedMinVacancies != 0 ||
+      submittedMaxVacancies != 5 ||
+      submittedCycleName ||
+      submittedSupervisors.length > 0 ||
+      submittedStatusName) {
+      return true
+    }
+    return false
+  }
+
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [afterSearchTheses, setAfterSearchTheses] = useState<Thesis[]>(theses);
@@ -272,7 +286,7 @@ const ThesisList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>

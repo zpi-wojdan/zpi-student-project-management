@@ -218,6 +218,19 @@ const ThesesTable: React.FC = () => {
     setFilteredTheses(newFilteredTheses);
   }
 
+  const filtered = () => {
+    if (selectedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr ||
+      submittedMinVacancies != 0 ||
+      submittedMaxVacancies != 5 ||
+      submittedCycleName ||
+      submittedSupervisors.length > 0) {
+      return true
+    }
+    return false
+  }
+
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [afterSearchTheses, setAfterSearchTheses] = useState<ThesisFront[]>(theses);
@@ -279,7 +292,7 @@ const ThesesTable: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -558,7 +571,7 @@ const ThesesTable: React.FC = () => {
                     </td>
                     <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
                     <td className="centered">{thesis.studyCycle?.name}</td>
-                    <td className="centered">{thesis.occupied + "/" + thesis.numPeople}</td>
+                    <td className="centered">{thesis.status.name === "Closed" ? "-" : thesis.occupied + "/" + thesis.numPeople}</td>
                     <td>
                       <button
                         className="custom-button coverall"

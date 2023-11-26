@@ -134,6 +134,15 @@ const StudentList: React.FC = () => {
     setFilteredStudents(newFilteredStudents);
   }
 
+  const filtered = () => {
+    if (submittedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr) {
+      return true
+    }
+    return false
+  }
+
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [afterSearchStudents, setAfterSearchStudents] = useState<Student[]>(students);
@@ -195,7 +204,7 @@ const StudentList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
