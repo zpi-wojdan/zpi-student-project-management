@@ -28,7 +28,6 @@ const ThesisList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/thesis/public')
       .then((response) => {
-        response.data.sort((a: Thesis, b: Thesis) => a.id - b.id);
         setTheses(response.data);
         setFilteredTheses(response.data);
         setAfterSearchTheses(response.data);

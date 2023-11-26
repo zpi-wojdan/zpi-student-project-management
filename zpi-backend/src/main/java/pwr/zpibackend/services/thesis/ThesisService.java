@@ -20,10 +20,7 @@ import pwr.zpibackend.repositories.user.StudentRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +35,7 @@ public class ThesisService {
     private final CommentRepository commentRepository;
 
     public List<Thesis> getAllTheses() {
-        return thesisRepository.findAll();
+        return sortTheses(thesisRepository.findAll());
     }
 
     public List<Thesis> getAllPublicTheses() {
@@ -49,7 +46,7 @@ public class ThesisService {
             Optional<Status> status = statusRepository.findByName(statusName);
             status.ifPresent(value -> theses.addAll(thesisRepository.findAllByStatusId(value.getId())));
         }
-        return theses;
+        return sortTheses(theses);
     }
 
     public Thesis getThesis(Long id) {
@@ -163,17 +160,25 @@ public class ThesisService {
 
     //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
     public List<Thesis> getAllThesesByStatusId(Long id) {
-        return thesisRepository.findAllByStatusId(id);
+        return sortTheses(thesisRepository.findAllByStatusId(id));
     }
 
     //  np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
-        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId);
+        return sortTheses(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId));
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
-        return thesisRepository.findAllByEmployeeId(id);
+        return sortTheses(thesisRepository.findAllByEmployeeId(id));
     }
 
+    public List<Thesis> sortTheses(List<Thesis> theses) {
+        return theses.stream()
+                .sorted(Comparator
+                        .comparing((Thesis thesis) -> thesis.getStudyCycle().getName())
+                        .reversed()
+                        .thenComparing(Thesis::getId, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+    }
 }

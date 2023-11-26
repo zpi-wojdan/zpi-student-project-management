@@ -49,7 +49,6 @@ const ThesesTable: React.FC = () => {
           };
           return thesis;
         });
-        thesis_response.sort((a: ThesisFront, b: ThesisFront) => a.id - b.id);
         setTheses(thesis_response);
         setFilteredTheses(thesis_response);
         setAfterSearchTheses(thesis_response);
