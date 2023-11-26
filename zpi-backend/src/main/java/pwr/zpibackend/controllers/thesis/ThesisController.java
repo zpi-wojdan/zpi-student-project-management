@@ -25,6 +25,12 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
     }
 
+    @GetMapping("/public")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllPublicTheses() {
+        return new ResponseEntity<>(thesisService.getAllPublicTheses(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Thesis> getThesisById(@PathVariable Long id) {
@@ -53,12 +59,6 @@ public class ThesisController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesByStatusId(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getAllThesesByStatusId(id), HttpStatus.OK);
-    }
-
-    @GetMapping("/status/exclude/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusId(id), HttpStatus.OK);
     }
 
     @GetMapping("/{empId}/{statId}")

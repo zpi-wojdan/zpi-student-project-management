@@ -26,7 +26,7 @@ const ThesisList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis')
+    api.get('http://localhost:8080/thesis/public')
       .then((response) => {
         response.data.sort((a: Thesis, b: Thesis) => a.id - b.id);
         setTheses(response.data);

@@ -27,7 +27,7 @@ const ThesesTable: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis')
+    api.get('http://localhost:8080/thesis/public')
       .then((response) => {
         console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
