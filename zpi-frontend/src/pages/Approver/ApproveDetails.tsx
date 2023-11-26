@@ -19,6 +19,9 @@ const ApproveDetails: React.FC = () => {
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
 
+  const [key, setKey] = useState(0);
+  const [commentsKey, setCommentsKey] = useState(0);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
@@ -30,6 +33,7 @@ const ApproveDetails: React.FC = () => {
   const commentContentRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [statusName, setStatusName] = useState<string | undefined>(undefined);
 
   const [thesisForm, setThesisForm] = useState<ThesisDTO>({
     namePL: '',
@@ -50,14 +54,7 @@ const ApproveDetails: React.FC = () => {
 
   const [confirmClicked, setConfirmClicked] = useState(false);
   const [rejectClicked, setRejectClicked] = useState(false);
-  const [updatedDatabase, setUpdatedDatabase] = useState(false);
 
-  useEffect(() => {
-    if (user === null){
-      const u = JSON.parse(Cookies.get("user") || "{}")
-      setUser(u);
-    }
-  }, [])
 
   useEffect(() => {
     const response = api.get(`http://localhost:8080/thesis/${id}`)
@@ -89,7 +86,14 @@ const ApproveDetails: React.FC = () => {
             }
         });
         
-  }, [id]);
+  }, [id, key, commentsKey]);
+
+  useEffect(() => {
+    if (user === null){
+      const u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+    }
+  }, [id])
 
   useEffect(() => {
     if (thesis){
@@ -131,7 +135,6 @@ const ApproveDetails: React.FC = () => {
   }, [i18n.language]);
 
   useEffect(() => {     
-    console.log('rejected');
     api.get('http://localhost:8080/status/Rejected')
       .then((response) => {
         setStatuses(statuses => [...statuses, response.data]);
@@ -155,7 +158,7 @@ const ApproveDetails: React.FC = () => {
           handleSignOut(navigate);
         }
       });
-    }, []);
+    }, [id]);
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
@@ -170,7 +173,7 @@ const ApproveDetails: React.FC = () => {
           handleSignOut(navigate);
         }
       });
-  }, []);
+  }, [id]);
 
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
@@ -218,11 +221,16 @@ const ApproveDetails: React.FC = () => {
   };
 
   const handleConfirmAccept = () => {
-    const [isValid, dto] = validateThesis();
+    const [isValid, thesisDTO] = validateThesis();
     if(isValid){
-        api.put(`http://localhost:8080/thesis/${id}`, dto)
+        api.put(`http://localhost:8080/thesis/${id}`, thesisDTO)
             .then(() => {
                 toast.success(t("thesis.acceptSuccesful"));
+                if (thesisDTO){
+                    console.log(thesisDTO?.statusId);
+                    setStatusName(statuses.find(s => s.id = thesisDTO?.statusId)?.name)
+                }
+                navigate('/manage');
             })
             .catch((error) => {
                 console.error(error);
@@ -265,7 +273,13 @@ const ApproveDetails: React.FC = () => {
 
                     api.put(`http://localhost:8080/thesis/${id}`, thesisDTO)
                         .then(() => {
+                            setKey(k => k+1);
+                            setCommentsKey(k => k+1);
                             toast.success(t("thesis.rejectionSuccessful"));
+                            if (thesisDTO){
+                                console.log(thesisDTO?.statusId);
+                                setStatusName(statuses.find(s => s.id = thesisDTO?.statusId)?.name)
+                            }
                         })
                         .catch((error) => {
                             console.error(error);
@@ -293,7 +307,7 @@ const ApproveDetails: React.FC = () => {
     else{
         toast.error(t("thesis.rejectionError"));
     }
-    setUpdatedDatabase(true);
+    // setUpdatedDatabase(true);
     setShowRejectConfirmation(false);
   };
 
@@ -359,7 +373,7 @@ const ApproveDetails: React.FC = () => {
     const isValid = !thesis ||
         !(thesis.status &&
             (thesis.status.name === 'Rejected' || thesis.status.name === 'Approved'));
-    console.log(thesis?.status);
+    console.log(thesis?.status.id);
     
     let id: number;
     if (confirmClicked && !rejectClicked){
@@ -371,6 +385,7 @@ const ApproveDetails: React.FC = () => {
     else{
         id = -1;
     }
+    console.log(id);
 
     if (isValid && thesis && id !== -1){
         const dto: ThesisDTO = {
@@ -390,6 +405,16 @@ const ApproveDetails: React.FC = () => {
         return [isValid, null];
     }
   }
+
+  const statusLabels: { [key:string]:string } = {
+    "Draft": t('status.draft'),
+    "Pending approval": t('status.pending'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed')
+  }
+
 
   return (
     <div className='page-margin'>
@@ -503,11 +528,15 @@ const ApproveDetails: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <p><span className="bold">{t('general.university.status')}:</span> <span>{thesis.status.name}</span></p>
+            <p key={key}><span className="bold">{t('general.university.status')}: </span> 
+                <span>
+                    {(statusName !== undefined && statusLabels[statusName]) || thesis.status.name}
+                </span>
+            </p>
             
-            <ul>
+            <ul key={commentsKey}>
                 {thesis.comments.map((c: Comment) => (
-                    <li key={c.id}>
+                    <li key={`${c.id}-${commentsKey}`}>
                         <div>
                             {c.content}
                         </div>

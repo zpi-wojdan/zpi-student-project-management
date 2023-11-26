@@ -84,7 +84,8 @@
     "manage": "Zarządzaj",
     "myTheses": "Moje tematy",
     "imageAlt": "Logo Politechniki Wrocławskiej",
-    "reports": "Raporty"
+    "reports": "Raporty",
+    "confirm": "Do zatwierdzenia"
   },
   "cycle": {
     "deleteSuccessful": "Cykl został usunięty",

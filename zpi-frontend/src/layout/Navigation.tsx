@@ -196,7 +196,7 @@ const Navigation = ({ children }: NavigationProps) => {
                                                 <li className="nav-item">
                                                     <NavLink className={({ isActive }) => isActive ?
                                                         "nav-link active" : "nav-link"} to="/manage">
-                                                        {t('navigation.manage')}
+                                                        {t('navigation.confirm')}
                                                     </NavLink>
                                                 </li>
                                             ) : null}

@@ -85,7 +85,8 @@
     "manage": "Manage",
     "myTheses": "My theses",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology",
-    "reports": "Reports"
+    "reports": "Reports",
+    "confirm": "To be approved"
   },
   "cycle": {
     "deleteSuccessful": "Study cycle has been deleted",
