@@ -187,7 +187,6 @@ const ThesisList: React.FC = () => {
       localStorage.setItem('adminThesesFilterCycle', selectedCycleName);
       localStorage.setItem('adminThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
       localStorage.setItem('adminThesesFilterStatus', selectedStatusName);
-      console.log("Zapisano filtry tematów admina")
     }
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)

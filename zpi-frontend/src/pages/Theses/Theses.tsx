@@ -195,7 +195,6 @@ const ThesesTable: React.FC = () => {
       localStorage.setItem('publicThesesFilterMaxVacancies', selectedMaxVacancies.toString());
       localStorage.setItem('publicThesesFilterCycle', selectedCycleName);
       localStorage.setItem('publicThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
-      console.log("Zapisano filtry publicznych tematów")
     }
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)

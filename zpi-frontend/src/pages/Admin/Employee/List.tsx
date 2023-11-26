@@ -107,7 +107,6 @@ const EmployeeList: React.FC = () => {
       localStorage.setItem('employeeFilterDepartment', selectedDepartmentCode);
       localStorage.setItem('employeeFilterRole', selectedRoleName);
       localStorage.setItem('employeeFilterTitle', selectedTitleName);
-      console.log("Zapisano filtry pracownika")
     }
     if (!sidebarOpen) {
       setSelectedDepartmentCode(submittedDepartmentCode)

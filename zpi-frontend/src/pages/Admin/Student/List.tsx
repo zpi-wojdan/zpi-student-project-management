@@ -118,7 +118,6 @@ const StudentList: React.FC = () => {
       localStorage.setItem('studentFilterFaculty', selectedFacultyAbbr);
       localStorage.setItem('studentFilterField', selectedFieldAbbr);
       localStorage.setItem('studentFilterSpecialization', selectedSpecializationAbbr);
-      console.log("Zapisano filtry studenta")
     }
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)

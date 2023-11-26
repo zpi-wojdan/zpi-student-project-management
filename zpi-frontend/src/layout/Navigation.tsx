@@ -49,19 +49,16 @@ const Navigation = ({ children }: NavigationProps) => {
     useEffect(() => {
         const path = location.pathname;
         if (prevPath.startsWith('/students') && !path.startsWith('/students')) {
-            console.log("Usunięto filtry studenta")
             localStorage.removeItem('studentFilterFaculty');
             localStorage.removeItem('studentFilterField');
             localStorage.removeItem('studentFilterSpecialization');
         }
         if (prevPath.startsWith('/employees') && !path.startsWith('/employees')) {
-            console.log("Usunięto filtry pracownika")
             localStorage.removeItem('employeeFilterDepartment');
             localStorage.removeItem('employeeFilterRole');
             localStorage.removeItem('employeeFilterTitle')
         }
         if (prevPath.startsWith('/theses') && !path.startsWith('/theses')) {
-            console.log("Usunięto filtry tematów admina")
             localStorage.removeItem('adminThesesFilterFaculty');
             localStorage.removeItem('adminThesesFilterField');
             localStorage.removeItem('adminThesesFilterSpecialization');
@@ -72,7 +69,6 @@ const Navigation = ({ children }: NavigationProps) => {
             localStorage.removeItem('adminThesesFilterStatus')
         }
         if (prevPath.startsWith('/public-theses') && !path.startsWith('/public-theses')) {
-            console.log("Usunięto filtry publicznych tematów")
             localStorage.getItem('publicThesesFilterFaculty');
             localStorage.getItem('publicThesesFilterField');
             localStorage.getItem('publicThesesFilterSpecialization');
