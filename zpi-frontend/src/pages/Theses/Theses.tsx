@@ -29,7 +29,6 @@ const ThesesTable: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/thesis')
       .then((response) => {
-        console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
             id: thesisDb.id,
@@ -172,6 +171,11 @@ const ThesesTable: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (loaded)
+      handleFiltration(false);
+  }, [loaded]);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleToggleSidebar = (submitted: boolean) => {
@@ -184,6 +188,14 @@ const ThesesTable: React.FC = () => {
       setSubmittedMaxVacancies(selectedMaxVacancies)
       setSubmittedCycleName(selectedCycleName)
       setSubmittedSupervisors(selectedSupervisors)
+      localStorage.setItem('publicThesesFilterFaculty', selectedFacultyAbbr);
+      localStorage.setItem('publicThesesFilterField', selectedFieldAbbr);
+      localStorage.setItem('publicThesesFilterSpecialization', selectedSpecializationAbbr);
+      localStorage.setItem('publicThesesFilterMinVacancies', selectedMinVacancies.toString());
+      localStorage.setItem('publicThesesFilterMaxVacancies', selectedMaxVacancies.toString());
+      localStorage.setItem('publicThesesFilterCycle', selectedCycleName);
+      localStorage.setItem('publicThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
+      console.log("Zapisano filtry publicznych tematów")
     }
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
@@ -197,25 +209,63 @@ const ThesesTable: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = () => {
-    handleToggleSidebar(true)
+  const handleFiltration = (toggle: boolean) => {
 
-    const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
-    const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
-    const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-    const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
-    const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
-    const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
+    if (toggle) {
+      handleToggleSidebar(true)
 
-    const newFilteredTheses = theses.filter(thesis =>
-      facultyFilter(thesis) &&
-      fieldFilter(thesis) &&
-      specializationFilter(thesis) &&
-      vacanciesFilter(thesis) &&
-      cycleFilter(thesis) &&
-      supervisorFilter(thesis)
-    );
-    setFilteredTheses(newFilteredTheses);
+      const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
+      const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+      const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
+      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
+      const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
+      const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
+
+      const newFilteredTheses = theses.filter(thesis =>
+        facultyFilter(thesis) &&
+        fieldFilter(thesis) &&
+        specializationFilter(thesis) &&
+        vacanciesFilter(thesis) &&
+        cycleFilter(thesis) &&
+        supervisorFilter(thesis)
+      );
+      setFilteredTheses(newFilteredTheses);
+    }
+    else {
+      const savedFacultyAbbr = localStorage.getItem('publicThesesFilterFaculty') || '';
+      const savedFieldAbbr = localStorage.getItem('publicThesesFilterField') || '';
+      const savedSpecializationAbbr = localStorage.getItem('publicThesesFilterSpecialization') || '';
+      const savedMinVacancies = parseInt(localStorage.getItem('publicThesesFilterMinVacancies') || '0', 10);
+      const savedMaxVacancies = parseInt(localStorage.getItem('publicThesesFilterMaxVacancies') || '5', 10);
+      const savedCycleName = localStorage.getItem('publicThesesFilterCycle') || '';
+      const savedsupervisors = JSON.parse(localStorage.getItem('publicThesesFilterSupervisors') || '[]');
+      const savedStatusName = localStorage.getItem('publicThesesFilterStatus') || '';
+
+      setSubmittedFacultyAbbr(savedFacultyAbbr)
+      setSubmittedFieldAbbr(savedFieldAbbr)
+      setSubmittedSpecializationAbbr(savedSpecializationAbbr)
+      setSubmittedMinVacancies(savedMinVacancies)
+      setSubmittedMaxVacancies(savedMaxVacancies)
+      setSubmittedCycleName(savedCycleName)
+      setSubmittedSupervisors(savedsupervisors)
+
+      const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
+      const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+      const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
+      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
+      const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
+      const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
+
+      const newFilteredTheses = theses.filter(thesis =>
+        facultyFilter(thesis) &&
+        fieldFilter(thesis) &&
+        specializationFilter(thesis) &&
+        vacanciesFilter(thesis) &&
+        cycleFilter(thesis) &&
+        supervisorFilter(thesis)
+      );
+      setFilteredTheses(newFilteredTheses);
+    }
   }
 
   // Wyszukiwanie
@@ -446,7 +496,7 @@ const ThesesTable: React.FC = () => {
             }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration()}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>
