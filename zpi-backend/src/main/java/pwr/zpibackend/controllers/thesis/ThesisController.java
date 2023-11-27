@@ -65,20 +65,20 @@ public class ThesisController {
     }
 
     @GetMapping("/{empId}/{statName}")
-//    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusName(@PathVariable Long empId,
                                                                             @PathVariable String statName) {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusName(empId, statName), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
-//    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployee(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployee(id), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{empId}/statuses")
-//    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusNameList(@PathVariable Long empId,
                                                                             @RequestParam List<String> statName) {
         List<String> fixedNames = new ArrayList<>();
