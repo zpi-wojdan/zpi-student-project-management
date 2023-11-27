@@ -328,7 +328,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusId() {
         Long empId = 1L;
         Long statId = 1L;
-        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisorIdAndStatusId(empId, statId)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusId(empId, statId);
 
@@ -339,7 +339,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusIdNotFound() {
         Long empId = 1L;
         Long statId = 1L;
-        when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisorIdAndStatusId(empId, statId)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployeeByStatusId(empId, statId), Collections.emptyList());
     }
@@ -348,7 +348,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesForEmployee() {
         Long empId = 1L;
-        when(thesisRepository.findAllByEmployeeId(empId)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisorId(empId)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployee(empId);
 
@@ -358,7 +358,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesForEmployeeNotFound() {
         Long empId = 1L;
-        when(thesisRepository.findAllByEmployeeId(empId)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisorId(empId)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployee(empId), Collections.emptyList());
     }
