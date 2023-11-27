@@ -225,7 +225,7 @@ public class ThesisServiceTests {
         thesisDTO.setDescriptionEN("Description 1");
         thesisDTO.setNumPeople(4);
         thesisDTO.setProgramIds(List.of(1L));
-        thesisDTO.setStudyCycleId(1L);
+        thesisDTO.setStudyCycleId(Optional.of(1L));
         thesisDTO.setStatusId(1L);
         thesisDTO.setSupervisorId(1L);
 
@@ -276,7 +276,7 @@ public class ThesisServiceTests {
         thesisDTO.setDescriptionEN("Description 1");
         thesisDTO.setNumPeople(4);
         thesisDTO.setProgramIds(List.of(1L));
-        thesisDTO.setStudyCycleId(1L);
+        thesisDTO.setStudyCycleId(Optional.of(1L));
         thesisDTO.setStatusId(1L);
         thesisDTO.setSupervisorId(1L);
 

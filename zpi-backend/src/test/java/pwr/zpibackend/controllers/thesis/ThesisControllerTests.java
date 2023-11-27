@@ -31,6 +31,7 @@ import pwr.zpibackend.services.thesis.ThesisService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -170,7 +171,7 @@ class ThesisControllerTests {
         thesisToAdd.setNumPeople(5);
         thesisToAdd.setSupervisorId(supervisorId);
         thesisToAdd.setProgramIds(List.of(0L));
-        thesisToAdd.setStudyCycleId(0L);
+        thesisToAdd.setStudyCycleId(Optional.of(0L));
         thesisToAdd.setStatusId(0L);
         return thesisToAdd;
     }
