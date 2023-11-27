@@ -58,16 +58,16 @@ public class ThesisController {
 
     @GetMapping("/status/exclude/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable String name) {
+    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusName(@PathVariable String name) {
         String realName = name.replaceAll("_", " ");
         return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusName(realName), HttpStatus.OK);
     }
 
     @GetMapping("/{empId}/{statName}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusId(@PathVariable Long empId,
-                                                                        @PathVariable String statName) {
-        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusId(empId, statName), HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusName(@PathVariable Long empId,
+                                                                            @PathVariable String statName) {
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusName(empId, statName), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")

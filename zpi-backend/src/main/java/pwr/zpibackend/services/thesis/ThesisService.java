@@ -163,7 +163,7 @@ public class ThesisService {
     }
 
     //  np na zwrócenie wszystkich draftów danego pracownika
-    public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, String statName) {
+    public List<Thesis> getAllThesesForEmployeeByStatusName(Long empId, String statName) {
         return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName);
     }
 

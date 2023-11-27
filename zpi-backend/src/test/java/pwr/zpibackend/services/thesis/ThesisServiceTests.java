@@ -266,7 +266,7 @@ public class ThesisServiceTests {
         String statName = "Draft";
         when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName)).thenReturn(theses);
 
-        List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusId(empId, statName);
+        List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusName(empId, statName);
 
         assertEquals(theses, result);
     }
@@ -277,7 +277,7 @@ public class ThesisServiceTests {
         String statName = "Draft";
         when(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName)).thenReturn(Collections.emptyList());
 
-        assertEquals(thesisService.getAllThesesForEmployeeByStatusId(empId, statName), Collections.emptyList());
+        assertEquals(thesisService.getAllThesesForEmployeeByStatusName(empId, statName), Collections.emptyList());
     }
 
 

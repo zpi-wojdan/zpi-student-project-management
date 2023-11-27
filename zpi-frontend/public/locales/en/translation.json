@@ -332,6 +332,8 @@
     "deleteError": "Comment cannot be deleted",
     "deleteConfirmation": "Are you sure you want to delete this comment?",
     "updateSuccessful": "Comment has been updated",
-    "updateError": "Comment has not been updated"
+    "updateError": "Comment has not been updated",
+    "content": "Comment",
+    "author": "Author"
   }
 }

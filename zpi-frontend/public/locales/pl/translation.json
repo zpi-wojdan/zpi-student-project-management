@@ -330,6 +330,8 @@
     "deleteError": "Komentarz nie może zostać usunięty!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten komentarz?",
     "updateSuccessful": "Komentarz został zaktualizowany",
-    "updateError": "Komentarz nie został zaktualizowany"
-  }
+    "updateError": "Komentarz nie został zaktualizowany",
+    "content": "Komentarz",
+    "author": "Autor"
+    }
 }

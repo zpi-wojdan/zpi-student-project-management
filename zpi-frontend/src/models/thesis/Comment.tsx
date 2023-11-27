@@ -5,7 +5,7 @@ export type Comment = {
     id: number;
     author: Employee;
     content: string;
-    creationTime: number;
+    creationTime: string;
     thesis: Thesis;
 }
 

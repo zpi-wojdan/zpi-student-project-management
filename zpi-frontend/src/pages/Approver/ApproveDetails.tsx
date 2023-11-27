@@ -20,7 +20,7 @@ const ApproveDetails: React.FC = () => {
   const navigate = useNavigate();
 
   const [key, setKey] = useState(0);
-  const [commentsKey, setCommentsKey] = useState(0);
+  const [commentsKey, setCommentsKey] = useState(1);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
@@ -203,6 +203,35 @@ const ApproveDetails: React.FC = () => {
     }
   };
 
+  const formatCreationTime = (creationTime: string) => {
+    const now = new Date();
+    const creationDate = new Date(creationTime);
+  
+    const elapsedMilliseconds = now.getTime() - creationDate.getTime();
+    const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+    const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+    const elapsedHours = Math.floor(elapsedMinutes / 60);
+    const elapsedDays = Math.floor(elapsedHours / 24);
+    const elapsedMonths = Math.floor(elapsedDays / 28); // miesiąc = +- 28 dni - zaokrąglam
+    const elapsedYears = Math.floor(elapsedDays / 365); // rok = +- 365 dni - zaokrąglam
+  
+    const rtf = new Intl.RelativeTimeFormat(i18n.language === 'pl' ? 'pl' : 'en', { numeric: 'auto' });
+  
+    if (elapsedYears > 0) {
+      return rtf.format(-elapsedYears, 'year');
+    } else if (elapsedMonths > 0) {
+      return rtf.format(-elapsedMonths, 'month');
+    } else if (elapsedDays > 0) {
+      return rtf.format(-elapsedDays, 'day');
+    } else if (elapsedHours > 0) {
+      return rtf.format(-elapsedHours, 'hour');
+    } else if (elapsedMinutes > 0) {
+      return rtf.format(-elapsedMinutes, 'minute');
+    } else {
+      return rtf.format(-elapsedSeconds, 'second');
+    }
+  };  
+
   const getApprovedStatusId = () => {
     return statuses.find(s => s.name === 'Approved')?.id ?? -1;
   }
@@ -227,7 +256,6 @@ const ApproveDetails: React.FC = () => {
             .then(() => {
                 toast.success(t("thesis.acceptSuccesful"));
                 if (thesisDTO){
-                    console.log(thesisDTO?.statusId);
                     setStatusName(statuses.find(s => s.id = thesisDTO?.statusId)?.name)
                 }
                 navigate('/manage');
@@ -244,7 +272,7 @@ const ApproveDetails: React.FC = () => {
     else{
         toast.error(t("thesis.acceptError"));
     }
-    setShowRejectConfirmation(false);
+    setShowAcceptConfirmation(false);
   };
 
   const handleConfirmCancel = () => {
@@ -277,9 +305,9 @@ const ApproveDetails: React.FC = () => {
                             setCommentsKey(k => k+1);
                             toast.success(t("thesis.rejectionSuccessful"));
                             if (thesisDTO){
-                                console.log(thesisDTO?.statusId);
                                 setStatusName(statuses.find(s => s.id = thesisDTO?.statusId)?.name)
                             }
+                            setShowRejectConfirmation(false);
                         })
                         .catch((error) => {
                             console.error(error);
@@ -308,7 +336,6 @@ const ApproveDetails: React.FC = () => {
         toast.error(t("thesis.rejectionError"));
     }
     // setUpdatedDatabase(true);
-    setShowRejectConfirmation(false);
   };
 
   const handleRejectCancel = () => {
@@ -365,7 +392,6 @@ const ApproveDetails: React.FC = () => {
         authorId: authorIndex,
         thesisId: thesisIndex
     }
-    console.log(dto);
     return [isValid, dto];
   }
 
@@ -373,7 +399,6 @@ const ApproveDetails: React.FC = () => {
     const isValid = !thesis ||
         !(thesis.status &&
             (thesis.status.name === 'Rejected' || thesis.status.name === 'Approved'));
-    console.log(thesis?.status.id);
     
     let id: number;
     if (confirmClicked && !rejectClicked){
@@ -385,7 +410,6 @@ const ApproveDetails: React.FC = () => {
     else{
         id = -1;
     }
-    console.log(id);
 
     if (isValid && thesis && id !== -1){
         const dto: ThesisDTO = {
@@ -423,36 +447,44 @@ const ApproveDetails: React.FC = () => {
           &larr; {t('general.management.goBack')}
         </button>
         
-        <button 
-            type="button" 
-            className="custom-button" 
-            onClick={() => handleConfirmClick()}
-            disabled={showRejectConfirmation}
-        >
-          {t('general.management.accept')}
-        </button>
-        {showAcceptConfirmation && (
-            <tr>
-            <td colSpan={5}>
-              <ChoiceConfirmation
-                isOpen={showAcceptConfirmation}
-                onClose={handleConfirmCancel}
-                onConfirm={handleConfirmAccept}
-                onCancel={handleConfirmCancel}
-                questionText={t('thesis.acceptConfirmation')}
-              />
-            </td>
-          </tr>
+        {!showRejectConfirmation && (
+          <>
+            <button 
+              type="button" 
+              className="custom-button" 
+              onClick={() => handleConfirmClick()}
+              disabled={showRejectConfirmation}
+            >
+              {t('general.management.accept')}
+            </button>
+
+            {showAcceptConfirmation && (
+              <tr>
+                <td colSpan={5}>
+                  <ChoiceConfirmation
+                    isOpen={showAcceptConfirmation}
+                    onClose={handleConfirmCancel}
+                    onConfirm={handleConfirmAccept}
+                    onCancel={handleConfirmCancel}
+                    questionText={t('thesis.acceptConfirmation')}
+                  />
+                </td>
+              </tr>
+            )}
+
+            <button 
+              type="button" 
+              className="custom-button" 
+              onClick={() => handleRejectClick()}
+              disabled={showAcceptConfirmation}
+            >
+              {t('general.management.reject')}  
+            </button>
+          </>
         )}
 
-        <button 
-            type="button" 
-            className="custom-button" 
-            onClick={() => handleRejectClick()}
-            disabled={showAcceptConfirmation}
-        >
-            {t('general.management.reject')}  
-        </button>
+
+
         {showRejectConfirmation && (
           <tr>
             <td colSpan={5}>
@@ -466,7 +498,6 @@ const ApproveDetails: React.FC = () => {
           </tr>
         )}
       </div>
-      {errors.comment && <div className="text-danger">{errors.comment}</div>}
       {showRejectConfirmation && (
         <form>
             <div className="mb-3">
@@ -482,10 +513,12 @@ const ApproveDetails: React.FC = () => {
                 maxLength={1000}
                 ref={commentContentRef}
                 />
+                {errors.comment && <div className="text-danger">{errors.comment}</div>}
             </div>
+            
         </form>
       )}
-      <div>
+      <div className='mt-3'>
         {thesis ? (
           <div>
             <p className="bold">{t('thesis.thesisName')}:</p>
@@ -534,15 +567,34 @@ const ApproveDetails: React.FC = () => {
                 </span>
             </p>
             
-            <ul key={commentsKey}>
-                {thesis.comments.map((c: Comment) => (
-                    <li key={`${c.id}-${commentsKey}`}>
-                        <div>
-                            {c.content}
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <table className="custom-table mt-4">
+              <thead>
+                <tr>
+                  <th style={{ width: '65%' }}>{t('comment.content')}</th>
+                  <th style={{ width: '20%' }}>{t('comment.author')}</th>
+                  <th style={{ width: '10%' }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {thesis.comments
+                  .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
+                  .map((c: Comment) => (
+                    <tr key={`${c.id}-${commentsKey}`}>
+                      <td 
+                        style={{ 
+                          wordBreak: 'break-word', overflowY: 'auto',
+                          display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
+                         }}>
+                          {c.content}
+                      </td>
+                      <td>{c.author.mail}</td>
+                      <td>{formatCreationTime(c.creationTime)}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+
+
 
           </div>
         ) : (
