@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Status;
@@ -138,9 +139,9 @@ public class ThesisServiceTests {
         theses.add(thesis6);
 
         publicTheses = new ArrayList<>();
-        publicTheses.add(thesis4);
-        publicTheses.add(thesis5);
         publicTheses.add(thesis6);
+        publicTheses.add(thesis5);
+        publicTheses.add(thesis4);
     }
 
     @Test
@@ -156,12 +157,9 @@ public class ThesisServiceTests {
 
     @Test
     public void testGetAllPublicTheses() {
-        when(statusRepository.findByName("Approved")).thenReturn(Optional.of(statuses.get(3)));
-        when(statusRepository.findByName("Assigned")).thenReturn(Optional.of(statuses.get(4)));
-        when(statusRepository.findByName("Closed")).thenReturn(Optional.of(statuses.get(5)));
-        when(thesisRepository.findAllByStatusId(4L)).thenReturn(List.of(theses.get(3)));
-        when(thesisRepository.findAllByStatusId(5L)).thenReturn(List.of(theses.get(4)));
-        when(thesisRepository.findAllByStatusId(6L)).thenReturn(List.of(theses.get(5)));
+        List <String> statusNames = List.of("Approved", "Assigned", "Closed");
+        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+        when(thesisRepository.findAllByStatusNameIn(statusNames, sort)).thenReturn(publicTheses);
 
         List<Thesis> result = thesisService.getAllPublicTheses();
 

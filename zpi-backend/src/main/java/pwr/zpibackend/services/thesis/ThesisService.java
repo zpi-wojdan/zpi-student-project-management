@@ -1,6 +1,7 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
@@ -38,14 +39,8 @@ public class ThesisService {
     }
 
     public List<Thesis> getAllPublicTheses() {
-        List<Thesis> theses = new ArrayList<>();
-
-        List<String> statusNames = Arrays.asList("Approved", "Assigned", "Closed");
-        for (String statusName : statusNames) {
-            Optional<Status> status = statusRepository.findByName(statusName);
-            status.ifPresent(value -> theses.addAll(thesisRepository.findAllByStatusId(value.getId())));
-        }
-        return theses;
+        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+        return thesisRepository.findAllByStatusNameIn(Arrays.asList("Approved", "Assigned", "Closed"), sort);
     }
 
     public Thesis getThesis(Long id) {
