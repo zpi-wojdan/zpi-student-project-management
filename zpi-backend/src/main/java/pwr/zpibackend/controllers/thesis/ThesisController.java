@@ -10,6 +10,7 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.services.thesis.ThesisService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -64,15 +65,26 @@ public class ThesisController {
     }
 
     @GetMapping("/{empId}/{statName}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusName(@PathVariable Long empId,
                                                                             @PathVariable String statName) {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusName(empId, statName), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployee(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployee(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/employee/{empId}/statuses")
+//    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusNameList(@PathVariable Long empId,
+                                                                            @RequestParam List<String> statName) {
+        List<String> fixedNames = new ArrayList<>();
+        for (String name : statName) {
+            fixedNames.add(name.replaceAll("_", " "));
+        }
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusNameList(empId, fixedNames), HttpStatus.OK);
     }
 }

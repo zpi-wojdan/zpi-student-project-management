@@ -572,7 +572,7 @@ const ApproveDetails: React.FC = () => {
                 <tr>
                   <th style={{ width: '65%' }}>{t('comment.content')}</th>
                   <th style={{ width: '20%' }}>{t('comment.author')}</th>
-                  <th style={{ width: '10%' }}></th>
+                  <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
                 </tr>
               </thead>
               <tbody>
@@ -588,7 +588,7 @@ const ApproveDetails: React.FC = () => {
                           {c.content}
                       </td>
                       <td>{c.author.mail}</td>
-                      <td>{formatCreationTime(c.creationTime)}</td>
+                      <td className='centered'>{formatCreationTime(c.creationTime)}</td>
                     </tr>
                   ))}
               </tbody>

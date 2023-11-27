@@ -172,4 +172,8 @@ public class ThesisService {
         return thesisRepository.findAllByEmployeeId(id);
     }
 
+    public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
+        return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames);
+    }
+
 }

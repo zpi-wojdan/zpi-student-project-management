@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.thesis.CommentDTO;
-import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.services.thesis.CommentService;
 
@@ -32,7 +31,7 @@ public class CommentController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<Comment> addComment(@RequestBody CommentDTO comment) {
         return new ResponseEntity<>(commentService.addComment(comment), HttpStatus.CREATED);
     }

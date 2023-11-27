@@ -19,10 +19,7 @@ import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -297,6 +294,25 @@ public class ThesisServiceTests {
         when(thesisRepository.findAllByEmployeeId(empId)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployee(empId), Collections.emptyList());
+    }
+
+    @Test
+    public void testGetAllThesesForEmployeeByStatusNameList(){
+        Long empId = 1L;
+        List<String> statName = Arrays.asList("Draft", "Rejected");
+        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName)).thenReturn(theses);
+
+        List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName);
+        assertEquals(theses, result);
+    }
+
+    @Test
+    public void testGetAllThesesForEmployeeByStatusNameListNotFound(){
+        Long empId = 5L;
+        List<String> statName = Arrays.asList("Draft", "Rejected");
+        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName)).thenReturn(Collections.emptyList());
+
+        assertEquals(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName), Collections.emptyList());
     }
 
 

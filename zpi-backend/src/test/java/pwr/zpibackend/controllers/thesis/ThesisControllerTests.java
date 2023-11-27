@@ -1,5 +1,6 @@
 package pwr.zpibackend.controllers.thesis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import pwr.zpibackend.services.user.StudentService;
 import pwr.zpibackend.services.thesis.ThesisService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -358,7 +360,7 @@ class ThesisControllerTests {
 
         String resultJson = objectMapper.writeValueAsString(theses);
 
-        mockMvc.perform(get(BASE_URL + "/employee/{id}", empId).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/employee/{empId}", empId).contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(resultJson));
 
@@ -370,10 +372,41 @@ class ThesisControllerTests {
         Long empId = 3L;
         Mockito.when(thesisService.getAllThesesForEmployee(empId)).thenThrow(new NotFoundException());
 
-        mockMvc.perform(get(BASE_URL + "/employee/{id}", empId).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/employee/{empId}", empId).contentType("application/json"))
                 .andExpect(status().isNotFound());
 
         verify(thesisService).getAllThesesForEmployee(empId);
+    }
+
+    @Test
+    public void testGetAllThesesForEmployeeByStatusNameList() throws Exception {
+        Long empId = 2L;
+        List<String> statName = Arrays.asList("Draft", "Rejected");
+        Mockito.when(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName)).thenReturn(theses);
+
+        String resultJson = objectMapper.writeValueAsString(theses);
+
+        mockMvc.perform(get(BASE_URL + "/employee/{empId}/statuses", empId)
+                .param("statName", statName.toArray(new String[0]))
+                .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(resultJson));
+
+        verify(thesisService).getAllThesesForEmployeeByStatusNameList(empId, statName);
+    }
+
+    @Test
+    public void testGetAllThesesForEmployeeByStatusNameListFailure() throws Exception{
+        Long empId = 3L;
+        List<String> statName = Arrays.asList("Draft", "Rejected");
+        Mockito.when(thesisService.getAllThesesForEmployeeByStatusNameList(empId,statName)).thenThrow(new NotFoundException());
+
+        mockMvc.perform(get(BASE_URL + "/employee/{empId}/statuses", empId)
+                .param("statName", statName.toArray(new String[0]))
+                .contentType("application/json"))
+                .andExpect(status().isNotFound());
+
+        verify(thesisService).getAllThesesForEmployeeByStatusNameList(empId, statName);
     }
 
 }
