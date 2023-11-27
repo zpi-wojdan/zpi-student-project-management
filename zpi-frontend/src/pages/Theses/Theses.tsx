@@ -45,6 +45,7 @@ const ThesesTable: React.FC = () => {
             leader: thesisDb.leader,
             students: thesisDb.reservations.map((reservation) => reservation.student),
             reservations: thesisDb.reservations,
+            comments: thesisDb.comments,
           };
           return thesis;
         });

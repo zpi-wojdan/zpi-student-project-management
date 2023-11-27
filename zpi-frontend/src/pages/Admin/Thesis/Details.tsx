@@ -8,6 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import { toast } from 'react-toastify';
+import { Comment } from '../../../models/thesis/Comment';
 
 const ThesisDetails: React.FC = () => {
   // @ts-ignore
@@ -86,6 +87,45 @@ const ThesisDetails: React.FC = () => {
     setShowDeleteConfirmation(false);
   };
 
+  const formatCreationTime = (creationTime: string) => {
+    const now = new Date();
+    const creationDate = new Date(creationTime);
+  
+    const elapsedMilliseconds = now.getTime() - creationDate.getTime();
+    const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+    const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+    const elapsedHours = Math.floor(elapsedMinutes / 60);
+    const elapsedDays = Math.floor(elapsedHours / 24);
+    const elapsedMonths = Math.floor(elapsedDays / 28); // miesiąc = +- 28 dni - zaokrąglam
+    const elapsedYears = Math.floor(elapsedDays / 365); // rok = +- 365 dni - zaokrąglam
+  
+    const rtf = new Intl.RelativeTimeFormat(i18n.language === 'pl' ? 'pl' : 'en', { numeric: 'auto' });
+  
+    if (elapsedYears > 0) {
+      return rtf.format(-elapsedYears, 'year');
+    } else if (elapsedMonths > 0) {
+      return rtf.format(-elapsedMonths, 'month');
+    } else if (elapsedDays > 0) {
+      return rtf.format(-elapsedDays, 'day');
+    } else if (elapsedHours > 0) {
+      return rtf.format(-elapsedHours, 'hour');
+    } else if (elapsedMinutes > 0) {
+      return rtf.format(-elapsedMinutes, 'minute');
+    } else {
+      return rtf.format(-elapsedSeconds, 'second');
+    }
+  };  
+
+  const statusLabels: { [key:string]:string } = {
+    "Draft": t('status.draft'),
+    "Pending approval": t('status.pending'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed')
+  }
+
+
   return (
     <div className='page-margin'>
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
@@ -155,7 +195,43 @@ const ThesisDetails: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <p><span className="bold">{t('general.university.status')}:</span> <span>{thesis.status.name}</span></p>
+            <p>
+              <span className="bold">{t('general.university.status')}: </span> 
+              <span>
+                {statusLabels[thesis.status.name] || thesis.status.name}
+              </span>
+            </p>
+          
+            <div className='comment-section'>
+                <table className="custom-table mt-4">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '65%' }}>{t('comment.content')}</th>
+                      <th style={{ width: '20%' }}>{t('comment.author')}</th>
+                      <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {thesis.comments
+                      .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
+                      .map((c: Comment) => (
+                        <tr key={`${c.id}`}>
+                          <td 
+                            style={{ 
+                              wordBreak: 'break-word', overflowY: 'auto',
+                              display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
+                            }}>
+                              {c.content}
+                          </td>
+                          <td>{c.author.mail}</td>
+                          <td className='centered'>{formatCreationTime(c.creationTime)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+            </div>
+          
           </div>
         ) : (
           <p>{t('general.management.errorOfLoading')} {id}</p>

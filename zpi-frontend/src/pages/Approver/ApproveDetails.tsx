@@ -51,10 +51,10 @@ const ApproveDetails: React.FC = () => {
   const [thesis, setThesis] = useState<Thesis>();
 
   const [user, setUser] = useState<Employee>();
+  const [commentSectionRights, setCommentSectionRights] = useState(false);
 
   const [confirmClicked, setConfirmClicked] = useState(false);
   const [rejectClicked, setRejectClicked] = useState(false);
-
 
   useEffect(() => {
     const response = api.get(`http://localhost:8080/thesis/${id}`)
@@ -175,6 +175,12 @@ const ApproveDetails: React.FC = () => {
       });
   }, [id]);
 
+  useEffect(() => {
+    const byRoles = gotCommentSectionRightsByRoles();
+    const bySupervisor = gotCommentSectionRightsBySupervisor();
+    setCommentSectionRights(byRoles || bySupervisor);
+  }, [user, thesisForm])
+
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
   const toggleProgramExpansion = (programId: number) => {
@@ -237,6 +243,28 @@ const ApproveDetails: React.FC = () => {
   }
   const getRejectedStatusId = () => {
     return statuses.find(s => s.name === 'Rejected')?.id ?? -1;
+  }
+  const gotCommentSectionRightsByRoles = () => {
+    let u: Employee | undefined;
+    if (user === null || user === undefined){
+      u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+    }
+    else{
+      u = user;
+    }
+    return u?.roles.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
+  }
+  const gotCommentSectionRightsBySupervisor = () =>{
+    let u: Employee | undefined;
+    if (user === null || user === undefined){
+      u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+    }
+    else{
+      u = user;
+    }
+    return u?.id === thesisForm.supervisorId;
   }
 
   const handleConfirmClick = () => {
@@ -566,34 +594,39 @@ const ApproveDetails: React.FC = () => {
                     {(statusName !== undefined && statusLabels[statusName]) || thesis.status.name}
                 </span>
             </p>
-            
-            <table className="custom-table mt-4">
-              <thead>
-                <tr>
-                  <th style={{ width: '65%' }}>{t('comment.content')}</th>
-                  <th style={{ width: '20%' }}>{t('comment.author')}</th>
-                  <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
-                </tr>
-              </thead>
-              <tbody>
-                {thesis.comments
-                  .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
-                  .map((c: Comment) => (
-                    <tr key={`${c.id}-${commentsKey}`}>
-                      <td 
-                        style={{ 
-                          wordBreak: 'break-word', overflowY: 'auto',
-                          display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
-                         }}>
-                          {c.content}
-                      </td>
-                      <td>{c.author.mail}</td>
-                      <td className='centered'>{formatCreationTime(c.creationTime)}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
 
+            <div className='comment-section' key={commentsKey}>
+              {commentSectionRights && (
+                <>
+                <table className="custom-table mt-4">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '65%' }}>{t('comment.content')}</th>
+                      <th style={{ width: '20%' }}>{t('comment.author')}</th>
+                      <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {thesis.comments
+                      .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
+                      .map((c: Comment) => (
+                        <tr key={`${c.id}-${commentsKey}`}>
+                          <td 
+                            style={{ 
+                              wordBreak: 'break-word', overflowY: 'auto',
+                              display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
+                            }}>
+                              {c.content}
+                          </td>
+                          <td>{c.author.mail}</td>
+                          <td className='centered'>{formatCreationTime(c.creationTime)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+                </>
+              )} 
+            </div>
 
 
           </div>

@@ -38,6 +38,7 @@ export type ThesisFront = {
   occupied: number;
   students: Student[];
   reservations: Reservation[];
+  comments: Comment[];
 }
 
 export type ThesisDTO = {
