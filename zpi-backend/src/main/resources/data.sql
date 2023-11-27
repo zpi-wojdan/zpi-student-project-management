@@ -351,6 +351,19 @@ VALUES
     ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
     ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor'));
 
+INSERT INTO employee_role(employee_id, role_id)
+VALUES
+    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
+    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
+    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
+    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver'));
+--
+-- INSERT INTO employee_role(employee_id, role_id)
+-- VALUES
+--     ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student')),
+--     ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student')),
+--     ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student')),
+--     ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student'));
 
 
 INSERT INTO student_program_cycle (student_id, program_id, cycle_id)
