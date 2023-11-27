@@ -69,14 +69,13 @@ const Navigation = ({ children }: NavigationProps) => {
             localStorage.removeItem('adminThesesFilterStatus')
         }
         if (prevPath.startsWith('/public-theses') && !path.startsWith('/public-theses')) {
-            localStorage.getItem('publicThesesFilterFaculty');
-            localStorage.getItem('publicThesesFilterField');
-            localStorage.getItem('publicThesesFilterSpecialization');
-            localStorage.getItem('publicThesesFilterMinVacancies');
-            localStorage.getItem('publicThesesFilterMaxVacancies');
-            localStorage.getItem('publicThesesFilterCycle');
-            localStorage.getItem('publicThesesFilterSupervisors');
-            localStorage.getItem('publicThesesFilterStatus')
+            localStorage.removeItem('publicThesesFilterFaculty');
+            localStorage.removeItem('publicThesesFilterField');
+            localStorage.removeItem('publicThesesFilterSpecialization');
+            localStorage.removeItem('publicThesesFilterMinVacancies');
+            localStorage.removeItem('publicThesesFilterMaxVacancies');
+            localStorage.removeItem('publicThesesFilterCycle');
+            localStorage.removeItem('publicThesesFilterSupervisors');
         }
         setPrevPath(path);
     }, [location.pathname]);
