@@ -48,11 +48,14 @@ function AddThesisPageAdmin() {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
+  // const [suggestionsKey, setSuggestionsKey] = useState(0);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeeSuggestions, setEmployeeSuggestions] = useState<Employee[]>([]);
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
+  const [user, setUser] = useState<Employee | null>(null);
 
+  
   useEffect(() => {
     const newErrors: Record<string, string> = {};
     Object.keys(errorKeys).forEach((key) => {
@@ -62,7 +65,18 @@ function AddThesisPageAdmin() {
   }, [i18n.language]);
 
   useEffect(() => {
-    api.get('http://localhost:8080/status')
+    if (user === null){
+      const u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+      if (!formData.supervisorId || formData.supervisorId === -1){
+        const cookieId = u?.id ?? -1;
+        setFormData({ ...formData, supervisorId: cookieId });
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    api.get('http://localhost:8080/status/exclude/Draft')
       .then((response) => {
         setStatuses(response.data);
       })
@@ -78,6 +92,19 @@ function AddThesisPageAdmin() {
     api.get('http://localhost:8080/studycycle')
     .then((response) => {
       setStudyCycles(response.data);
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('http://localhost:8080/program')
+    .then((response) => {
+      setPrograms(response.data);
     })
     .catch((error) => {
       if (error.response.status === 401 || error.response.status ===403){
@@ -108,18 +135,6 @@ function AddThesisPageAdmin() {
     }
   }, [employees, formData.supervisorId])
 
-  useEffect(() => {
-    api.get('http://localhost:8080/program')
-    .then((response) => {
-      setPrograms(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (thesis){
@@ -133,7 +148,7 @@ function AddThesisPageAdmin() {
           numPeople: thesis.numPeople,
           supervisorId: thesis.supervisor.id,
           programIds: thesis.programs.map((p) => p.id),
-          studyCycleId: thesis.studyCycle?.id,
+          studyCycleId: thesis.studyCycle?.id ?? null,
           statusId: thesis.status.id,
         };
       });
@@ -141,70 +156,219 @@ function AddThesisPageAdmin() {
     }
   }, [thesis]);
 
-  const validateForm = () => {
+  // useEffect(() => {
+  //   const index = thesis.studyCycle?.id;
+  //     if (index !== null){
+  //       const updatedProgramSuggestions = programs
+  //                 .filter((p) => p.studyCycles
+  //                 .map((c)=> c.id === thesis.studyCycle?.id));
+  //       console.log('suggestions: ' + updatedProgramSuggestions.map(p => p.name));
+  //       setProgramSuggestions(updatedProgramSuggestions);
+  //       setSuggestionsKey(k => k+1);
+  //     }
+  // }, [thesis]);
+
+  const validateForm = (): [boolean, ThesisDTO | null] => {
     const newErrors: Record<string, string> =  {};
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
     const errorRequireText = t('general.management.fieldIsRequired');
+    const errorBigNumberText = t('thesis.numPeopleTooBig');
+    const errorSmallNumberText = t('thesis.numPeopleTooSmall');
+    const mailDoesNotExistText = t('employee.doesNotExist');
+    const regularEmployeeAsSupervisorText = t('employee.cantBecomeASupervisor');
 
-    if (!formData.namePL){
+    const mailRegex = /^[a-z0-9-]{1,50}(\.[a-z0-9-]{1,50}){0,4}@(?:student\.)?(pwr\.edu\.pl|pwr\.wroc\.pl)$/;
+
+    let supervisorIndex: number = formData.supervisorId;
+    let pplCount = formData.numPeople;
+    let cycleId: number | null;
+
+    if (formData.studyCycleId && formData.studyCycleId !== -1){
+      cycleId = formData.studyCycleId;
+    }
+    else{
+      cycleId = null;
+    }
+
+    const filteredPrograms = formData.programIds.filter((num) => num !== -1);
+    const statusName = statuses.find((s) => s.id === formData.statusId);
+
+    if (!formData.namePL || formData.namePL === ''){
       newErrors.namePL = errorRequireText
       newErrorsKeys.namePL = "general.management.fieldIsRequired";
       isValid = false;
     }
 
-    if (!formData.nameEN){
+    if (!formData.nameEN || formData.nameEN === ''){
       newErrors.nameEN = errorRequireText
       newErrorsKeys.nameEN = "general.management.fieldIsRequired";
       isValid = false;
     }
 
-    if (!formData.descriptionPL){
-      newErrors.descriptionPL = errorRequireText
-      newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
-      isValid = false;
+    if (!statusName || statusName.name !== 'Draft'){
+      if (!formData.descriptionPL || formData.namePL === ''){
+        newErrors.descriptionPL = errorRequireText
+        newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.numPeople){
+        newErrors.numPeople = errorRequireText
+        newErrorsKeys.numPeople = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (formData.numPeople > 5){
+        newErrors.numPeople = errorBigNumberText
+        newErrorsKeys.numPeople = "thesis.numPeopleTooBig";
+        isValid = false;
+      }
+  
+      if (formData.numPeople < 3){
+        newErrors.numPeople = errorSmallNumberText
+        newErrorsKeys.numPeople = "thesis.numPeopleTooSmall";
+        isValid = false;
+      }
+      
+      if ((!formData.supervisorId || formData.supervisorId === -1) &&
+            mailAbbrev.trim() === ''){
+        newErrors.supervisor = errorRequireText
+        newErrorsKeys.supervisor = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      else if (formData.supervisorId === -1 &&
+            (!employees.some(e => e.mail === mailAbbrev ||
+              !mailRegex.test(mailAbbrev)))){
+        newErrors.supervisor = mailDoesNotExistText
+        newErrorsKeys.supervisor = "employee.doesNotExist";
+        isValid = false;
+      }
+      else if (employees.some(e =>
+            (e.id === formData.supervisorId &&
+              !e.roles.some(r => r.name === 'supervisor')))){
+        newErrors.supervisor = regularEmployeeAsSupervisorText
+        newErrorsKeys.supervisor = "employee.cantBecomeASupervisor";
+        isValid = false;
+      }
+      
+      if (filteredPrograms.length === 0){
+        newErrors.programIds = errorRequireText
+        newErrorsKeys.programIds = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.studyCycleId || formData.studyCycleId === -1){
+        newErrors.studyCycle = errorRequireText
+        newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+  
+      if (!formData.statusId || formData.statusId === -1){
+        newErrors.status = errorRequireText
+        newErrorsKeys.status = "general.management.fieldIsRequired";
+        isValid = false;
+      }
     }
+    else{
+      if (!formData.statusId || formData.statusId === -1){
+        newErrors.status = errorRequireText
+        newErrorsKeys.status = "general.management.fieldIsRequired";
+        isValid = false;
+      }
+      else{
+        if (!formData.supervisorId || formData.supervisorId === -1){
+          if (user === null){
+            const cookieUser = JSON.parse(Cookies.get("user") || "{}");
+            setFormData({ ...formData, supervisorId: cookieUser?.id })
+            setUser(cookieUser);
+            setMailAbbrev(cookieUser?.mail);
+            supervisorIndex = cookieUser?.id;
+          }
+          else{
+            setFormData({ ...formData, supervisorId: user?.id })
+            setMailAbbrev(user?.name);
+            supervisorIndex = user?.id;
+          }
+        }
+        else{
+          supervisorIndex = formData.supervisorId;
+        }
 
-    if (!formData.numPeople){
-      newErrors.numPeople = errorRequireText
-      newErrorsKeys.numPeople = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.supervisorId){
-      newErrors.supervisor = errorRequireText
-      newErrorsKeys.supervisor = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-    
-    if (!formData.programIds){
-      newErrors.programIds = errorRequireText
-      newErrorsKeys.programIds = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (formData.programIds.includes(-1)){
-      newErrors.program = errorRequireText
-      newErrorsKeys.program = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.studyCycleId || formData.studyCycleId === -1){
-      newErrors.studyCycle = errorRequireText
-      newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
-      isValid = false;
-    }
-
-    if (!formData.statusId){
-      newErrors.status = errorRequireText
-      newErrorsKeys.status = "general.management.fieldIsRequired";
-      isValid = false;
+        setFormData({ ...formData, programIds: filteredPrograms })
+        if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3){
+          setFormData({ ...formData, numPeople: 4 })
+          pplCount = 4;
+        }
+      }
     }
 
     setErrors(newErrors);
     setErrorsKeys(newErrorsKeys);
-    return isValid;
+
+    if (!isValid) {
+      return [isValid, null];
+    }
+
+    const dto: ThesisDTO = {
+      ...formData,
+      supervisorId: supervisorIndex,
+      programIds: filteredPrograms,
+      numPeople: pplCount,
+      studyCycleId: cycleId
+    }
+
+    return [isValid, dto];
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const [isValid, dto] = validateForm();
+
+    if (isValid){
+      if (thesis){
+        api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
+          .then(() => {
+            navigate("/theses");
+            toast.success(t("thesis.updateSuccessful"));
+          })
+          .catch((error) => {
+            console.error(error);
+            if (error.response.status === 401 || error.response.status === 403) {
+              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+              handleSignOut(navigate);
+            }
+            navigate("/theses");
+            toast.error(t("thesis.updateError"));
+          });
+      }
+      else{
+        api.post('http://localhost:8080/thesis', dto)
+          .then(() => {
+            navigate("/theses");
+            toast.success(t("thesis.addSuccessful"));
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 409) {
+              const newErrors: Record<string, string> = {};
+              newErrors.index = t("thesis.addError")
+              setErrors(newErrors);
+              const newErrorsKeys: Record<string, string> = {};
+              newErrorsKeys.index = "thesis.addError"
+              setErrorsKeys(newErrorsKeys);
+            } else {
+              console.error(error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
+              navigate("/theses");
+              toast.error(t("thesis.addError"));
+            }
+          })
+      }
+    }
   };
 
   const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -228,7 +392,7 @@ function AddThesisPageAdmin() {
     }
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNumPeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -252,12 +416,14 @@ function AddThesisPageAdmin() {
     }
   };
 
-  const handleCycleChange = (selectedCycleId: number) => {
-    const updatedProgramSuggestions = programs
+  const handleCycleChange = (selectedCycleId: number | null) => {
+    if (selectedCycleId !== null){
+      const updatedProgramSuggestions = programs
                   .filter((p) => p.studyCycles
                   .map((c)=> c.id === selectedCycleId));
-    setProgramSuggestions(updatedProgramSuggestions);
-    setFormData({ ...formData, studyCycleId: selectedCycleId});
+      setProgramSuggestions(updatedProgramSuggestions);
+      setFormData({ ...formData, studyCycleId: selectedCycleId});
+    }
   }
 
   const handleProgramChange = (index: number, selectedProgramId: number) => {
@@ -279,58 +445,19 @@ function AddThesisPageAdmin() {
     newProgram.push(-1);
     setFormData({ ...formData, programIds: newProgram });
   }
-  
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
 
-    if (validateForm()){
-      if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, formData)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.updateSuccessful"));
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
-            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-            handleSignOut(navigate);
-          }
-          navigate("/theses");
-          toast.error(t("thesis.updateError"));
-        });
-      }
-      else{
-        api.post('http://localhost:8080/thesis', formData)
-        .then(() => {
-          navigate("/theses");
-          toast.success(t("thesis.addSuccessful"));
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 409) {
-            const newErrors: Record<string, string> = {};
-            newErrors.index = t("thesis.addError")
-            setErrors(newErrors);
-            const newErrorsKeys: Record<string, string> = {};
-            newErrorsKeys.index = "thesis.addError"
-            setErrorsKeys(newErrorsKeys);
-          } else {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
-              setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-              handleSignOut(navigate);
-            }
-            navigate("/theses");
-            toast.error(t("thesis.addError"));
-          }
-        })
-      }
-    }
-  };
+  const statusLabels: { [key:string]:string } = {
+    "Pending approval": t('status.pending'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed')
+  }
+
 
   return (
     <div className='page-margin'>
-      <form onSubmit={(event) => handleSubmit(event)} className="form">
+      <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
 
       <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
@@ -418,7 +545,7 @@ function AddThesisPageAdmin() {
           id="numPeople"
           name="numPeople"
           value={formData.numPeople}
-          onChange={handleInputChange}
+          onChange={handleNumPeopleChange}
           min={3}
           max={5}
         />
@@ -463,9 +590,9 @@ function AddThesisPageAdmin() {
         <select
           id={'studyCycleSel'}
           name={`studyCycle`}
-          value={formData.studyCycleId}
+          value={formData.studyCycleId || -1}
           onChange={(e) => {
-            const selectedCycleId = parseInt(e.target.value, 10);
+            const selectedCycleId = e.target.value === '' ? null : parseInt(e.target.value, 10);
             handleCycleChange(selectedCycleId);
           }}
           className='form-control'
@@ -480,7 +607,7 @@ function AddThesisPageAdmin() {
         {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
       </div>
 
-      <div className="mb-3">
+     <div className="mb-3">{/*key={suggestionsKey} */}
         <label className="bold">{t('general.university.studyPrograms')}:</label>  
 
         <ul>
@@ -500,6 +627,12 @@ function AddThesisPageAdmin() {
                   className='form-control'
                   disabled={formData.studyCycleId === -1}
                 >
+                  {/* <option value={-1}>
+                  {programSuggestions ? programs[formData.programIds[programId]]?.name : t('general.management.choose')}
+                    {programSuggestions ? programs[1]?.name : t('general.management.choose')}
+                    {thesis.program ? thesis.program.name : t('general.management.choose')}
+                  </option> */}
+
                   <option value={-1}>{t('general.management.choose')}</option>
                   {programSuggestions
                     .filter((p) =>
@@ -511,7 +644,7 @@ function AddThesisPageAdmin() {
                       </option>
                     ))}
                 </select>
-                {errors.program && <div className="text-danger">{errors.program}</div>}
+                {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
               </div>
               {formData.programIds.length > 1 && (
                 <button
@@ -550,7 +683,7 @@ function AddThesisPageAdmin() {
           <option value={-1}>{t('general.management.choose')}</option>
           {statuses.map((status) => (
             <option key={status.id} value={status.id}>
-              {status.name}
+              {statusLabels[status.name] || status.name}
             </option>
           ))}
         </select>

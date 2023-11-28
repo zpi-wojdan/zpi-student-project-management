@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +18,6 @@ public class ThesisDTO {
     private Integer numPeople;
     private Long supervisorId;
     private List<Long> programIds;
-    private Long studyCycleId;
+    private Optional<Long> studyCycleId;
     private Long statusId;
 }

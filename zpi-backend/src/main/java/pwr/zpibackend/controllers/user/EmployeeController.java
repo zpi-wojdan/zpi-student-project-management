@@ -28,15 +28,9 @@ public class EmployeeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
-    }
-
-    @GetMapping("/match/{prefix}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Employee>> getEmployeesByPrefix(@PathVariable String prefix) {
-        return new ResponseEntity<>(employeeService.getEmployeesByPrefix(prefix.toLowerCase()), HttpStatus.OK);
     }
 
     @PostMapping

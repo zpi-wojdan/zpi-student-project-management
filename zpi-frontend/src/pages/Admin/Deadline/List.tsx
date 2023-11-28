@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
-import {Deadline} from "../../../models/Deadline";
+import { Deadline } from "../../../models/Deadline";
 
 const DeadlineList: React.FC = () => {
     // @ts-ignore
@@ -16,6 +16,7 @@ const DeadlineList: React.FC = () => {
     const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(['10', '25', '50', 'All']);
     const [deadlines, setDeadlines] = useState<Deadline[]>([]);
     const [refreshList, setRefreshList] = useState(false);
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
         api.get('http://localhost:8080/deadline/ordered')
@@ -30,6 +31,7 @@ const DeadlineList: React.FC = () => {
                     }
                 });
                 setITEMS_PER_PAGE(filteredItemsPerPage);
+                setLoaded(true);
             })
             .catch((error) => {
                 console.error(error);
@@ -163,103 +165,115 @@ const DeadlineList: React.FC = () => {
                     </div>
                 )}
             </div>
-            <table className="custom-table">
-                <thead>
-                <tr>
-                    <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '62%' }}>{t('deadline.activity')}</th>
-                    <th style={{ width: '15%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
-                    <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
-                    <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {currentDeadlines.map((deadline, index) => (
-                    <React.Fragment key={deadline.id}>
-                        <tr>
-                            <td className="centered">{indexOfFirstItem + index + 1}</td>
-                            <td>
-                                {i18n.language === 'pl' ? (
-                                    deadline.namePL
-                                ) : (
-                                    deadline.nameEN
-                                )}
-                            </td>
-                            <td className="centered">{new Date(deadline.deadlineDate).toLocaleDateString()}</td>
-                            <td>
-                                <button
-                                    className="custom-button coverall"
-                                    onClick={() => {
-                                        navigate(`/deadlines/edit/${deadline.id}`, { state: { deadline } });
-                                    }}
-                                >
-                                    <i className="bi bi-arrow-right"></i>
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    className="custom-button coverall"
-                                    onClick={() => handleDeleteClick(deadline.id)}
-                                >
-                                    <i className="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {deadlineToDelete === deadline.id && showDeleteConfirmation && (
-                            <tr>
-                                <td colSpan={5}>
-                                    <DeleteConfirmation
-                                        isOpen={showDeleteConfirmation}
-                                        onClose={handleCancelDelete}
-                                        onConfirm={handleConfirmDelete}
-                                        onCancel={handleCancelDelete}
-                                        questionText={t('deadline.deleteConfirmation')}
-                                    />
-                                </td>
-                            </tr>
-                        )}
-                    </React.Fragment>
-                ))}
-                </tbody>
-            </table>
-            {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
-                <div className="pagination">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className='custom-button'
-                    >
-                        &lt;
-                    </button>
-
-                    <input
-                        type="number"
-                        value={inputValue}
-                        onChange={(e) => {
-                            const newPage = parseInt(e.target.value, 10);
-                            setInputValue(newPage);
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handlePageChange(inputValue);
-                            }
-                        }}
-                        onBlur={() => {
-                            handlePageChange(inputValue);
-                        }}
-                        className='text'
-                    />
-
-                    <span className='text'> z {totalPages}</span>
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className='custom-button'
-                    >
-                        &gt;
-                    </button>
+            {!loaded ? (
+                <div className='info-no-data'>
+                    <p>{t('general.management.load')}</p>
                 </div>
-            )}
+            ) : (<React.Fragment>
+                {deadlines.length === 0 ? (
+                    <div className='info-no-data'>
+                        <p>{t('general.management.noData')}</p>
+                    </div>
+                ) : (<React.Fragment>
+                    <table className="custom-table">
+                        <thead>
+                            <tr>
+                                <th style={{ width: '3%', textAlign: 'center' }}>#</th>
+                                <th style={{ width: '62%' }}>{t('deadline.activity')}</th>
+                                <th style={{ width: '15%', textAlign: 'center' }}>{t('deadline.deadline')}</th>
+                                <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
+                                <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentDeadlines.map((deadline, index) => (
+                                <React.Fragment key={deadline.id}>
+                                    <tr>
+                                        <td className="centered">{indexOfFirstItem + index + 1}</td>
+                                        <td>
+                                            {i18n.language === 'pl' ? (
+                                                deadline.namePL
+                                            ) : (
+                                                deadline.nameEN
+                                            )}
+                                        </td>
+                                        <td className="centered">{new Date(deadline.deadlineDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <button
+                                                className="custom-button coverall"
+                                                onClick={() => {
+                                                    navigate(`/deadlines/edit/${deadline.id}`, { state: { deadline } });
+                                                }}
+                                            >
+                                                <i className="bi bi-arrow-right"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="custom-button coverall"
+                                                onClick={() => handleDeleteClick(deadline.id)}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {deadlineToDelete === deadline.id && showDeleteConfirmation && (
+                                        <tr>
+                                            <td colSpan={5}>
+                                                <ChoiceConfirmation
+                                                    isOpen={showDeleteConfirmation}
+                                                    onClose={handleCancelDelete}
+                                                    onConfirm={handleConfirmDelete}
+                                                    onCancel={handleCancelDelete}
+                                                    questionText={t('deadline.deleteConfirmation')}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                    {ITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
+                        <div className="pagination">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className='custom-button'
+                            >
+                                &lt;
+                            </button>
+
+                            <input
+                                type="number"
+                                value={inputValue}
+                                onChange={(e) => {
+                                    const newPage = parseInt(e.target.value, 10);
+                                    setInputValue(newPage);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handlePageChange(inputValue);
+                                    }
+                                }}
+                                onBlur={() => {
+                                    handlePageChange(inputValue);
+                                }}
+                                className='text'
+                            />
+
+                            <span className='text'> z {totalPages}</span>
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className='custom-button'
+                            >
+                                &gt;
+                            </button>
+                        </div>
+                    )}
+                </React.Fragment>)}
+            </React.Fragment>)}
         </div>
     );
 };

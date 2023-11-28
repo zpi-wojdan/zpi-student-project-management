@@ -270,8 +270,6 @@ public class PdfServiceTests {
         supervisorDTO1.setSurname("Damon");
         supervisorDTO1.setMail("j.d@pwr.edu.pl");
         supervisorDTO1.setTitle("dr");
-        supervisorDTO1.setDepartmentCode("K035");
-        supervisorDTO1.setDepartmentName("Katedra 1");
 
         thesisGroupsW04NIST = Map.of(
                 "W04N", Map.of(

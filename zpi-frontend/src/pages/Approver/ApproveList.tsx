@@ -16,7 +16,7 @@ import { StudyField } from '../../models/university/StudyField';
 import { Employee } from '../../models/user/Employee';
 
 
-const ThesesTable: React.FC = () => {
+const ApproveList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -24,11 +24,11 @@ const ThesesTable: React.FC = () => {
   const [theses, setTheses] = useState<ThesisFront[]>([]);
   const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
   const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
-  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis/public')
+    api.get(`http://localhost:8080/thesis/status/Pending_approval`)
       .then((response) => {
+        console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
             id: thesisDb.id,
@@ -53,7 +53,6 @@ const ThesesTable: React.FC = () => {
         setTheses(thesis_response);
         setFilteredTheses(thesis_response);
         setAfterSearchTheses(thesis_response);
-        setLoaded(true);
       })
       .catch((error) => {
         console.error(error);
@@ -70,10 +69,6 @@ const ThesesTable: React.FC = () => {
   const [availableSupervisors, setAvailableSupervisor] = useState<Employee[]>([]);
   const [selectedSupervisors, setSelectedSupervisors] = useState<number[]>([]);
   const [submittedSupervisors, setSubmittedSupervisors] = useState<number[]>([]);
-  const [selectedMinVacancies, setSelectedMinVacancies] = useState<number>(0);
-  const [submittedMinVacancies, setSubmittedMinVacancies] = useState<number>(0);
-  const [selectedMaxVacancies, setSelectedMaxVacancies] = useState<number>(5);
-  const [submittedMaxVacancies, setSubmittedMaxVacancies] = useState<number>(5);
   const [availableCycles, setAvailableCycles] = useState<StudyCycle[]>([]);
   const [selectedCycleName, setSelectedCycleName] = useState<string>("");
   const [submittedCycleName, setSubmittedCycleName] = useState<string>("");
@@ -91,7 +86,7 @@ const ThesesTable: React.FC = () => {
     api.get('http://localhost:8080/employee')
       .then((response) => {
         const supervisors = response.data
-          .filter((employee: Employee) => employee.roles.some((role: Role) => role.name === 'supervisor'))
+          .filter((employee: Employee) => employee.roles.some((role:Role) => role.name === 'supervisor'))
           .sort((a: Employee, b: Employee) => a.surname.localeCompare(b.surname));;
         setAvailableSupervisor(supervisors);
       })
@@ -172,11 +167,6 @@ const ThesesTable: React.FC = () => {
       });
   }, []);
 
-  useEffect(() => {
-    if (loaded)
-      handleFiltration(false);
-  }, [loaded]);
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleToggleSidebar = (submitted: boolean) => {
@@ -185,87 +175,36 @@ const ThesesTable: React.FC = () => {
       setSubmittedFacultyAbbr(selectedFacultyAbbr)
       setSubmittedFieldAbbr(selectedFieldAbbr)
       setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-      setSubmittedMinVacancies(selectedMinVacancies)
-      setSubmittedMaxVacancies(selectedMaxVacancies)
       setSubmittedCycleName(selectedCycleName)
       setSubmittedSupervisors(selectedSupervisors)
-      localStorage.setItem('publicThesesFilterFaculty', selectedFacultyAbbr);
-      localStorage.setItem('publicThesesFilterField', selectedFieldAbbr);
-      localStorage.setItem('publicThesesFilterSpecialization', selectedSpecializationAbbr);
-      localStorage.setItem('publicThesesFilterMinVacancies', selectedMinVacancies.toString());
-      localStorage.setItem('publicThesesFilterMaxVacancies', selectedMaxVacancies.toString());
-      localStorage.setItem('publicThesesFilterCycle', selectedCycleName);
-      localStorage.setItem('publicThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
     }
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
       setSelectedSpecializationAbbr(submittedSpecializationAbbr)
-      setSelectedMinVacancies(submittedMinVacancies)
-      setSelectedMaxVacancies(submittedMaxVacancies)
       setSelectedCycleName(submittedCycleName)
       setSelectedSupervisors(submittedSupervisors)
     }
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = (toggle: boolean) => {
+  const handleFiltration = () => {
+    handleToggleSidebar(true)
 
-    if (toggle) {
-      handleToggleSidebar(true)
+    const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
+    const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+    const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
+    const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
+    const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
 
-      const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
-      const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
-      const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
-      const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
-      const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
-
-      const newFilteredTheses = theses.filter(thesis =>
-        facultyFilter(thesis) &&
-        fieldFilter(thesis) &&
-        specializationFilter(thesis) &&
-        vacanciesFilter(thesis) &&
-        cycleFilter(thesis) &&
-        supervisorFilter(thesis)
-      );
-      setFilteredTheses(newFilteredTheses);
-    }
-    else {
-      const savedFacultyAbbr = localStorage.getItem('publicThesesFilterFaculty') || '';
-      const savedFieldAbbr = localStorage.getItem('publicThesesFilterField') || '';
-      const savedSpecializationAbbr = localStorage.getItem('publicThesesFilterSpecialization') || '';
-      const savedMinVacancies = parseInt(localStorage.getItem('publicThesesFilterMinVacancies') || '0', 10);
-      const savedMaxVacancies = parseInt(localStorage.getItem('publicThesesFilterMaxVacancies') || '5', 10);
-      const savedCycleName = localStorage.getItem('publicThesesFilterCycle') || '';
-      const savedsupervisors = JSON.parse(localStorage.getItem('publicThesesFilterSupervisors') || '[]');
-      const savedStatusName = localStorage.getItem('publicThesesFilterStatus') || '';
-
-      setSubmittedFacultyAbbr(savedFacultyAbbr)
-      setSubmittedFieldAbbr(savedFieldAbbr)
-      setSubmittedSpecializationAbbr(savedSpecializationAbbr)
-      setSubmittedMinVacancies(savedMinVacancies)
-      setSubmittedMaxVacancies(savedMaxVacancies)
-      setSubmittedCycleName(savedCycleName)
-      setSubmittedSupervisors(savedsupervisors)
-
-      const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
-      const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
-      const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
-      const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
-      const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
-
-      const newFilteredTheses = theses.filter(thesis =>
-        facultyFilter(thesis) &&
-        fieldFilter(thesis) &&
-        specializationFilter(thesis) &&
-        vacanciesFilter(thesis) &&
-        cycleFilter(thesis) &&
-        supervisorFilter(thesis)
-      );
-      setFilteredTheses(newFilteredTheses);
-    }
+    const newFilteredTheses = theses.filter(thesis =>
+      facultyFilter(thesis) &&
+      fieldFilter(thesis) &&
+      specializationFilter(thesis) &&
+      cycleFilter(thesis) &&
+      supervisorFilter(thesis)
+    );
+    setFilteredTheses(newFilteredTheses);
   }
 
   // Wyszukiwanie
@@ -359,31 +298,6 @@ const ThesesTable: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-        <hr className="my-4" />
-        <div className="mb-4">
-          <label className="bold" htmlFor="vacancies">
-            {t('general.management.vacancies')}:
-          </label>
-          <Slider
-            range
-            min={0}
-            max={5}
-            value={[selectedMinVacancies, selectedMaxVacancies]}
-            onChange={(value: number | number[]) => {
-              if (Array.isArray(value)) {
-                setSelectedMinVacancies(value[0]);
-                setSelectedMaxVacancies(value[1]);
-              } else {
-                setSelectedMinVacancies(value);
-                setSelectedMaxVacancies(value);
-              }
-            }}
-            marks={{ 0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }}
-            dots={false}
-            dotStyle={{ display: 'none' }}
-            className='mt-4 mb-5 custom-slider'
-          />
         </div>
         <hr className="my-4" />
         <div className="mb-4">
@@ -490,178 +404,162 @@ const ThesesTable: React.FC = () => {
               setSelectedFacultyAbbr("");
               setSelectedFieldAbbr("");
               setSelectedSpecializationAbbr("");
-              setSelectedMinVacancies(0);
-              setSelectedMaxVacancies(5);
               setSelectedSupervisors([])
             }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true)}>
+          <button className="custom-button" onClick={() => handleFiltration()}>
             {t('general.management.filter')}
           </button>
         </div>
       </div>
-      {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
-      ) : (<React.Fragment>
-        {theses.length === 0 ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.noData')}</p>
-          </div>
-        ) : (<React.Fragment>
-          <div className='d-flex justify-content-between  align-items-center'>
-            <SearchBar
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              placeholder={t('general.management.search')}
-            />
-            {currentITEMS_PER_PAGE.length > 1 && (
-              <div className="d-flex justify-content-between">
-                <div className="d-flex align-items-center">
-                  <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
-                  <select
-                    value={itemsPerPage}
-                    onChange={(e) => {
-                      setItemsPerPage(e.target.value);
-                      setChosenItemsPerPage(e.target.value);
-                      handlePageChange(1);
-                    }}
-                  >
-                    {currentITEMS_PER_PAGE.map((value) => (
-                      <option key={value} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ marginLeft: '30px' }}>
-                  {itemsPerPage !== 'All' && (
-                    <div className="pagination">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className='custom-button'
-                      >
-                        &lt;
-                      </button>
-
-                      <input
-                        type="number"
-                        value={inputValue}
-                        onChange={(e) => {
-                          const newPage = parseInt(e.target.value, 10);
-                          setInputValue(newPage);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handlePageChange(inputValue);
-                          }
-                        }}
-                        onBlur={() => {
-                          handlePageChange(inputValue);
-                        }}
-                        className='text'
-                      />
-
-                      <span className='text'> z {totalPages}</span>
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className='custom-button'
-                      >
-                        &gt;
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          {afterSearchTheses.length === 0 ? (
-            <div className='info-no-data'>
-              <p>{t('general.management.noSearchData')}</p>
-            </div>
-          ) : (
-            <table className="custom-table">
-              <thead>
-                <tr>
-                  <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                  <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
-                  <th style={{ width: '10%', textAlign: 'center' }}>{t('thesis.occupiedSeats')}</th>
-                  <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentTheses.map((thesis, index) => (
-                  <tr key={thesis.id}>
-                    <td className="centered">{indexOfFirstItem + index + 1}</td>
-                    <td>
-                      {i18n.language === 'pl' ? (
-                        thesis.namePL
-                      ) : (
-                        thesis.nameEN
-                      )}
-                    </td>
-                    <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
-                    <td className="centered">{thesis.occupied + "/" + thesis.numPeople}</td>
-                    <td>
-                      <button
-                        className="custom-button coverall"
-                        onClick={() => { navigate(`/public-theses/${thesis.id}`, { state: { thesis } }) }}
-                      >
-                        <i className="bi bi-arrow-right"></i>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          {currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className='custom-button'
-              >
-                &lt;
-              </button>
-
-              <input
-                type="number"
-                value={inputValue}
+      <div className='d-flex justify-content-between  align-items-center'>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          placeholder={t('general.management.search')}
+        />
+        {currentITEMS_PER_PAGE.length > 1 && (
+          <div className="d-flex justify-content-between">
+            <div className="d-flex align-items-center">
+              <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
+              <select
+                value={itemsPerPage}
                 onChange={(e) => {
-                  const newPage = parseInt(e.target.value, 10);
-                  setInputValue(newPage);
+                  setItemsPerPage(e.target.value);
+                  setChosenItemsPerPage(e.target.value);
+                  handlePageChange(1);
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handlePageChange(inputValue);
-                  }
-                }}
-                onBlur={() => {
-                  handlePageChange(inputValue);
-                }}
-                className='text'
-              />
-
-              <span className='text'> z {totalPages}</span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className='custom-button'
               >
-                &gt;
-              </button>
+                {currentITEMS_PER_PAGE.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-        </React.Fragment>)}
-      </React.Fragment>)}
+            <div style={{ marginLeft: '30px' }}>
+              {itemsPerPage !== 'All' && (
+                <div className="pagination">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className='custom-button'
+                  >
+                    &lt;
+                  </button>
+
+                  <input
+                    type="number"
+                    value={inputValue}
+                    onChange={(e) => {
+                      const newPage = parseInt(e.target.value, 10);
+                      setInputValue(newPage);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handlePageChange(inputValue);
+                      }
+                    }}
+                    onBlur={() => {
+                      handlePageChange(inputValue);
+                    }}
+                    className='text'
+                  />
+
+                  <span className='text'> z {totalPages}</span>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className='custom-button'
+                  >
+                    &gt;
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+      {afterSearchTheses.length === 0 ? (
+        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
+        </div>
+      ) : (
+        <table className="custom-table">
+          <thead>
+            <tr>
+              <th style={{ width: '3%', textAlign: 'center' }}>#</th>
+              <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
+              <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+              <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentTheses.map((thesis, index) => (
+              <tr key={thesis.id}>
+                <td className="centered">{indexOfFirstItem + index + 1}</td>
+                <td>
+                  {i18n.language === 'pl' ? (
+                    thesis.namePL
+                  ) : (
+                    thesis.nameEN
+                  )}
+                </td>
+                <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+                <td>
+                  <button
+                    className="custom-button coverall"
+                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
+                  >
+                    <i className="bi bi-arrow-right"></i>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
+        <div className="pagination">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className='custom-button'
+          >
+            &lt;
+          </button>
+
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => {
+              const newPage = parseInt(e.target.value, 10);
+              setInputValue(newPage);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handlePageChange(inputValue);
+              }
+            }}
+            onBlur={() => {
+              handlePageChange(inputValue);
+            }}
+            className='text'
+          />
+
+          <span className='text'> z {totalPages}</span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className='custom-button'
+          >
+            &gt;
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-export default ThesesTable;
+export default ApproveList;

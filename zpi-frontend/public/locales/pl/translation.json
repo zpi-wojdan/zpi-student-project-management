@@ -4,6 +4,7 @@
       "abbreviationExists": "Podany skrót już istnieje!",
       "add": "Dodaj",
       "addNext": "Dodaj następny",
+      "addAsDraft": "Zapisz wersję roboczą",
       "all": "Wszystkie",
       "choose": "Wybierz",
       "delete": "Usuń",
@@ -11,12 +12,13 @@
       "edit": "Edytuj",
       "errorOfLoading": "Błąd wczytywania danych",
       "fieldIsRequired": "Pole jest wymagane.",
-      "fieldIsOptional": "Pole nie jest wymagane.",
+      "fieldIsOptional": "Pole opcjonalne.",
       "goBack": "Powrót",
       "mailExists": "Podany mail już istnieje!",
-      "mailMustBePwr": "Mail musi być z domeny pwr.edu.pl",
+      "mailMustBePwr": "Mail musi być z domeny pwr.edu.pl lub pwr.wroc.pl",
       "nA": "Brak",
       "no": "Nie",
+      "reject": "Odrzuć",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
       "view": "Widok",
@@ -27,10 +29,14 @@
       "accept": "Akceptuj",
       "search": "Wyszukaj",
       "noSearchData": "Brak wyników wyszukiwania",
+      "noData": "Brak danych",
+      "load": "Ładowanie...",
       "filtration": "Filtrowanie",
       "filter": "Filtruj",
       "filterClear": "Wyczyść filtry",
-      "vacancies": "Wolne miejsca"
+      "vacancies": "Wolne miejsca",
+      "cancel": "Anuluj",
+      "send": "Wyślij"
     },
     "people": {
       "adminLC": "administrator",
@@ -80,7 +86,8 @@
     "manage": "Zarządzaj",
     "myTheses": "Moje tematy",
     "imageAlt": "Logo Politechniki Wrocławskiej",
-    "reports": "Raporty"
+    "reports": "Raporty",
+    "confirm": "Do zatwierdzenia"
   },
   "study_cycle": {
     "deleteSuccessful": "Cykl został usunięty",
@@ -117,10 +124,12 @@
     "deleteConfirmation": "Czy na pewno chcesz usunąć tego pracownika?",
     "deleteError": "Pracownik nie może zostać usunięty!",
     "deleteSuccessful": "Pracownik został usunięty",
+    "doesNotExist": "Pracownik nie istnieje.",
     "updateSuccessful": "Pracownik został zaktualizowany",
     "updateError": "Pracownik nie został zaktualizowany",
     "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę.",
     "import": "Importuj pracowników",
+    "cantBecomeASupervisor": "Dany pracownik nie może zostać promotorem.",
     "deleteErrorWithReference": "Pracownik nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
   },
   "student": {
@@ -210,6 +219,9 @@
     "deleteSuccessful": "Temat został usunięty",
     "deleteError": "Temat nie może zostać usunięty!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten temat?",
+    "acceptConfirmation": "Czy na pewno chcesz zaakceptować ten temat?",
+    "rejectConfirmation": "Czy na pewno chcesz odrzucić ten temat?",
+    "sendRejection": "Jeśli chcesz odrzucić ten temat, musisz napisać wyjaśnienie w znajdującej się poniżej sekcji komentarzy",
     "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
     "errorOfLoadingSupervisorData": "Błąd wczytywania danych prowadzącego!",
     "peopleLimit": "Limit osób",
@@ -232,6 +244,12 @@
     "downloadNoDataError": "Nie znaleziono danych do deklaracji",
     "downloadError": "Wystąpił błąd podczas generowania deklaracji",
     "generating": "Generowanie deklaracji...",
+    "numPeopleTooBig": "Wartość nie może być większa niż: 5",
+    "numPeopleTooSmall": "Wartość nie może być mniejsza niż: 3",
+    "rejectionSuccessful": "Temat został odrzucony",
+    "rejectionError": "Temat nie został odrzucony",
+    "acceptSuccesful": "Temat został zaakceptowany",
+    "acceptError": "Temat nie został zaakceptowany",
     "deleteErrorWithReference": "Temat nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
   },
   "uploadFiles": {
@@ -312,6 +330,22 @@
     "activityExists": "Podana czynność już istnieje!",
     "dateInPast": "Termin zakończenia nie może być w przeszłości!"
   },
+  "home":{
+    "welcome": "Witaj na stronie ZPI Helper!",
+    "schedule": "Harmonogram"
+  },
+  "comment": {
+    "addSuccessful": "Komentarz został dodany",
+    "addError": "Komentarz nie został dodany",
+    "deleteSuccessful": "Komentarz został usunięty",
+    "deleteError": "Komentarz nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten komentarz?",
+    "updateSuccessful": "Komentarz został zaktualizowany",
+    "updateError": "Komentarz nie został zaktualizowany",
+    "content": "Komentarz",
+    "author": "Autor",
+    "empty": "Brak komentarzy"
+    },
   "tables": {
     "study_field": "kierunek",
     "specialization": "specjalność",

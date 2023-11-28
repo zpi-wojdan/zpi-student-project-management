@@ -22,10 +22,16 @@ public class StatusController {
         return ResponseEntity.ok(statusService.getAllStatuses());
     }
 
-    @GetMapping("/name")
+    @GetMapping("/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Status> getStatusByName(String name) {
+    public ResponseEntity<Status> getStatusByName(@PathVariable String name) {
         return ResponseEntity.ok(statusService.getStatusByName(name));
+    }
+
+    @GetMapping("/exclude/{name}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Status>> getAllStatusesWithoutName(@PathVariable String name) {
+        return ResponseEntity.ok(statusService.getAllStatusesWithoutName(name));
     }
 
     @PostMapping("")

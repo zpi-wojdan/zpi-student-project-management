@@ -10,9 +10,10 @@ import api from '../../utils/api';
 import { useTranslation } from "react-i18next";
 
 type ReservationProps = {
+    admin: boolean;
 }
 
-function ReservationPage({ }: ReservationProps) {
+function ReservationPage({ admin }: ReservationProps) {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
     const { i18n, t } = useTranslation();
@@ -20,24 +21,27 @@ function ReservationPage({ }: ReservationProps) {
     const location = useLocation();
     const thesis = location.state?.thesis as Thesis;
 
-    const [reservations, setReservations] = useState<string[]>(["", ""]);
+    const [reservations, setReservations] = useState<string[]>(admin ? [""] : ["", ""]);
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
     const [user, setUser] = useState<Student>();
+    const [showAddButton, setShowAddButton] = useState<boolean>(true);
 
     useEffect(() => {
-        const userCookies = JSON.parse(Cookies.get("user") || "{}");
-        setUser(userCookies);
-        reservations[0] = userCookies.index || "";
-        setReservations(reservations);
+        if (!admin) {
+            const userCookies = JSON.parse(Cookies.get("user") || "{}");
+            setUser(userCookies);
+            reservations[0] = userCookies.index || "";
+            setReservations(reservations);
+        }
     }, []);
 
     const addReservationInput = () => {
-        if (thesis?.numPeople && reservations.length >= thesis?.numPeople) {
-            return;
-        }
         setReservations([...reservations, ""]);
+        if (thesis?.numPeople && reservations.length >= (thesis?.numPeople - thesis?.occupied) - 1) {
+            setShowAddButton(false);
+        }
     };
 
     const removeReservationInput = (index: number) => {
@@ -55,6 +59,7 @@ function ReservationPage({ }: ReservationProps) {
         setErrors(updatedErrors);
         setStudents(updatedStudents);
         setDoubles(updatedDoubles);
+        setShowAddButton(true);
     };
 
     const handleReservationChange = (index: number, value: string) => {
@@ -132,6 +137,8 @@ function ReservationPage({ }: ReservationProps) {
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
                     confirmedByLeader: true,
+                    confirmedByStudent: admin,
+                    confirmedBySupervisor: admin,
                 };
                 console.log(JSON.stringify(responseBody));
 
@@ -139,7 +146,7 @@ function ReservationPage({ }: ReservationProps) {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                
+
                 })
                     .then(response => {
                         if (response.status === 201) {
@@ -184,59 +191,86 @@ function ReservationPage({ }: ReservationProps) {
             <h1 className='my-3'>{t('reservation.reservation')}:</h1>
             <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
-                {reservations.map((reservation, index) => (
-                    <div key={index} className="form-group row justify-content-center">
-                        <label htmlFor={`reservation-${index}`} className="col-sm-2 col-form-label">
-                            {t('general.people.student')} {index + 1}:</label>
-                        <div className="col-sm-4 d-flex">
-                            <input
-                                id={`reservation-${index}`}
-                                type="text"
-                                className={`form-control ${errors[index] ? "is-invalid" : ""}`}
-                                value={reservation}
-                                onChange={(e) => handleReservationChange(index, e.target.value)}
-                                onBlur={() => handleReservationBlur(index)}
-                                placeholder={t('general.people.index')}
-                            />
-                            {index > 1 ? (
-                                <button type="button" className="btn btn-sm ml-2" onClick={() => removeReservationInput(index)}>
-                                    <span>&times;</span>
-                                </button>
-                            ) : (
-                                <span className="btn btn-sm ml-2" style={{ visibility: "hidden" }}>&times;</span>
-                            )}
-                        </div>
-
-                        <div className="col-sm-6">
-                            <p className={errors[index] ? "col-form-label text-danger" : "col-form-label"}>
-                                {students[index] && students[index].name !== undefined ?
-                                    students[index].name + ' ' + students[index].surname
-                                    : (errors[index] ?
-                                        (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
-                                            t('reservation.wrongIndex')
-                                        ) : ''
+                <table className="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col" style={{ width: '10%' }}></th>
+                            <th scope="col" style={{ width: '30%' }}></th>
+                            <th scope="col" style={{ width: '5%' }}></th>
+                            <th scope="col" style={{ width: '60%' }}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reservations.map((reservation, index) => (
+                            <tr key={index}>
+                                <td style={{whiteSpace: "nowrap"}}>
+                                    <label htmlFor={`reservation-${index}`} className="col-form-label">
+                                        {t('general.people.student')} {index + 1}:
+                                    </label>
+                                </td>
+                                <td>
+                                    <input
+                                        id={`reservation-${index}`}
+                                        type="text"
+                                        className={`form-control ${errors[index] ? "is-invalid" : ""}`}
+                                        value={reservation}
+                                        onChange={(e) => handleReservationChange(index, e.target.value)}
+                                        onBlur={() => handleReservationBlur(index)}
+                                        placeholder={t('general.people.index')}
+                                    />
+                                </td>
+                                <td>
+                                    {!admin && index > 1 && (
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm my-1"
+                                            onClick={() => removeReservationInput(index)}
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
                                     )}
-                            </p>
-                        </div>
-
-                    </div>
-                ))}
-
-                <div className="row justify-content-center">
-                    <div className="col-sm-1"></div>
-                    <div className="col-sm-6">
-                        <div className="form-group row justify-content-center">
-                            <button type="button" className="col-sm-3 m-2 custom-button another-color" onClick={addReservationInput}>
-                                {t('reservation.addPerson')}
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-sm-5"></div>
-                </div>
+                                    {admin && index > 0 && (
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm my-1"
+                                            onClick={() => removeReservationInput(index)}
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
+                                    )}
+                                </td>
+                                <td>
+                                    <p className={errors[index] ? "col-form-label text-danger" : "col-form-label mb-0"}>
+                                        {students[index] && students[index].name !== undefined ?
+                                            students[index].name + ' ' + students[index].surname
+                                            : (errors[index] ?
+                                                (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
+                                                    t('reservation.wrongIndex')
+                                                ) : ''
+                                            )}
+                                    </p>
+                                </td>
+                            </tr>
+                        ))}
+                        {showAddButton && (
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        className="custom-button another-color form-control"
+                                        onClick={addReservationInput}
+                                    >
+                                        {t('reservation.addPerson')}
+                                    </button>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </form>
         </div>
     );
-
 }
 
 export default ReservationPage

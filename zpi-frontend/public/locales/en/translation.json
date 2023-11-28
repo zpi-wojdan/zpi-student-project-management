@@ -4,19 +4,22 @@
       "abbreviationExists": "Given abbreviation already exists!",
       "add": "Add",
       "addNext": "Add next",
+      "addAsDraft": "Save draft",
       "all": "All",
       "choose": "Choose",
+      "confirm": "Confirm",
       "delete": "Delete",
       "details": "Details",
       "edit": "Edit",
       "errorOfLoading": "Error of loading data",
       "fieldIsRequired": "This field is required.",
-      "fieldIsOptional": "This field is not required.",
+      "fieldIsOptional": "Optional field.",
       "goBack": "Go back",
       "mailExists": "Given mail already exists!",
-      "mailMustBePwr": "Mail must be from the pwr.edu.pl domain",
+      "mailMustBePwr": "Mail must originate from either the pwr.edu.pl or pwr.wroc.pl domain",
       "nA": "N/A",
       "no": "No",
+      "reject": "Reject",
       "reserve": "Reserve",
       "save": "Save",
       "view": "View",
@@ -27,10 +30,14 @@
       "accept": "Accept",
       "search": "Search",
       "noSearchData": "No search results",
+      "noData": "No data",
+      "load": "Loading...",
       "filtration": "Filtering",
       "filter": "Filter",
       "filterClear": "Clear filters",
-      "vacancies": "Vacancies"
+      "vacancies": "Vacancies",
+      "cancel": "Cancel",
+      "send": "Send"
     },
     "people": {
       "adminLC": "administrator",
@@ -80,7 +87,8 @@
     "manage": "Manage",
     "myTheses": "My theses",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology",
-    "reports": "Reports"
+    "reports": "Reports",
+    "confirm": "To be approved"
   },
   "study_cycle": {
     "deleteSuccessful": "Study cycle has been deleted",
@@ -117,10 +125,12 @@
     "deleteSuccessful": "Employee has been deleted",
     "deleteError": "Employee cannot be deleted!",
     "deleteConfirmation": "Are you sure you want to delete this employee?",
+    "doesNotExist": "Employee does not exist.",
     "updateSuccessful": "Employee has been updated",
     "updateError": "Employee has not been updated",
     "rolesRequired": "Employee must have at least one role.",
     "import": "Import employees",
+    "cantBecomeASupervisor": "This employee can't become a supervisor.",
     "deleteErrorWithReference": "Field cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "student": {
@@ -212,6 +222,9 @@
     "deleteSuccessful": "Thesis has been deleted",
     "deleteError": "Thesis cannot be deleted!",
     "deleteConfirmation": "Are you sure you want to delete this thesis?",
+    "acceptConfirmation": "Are you sure you want to accept this thesis?",
+    "rejectConfirmation": "Are you sure you want to reject this thesis?",
+    "sendRejection": "If you want to reject this thesis, you have to write an explanation in the comment section below.",
     "peopleLimit": "People limit",
     "occupiedSeats": "Occupied seats",
     "enrollStudents": "Enroll students",
@@ -232,6 +245,10 @@
     "downloadNoDataError": "Data for the declaration not found",
     "downloadError": "An error occurred while generating the declaration",
     "generating": "Generating declaration...",
+    "rejectionSuccessful": "Thesis has been rejected",
+    "rejectionError": "Thesis has not been rejected",
+    "acceptSuccesful": "Thesis has been accepted",
+    "acceptError": "Thesis has not been accepted",
     "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "status": {
@@ -240,7 +257,10 @@
     "rejected": "Rejected",
     "approved": "Approved",
     "assigned": "Assigned",
-    "closed": "Closed"
+    "closed": "Closed",
+    "updateError": "Thesis has not been updated",
+    "numPeopleTooBig": "Value can't be bigger than: 5",
+    "numPeopleTooSmall": "Value can't be smaller than: 3"
   },
   "uploadFiles": {
     "fileName": "Source file name",
@@ -311,6 +331,22 @@
     "updateError": "Deadline has not been updated",
     "activityExists": "Given activity already exists!",
     "dateInPast": "Deadline cannot be in the past!"
+  },
+  "home":{
+    "welcome": "Welcome to ZPI Helper website!",
+    "schedule": "Schedule"
+  },
+  "comment": {
+    "addSuccessful": "Comment has been added",
+    "addError": "Comment has not been added",
+    "deleteSuccessful": "Comment has been deleted",
+    "deleteError": "Comment cannot be deleted",
+    "deleteConfirmation": "Are you sure you want to delete this comment?",
+    "updateSuccessful": "Comment has been updated",
+    "updateError": "Comment has not been updated",
+    "content": "Comment",
+    "author": "Author",
+    "empty": "No comments"
   },
   "tables": {
     "study_field": "study field",
