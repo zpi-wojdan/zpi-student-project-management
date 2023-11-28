@@ -8,7 +8,7 @@ import api from "../../../utils/api";
 import { Department } from '../../../models/university/Department'
 import { Role } from '../../../models/user/Role';
 import { Title } from './Form';
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore

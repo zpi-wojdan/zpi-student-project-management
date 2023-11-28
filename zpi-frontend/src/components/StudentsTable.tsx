@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import { Reservation } from '../models/thesis/Reservation';
-import DeleteConfirmation from './DeleteConfirmation';
+import ChoiceConfirmation from './ChoiceConfirmation';
 
 type StudentTableProps = {
   students: Student[];
@@ -167,7 +167,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
               reservationToDelete.id === thesis.reservations.find((res) => res.student === student)?.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
-                    <DeleteConfirmation
+                    <ChoiceConfirmation
                       isOpen={showDeleteConfirmation}
                       onClose={handleCancelDelete}
                       onConfirm={handleConfirmDelete}
