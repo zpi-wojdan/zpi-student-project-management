@@ -12,20 +12,12 @@ import java.util.List;
 public interface ThesisRepository extends JpaRepository<Thesis, Long>{
     List<Thesis> findAllByOrderByNamePLAsc();
 
-    List<Thesis> findAllByStatusId(Long statusId);
+    List<Thesis> findAllByStatusName(String name);
 
-    List<Thesis> findAllBySupervisorIdAndStatusId(Long empId, Long statId);
+    List<Thesis> findAllBySupervisorIdAndStatusName(Long empId, String statName);
 
     List<Thesis> findAllBySupervisorId(Long empId);
+    List<Thesis> findAllBySupervisor_IdAndAndStatus_NameIn(Long empId, List<String> statNames);
 
     List<Thesis> findAllByStatusNameIn(List<String> statusNames, Sort sort);
-
-    // - - - - - - -
-
-    List<Thesis> findAllByStatusName(String name);
-    List<Thesis> findAllBySupervisor_IdAndAndStatus_NameIn(Long empId, List<String> statNames);
-    @Query("SELECT t FROM Thesis t " +
-            "WHERE t.supervisor.id = :empId " +
-            "AND t.status.name = :statName")
-    List<Thesis> findAllByEmployeeIdAndStatusName(@Param("empId") Long empId, @Param("statName") String statName);
 }

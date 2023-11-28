@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -172,9 +173,7 @@ public class ThesisService {
 
     //  np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusName(Long empId, String statName) {
-        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statName);
-    public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
-        return thesisRepository.findAllBySupervisorIdAndStatusId(empId, statId);
+        return thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName);
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
@@ -186,8 +185,5 @@ public class ThesisService {
         return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames);
     }
 
-    public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
-        return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames);
-    }
 
 }

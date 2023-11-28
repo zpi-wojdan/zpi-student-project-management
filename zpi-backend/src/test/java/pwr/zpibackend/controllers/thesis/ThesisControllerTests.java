@@ -327,16 +327,16 @@ class ThesisControllerTests {
 
     @Test
     public void testGetAllThesesExcludingStatusId() throws Exception {
-        Long statusId = 1L;
-        Mockito.when(thesisService.getAllThesesExcludingStatusId(statusId)).thenReturn(theses);
+        String name = "Draft";
+        Mockito.when(thesisService.getAllThesesExcludingStatusName(name)).thenReturn(theses);
 
         String resultJson = objectMapper.writeValueAsString(theses);
 
-        mockMvc.perform(get(BASE_URL + "/status/exclude/{id}", statusId).contentType("application/json"))
+        mockMvc.perform(get(BASE_URL + "/status/exclude/{id}", name).contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(resultJson));
 
-        verify(thesisService).getAllThesesExcludingStatusId(statusId);
+        verify(thesisService).getAllThesesExcludingStatusName(name);
     }
 
     @Test

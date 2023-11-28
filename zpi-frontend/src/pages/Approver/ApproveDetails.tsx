@@ -595,10 +595,12 @@ const ApproveDetails: React.FC = () => {
                 </span>
             </p>
 
-            <div className='comment-section' key={commentsKey}>
+            <div className='comment-section'>
               {commentSectionRights && (
                 <>
-                <table className="custom-table mt-4">
+                <hr className="my-4" />
+                {thesis.comments.length !== 0 ? (
+                  <table className="custom-table mt-4">
                   <thead>
                     <tr>
                       <th style={{ width: '65%' }}>{t('comment.content')}</th>
@@ -610,7 +612,7 @@ const ApproveDetails: React.FC = () => {
                     {thesis.comments
                       .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
                       .map((c: Comment) => (
-                        <tr key={`${c.id}-${commentsKey}`}>
+                        <tr key={`${c.id}`}>
                           <td 
                             style={{ 
                               wordBreak: 'break-word', overflowY: 'auto',
@@ -624,6 +626,11 @@ const ApproveDetails: React.FC = () => {
                       ))}
                   </tbody>
                 </table>
+                ) : (
+                  <div className='info-no-data'>
+                  <p>{t('comment.empty')}</p>
+                </div>                
+                )}
                 </>
               )} 
             </div>

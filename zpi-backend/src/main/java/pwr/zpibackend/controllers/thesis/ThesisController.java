@@ -21,70 +21,71 @@ public class ThesisController {
     private final ThesisService thesisService;
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
     }
 
     @GetMapping("/public")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllPublicTheses() {
         return new ResponseEntity<>(thesisService.getAllPublicTheses(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Thesis> getThesisById(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Thesis> addThesis(@RequestBody ThesisDTO thesis) throws NotFoundException {
         return new ResponseEntity<>(thesisService.addThesis(thesis), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")
     public ResponseEntity<Thesis> updateThesis(@PathVariable Long id, @RequestBody ThesisDTO param) {
         return new ResponseEntity<>(thesisService.updateThesis(id, param), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Thesis> deleteThesis(@PathVariable Long id) throws NotFoundException {
         return new ResponseEntity<>(thesisService.deleteThesis(id), HttpStatus.OK);
     }
 
     @GetMapping("/status/{name}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesByStatusName(@PathVariable String name) {
         String realName = name.replaceAll("_", " ");
         return new ResponseEntity<>(thesisService.getAllThesesByStatusName(realName), HttpStatus.OK);
     }
 
     @GetMapping("/status/exclude/{name}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusName(@PathVariable String name) {
         String realName = name.replaceAll("_", " ");
         return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusName(realName), HttpStatus.OK);
     }
 
     @GetMapping("/{empId}/{statName}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusName(@PathVariable Long empId,
                                                                             @PathVariable String statName) {
-        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusName(empId, statName), HttpStatus.OK);
+        String realName = statName.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusName(empId, realName), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployee(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployee(id), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{empId}/statuses")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusNameList(@PathVariable Long empId,
                                                                             @RequestParam List<String> statName) {
         List<String> fixedNames = new ArrayList<>();

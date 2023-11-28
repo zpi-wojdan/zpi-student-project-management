@@ -342,10 +342,13 @@ const ThesesDetails: React.FC = () => {
 
             </div>
 
+            
             <div className='comment-section'>
               {commentSectionRights && (
                 <>
-                <table className="custom-table mt-4">
+                <hr className="my-4" />
+                {thesis.comments.length !== 0 ? (
+                  <table className="custom-table mt-4">
                   <thead>
                     <tr>
                       <th style={{ width: '65%' }}>{t('comment.content')}</th>
@@ -371,6 +374,11 @@ const ThesesDetails: React.FC = () => {
                       ))}
                   </tbody>
                 </table>
+                ) : (
+                  <div className='info-no-data'>
+                  <p>{t('comment.empty')}</p>
+                </div>                
+                )}
                 </>
               )} 
             </div>

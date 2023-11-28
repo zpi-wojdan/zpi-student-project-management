@@ -336,6 +336,7 @@
     "updateSuccessful": "Comment has been updated",
     "updateError": "Comment has not been updated",
     "content": "Comment",
-    "author": "Author"
+    "author": "Author",
+    "empty": "No comments"
   }
 }

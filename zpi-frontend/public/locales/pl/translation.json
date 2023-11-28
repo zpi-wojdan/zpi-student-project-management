@@ -334,6 +334,7 @@
     "updateSuccessful": "Komentarz został zaktualizowany",
     "updateError": "Komentarz nie został zaktualizowany",
     "content": "Komentarz",
-    "author": "Autor"
+    "author": "Autor",
+    "empty": "Brak komentarzy"
     }
 }
