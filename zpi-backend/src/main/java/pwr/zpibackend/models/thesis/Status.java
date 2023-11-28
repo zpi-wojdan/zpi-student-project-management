@@ -18,7 +18,7 @@ public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long Id;
+    private long id;
 
     @Column(nullable = false)
     private String name;
@@ -28,7 +28,7 @@ public class Status {
     private List<Thesis> theses;
 
     public Status(long id, String name) {
-        Id = id;
+        this.id = id;
         this.name = name;
     }
 

@@ -26,6 +26,12 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
     }
 
+    @GetMapping("/public")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllPublicTheses() {
+        return new ResponseEntity<>(thesisService.getAllPublicTheses(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Thesis> getThesisById(@PathVariable Long id) {

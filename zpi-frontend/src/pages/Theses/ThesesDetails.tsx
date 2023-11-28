@@ -240,7 +240,8 @@ const ThesesDetails: React.FC = () => {
           user?.role?.name === 'student' &&
           user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
           user?.roles?.some(role => role.name === 'supervisor') &&
-          user?.mail === thesis?.supervisor.mail)) ?
+          user?.mail === thesis?.supervisor.mail ) ||
+          user?.roles?.some(role => role.name === 'admin')) ?
           (
             <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
               if (user?.role?.name === 'student') {
@@ -250,7 +251,11 @@ const ThesesDetails: React.FC = () => {
                   navigate('/single-reservation', { state: { thesis: thesis } })
                 }
               } else {
+                if (user?.mail === thesis?.supervisor.mail) {
                 navigate('/supervisor-reservation', { state: { thesis: thesis } })
+                } else {
+                  navigate('/admin-reservation', { state: { thesis: thesis } })
+                }
               }
             }
             }>
@@ -261,7 +266,7 @@ const ThesesDetails: React.FC = () => {
                   (
                     <span>{t('thesis.enrollStudents')}</span>
                   ) : (
-                    <></>
+                    user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
                   )
               )}
             </button>

@@ -27,6 +27,12 @@ code {
   width: 20%;
 }
 
+/* Navbar */
+.custom-dropdown .dropdown-menu a:focus {
+  background-color: transparent;
+  color: #9A342D;
+}
+
 /* Home */
 .welcome {
   text-align: center;
@@ -77,6 +83,12 @@ code {
   width: 100%;
 }
 
+.info-no-data{
+  text-align: center;
+  margin-top: 40px;
+  font-size: 1.5em;
+}
+
 /* Pagination */
 .pagination {
   display: flex;
@@ -95,8 +107,8 @@ code {
   text-align: center;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+.pagination input[type="number"]::-webkit-inner-spin-button,
+.pagination input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none !important;
 }
 
@@ -146,7 +158,6 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* Slider */
-/* Dodaj styl dla zaznaczonej części suwaka (kolor czerwony) */
 .custom-slider{
   border-color: #9A342D;
 }
