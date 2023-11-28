@@ -1,27 +1,27 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.repositories.user.StudentRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -39,14 +39,8 @@ public class ThesisService {
     }
 
     public List<Thesis> getAllPublicTheses() {
-        List<Thesis> theses = new ArrayList<>();
-
-        List<String> statusNames = Arrays.asList("Approved", "Assigned", "Closed");
-        for (String statusName : statusNames) {
-            Optional<Status> status = statusRepository.findByName(statusName);
-            status.ifPresent(value -> theses.addAll(thesisRepository.findAllByStatusId(value.getId())));
-        }
-        return sortTheses(theses);
+        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+        return thesisRepository.findAllByStatusNameIn(Arrays.asList("Approved", "Assigned", "Closed"), sort);
     }
 
     public Thesis getThesis(Long id) {
@@ -165,12 +159,12 @@ public class ThesisService {
 
     //  np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
-        return sortTheses(thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId));
+        return thesisRepository.findAllBySupervisorIdAndStatusId(empId, statId);
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
-        return sortTheses(thesisRepository.findAllByEmployeeId(id));
+        return thesisRepository.findAllBySupervisorId(id);
     }
 
     public List<Thesis> sortTheses(List<Thesis> theses) {
