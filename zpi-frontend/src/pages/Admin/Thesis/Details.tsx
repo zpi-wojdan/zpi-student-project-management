@@ -17,11 +17,13 @@ const ThesisDetails: React.FC = () => {
 
   const { id } = useParams<{ id: string }>();
   const [thesis, setThesis] = useState<Thesis>();
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     const response = api.get(`http://localhost:8080/thesis/${id}`)
       .then((response) => {
         setThesis(response.data);
+        setLoaded(true);
       })
       .catch((error) => {
         console.error(error);
@@ -92,74 +94,85 @@ const ThesisDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => { navigate(`/theses/edit/${id}`, { state: { thesis } }) }}>
-          {t('thesis.edit')}
-        </button>
-        <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
-          <i className="bi bi-trash"></i>
-        </button>
-        {showDeleteConfirmation && (
-          <tr>
-            <td colSpan={5}>
-              <DeleteConfirmation
-                isOpen={showDeleteConfirmation}
-                onClose={handleCancelDelete}
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-                questionText={t('thesis.deleteConfirmation')}
-              />
-            </td>
-          </tr>
-        )}
+        {loaded ? (<React.Fragment>
+          <button type="button" className="custom-button" onClick={() => { navigate(`/theses/edit/${id}`, { state: { thesis } }) }}>
+            {t('thesis.edit')}
+          </button>
+          <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
+            <i className="bi bi-trash"></i>
+          </button>
+          {showDeleteConfirmation && (
+            <tr>
+              <td colSpan={5}>
+                <DeleteConfirmation
+                  isOpen={showDeleteConfirmation}
+                  onClose={handleCancelDelete}
+                  onConfirm={handleConfirmDelete}
+                  onCancel={handleCancelDelete}
+                  questionText={t('thesis.deleteConfirmation')}
+                />
+              </td>
+            </tr>
+          )}
+        </React.Fragment>
+        ) : (<></>)}
       </div>
       <div>
-        {thesis ? (
-          <div>
-            <p className="bold">{t('thesis.thesisName')}:</p>
-            {i18n.language === 'pl' ? (
-              <p>{thesis.namePL}</p>
-            ) : (
-              <p>{thesis.nameEN}</p>
-            )}
-            <p className="bold">{t('general.university.description')}:</p>
-            {i18n.language === 'pl' ? (
-              <p>{thesis.descriptionPL}</p>
-            ) : (
-              <p>{thesis.descriptionEN}</p>
-            )}
-            <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title.name +
-              " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
-            <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
-              thesis.studyCycle.name : 'N/A'}</span></p>
-            <p className="bold">{t('general.university.studyPrograms')}:</p>
-            <ul>
-              {thesis.programs.map((program: Program) => (
-                <li key={program.id}>
-                  {program.name}
-                  <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
-                    {expandedPrograms.includes(program.id) ? '▼' : '▶'}
-                  </button>
-                  {expandedPrograms.includes(program.id) && (
-                    <ul>
-                      <li>
-                        <p><span className="bold">{t('general.university.faculty')} - </span> <span>{program.studyField.faculty.name}</span></p>
-                      </li>
-                      <li>
-                        <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
-                      </li>
-                      <li>
-                        <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.lack')}</span></p>
-                      </li>
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-            <p><span className="bold">{t('general.university.status')}:</span> <span>{thesis.status.name}</span></p>
+        {!loaded ? (
+          <div className='info-no-data'>
+            <p>{t('general.management.load')}</p>
           </div>
-        ) : (
-          <p>{t('general.management.errorOfLoading')} {id}</p>
-        )}
+        ) : (<React.Fragment>
+          {thesis ? (
+            <div>
+              <p className="bold">{t('thesis.thesisName')}:</p>
+              {i18n.language === 'pl' ? (
+                <p>{thesis.namePL}</p>
+              ) : (
+                <p>{thesis.nameEN}</p>
+              )}
+              <p className="bold">{t('general.university.description')}:</p>
+              {i18n.language === 'pl' ? (
+                <p>{thesis.descriptionPL}</p>
+              ) : (
+                <p>{thesis.descriptionEN}</p>
+              )}
+              <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title.name +
+                " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
+              <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
+                thesis.studyCycle.name : 'N/A'}</span></p>
+              <p className="bold">{t('general.university.studyPrograms')}:</p>
+              <ul>
+                {thesis.programs.map((program: Program) => (
+                  <li key={program.id}>
+                    {program.name}
+                    <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
+                      {expandedPrograms.includes(program.id) ? '▼' : '▶'}
+                    </button>
+                    {expandedPrograms.includes(program.id) && (
+                      <ul>
+                        <li>
+                          <p><span className="bold">{t('general.university.faculty')} - </span> <span>{program.studyField.faculty.name}</span></p>
+                        </li>
+                        <li>
+                          <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
+                        </li>
+                        <li>
+                          <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.lack')}</span></p>
+                        </li>
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p><span className="bold">{t('general.university.status')}:</span> <span>{thesis.status.name}</span></p>
+            </div>
+          ) : (
+            <div className='info-no-data'>
+              <p>{t('general.management.errorOfLoading')}</p>
+            </div>
+          )}
+        </React.Fragment>)}
       </div>
     </div>
   );

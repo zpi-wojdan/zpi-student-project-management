@@ -18,15 +18,17 @@ const EmployeeDetails: React.FC = () => {
     approver: t('general.people.approverLC'),
     admin: t('general.people.adminLC'),
   };
-  
+
   const { id } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<Employee>()
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     api.get(`http://localhost:8080/employee/${id}`)
       .then((response) => {
         console.log(response.data)
         setEmployee(response.data);
+        setLoaded(true);
       })
       .catch((error) => {
         console.error(error);
@@ -71,46 +73,57 @@ const EmployeeDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        <button type="button" className="custom-button" onClick={() => { navigate(`/employees/edit/${employee?.id}`, { state: { employee } }) }}>
-          {t('employee.edit')}
-        </button>
-        <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
-          <i className="bi bi-trash"></i>
-        </button>
-        {showDeleteConfirmation && (
-          <tr>
-            <td colSpan={5}>
-              <DeleteConfirmation
-                isOpen={showDeleteConfirmation}
-                onClose={handleCancelDelete}
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-                questionText={t('employee.deleteConfirmation')}
-              />
-            </td>
-          </tr>
-        )}
+        {loaded ? (<React.Fragment>
+          <button type="button" className="custom-button" onClick={() => { navigate(`/employees/edit/${employee?.id}`, { state: { employee } }) }}>
+            {t('employee.edit')}
+          </button>
+          <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
+            <i className="bi bi-trash"></i>
+          </button>
+          {showDeleteConfirmation && (
+            <tr>
+              <td colSpan={5}>
+                <DeleteConfirmation
+                  isOpen={showDeleteConfirmation}
+                  onClose={handleCancelDelete}
+                  onConfirm={handleConfirmDelete}
+                  onCancel={handleCancelDelete}
+                  questionText={t('employee.deleteConfirmation')}
+                />
+              </td>
+            </tr>
+          )}
+        </React.Fragment>
+        ) : (<></>)}
       </div>
       <div>
-        {employee ? (
-          <div>
-            <p><span className="bold">{t('general.title')}:</span> <span>{employee.title.name}</span></p>
-            <p><span className="bold">{t('general.people.name')}:</span> <span>{employee.name}</span></p>
-            <p><span className="bold">{t('general.people.surname')}:</span> <span>{employee.surname}</span></p>
-            <p><span className="bold">{t('general.people.mail')}:</span> <span>{employee.mail}</span></p>
-            <p><span className="bold">{t('general.university.department')}:</span> <span>{employee.department.name}</span></p>
-            <p className="bold">{t('general.people.roles')}:</p>
-            <ul>
-              {employee.roles.map((role) => (
-                <li key={role.id}>
-                  {roleLabels[role.name] || role.name}
-                </li>
-              ))}
-            </ul>
+        {!loaded ? (
+          <div className='info-no-data'>
+            <p>{t('general.management.load')}</p>
           </div>
-        ) : (
-          <p>{t('general.management.errorOfLoading')}</p>
-        )}
+        ) : (<React.Fragment>
+          {employee ? (
+            <div>
+              <p><span className="bold">{t('general.title')}:</span> <span>{employee.title.name}</span></p>
+              <p><span className="bold">{t('general.people.name')}:</span> <span>{employee.name}</span></p>
+              <p><span className="bold">{t('general.people.surname')}:</span> <span>{employee.surname}</span></p>
+              <p><span className="bold">{t('general.people.mail')}:</span> <span>{employee.mail}</span></p>
+              <p><span className="bold">{t('general.university.department')}:</span> <span>{employee.department.name}</span></p>
+              <p className="bold">{t('general.people.roles')}:</p>
+              <ul>
+                {employee.roles.map((role) => (
+                  <li key={role.id}>
+                    {roleLabels[role.name] || role.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className='info-no-data'>
+              <p>{t('general.management.errorOfLoading')}</p>
+            </div>
+          )}
+        </React.Fragment>)}
       </div>
     </div>
   );
