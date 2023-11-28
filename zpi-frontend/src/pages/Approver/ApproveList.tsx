@@ -171,7 +171,7 @@ const ApproveList: React.FC = () => {
 
   useEffect(() => {
     if (loaded)
-      handleFiltration(false, false);
+      handleFiltration(false);
   }, [loaded]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -227,10 +227,10 @@ const ApproveList: React.FC = () => {
     setFilteredTheses(theses);
   };
 
-  const handleFiltration = (submitted: boolean, toggle: boolean) => {
+  const handleFiltration = (toggle: boolean) => {
 
-    if (submitted) {
-      handleSubmitFilters(toggle)
+    if (toggle) {
+      handleSubmitFilters(true)
 
       const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
@@ -472,7 +472,7 @@ const ApproveList: React.FC = () => {
             onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true, true)}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>

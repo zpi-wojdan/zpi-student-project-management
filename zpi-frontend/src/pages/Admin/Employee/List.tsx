@@ -93,7 +93,7 @@ const EmployeeList: React.FC = () => {
 
   useEffect(() => {
     if (loaded)
-      handleFiltration(false, false);
+      handleFiltration(false);
   }, [loaded]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -137,10 +137,10 @@ const EmployeeList: React.FC = () => {
     setFilteredEmployees(employees);
   };
 
-  const handleFiltration = (submitted: boolean, toggle: boolean) => {
+  const handleFiltration = (toggle: boolean) => {
 
-    if (submitted) {
-      handleSubmitFilters(toggle)
+    if (toggle) {
+      handleSubmitFilters(true)
 
       const departmentFilter = selectedDepartmentCode ? (employee: Employee) => employee.department.code === selectedDepartmentCode : () => true;
       const roleFilter = selectedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === selectedRoleName) : () => true;
@@ -311,7 +311,7 @@ const EmployeeList: React.FC = () => {
             onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true, true)}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>
