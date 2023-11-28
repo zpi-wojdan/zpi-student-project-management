@@ -7,6 +7,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 
 const DepartmentList: React.FC = () => {
   // @ts-ignore
@@ -88,7 +89,7 @@ const DepartmentList: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('department.deleteError'));
+        handleDeletionError(error, t, 'department');
       });
     setShowDeleteConfirmation(false);
   };

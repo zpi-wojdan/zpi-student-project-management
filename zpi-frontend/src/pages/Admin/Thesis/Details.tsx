@@ -8,6 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import { toast } from 'react-toastify';
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 
 const ThesisDetails: React.FC = () => {
   // @ts-ignore
@@ -76,7 +77,7 @@ const ThesisDetails: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('thesis.deleteError'));
+        handleDeletionError(error, t, 'thesis');
 
       });
     setShowDeleteConfirmation(false);
