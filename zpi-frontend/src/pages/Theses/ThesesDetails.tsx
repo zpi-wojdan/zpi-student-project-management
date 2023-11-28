@@ -12,6 +12,7 @@ import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import { Reservation } from "../../models/thesis/Reservation";
 import { toast } from "react-toastify";
+import { Comment } from '../../models/thesis/Comment';
 
 const ThesesDetails: React.FC = () => {
   // @ts-ignore
@@ -42,6 +43,7 @@ const ThesesDetails: React.FC = () => {
           leader: thesisDb.leader,
           students: thesisDb.reservations.map((reservation) => reservation.student).sort((a, b) => a.index.localeCompare(b.index)),
           reservations: thesisDb.reservations.sort((a, b) => a.student.index.localeCompare(b.student.index)),
+          comments: thesisDb.comments,
         };
         setThesis(thesis);
         setLoaded(true);
@@ -79,11 +81,20 @@ const ThesesDetails: React.FC = () => {
     } else {
       setExpandedPrograms([...expandedPrograms, programId]);
     }
-  }; const [user, setUser] = useState<Student & Employee>();
+  }; 
+  
+  const [user, setUser] = useState<Student & Employee>();
+  const [commentSectionRights, setCommentSectionRights] = useState(false);
 
   useEffect(() => {
     setUser(JSON.parse(Cookies.get("user") || "{}"));
   }, []);
+
+  useEffect(() => {
+    const byRoles = gotCommentSectionRightsByRoles();
+    const bySupervisor = gotCommentSectionRightsBySupervisor();
+    setCommentSectionRights(byRoles || bySupervisor);
+  }, [user, thesis])
 
   const handleReadyForApproval = async () => {
     if (thesis?.reservations) {
@@ -154,6 +165,61 @@ const ThesesDetails: React.FC = () => {
           toast.error(t('thesis.downloadError'));
       });
   }
+
+  const formatCreationTime = (creationTime: string) => {
+    const now = new Date();
+    const creationDate = new Date(creationTime);
+  
+    const elapsedMilliseconds = now.getTime() - creationDate.getTime();
+    const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+    const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+    const elapsedHours = Math.floor(elapsedMinutes / 60);
+    const elapsedDays = Math.floor(elapsedHours / 24);
+    const elapsedMonths = Math.floor(elapsedDays / 28); // miesiąc = +- 28 dni - zaokrąglam
+    const elapsedYears = Math.floor(elapsedDays / 365); // rok = +- 365 dni - zaokrąglam
+  
+    const rtf = new Intl.RelativeTimeFormat(i18n.language === 'pl' ? 'pl' : 'en', { numeric: 'auto' });
+  
+    if (elapsedYears > 0) {
+      return rtf.format(-elapsedYears, 'year');
+    } else if (elapsedMonths > 0) {
+      return rtf.format(-elapsedMonths, 'month');
+    } else if (elapsedDays > 0) {
+      return rtf.format(-elapsedDays, 'day');
+    } else if (elapsedHours > 0) {
+      return rtf.format(-elapsedHours, 'hour');
+    } else if (elapsedMinutes > 0) {
+      return rtf.format(-elapsedMinutes, 'minute');
+    } else {
+      return rtf.format(-elapsedSeconds, 'second');
+    }
+  };  
+
+  const gotCommentSectionRightsByRoles = () => {
+    let u: (Student & Employee) | undefined;
+    if (user === null || user === undefined){
+      u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+    }
+    else{
+      u = user;
+    }
+    return u?.roles.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
+  }
+  const gotCommentSectionRightsBySupervisor = () =>{
+    let u: (Student & Employee) | undefined;
+    if (user === null || user === undefined){
+      u = JSON.parse(Cookies.get("user") || "{}")
+      setUser(u);
+    }
+    else{
+      u = user;
+    }
+    const isSupervisor = u?.id === thesis?.supervisor.id;
+    console.log('is supervisor: ' + isSupervisor);
+    return u?.id === thesis?.supervisor.id;
+  }
+
 
   return (
     <div className='page-margin'>
@@ -283,6 +349,47 @@ const ThesesDetails: React.FC = () => {
                     </button>
                   )}
 
+            </div>
+
+            
+            <div className='comment-section'>
+              {commentSectionRights && (
+                <>
+                <hr className="my-4" />
+                {thesis.comments.length !== 0 ? (
+                  <table className="custom-table mt-4">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '65%' }}>{t('comment.content')}</th>
+                      <th style={{ width: '20%' }}>{t('comment.author')}</th>
+                      <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {thesis.comments
+                      .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
+                      .map((c: Comment) => (
+                        <tr key={`${c.id}`}>
+                          <td 
+                            style={{ 
+                              wordBreak: 'break-word', overflowY: 'auto',
+                              display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
+                            }}>
+                              {c.content}
+                          </td>
+                          <td>{c.author.mail}</td>
+                          <td className='centered'>{formatCreationTime(c.creationTime)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+                ) : (
+                  <div className='info-no-data'>
+                  <p>{t('comment.empty')}</p>
+                </div>                
+                )}
+                </>
+              )} 
               </div>
             </div>
           ) : (

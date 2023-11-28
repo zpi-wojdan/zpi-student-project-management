@@ -5,7 +5,7 @@ import api from '../../../utils/api';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Faculty } from '../../../models/university/Faculty';
@@ -359,6 +359,16 @@ const ThesisList: React.FC = () => {
     }
   };
 
+  const statusLabels: { [key:string]:string } = {
+    "Draft": t('status.draft'),
+    "Pending approval": t('status.pending'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed')
+  }
+
+
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
@@ -659,7 +669,7 @@ const ThesisList: React.FC = () => {
                       )}
                     </td>
                     <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
-                    <td className="centered">{thesis.status.name}</td>
+                    <td className="centered">{statusLabels[thesis.status.name] || thesis.status.name}</td>
                     <td>
                       <button
                         className="custom-button coverall"
