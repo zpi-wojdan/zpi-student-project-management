@@ -8,6 +8,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
+import api_access from '../../../utils/api_access';
 
 const StudyCycleList: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const StudyCycleList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => a.id - b.id);
         setCycles(sortedCycles);
@@ -101,7 +102,7 @@ const StudyCycleList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/studycycle/${studyCycleToDelete}`)
+    api.delete(api_access + `studycycle/${studyCycleToDelete}`)
       .then(() => {
         toast.success(t('cycle.deleteSuccessful'));
         setRefreshList(!refreshList);

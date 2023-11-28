@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import api from '../../../utils/api';
 import handleSignOut from '../../../auth/Logout';
 import useAuth from "../../../auth/useAuth";
+import api_access from '../../../utils/api_access';
 
 const EmployeeDetails: React.FC = () => {
   // @ts-ignore
@@ -23,7 +24,7 @@ const EmployeeDetails: React.FC = () => {
   const [employee, setEmployee] = useState<Employee>()
 
   useEffect(() => {
-    api.get(`http://localhost:8080/employee/${id}`)
+    api.get(api_access + `employee/${id}`)
       .then((response) => {
         console.log(response.data)
         setEmployee(response.data);
@@ -45,7 +46,7 @@ const EmployeeDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/employee/${employee?.id}`)
+    api.delete(api_access + `employee/${employee?.id}`)
       .then(() => {
         toast.success(t("employee.deleteSuccessful"));
         navigate("/employees");

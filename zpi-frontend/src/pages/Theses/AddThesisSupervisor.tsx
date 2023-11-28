@@ -11,6 +11,7 @@ import { Employee } from '../../models/user/Employee';
 import { toast } from 'react-toastify';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
+import api_access from '../../utils/api_access';
 
 
 function AddThesisPageSupervisor() {
@@ -73,7 +74,7 @@ function AddThesisPageSupervisor() {
   }, [])
 
   useEffect(() => {
-    api.get('http://localhost:8080/status')
+    api.get(api_access + 'status')
       .then((response) => {
         const allStatuses: Status[] = response.data;
         const allowedStatuses = allStatuses.filter(elem => elem.name === 'Draft' || elem.name === 'Pending approval');
@@ -88,7 +89,7 @@ function AddThesisPageSupervisor() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
     .then((response) => {
       setStudyCycles(response.data);
     })
@@ -101,7 +102,7 @@ function AddThesisPageSupervisor() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
     .then((response) => {
       setPrograms(response.data);
     })
@@ -280,7 +281,7 @@ function AddThesisPageSupervisor() {
 
     if (isValid){
       if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
+        api.put(api_access + `thesis/${thesis.id}`, dto)
         .then(() => {
           navigate("/my");
           toast.success(t("thesis.updateSuccessful"));
@@ -296,7 +297,7 @@ function AddThesisPageSupervisor() {
         });
       }
       else{
-        api.post('http://localhost:8080/thesis', dto)
+        api.post(api_access + 'thesis', dto)
         .then(() => {
           navigate("/my");
           toast.success(t("thesis.addSuccessful"));

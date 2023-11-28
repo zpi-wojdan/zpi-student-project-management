@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import api from '../../../utils/api';
 import { useTranslation } from "react-i18next";
+import api_access from '../../../utils/api_access';
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -19,7 +20,7 @@ const StudentDetails: React.FC = () => {
   const [student, setStudent] = useState<Student>()
 
   useEffect(() => {
-    api.get(`http://localhost:8080/student/${id}`)
+    api.get(api_access + `student/${id}`)
       .then((response) => {
         console.log(response.data)
         setStudent(response.data);
@@ -36,7 +37,7 @@ const StudentDetails: React.FC = () => {
 
   const [faculties, setFaculties] = useState<Faculty[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         setFaculties(response.data);
       })
@@ -66,7 +67,7 @@ const StudentDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/student/${student?.id}`)
+    api.delete(api_access + `student/${student?.id}`)
       .then(() => {
         toast.success(t('student.deleteSuccessful'));
         navigate("/students");

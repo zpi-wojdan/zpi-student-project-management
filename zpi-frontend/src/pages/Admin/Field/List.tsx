@@ -8,6 +8,7 @@ import useAuth from '../../../auth/useAuth';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
+import api_access from '../../../utils/api_access';
 
 const StudyFieldList: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const StudyFieldList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access + 'studyfield')
       .then((response) => {
         const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.abbreviation.localeCompare(b.abbreviation);
@@ -104,7 +105,7 @@ const StudyFieldList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/studyfield/${studyFieldToDelete}`)
+    api.delete(api_access + `studyfield/${studyFieldToDelete}`)
       .then(() => {
         toast.success(t('field.deleteSuccessful'));
         setRefreshList(!refreshList);

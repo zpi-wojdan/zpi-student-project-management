@@ -6,7 +6,7 @@ spring:
     port: ${PORT:8080}
 
   frontend:
-    url: ${FRONTEND_URL:http://localhost:3000}
+    url: ${FRONTEND_URL:http://${FRONTEND_HOST}:${FRONTEND_PORT}}
 
   profiles:
     active: ${ACTIVE_PROFILE:dev}
@@ -81,4 +81,5 @@ spring:
     locale: pl_PL
 
 frontend:
-  url: ${FRONTEND_URL}
+  url: ${FRONTEND_URL:http://${FRONTEND_HOST}:${FRONTEND_PORT}}
+  

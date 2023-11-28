@@ -8,6 +8,7 @@ import handleSignOut from "../../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import DeleteConfirmation from '../../../components/DeleteConfirmation';
 import { toast } from 'react-toastify';
+import api_access from '../../../utils/api_access';
 
 const ThesisDetails: React.FC = () => {
   // @ts-ignore
@@ -19,7 +20,7 @@ const ThesisDetails: React.FC = () => {
   const [thesis, setThesis] = useState<Thesis>();
 
   useEffect(() => {
-    const response = api.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(api_access + `thesis/${id}`)
       .then((response) => {
         setThesis(response.data);
       })
@@ -34,7 +35,7 @@ const ThesisDetails: React.FC = () => {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
         console.log(programs);
@@ -65,7 +66,7 @@ const ThesisDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/thesis/${id}`)
+    api.delete(api_access + `thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
         navigate("/theses");

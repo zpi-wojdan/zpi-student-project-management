@@ -8,6 +8,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
+import api_access from '../../../utils/api_access';
 
 const ProgramList: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const ProgramList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         const sortedPrograms = response.data.sort((a: Program, b: Program) => {
           return a.name.localeCompare(b.name);
@@ -103,7 +104,7 @@ const ProgramList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/program/${programToDelete}`)
+    api.delete(api_access + `program/${programToDelete}`)
       .then(() => {
         toast.success(t('program.deleteSuccessful'));
         setRefreshList(!refreshList);

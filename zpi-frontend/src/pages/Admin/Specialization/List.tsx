@@ -8,6 +8,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
+import api_access from '../../../utils/api_access';
 
 const SpecializationList: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const SpecializationList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
+    api.get(api_access + 'specialization')
       .then((response) => {
         const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
           return a.abbreviation.localeCompare(b.abbreviation);
@@ -104,7 +105,7 @@ const SpecializationList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/specialization/${specializationToDelete}`)
+    api.delete(api_access + `specialization/${specializationToDelete}`)
       .then(() => {
         toast.success(t('specialization.deleteSuccessful'));
         setRefreshList(!refreshList);

@@ -8,6 +8,7 @@ import { StudyField } from '../../../models/university/StudyField';
 import { Faculty } from '../../../models/university/Faculty';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import api_access from '../../../utils/api_access';
 
 const SpecializationForm: React.FC = () => {
   // @ts-ignore
@@ -53,7 +54,7 @@ const SpecializationForm: React.FC = () => {
 
     if (validateForm()) {
       if (specialization) {
-        api.put(`http://localhost:8080/specialization/${specializationId}`, formData)
+        api.put(api_access + `specialization/${specializationId}`, formData)
           .then(() => {
             navigate("/specializations")
             toast.success(t("specialization.updateSuccessful"));
@@ -76,7 +77,7 @@ const SpecializationForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/specialization', formData)
+        api.post(api_access + 'specialization', formData)
           .then(() => {
             navigate("/specializations")
             toast.success(t("specialization.addSuccessful"));
@@ -149,7 +150,7 @@ const SpecializationForm: React.FC = () => {
   const [selectedFacultyAbbr, setSelectedFacultyAbbr] = useState<string>();
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         setAvailableFaculties(response.data);
       })
@@ -163,7 +164,7 @@ const SpecializationForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access + 'studyfield')
       .then((response) => {
         setAvailableFields(response.data);
       })

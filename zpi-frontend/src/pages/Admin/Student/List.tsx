@@ -9,6 +9,7 @@ import SearchBar from '../../../components/SeatchBar';
 import { Faculty } from '../../../models/university/Faculty';
 import { StudyField } from '../../../models/university/StudyField';
 import { Specialization } from '../../../models/university/Specialization';
+import api_access from '../../../utils/api_access';
 
 const StudentList: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const StudentList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/student')
+    api.get(api_access + 'student')
       .then((response) => {
         response.data.sort((a: Student, b: Student) => parseInt(a.index, 10) - parseInt(b.index, 10));
         setStudents(response.data);
@@ -52,7 +53,7 @@ const StudentList: React.FC = () => {
   const [submittedSpecializationAbbr, setSubmittedSpecializationAbbr] = useState<string>("");
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
           return a.name.localeCompare(b.name);
@@ -69,7 +70,7 @@ const StudentList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access + 'studyfield')
       .then((response) => {
         const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.name.localeCompare(b.name);
@@ -86,7 +87,7 @@ const StudentList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
+    api.get(api_access + 'specialization')
       .then((response) => {
         const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
           return a.name.localeCompare(b.name);

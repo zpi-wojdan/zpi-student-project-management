@@ -12,6 +12,7 @@ import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import { Reservation } from "../../models/thesis/Reservation";
 import { toast } from "react-toastify";
+import api_access from '../../utils/api_access';
 
 const ThesesDetails: React.FC = () => {
   // @ts-ignore
@@ -23,7 +24,7 @@ const ThesesDetails: React.FC = () => {
   const [thesis, setThesis] = useState<ThesisFront>();
 
   useEffect(() => {
-    const response = api.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(api_access + `thesis/${id}`)
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const thesis: ThesisFront = {
@@ -56,7 +57,7 @@ const ThesesDetails: React.FC = () => {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
       })
@@ -89,7 +90,7 @@ const ThesesDetails: React.FC = () => {
         try {
           reservation.readyForApproval = true;
           reservation.sentForApprovalDate = new Date();
-          const response = await api.put('http://localhost:8080/reservation/' + reservation.id,
+          const response = await api.put(api_access + 'reservation/' + reservation.id,
             JSON.stringify(reservation)
           );
 
@@ -106,7 +107,7 @@ const ThesesDetails: React.FC = () => {
   };
 
   const downloadDeclaration = () => {
-    let url = 'http://localhost:8080/report/pdf/thesis-declaration/' + thesis?.id;
+    let url = api_access + 'report/pdf/thesis-declaration/' + thesis?.id;
 
     let toastId: any = null;
     toastId = toast.info(t('thesis.generating'), { autoClose: false });

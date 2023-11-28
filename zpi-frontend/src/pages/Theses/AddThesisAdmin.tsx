@@ -11,6 +11,7 @@ import { Employee } from '../../models/user/Employee';
 import { toast } from 'react-toastify';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
+import api_access from '../../utils/api_access';
 
 
 function AddThesisPageAdmin() {
@@ -75,7 +76,7 @@ function AddThesisPageAdmin() {
   }, [])
 
   useEffect(() => {
-    api.get('http://localhost:8080/status/exclude/Draft')
+    api.get(api_access + 'status/exclude/Draft')
       .then((response) => {
         setStatuses(response.data);
       })
@@ -88,7 +89,7 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
     .then((response) => {
       setStudyCycles(response.data);
     })
@@ -101,7 +102,7 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
     .then((response) => {
       setPrograms(response.data);
     })
@@ -114,7 +115,7 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get(api_access + 'employee')
     .then((response) => {
       setEmployees(response.data);
     })
@@ -315,7 +316,7 @@ function AddThesisPageAdmin() {
 
     if (isValid){
       if (thesis){
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
+        api.put(api_access + `thesis/${thesis.id}`, dto)
         .then(() => {
           navigate("/theses");
           toast.success(t("thesis.updateSuccessful"));
@@ -331,7 +332,7 @@ function AddThesisPageAdmin() {
         });
       }
       else{
-        api.post('http://localhost:8080/thesis', dto)
+        api.post(api_access + 'thesis', dto)
         .then(() => {
           navigate("/theses");
           toast.success(t("thesis.addSuccessful"));
