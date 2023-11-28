@@ -93,21 +93,26 @@ const EmployeeList: React.FC = () => {
 
   useEffect(() => {
     if (loaded)
-      handleFiltration(false);
+      handleFiltration(false, false);
   }, [loaded]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleToggleSidebar = (submitted: boolean) => {
+  const handleSubmitFilters = (toogle: boolean) => {
 
-    if (submitted) {
-      setSubmittedDepartmentCode(selectedDepartmentCode)
-      setSubmittedRoleName(selectedRoleName)
-      setSubmittedTitleName(selectedTitleName)
-      localStorage.setItem('employeeFilterDepartment', selectedDepartmentCode);
-      localStorage.setItem('employeeFilterRole', selectedRoleName);
-      localStorage.setItem('employeeFilterTitle', selectedTitleName);
-    }
+    setSubmittedDepartmentCode(selectedDepartmentCode)
+    setSubmittedRoleName(selectedRoleName)
+    setSubmittedTitleName(selectedTitleName)
+    localStorage.setItem('employeeFilterDepartment', selectedDepartmentCode);
+    localStorage.setItem('employeeFilterRole', selectedRoleName);
+    localStorage.setItem('employeeFilterTitle', selectedTitleName);
+
+    if (toogle)
+      handleToggleSidebar()
+  };
+
+  const handleToggleSidebar = () => {
+
     if (!sidebarOpen) {
       setSelectedDepartmentCode(submittedDepartmentCode)
       setSelectedRoleName(submittedRoleName)
@@ -116,10 +121,27 @@ const EmployeeList: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = (toggle: boolean) => {
+  const handleDeleteFilters = () => {
+    setSelectedDepartmentCode("");
+    setSelectedRoleName("");
+    setSelectedTitleName("");
 
-    if (toggle) {
-      handleToggleSidebar(true)
+    localStorage.removeItem('employeeFilterDepartment');
+    localStorage.removeItem('employeeFilterRole');
+    localStorage.removeItem('employeeFilterTitle');
+
+    setSubmittedDepartmentCode("");
+    setSubmittedRoleName("");
+    setSubmittedTitleName("");
+
+    setFilteredEmployees(employees);
+  };
+
+  const handleFiltration = (submitted: boolean, toggle: boolean) => {
+
+    if (submitted) {
+      handleSubmitFilters(toggle)
+
       const departmentFilter = selectedDepartmentCode ? (employee: Employee) => employee.department.code === selectedDepartmentCode : () => true;
       const roleFilter = selectedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === selectedRoleName) : () => true;
       const titleFilter = selectedTitleName ? (employee: Employee) => employee.title.name === selectedTitleName : () => true;
@@ -214,7 +236,7 @@ const EmployeeList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -286,14 +308,10 @@ const EmployeeList: React.FC = () => {
         <hr className="my-4" />
         <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
-            onClick={() => {
-              setSelectedDepartmentCode("");
-              setSelectedRoleName("");
-              setSelectedTitleName("");
-            }}>
+            onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true)}>
+          <button className="custom-button" onClick={() => handleFiltration(true, true)}>
             {t('general.management.filter')}
           </button>
         </div>

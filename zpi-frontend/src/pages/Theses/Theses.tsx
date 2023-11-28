@@ -173,29 +173,34 @@ const ThesesTable: React.FC = () => {
 
   useEffect(() => {
     if (loaded)
-      handleFiltration(false);
+      handleFiltration(false, false);
   }, [loaded]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleToggleSidebar = (submitted: boolean) => {
+  const handleSubmitFilters = (toogle: boolean) => {
 
-    if (submitted) {
-      setSubmittedFacultyAbbr(selectedFacultyAbbr)
-      setSubmittedFieldAbbr(selectedFieldAbbr)
-      setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-      setSubmittedMinVacancies(selectedMinVacancies)
-      setSubmittedMaxVacancies(selectedMaxVacancies)
-      setSubmittedCycleName(selectedCycleName)
-      setSubmittedSupervisors(selectedSupervisors)
-      localStorage.setItem('publicThesesFilterFaculty', selectedFacultyAbbr);
-      localStorage.setItem('publicThesesFilterField', selectedFieldAbbr);
-      localStorage.setItem('publicThesesFilterSpecialization', selectedSpecializationAbbr);
-      localStorage.setItem('publicThesesFilterMinVacancies', selectedMinVacancies.toString());
-      localStorage.setItem('publicThesesFilterMaxVacancies', selectedMaxVacancies.toString());
-      localStorage.setItem('publicThesesFilterCycle', selectedCycleName);
-      localStorage.setItem('publicThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
-    }
+    setSubmittedFacultyAbbr(selectedFacultyAbbr)
+    setSubmittedFieldAbbr(selectedFieldAbbr)
+    setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
+    setSubmittedMinVacancies(selectedMinVacancies)
+    setSubmittedMaxVacancies(selectedMaxVacancies)
+    setSubmittedCycleName(selectedCycleName)
+    setSubmittedSupervisors(selectedSupervisors)
+    localStorage.setItem('publicThesesFilterFaculty', selectedFacultyAbbr);
+    localStorage.setItem('publicThesesFilterField', selectedFieldAbbr);
+    localStorage.setItem('publicThesesFilterSpecialization', selectedSpecializationAbbr);
+    localStorage.setItem('publicThesesFilterMinVacancies', selectedMinVacancies.toString());
+    localStorage.setItem('publicThesesFilterMaxVacancies', selectedMaxVacancies.toString());
+    localStorage.setItem('publicThesesFilterCycle', selectedCycleName);
+    localStorage.setItem('publicThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
+
+    if (toogle)
+      handleToggleSidebar()
+  };
+
+  const handleToggleSidebar = () => {
+
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
@@ -208,10 +213,38 @@ const ThesesTable: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = (toggle: boolean) => {
+  const handleDeleteFilters = () => {
+    setSelectedCycleName("");
+    setSelectedFacultyAbbr("");
+    setSelectedFieldAbbr("");
+    setSelectedSpecializationAbbr("");
+    setSelectedMinVacancies(0);
+    setSelectedMaxVacancies(5);
+    setSelectedSupervisors([]);
 
-    if (toggle) {
-      handleToggleSidebar(true)
+    localStorage.removeItem('publicThesesFilterFaculty');
+    localStorage.removeItem('publicThesesFilterField');
+    localStorage.removeItem('publicThesesFilterSpecialization');
+    localStorage.removeItem('publicThesesFilterMinVacancies');
+    localStorage.removeItem('publicThesesFilterMaxVacancies');
+    localStorage.removeItem('publicThesesFilterCycle');
+    localStorage.removeItem('publicThesesFilterSupervisors');
+
+    setSubmittedCycleName("");
+    setSubmittedFacultyAbbr("");
+    setSubmittedFieldAbbr("");
+    setSubmittedSpecializationAbbr("");
+    setSubmittedMinVacancies(0);
+    setSubmittedMaxVacancies(5);
+    setSubmittedSupervisors([]);
+
+    setFilteredTheses(theses);
+  };
+
+  const handleFiltration = (submitted: boolean, toggle: boolean) => {
+
+    if (submitted) {
+      handleSubmitFilters(toggle)
 
       const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
@@ -328,7 +361,7 @@ const ThesesTable: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -484,18 +517,10 @@ const ThesesTable: React.FC = () => {
         <hr className="my-4" />
         <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
-            onClick={() => {
-              setSelectedCycleName("");
-              setSelectedFacultyAbbr("");
-              setSelectedFieldAbbr("");
-              setSelectedSpecializationAbbr("");
-              setSelectedMinVacancies(0);
-              setSelectedMaxVacancies(5);
-              setSelectedSupervisors([])
-            }}>
+            onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true)}>
+          <button className="custom-button" onClick={() => handleFiltration(true, true)}>
             {t('general.management.filter')}
           </button>
         </div>
