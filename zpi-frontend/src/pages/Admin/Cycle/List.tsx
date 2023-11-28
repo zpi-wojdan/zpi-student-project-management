@@ -7,7 +7,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 
 const StudyCycleList: React.FC = () => {
   // @ts-ignore
