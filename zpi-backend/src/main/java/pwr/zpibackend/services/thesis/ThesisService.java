@@ -1,29 +1,27 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.repositories.user.StudentRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -38,6 +36,11 @@ public class ThesisService {
 
     public List<Thesis> getAllTheses() {
         return thesisRepository.findAll();
+    }
+
+    public List<Thesis> getAllPublicTheses() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+        return thesisRepository.findAllByStatusNameIn(Arrays.asList("Approved", "Assigned", "Closed"), sort);
     }
 
     public Thesis getThesis(Long id) {
@@ -154,25 +157,14 @@ public class ThesisService {
         return thesisRepository.findAllByStatusId(id);
     }
 
-    //  np na zwrócenie wszystkich tematów, które nie są draftami
-    public List<Thesis> getAllThesesExcludingStatusId(Long id){
-        Optional<Status> excludedStatus = statusRepository.findById(id);
-        if (excludedStatus.isEmpty()) {
-            throw new NotFoundException("Status with id " + id + " does not exist");
-        }
-        return thesisRepository.findAll().stream()
-                .filter(thesis -> !id.equals(thesis.getStatus().getId()))
-                .collect(Collectors.toList());
-    }
-
     //  np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
-        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId);
+        return thesisRepository.findAllBySupervisorIdAndStatusId(empId, statId);
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
-        return thesisRepository.findAllByEmployeeId(id);
+        return thesisRepository.findAllBySupervisorId(id);
     }
 
 }

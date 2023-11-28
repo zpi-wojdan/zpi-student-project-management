@@ -324,7 +324,7 @@ const StudentList: React.FC = () => {
         <button className="custom-button" onClick={() => { navigate('/students/add') }}>
           {t('student.add')}
         </button>
-        <button className="custom-button" onClick={() => { navigate('/file/student') }}>
+        <button className="custom-button" onClick={() => { navigate('/students/file') }}>
           {t('student.import')}
         </button>
       </div>

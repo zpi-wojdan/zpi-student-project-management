@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -80,7 +79,7 @@ class ThesisControllerTests {
         emp.setId(1L);
         thesis.setSupervisor(emp);
         thesis.setPrograms(List.of(new Program()));
-        thesis.setStatus(new Status(1, "Draft"));
+        thesis.setStatus(new Status(1, "Approved"));
 
         theses.add(thesis);
     }
@@ -96,6 +95,19 @@ class ThesisControllerTests {
                 .andExpect(content().json(resultJson));
 
         verify(thesisService).getAllTheses();
+    }
+
+    @Test
+    public void testGetAllPublicTheses() throws Exception {
+        Mockito.when(thesisService.getAllPublicTheses()).thenReturn(theses);
+
+        String resultJson = objectMapper.writeValueAsString(theses);
+
+        mockMvc.perform(get(BASE_URL + "/public").contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(resultJson));
+
+        verify(thesisService).getAllPublicTheses();
     }
 
     @Test
@@ -309,20 +321,6 @@ class ThesisControllerTests {
                 .andExpect(content().json(resultJson));
 
         verify(thesisService).getAllThesesByStatusId(statusId);
-    }
-
-    @Test
-    public void testGetAllThesesExcludingStatusId() throws Exception {
-        Long statusId = 1L;
-        Mockito.when(thesisService.getAllThesesExcludingStatusId(statusId)).thenReturn(theses);
-
-        String resultJson = objectMapper.writeValueAsString(theses);
-
-        mockMvc.perform(get(BASE_URL + "/status/exclude/{id}", statusId).contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(resultJson));
-
-        verify(thesisService).getAllThesesExcludingStatusId(statusId);
     }
 
     @Test
