@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../components/DeleteConfirmation';
+import ChoiceConfirmation from '../components/ChoiceConfirmation';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import { useTranslation } from "react-i18next";

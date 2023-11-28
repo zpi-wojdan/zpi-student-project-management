@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Employee } from '../../../models/user/Employee';
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import { useTranslation } from "react-i18next";
 import api from '../../../utils/api';
 import handleSignOut from '../../../auth/Logout';
@@ -81,7 +81,7 @@ const EmployeeDetails: React.FC = () => {
         {showDeleteConfirmation && (
           <tr>
             <td colSpan={5}>
-              <DeleteConfirmation
+              <ChoiceConfirmation
                 isOpen={showDeleteConfirmation}
                 onClose={handleCancelDelete}
                 onConfirm={handleConfirmDelete}

@@ -49,6 +49,7 @@ function AddThesisPageAdmin() {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
+  // const [suggestionsKey, setSuggestionsKey] = useState(0);
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeeSuggestions, setEmployeeSuggestions] = useState<Employee[]>([]);
@@ -155,6 +156,18 @@ function AddThesisPageAdmin() {
       setThesisId(thesis.id);
     }
   }, [thesis]);
+
+  // useEffect(() => {
+  //   const index = thesis.studyCycle?.id;
+  //     if (index !== null){
+  //       const updatedProgramSuggestions = programs
+  //                 .filter((p) => p.studyCycles
+  //                 .map((c)=> c.id === thesis.studyCycle?.id));
+  //       console.log('suggestions: ' + updatedProgramSuggestions.map(p => p.name));
+  //       setProgramSuggestions(updatedProgramSuggestions);
+  //       setSuggestionsKey(k => k+1);
+  //     }
+  // }, [thesis]);
 
   const validateForm = (): [boolean, ThesisDTO | null] => {
     const newErrors: Record<string, string> =  {};
@@ -352,9 +365,8 @@ function AddThesisPageAdmin() {
               handleSignOut(navigate);
             }
             navigate("/theses");
-            toast.error(t("thesis.addError"));
-          }
-        })
+            toast.error(t("thesis.updateError"));
+          }});
       }
     }
   };
@@ -595,7 +607,7 @@ function AddThesisPageAdmin() {
         {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
       </div>
 
-      <div className="mb-3">
+     <div className="mb-3">{/*key={suggestionsKey} */}
         <label className="bold">{t('general.university.studyPrograms')}:</label>  
 
         <ul>
@@ -615,6 +627,12 @@ function AddThesisPageAdmin() {
                   className='form-control'
                   disabled={formData.studyCycleId === -1}
                 >
+                  {/* <option value={-1}>
+                  {programSuggestions ? programs[formData.programIds[programId]]?.name : t('general.management.choose')}
+                    {programSuggestions ? programs[1]?.name : t('general.management.choose')}
+                    {thesis.program ? thesis.program.name : t('general.management.choose')}
+                  </option> */}
+
                   <option value={-1}>{t('general.management.choose')}</option>
                   {programSuggestions
                     .filter((p) =>

@@ -27,6 +27,12 @@ code {
   width: 20%;
 }
 
+/* Navbar */
+.custom-dropdown .dropdown-menu a:focus {
+  background-color: transparent;
+  color: #9A342D;
+}
+
 /* Home */
 .welcome {
   text-align: center;

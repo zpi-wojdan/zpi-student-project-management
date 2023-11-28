@@ -237,9 +237,46 @@ VALUES
     ((SELECT id FROM employee WHERE mail = 'william.rose@pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
     ((SELECT id FROM employee WHERE mail = 'ava.chapman@pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
 
+
+INSERT INTO employee(mail, name, surname, title, department_id)
+VALUES
+    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
+
+INSERT INTO employee_role(employee_id, role_id)
+VALUES
+    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
+    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
+    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
+    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
+
+INSERT INTO employee_role(employee_id, role_id)
+VALUES
+    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
+    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
+    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
+    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor'));
+
+INSERT INTO employee_role(employee_id, role_id)
+VALUES
+    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
+    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
+    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver')),
+    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'approver'));
+--
+-- INSERT INTO employee_role(employee_id, role_id)
+-- VALUES
+--     ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student')),
+--     ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student')),
+--     ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student')),
+--     ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'student'));
+
+
 INSERT INTO Thesis (name_pl, name_en, description_pl, description_en, num_people, supervisor, cycle_id, status, creation_time)
 VALUES
-    ('Mobilna aplikacja dla miłośników starych zamków', 'Mobile application for lovers of old castles', 'Opis1', 'Description1', 5, (SELECT e.id FROM Employee e WHERE e.mail = 'john.doe@pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW()),
+    ('Mobilna aplikacja dla miłośników starych zamków', 'Mobile application for lovers of old castles', 'Opis1', 'Description1', 5, (SELECT e.id FROM Employee e WHERE e.mail = '255356@student.pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW()),
     ('Wieloosobowa i wielopoziomowa gra komputerowa', 'Multiplayer, and multi-level computer game', 'Opis2', 'Description2', 5, (SELECT e.id FROM Employee e WHERE e.mail = 'emily.anderson@pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW()),
     ('Mobilna aplikacja dla miłośników astronomii', 'Mobile application for lovers and collectors of antiques', 'Opis3', 'Description3', 5, (SELECT e.id FROM Employee e WHERE e.mail = 'jennifer.lee@pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW()),
     ('Mobilna aplikacja dla miłośników i kolekcjonerów staroci', 'Mobile application for lovers and collectors of antiques', 'Opis4', 'Description4', 5, (SELECT e.id FROM Employee e WHERE e.mail = 'john.doe@pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Draft'), NOW()),
@@ -329,28 +366,6 @@ VALUES
     ((SELECT id FROM thesis WHERE description_pl = 'Opis41'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7')),
     ((SELECT id FROM thesis WHERE description_pl = 'Opis42'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7')),
     ((SELECT id FROM thesis WHERE description_pl = 'Opis43'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'));
-
-INSERT INTO employee(mail, name, surname, title, department_id)
-VALUES
-    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
-
-INSERT INTO employee_role(employee_id, role_id)
-VALUES
-    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
-    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
-    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin')),
-    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
-
-INSERT INTO employee_role(employee_id, role_id)
-VALUES
-    ((SELECT id FROM employee WHERE mail = '260452@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
-    ((SELECT id FROM employee WHERE mail = '260466@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
-    ((SELECT id FROM employee WHERE mail = '260464@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor')),
-    ((SELECT id FROM employee WHERE mail = '255356@student.pwr.edu.pl'), (SELECT id FROM role WHERE name = 'supervisor'));
-
 
 
 INSERT INTO student_program_cycle (student_id, program_id, cycle_id)
@@ -503,3 +518,8 @@ SET
     occupied = 2,
     status = (SELECT id FROM status WHERE name = 'Approved')
 WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii';
+
+
+INSERT INTO Thesis (name_pl, name_en, description_pl, description_en, num_people, supervisor, cycle_id, status, creation_time)
+VALUES
+    ('XD', 'Mobile application for lovers of old castles', 'Opis1', 'Description1', 5, (SELECT e.id FROM Employee e WHERE e.mail = '255356@student.pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Approved'), NOW());

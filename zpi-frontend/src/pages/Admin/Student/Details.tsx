@@ -6,7 +6,7 @@ import { StudentProgramCycle } from '../../../models/StudentProgramCycle';
 import useAuth from "../../../auth/useAuth";
 import handleSignOut from "../../../auth/Logout";
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import api from '../../../utils/api';
 import { useTranslation } from "react-i18next";
 import api_access from '../../../utils/api_access';
@@ -22,7 +22,6 @@ const StudentDetails: React.FC = () => {
   useEffect(() => {
     api.get(api_access + `student/${id}`)
       .then((response) => {
-        console.log(response.data)
         setStudent(response.data);
       })
       .catch((error) => {
@@ -102,7 +101,7 @@ const StudentDetails: React.FC = () => {
         {showDeleteConfirmation && (
           <tr>
             <td colSpan={5}>
-              <DeleteConfirmation
+              <ChoiceConfirmation
                 isOpen={showDeleteConfirmation}
                 onClose={handleCancelDelete}
                 onConfirm={handleConfirmDelete}

@@ -10,6 +10,7 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.services.thesis.ThesisService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,12 @@ public class ThesisController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
+    }
+
+    @GetMapping("/public")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllPublicTheses() {
+        return new ResponseEntity<>(thesisService.getAllPublicTheses(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -49,28 +56,42 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.deleteThesis(id), HttpStatus.OK);
     }
 
-    @GetMapping("/status/{id}")
+    @GetMapping("/status/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesByStatusId(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.getAllThesesByStatusId(id), HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getAllThesesByStatusName(@PathVariable String name) {
+        String realName = name.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.getAllThesesByStatusName(realName), HttpStatus.OK);
     }
 
-    @GetMapping("/status/exclude/{id}")
+    @GetMapping("/status/exclude/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusId(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusId(id), HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getAllThesesExcludingStatusName(@PathVariable String name) {
+        String realName = name.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.getAllThesesExcludingStatusName(realName), HttpStatus.OK);
     }
 
-    @GetMapping("/{empId}/{statId}")
+    @GetMapping("/{empId}/{statName}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusId(@PathVariable Long empId,
-                                                                        @PathVariable Long statId) {
-        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusId(empId, statId), HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusName(@PathVariable Long empId,
+                                                                            @PathVariable String statName) {
+        String realName = statName.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusName(empId, realName), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllThesesForEmployee(@PathVariable Long id) {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployee(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/employee/{empId}/statuses")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Thesis>> getAllThesesForEmployeeByStatusNameList(@PathVariable Long empId,
+                                                                            @RequestParam List<String> statName) {
+        List<String> fixedNames = new ArrayList<>();
+        for (String name : statName) {
+            fixedNames.add(name.replaceAll("_", " "));
+        }
+        return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusNameList(empId, fixedNames), HttpStatus.OK);
     }
 }

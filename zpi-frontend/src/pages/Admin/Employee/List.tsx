@@ -92,6 +92,11 @@ const EmployeeList: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (loaded)
+      handleFiltration(false);
+  }, [loaded]);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleToggleSidebar = (submitted: boolean) => {
@@ -100,6 +105,9 @@ const EmployeeList: React.FC = () => {
       setSubmittedDepartmentCode(selectedDepartmentCode)
       setSubmittedRoleName(selectedRoleName)
       setSubmittedTitleName(selectedTitleName)
+      localStorage.setItem('employeeFilterDepartment', selectedDepartmentCode);
+      localStorage.setItem('employeeFilterRole', selectedRoleName);
+      localStorage.setItem('employeeFilterTitle', selectedTitleName);
     }
     if (!sidebarOpen) {
       setSelectedDepartmentCode(submittedDepartmentCode)
@@ -109,19 +117,41 @@ const EmployeeList: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = () => {
-    handleToggleSidebar(true)
+  const handleFiltration = (toggle: boolean) => {
 
-    const departmentFilter = selectedDepartmentCode ? (employee: Employee) => employee.department.code === selectedDepartmentCode : () => true;
-    const roleFilter = selectedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === selectedRoleName) : () => true;
-    const titleFilter = selectedTitleName ? (employee: Employee) => employee.title.name === selectedTitleName : () => true;
+    if (toggle) {
+      handleToggleSidebar(true)
+      const departmentFilter = selectedDepartmentCode ? (employee: Employee) => employee.department.code === selectedDepartmentCode : () => true;
+      const roleFilter = selectedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === selectedRoleName) : () => true;
+      const titleFilter = selectedTitleName ? (employee: Employee) => employee.title.name === selectedTitleName : () => true;
 
-    const newFilteredEmployees = employees.filter(employee =>
-      departmentFilter(employee) &&
-      roleFilter(employee) &&
-      titleFilter(employee)
-    );
-    setFilteredEmployees(newFilteredEmployees);
+      const newFilteredEmployees = employees.filter(employee =>
+        departmentFilter(employee) &&
+        roleFilter(employee) &&
+        titleFilter(employee)
+      );
+      setFilteredEmployees(newFilteredEmployees);
+    }
+    else {
+      const savedDepartmentCode = localStorage.getItem('employeeFilterDepartment') || '';
+      const savedRoleName = localStorage.getItem('employeeFilterRole') || '';
+      const savedTitleName = localStorage.getItem('employeeFilterTitle') || '';
+
+      setSubmittedDepartmentCode(savedDepartmentCode)
+      setSubmittedRoleName(savedRoleName)
+      setSubmittedTitleName(savedTitleName)
+
+      const departmentFilter = savedDepartmentCode ? (employee: Employee) => employee.department.code === savedDepartmentCode : () => true;
+      const roleFilter = savedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === savedRoleName) : () => true;
+      const titleFilter = savedTitleName ? (employee: Employee) => employee.title.name === savedTitleName : () => true;
+
+      const newFilteredEmployees = employees.filter(employee =>
+        departmentFilter(employee) &&
+        roleFilter(employee) &&
+        titleFilter(employee)
+      );
+      setFilteredEmployees(newFilteredEmployees);
+    }
   }
 
   // Wyszukiwanie
@@ -264,7 +294,7 @@ const EmployeeList: React.FC = () => {
             }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration()}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>
@@ -273,7 +303,7 @@ const EmployeeList: React.FC = () => {
         <button className="custom-button" onClick={() => { navigate('/employees/add') }}>
           {t('employee.add')}
         </button>
-        <button className="custom-button" onClick={() => { navigate('/file/employee') }}>
+        <button className="custom-button" onClick={() => { navigate('/employees/file') }}>
           {t('employee.import')}
         </button>
       </div>

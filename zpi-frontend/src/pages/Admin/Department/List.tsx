@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Department } from '../../../models/university/Department';
 import { toast } from 'react-toastify';
-import DeleteConfirmation from '../../../components/DeleteConfirmation';
+import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SeatchBar';
 import api_access from '../../../utils/api_access';
+
 
 const DepartmentList: React.FC = () => {
   // @ts-ignore
@@ -254,7 +255,7 @@ const DepartmentList: React.FC = () => {
                     {departmentToDelete === department.id && showDeleteConfirmation && (
                       <tr>
                         <td colSpan={5}>
-                          <DeleteConfirmation
+                          <ChoiceConfirmation
                             isOpen={showDeleteConfirmation}
                             onClose={handleCancelDelete}
                             onConfirm={handleConfirmDelete}
