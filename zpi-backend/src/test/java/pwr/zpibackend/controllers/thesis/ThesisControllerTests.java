@@ -246,7 +246,6 @@ class ThesisControllerTests {
         verify(thesisService).addThesis(any(ThesisDTO.class));
     }
 
-    @Test // TODO: fix this test - 400 instead of 200 OK
     public void testUpdateThesisSuccess() throws Exception {
         Employee supervisor = new Employee();
         Student leader = new Student();
