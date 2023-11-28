@@ -92,7 +92,7 @@ const ThesisDetails: React.FC = () => {
   const formatCreationTime = (creationTime: string) => {
     const now = new Date();
     const creationDate = new Date(creationTime);
-  
+
     const elapsedMilliseconds = now.getTime() - creationDate.getTime();
     const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
     const elapsedMinutes = Math.floor(elapsedSeconds / 60);
@@ -100,9 +100,9 @@ const ThesisDetails: React.FC = () => {
     const elapsedDays = Math.floor(elapsedHours / 24);
     const elapsedMonths = Math.floor(elapsedDays / 28); // miesiąc = +- 28 dni - zaokrąglam
     const elapsedYears = Math.floor(elapsedDays / 365); // rok = +- 365 dni - zaokrąglam
-  
+
     const rtf = new Intl.RelativeTimeFormat(i18n.language === 'pl' ? 'pl' : 'en', { numeric: 'auto' });
-  
+
     if (elapsedYears > 0) {
       return rtf.format(-elapsedYears, 'year');
     } else if (elapsedMonths > 0) {
@@ -116,9 +116,9 @@ const ThesisDetails: React.FC = () => {
     } else {
       return rtf.format(-elapsedSeconds, 'second');
     }
-  };  
+  };
 
-  const statusLabels: { [key:string]:string } = {
+  const statusLabels: { [key: string]: string } = {
     "Draft": t('status.draft'),
     "Pending approval": t('status.pending'),
     "Rejected": t('status.rejected'),
@@ -206,51 +206,51 @@ const ThesisDetails: React.FC = () => {
                 ))}
               </ul>
               <p>
-              <span className="bold">{t('general.university.status')}: </span> 
-              <span>
-                {statusLabels[thesis.status.name] || thesis.status.name}
-              </span>
-            </p>
-            
-            <div className='comment-section'>
+                <span className="bold">{t('general.university.status')}: </span>
+                <span>
+                  {statusLabels[thesis.status.name] || thesis.status.name}
+                </span>
+              </p>
+
+              <div className='comment-section'>
                 <>
-                <hr className="my-4" />
-                {thesis.comments.length !== 0 ? (
-                  <table className="custom-table mt-4">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '65%' }}>{t('comment.content')}</th>
-                      <th style={{ width: '20%' }}>{t('comment.author')}</th>
-                      <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {thesis.comments
-                      .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
-                      .map((c: Comment) => (
-                        <tr key={`${c.id}`}>
-                          <td 
-                            style={{ 
-                              wordBreak: 'break-word', overflowY: 'auto',
-                              display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
-                            }}>
-                              {c.content}
-                          </td>
-                          <td>{c.author.mail}</td>
-                          <td className='centered'>{formatCreationTime(c.creationTime)}</td>
+                  <hr className="my-4" />
+                  {thesis.comments.length !== 0 ? (
+                    <table className="custom-table mt-4">
+                      <thead>
+                        <tr>
+                          <th style={{ width: '65%' }}>{t('comment.content')}</th>
+                          <th style={{ width: '20%' }}>{t('comment.author')}</th>
+                          <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
                         </tr>
-                      ))}
-                  </tbody>
-                </table>
-                ) : (
-                  <div className='info-no-data'>
-                  <p>{t('comment.empty')}</p>
-                </div>                
-                )}
+                      </thead>
+                      <tbody>
+                        {thesis.comments
+                          .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
+                          .map((c: Comment) => (
+                            <tr key={`${c.id}`}>
+                              <td
+                                style={{
+                                  wordBreak: 'break-word', overflowY: 'auto',
+                                  display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
+                                }}>
+                                {c.content}
+                              </td>
+                              <td>{c.author.mail}</td>
+                              <td className='centered'>{formatCreationTime(c.creationTime)}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className='info-no-data'>
+                      <p>{t('comment.empty')}</p>
+                    </div>
+                  )}
                 </>
+              </div>
+
             </div>
-          
-          </div>
           ) : (
             <div className='info-no-data'>
               <p>{t('general.management.errorOfLoading')}</p>

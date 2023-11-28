@@ -272,7 +272,6 @@ const ThesesTable: React.FC = () => {
       const savedMaxVacancies = parseInt(localStorage.getItem('publicThesesFilterMaxVacancies') || '5', 10);
       const savedCycleName = localStorage.getItem('publicThesesFilterCycle') || '';
       const savedsupervisors = JSON.parse(localStorage.getItem('publicThesesFilterSupervisors') || '[]');
-      const savedStatusName = localStorage.getItem('publicThesesFilterStatus') || '';
 
       setSubmittedFacultyAbbr(savedFacultyAbbr)
       setSubmittedFieldAbbr(savedFieldAbbr)

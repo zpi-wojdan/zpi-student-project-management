@@ -35,21 +35,6 @@ const StudentDetails: React.FC = () => {
 
   }, [id]);
 
-  const [faculties, setFaculties] = useState<Faculty[]>([]);
-  useEffect(() => {
-    api.get('http://localhost:8080/faculty')
-      .then((response) => {
-        setFaculties(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
-
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
   const toggleProgramExpansion = (programId: number) => {

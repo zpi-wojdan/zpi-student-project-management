@@ -78,6 +78,13 @@ const Navigation = ({ children }: NavigationProps) => {
             localStorage.removeItem('publicThesesFilterCycle');
             localStorage.removeItem('publicThesesFilterSupervisors');
         }
+        if (prevPath.startsWith('/manage') && !path.startsWith('/manage')) {
+            localStorage.removeItem('approverFilterFaculty');
+            localStorage.removeItem('approverFilterField');
+            localStorage.removeItem('approverFilterSpecialization');
+            localStorage.removeItem('approverFilterCycle');
+            localStorage.removeItem('approverFilterSupervisors');
+        }
         setPrevPath(path);
     }, [location.pathname]);
 
