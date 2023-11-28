@@ -154,13 +154,10 @@ public class ThesisService {
         throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
-
-    //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
     public List<Thesis> getAllThesesByStatusName(String name) {
         return thesisRepository.findAllByStatusName(name);
     }
 
-    //  np na zwrócenie wszystkich tematów, które nie są draftami
     public List<Thesis> getAllThesesExcludingStatusName(String name){
         Optional<Status> excludedStatus = statusRepository.findByName(name);
         if (excludedStatus.isEmpty()) {
@@ -171,12 +168,10 @@ public class ThesisService {
                 .collect(Collectors.toList());
     }
 
-    //  np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusName(Long empId, String statName) {
         return thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName);
     }
 
-    //  np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
         return thesisRepository.findAllBySupervisorId(id);
     }

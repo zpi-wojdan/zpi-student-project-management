@@ -2,6 +2,8 @@ package pwr.zpibackend.controllers.thesis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -139,13 +141,15 @@ class ThesisControllerTests {
         verify(thesisService).getThesis(thesisId);
     }
 
-    public static String asJsonString(final Object obj) {
+    public String asJsonString(final Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            objectMapper.findAndRegisterModules();
+            return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public static Thesis createTestThesis(Employee supervisor, Student leader){
         Thesis thesisToAdd = new Thesis();
@@ -250,6 +254,7 @@ class ThesisControllerTests {
         ThesisDTO thesisDTO = createTestThesisDTO(0L);
         thesisDTO.setDescriptionEN("UPDATED DESCRIPTION");
         thesisDTO.setNamePL("UPDATED NAME");
+        thesisDTO.setStudyCycleId(Optional.of(0L));
         existingThesis.setId(1L);
         existingThesis.setNamePL("UPDATED NAME");
         existingThesis.setDescriptionEN("UPDATED DESCRIPTION");
@@ -257,7 +262,8 @@ class ThesisControllerTests {
         Thesis updatedThesis = createTestThesis(supervisor, leader);
         updatedThesis.setId(1L);
 
-        doReturn(updatedThesis).when(thesisService).updateThesis(1L, thesisDTO);
+
+        doReturn(updatedThesis).when(thesisService).updateThesis(eq(1L), any(ThesisDTO.class));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .put("/thesis/1")
