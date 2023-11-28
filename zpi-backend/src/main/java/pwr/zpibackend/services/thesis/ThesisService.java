@@ -9,6 +9,7 @@ import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
@@ -18,10 +19,8 @@ import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -170,7 +169,10 @@ public class ThesisService {
     public List<Thesis> sortTheses(List<Thesis> theses) {
         return theses.stream()
                 .sorted(Comparator
-                        .comparing((Thesis thesis) -> thesis.getStudyCycle().getName())
+                        .comparing((Thesis thesis) -> {
+                            StudyCycle studyCycle = thesis.getStudyCycle();
+                            return (studyCycle != null) ? studyCycle.getName() : "";
+                        })
                         .reversed()
                         .thenComparing(Thesis::getId, Comparator.reverseOrder()))
                 .collect(Collectors.toList());

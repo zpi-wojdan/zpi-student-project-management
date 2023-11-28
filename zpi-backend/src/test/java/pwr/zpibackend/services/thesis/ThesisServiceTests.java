@@ -131,12 +131,12 @@ public class ThesisServiceTests {
         thesis6.setStatus(statuses.get(5));
 
         theses = new ArrayList<>();
-        theses.add(thesis);
-        theses.add(thesis2);
-        theses.add(thesis3);
-        theses.add(thesis4);
-        theses.add(thesis5);
         theses.add(thesis6);
+        theses.add(thesis5);
+        theses.add(thesis4);
+        theses.add(thesis3);
+        theses.add(thesis2);
+        theses.add(thesis);
 
         publicTheses = new ArrayList<>();
         publicTheses.add(thesis6);
