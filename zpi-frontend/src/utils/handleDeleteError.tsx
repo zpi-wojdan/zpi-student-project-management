@@ -52,6 +52,29 @@ export const handleDeletionError = (error: any, t: TFunction<"translation", unde
                 toast.error(translatedMessage);
                 return;
             }
+        } else if (errorMessage.includes('narusza klucz obcy'))) {
+            const tableNameRegex = /tabeli "(?<table>[a-zA-Z0-9_]+)"/mg;
+            const tableNames = [];
+
+            let match;
+            while ((match = tableNameRegex.exec(errorMessage)) !== null) {
+                const tableName = match.groups?.table;
+                tableNames.push(tableName);
+            }
+
+            if (tableNames.length === 3) {
+                const deletedTable = tableNames[0];
+                const referencedTable = tableNames[1];
+
+                const translatedReferencedTable = t(`tables.${referencedTable}`, { defaultValue: referencedTable });
+
+                const translatedMessage = t(`${deletedTable}.deleteErrorWithReference`, {
+                    referencedTable: translatedReferencedTable
+                });
+
+                toast.error(translatedMessage);
+                return;
+            }
         }
     }
 
