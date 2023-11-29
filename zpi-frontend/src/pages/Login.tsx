@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Alert, Col, Container, Row} from "react-bootstrap";
+import {Alert, Col, Image, Row} from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 import {useLocation, useNavigate} from "react-router-dom";
 // @ts-ignore
@@ -50,7 +50,6 @@ const LoginPage = () => {
             {
                 theme: "filled_black",
                 size: "large",
-                width: document.getElementById("sign-in-button")?.offsetWidth,
                 locale: i18n.language,
             }
         )
@@ -80,32 +79,32 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="login page">
-            <Container>
-                <Row>
-                    <Col md={6}>
-                        <Alert show={showAlert} variant="danger">
-                            <Alert.Heading>{alertMessage}</Alert.Heading>
-                            {errorMessage}
-                        </Alert>
-                        <div className="container">
-                            <h2>{t('login.welcome')}</h2>
-                            <div id="sign-in-prompt">
-                                <p>{t('login.instruction')}</p>
-                            </div>
-                            <div id="sign-in-button"></div>
+        <div className='login-page'>
+            <Row className="h-100">
+                <Col md={6} className="d-flex flex-column justify-content-center text-center">
+                    <Alert show={showAlert} variant="danger">
+                        <Alert.Heading>{alertMessage}</Alert.Heading>
+                        {errorMessage}
+                    </Alert>
+                    <div className="container">
+                        <h2 className="mb-3">{t('login.welcome')}</h2>
+                        <div className="mb-5">
+                            <p>{t('login.instruction')}</p>
                         </div>
-                    </Col>
-                    <Col md={6} className="d-none d-md-block">
-                        <div className="login-image">
-                            <img
-                                src="/images/login-img.JPG"
-                                alt={t('login.imageAlt')}
-                            />
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
+                        <div id="sign-in-button" className="d-flex justify-content-center mt-5"></div>
+                    </div>
+                </Col>
+                <Col md={6} className="d-none d-md-block h-100">
+                    <div className="image-div">
+                        <Image
+                            src="/images/login-image.jpg"
+                            alt={t('login.imageAlt')}
+                            fluid
+                            className="image"
+                        />
+                    </div>
+                </Col>
+            </Row>
         </div>
     );
 }

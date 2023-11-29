@@ -275,7 +275,7 @@
     "loginError": "Wystąpił błąd logowania. Spróbuj ponownie.",
     "welcome": "Witaj w systemie logowania",
     "instruction": "Kliknij przycisk poniżej, aby zalogować się za pomocą uczelnianego adresu email.",
-    "imageAlt": "Budynek A1 z logo PWr"
+    "imageAlt": "Budynek PWr"
   },
   "missingPage": {
     "title": "Nie znaleziono strony",

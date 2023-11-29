@@ -275,7 +275,7 @@
     "loginError": "Login error occurred. Please try again.",
     "welcome": "Welcome to the login system",
     "instruction": "Click the button below to log in using your academic email address.",
-    "imageAlt": "A1 building in the campus of the Wrocław University of Science and Technology"
+    "imageAlt": "Building in the campus of the Wrocław University of Science and Technology"
   },
   "missingPage": {
     "title": "Page not found",

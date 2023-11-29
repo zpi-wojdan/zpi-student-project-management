@@ -124,7 +124,7 @@ const Navigation = ({ children }: NavigationProps) => {
                 )}
             </div>
             <div className='container'>
-                <div className={`container p-0 ${isLoginPage ? 'd-none' : ''}`}>
+                <div className={'container p-0'}>
                     <nav className="navbar navbar-expand-lg navbar-light bg-light">
                         <div className="container">
                             <button className="navbar-toggler ms-auto" type="button" onClick={() => setShowNav(!showNav)}>
