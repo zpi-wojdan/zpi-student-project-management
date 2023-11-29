@@ -29,7 +29,7 @@ spring:
             entity_copy_observer: allow
         jdbc:
           time_zone: UTC
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: ${JDBC_DRIVER:org.hibernate.dialect.H2Dialect}
         globally_quoted_identifiers: true
 
   liquibase:
