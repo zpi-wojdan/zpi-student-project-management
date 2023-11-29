@@ -286,8 +286,8 @@
     "accessDenied": "Log in to access this page.",
     "loginError": "Login error occurred. Please try again.",
     "welcome": "Welcome to the login system",
-    "instruction": "Click the button below to log in using your academic email address.",
-    "imageAlt": "A1 building in the campus of the Wrocław University of Science and Technology"
+    "instruction": "Click the button below to log in using your email address from pwr domain.",
+    "imageAlt": "Building in the campus of the Wrocław University of Science and Technology"
   },
   "missingPage": {
     "title": "Page not found",
