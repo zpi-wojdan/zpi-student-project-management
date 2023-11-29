@@ -44,6 +44,8 @@ import Reports from "./pages/Admin/Reports";
 import DeadlineList from "./pages/Admin/Deadline/List";
 import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
+import ApproveDetails from './pages/Approver/ApproveDetails';
+import ApproveList from './pages/Approver/ApproveList';
 
 
 export interface IAppProps {
@@ -62,13 +64,13 @@ export default function App(props: IAppProps) {
                 <Route path="/unauthorized" element={<Unauthorized />} />
 
                 <Route element={<RequireAuth allowedRoles={['student', 'admin']} />}>
-                  <Route path='reservation' element={<ReservationPage />} />
+                  <Route path='reservation' element={<ReservationPage admin={false}/>} />
                   <Route path='single-reservation' element={<SingleReservationPage />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
-                  <Route path='my' element={<ReservationPage />} />
+                  <Route path='my' element={<ReservationPage admin={false}/>} />
                   <Route path='sup-theses/add' element={<AddThesisPageSupervisor />} />
                   <Route path='sup-theses/edit/:id' element={<AddThesisPageSupervisor />} />
                 </Route>
@@ -78,40 +80,16 @@ export default function App(props: IAppProps) {
                   <Route path='public-theses/:id' element={<ThesesDetails />} />
                 </Route>
 
-                <Route element={<RequireAuth allowedRoles={['admin']} />}>
-                  <Route path='students' element={<StudentList />} />
-                  <Route path='students/:id' element={<StudentDetails />} />
-                  <Route path='students/add' element={<StudentForm/>} />
-                  <Route path='students/edit/:id' element={<StudentForm/>} />
-                  <Route path='employees' element={<EmployeeList />} />
-                  <Route path='employees/:id' element={<EmployeeDetails />} />
-                  <Route path='employees/add' element={<EmployeeForm/>} />
-                  <Route path='employees/edit/:id' element={<EmployeeForm/>} />
-                  <Route path='theses' element={<ThesisList />} />
-                  <Route path='theses/:id' element={<ThesisDetails />} />
-                  <Route path='theses/add' element={<AddThesisPageAdmin/>} />
-                  <Route path='theses/edit/:id' element={<AddThesisPageAdmin/>} />
-                  <Route path='faculties' element={<FacultyList />} />
-                  <Route path='faculties/add' element={<FacultyForm />} />
-                  <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
-                  <Route path='fields' element={<StudyFieldList />} />
-                  <Route path='fields/add' element={<StudyFieldForm />} />
-                  <Route path='fields/edit/:abbr' element={<StudyFieldForm />} />
-                  <Route path='specializations' element={<SpecializationList />} />
-                  <Route path='specializations/add' element={<SpecializationForm />} />
-                  <Route path='specializations/edit/:abbr' element={<SpecializationForm />} />
-                  <Route path='programs' element={<ProgramList />} />
-                  <Route path='programs/add' element={<ProgramForm />} />
-                  <Route path='programs/edit/:id' element={<ProgramForm />} />
-                  <Route path='cycles' element={<StudyCycleList />} />
-                  <Route path='cycles/add' element={<StudyCycleForm />} />
-                  <Route path='cycles/edit/:id' element={<StudyCycleForm />} />
-                  <Route path='departments' element={<DepartmentList />} />
-                  <Route path='departments/add' element={<DepartmentForm />} />
-                  <Route path='departments/edit/:id' element={<DepartmentForm />} />
-                  <Route path="/file/student" element={<UploadStudentFilePage />} />
-                  <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                <Route element={<RequireAuth allowedRoles={['approver']} />}>
+                  <Route path='manage' element={<ApproveList />} />
+                  <Route path='manage/:id' element={<ApproveDetails />} />
                 </Route>
+
+                <Route element={<RequireAuth allowedRoles={['approver']} />}>
+                  <Route path='manage' element={<ApproveList />} />
+                  <Route path='manage/:id' element={<ApproveDetails />} />
+                </Route>
+
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:id' element={<StudentDetails />} />
@@ -123,6 +101,8 @@ export default function App(props: IAppProps) {
                 <Route path='employees/edit/:id' element={<EmployeeForm/>} />
                 <Route path='theses' element={<ThesisList />} />
                 <Route path='theses/:id' element={<ThesisDetails />} />
+                <Route path='theses/add' element={<AddThesisPageAdmin/>} />
+                <Route path='theses/edit/:id' element={<AddThesisPageAdmin/>} />
                 <Route path='faculties' element={<FacultyList />} />
                 <Route path='faculties/add' element={<FacultyForm />} />
                 <Route path='faculties/edit/:abbr' element={<FacultyForm />} />
@@ -144,11 +124,11 @@ export default function App(props: IAppProps) {
                 <Route path='deadlines' element={<DeadlineList />} />
                 <Route path='deadlines/add' element={<DeadlineForm />} />
                 <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
-                <Route path="/file/student" element={<UploadStudentFilePage />} />
-                <Route path="/file/employee" element={<UplaodEmployeeFilePage />} />
+                <Route path="/students/file" element={<UploadStudentFilePage />} />
+                <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/admin-reservation" element={<ReservationPage admin={true}/>} />
               </Route>
-
               <Route path="*" element={<Missing />} />
         </Routes>
           </Navigation>

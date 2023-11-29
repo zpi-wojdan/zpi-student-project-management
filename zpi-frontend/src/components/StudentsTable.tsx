@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import { Reservation } from '../models/thesis/Reservation';
-import DeleteConfirmation from './DeleteConfirmation';
+import ChoiceConfirmation from './ChoiceConfirmation';
 
 type StudentTableProps = {
   students: Student[];
@@ -93,7 +93,10 @@ function StudentTable({ students, thesis }: StudentTableProps) {
         }
 
         const newShowButtonDelete = [...showButtonDelete];
-        newShowButtonDelete[students.findIndex((stu) => stu.mail === user.mail)] = true;
+        const thisStudent = students.find((stu) => stu.mail === user.mail);
+        if (thisStudent && thesis.reservations.every((res) => !res.readyForApproval)) {
+          newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;
+        }
         setShowButtonDelete(newShowButtonDelete)
 
       } else if (user.roles && user.roles.some(role => role.name === "supervisor") && user.mail === thesis.supervisor.mail) {
@@ -164,7 +167,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
               reservationToDelete.id === thesis.reservations.find((res) => res.student === student)?.id && showDeleteConfirmation && (
                 <tr>
                   <td colSpan={5}>
-                    <DeleteConfirmation
+                    <ChoiceConfirmation
                       isOpen={showDeleteConfirmation}
                       onClose={handleCancelDelete}
                       onConfirm={handleConfirmDelete}

@@ -3,17 +3,14 @@ package pwr.zpibackend.exceptions;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -36,8 +33,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        return new ResponseEntity<>("A data integrity violation occurred.", HttpStatus.METHOD_NOT_ALLOWED);
+    public ResponseEntity<ErrorDetails> handleDataIntegrityViolationException(SQLException e, WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -63,3 +61,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body("File was too large\n" + Arrays.toString(exception.getStackTrace()));
     }
 }
+

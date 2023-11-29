@@ -1,28 +1,29 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.services.mailing.MailService;
 import pwr.zpibackend.utils.MailTemplates;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +42,11 @@ public class ThesisService {
 
     public List<Thesis> getAllTheses() {
         return thesisRepository.findAll();
+    }
+
+    public List<Thesis> getAllPublicTheses() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+        return thesisRepository.findAllByStatusNameIn(Arrays.asList("Approved", "Assigned", "Closed"), sort);
     }
 
     public Thesis getThesis(Long id) {
@@ -68,12 +74,12 @@ public class ThesisService {
                     () -> new NotFoundException("Program with id " + programId + " does not exist"));
             newThesis.getPrograms().add(program);
         });
-        newThesis.setStudyCycle(studyCycleRepository.findById(
-                thesis.getStudyCycleId()).orElseThrow(
-                        () -> new NotFoundException("StudyCycle with id " + thesis.getStudyCycleId() + " does not exist"))
-        );
-        newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(
-                () -> new NotFoundException("Status with id " + thesis.getStatusId() + " does not exist")));
+
+        newThesis.setStudyCycle(thesis.getStudyCycleId().map(index ->
+                studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
+        ).orElse(null));
+
+        newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
         newThesis.setOccupied(0);
 
         if (newThesis.getStatus().getName().equals("Pending approval")) {
@@ -111,12 +117,12 @@ public class ThesisService {
                 programList.add(program);
             });
             updated.setPrograms(programList);
-            updated.setStudyCycle(studyCycleRepository.findById(
-                    thesis.getStudyCycleId()).orElseThrow(
-                    () -> new NotFoundException("StudyCycle with id " + thesis.getStudyCycleId() + " does not exist"))
-            );
-            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(
-                    () -> new NotFoundException("Status with id " + thesis.getStatusId() + " does not exist")));
+
+            updated.setStudyCycle(thesis.getStudyCycleId().map(index ->
+                    studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
+            ).orElse(null));
+
+            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
@@ -164,29 +170,34 @@ public class ThesisService {
 
 
     //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
-    public List<Thesis> getAllThesesByStatusId(Long id) {
-        return thesisRepository.findAllByStatusId(id);
+    public List<Thesis> getAllThesesByStatusName(String name) {
+        return thesisRepository.findAllByStatusName(name);
     }
 
     //  np na zwrócenie wszystkich tematów, które nie są draftami
-    public List<Thesis> getAllThesesExcludingStatusId(Long id){
-        Optional<Status> excludedStatus = statusRepository.findById(id);
+    public List<Thesis> getAllThesesExcludingStatusName(String name){
+        Optional<Status> excludedStatus = statusRepository.findByName(name);
         if (excludedStatus.isEmpty()) {
-            throw new NotFoundException("Status with id " + id + " does not exist");
+            throw new NotFoundException("Status with name " + name + " does not exist");
         }
         return thesisRepository.findAll().stream()
-                .filter(thesis -> !id.equals(thesis.getStatus().getId()))
+                .filter(thesis -> !name.equals(thesis.getStatus().getName()))
                 .collect(Collectors.toList());
     }
 
     //  np na zwrócenie wszystkich draftów danego pracownika
-    public List<Thesis> getAllThesesForEmployeeByStatusId(Long empId, Long statId) {
-        return thesisRepository.findAllByEmployeeIdAndStatusName(empId, statId);
+    public List<Thesis> getAllThesesForEmployeeByStatusName(Long empId, String statName) {
+        return thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName);
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
-        return thesisRepository.findAllByEmployeeId(id);
+        return thesisRepository.findAllBySupervisorId(id);
     }
+
+    public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
+        return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames);
+    }
+
 
 }

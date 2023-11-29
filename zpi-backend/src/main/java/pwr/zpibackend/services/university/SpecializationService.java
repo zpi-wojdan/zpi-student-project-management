@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class SpecialisationService {
+public class SpecializationService {
 
     private final SpecializationRepository specializationRepository;
     private final StudyFieldRepository studyFieldRepository;

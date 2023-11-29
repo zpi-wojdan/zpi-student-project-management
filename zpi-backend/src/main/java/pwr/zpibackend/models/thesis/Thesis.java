@@ -2,7 +2,6 @@ package pwr.zpibackend.models.thesis;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,7 @@ public class Thesis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long Id;
+    private long id;
     @Column(name = "name_pl", nullable = false)
     private String namePL;
     @Column(name = "name_en", nullable = false)

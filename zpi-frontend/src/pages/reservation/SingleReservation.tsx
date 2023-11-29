@@ -46,7 +46,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        
+
         })
             .then(response => {
                 if (response.status === 201) {
@@ -79,19 +79,32 @@ function SingleReservationPage({ }: SingleReservationProps) {
             <h1 className='my-3'>{t('reservation.reservation')}:</h1>
             <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
             <form>
-                <div className="form-group row justify-content-center">
-                    <label htmlFor={`reservation`} className="col-sm-2 col-form-label">
-                        {t('general.people.student')}:</label>
-                    <div className="col-sm-4 d-flex">
-                        <input
-                            id={`reservation`}
-                            type="text"
-                            className={`form-control`}
-                            value={reservation}
-                            readOnly
-                        />
-                    </div>
-                </div>
+                <table className="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col" style={{ width: '10%' }}></th>
+                            <th scope="col" style={{ width: '30%' }}></th>
+                            <th scope="col" style={{ width: '60%' }}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style={{whiteSpace: "nowrap"}}>
+                                <label htmlFor={`reservation`} className="col-sm-2 col-form-label">
+                                    {t('general.people.student')}:</label>
+                            </td>
+                            <td>
+                                <input
+                                    id={`reservation`}
+                                    type="text"
+                                    className={`form-control my-1`}
+                                    value={reservation}
+                                    readOnly
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </form>
         </div>
 

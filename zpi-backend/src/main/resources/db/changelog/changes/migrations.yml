@@ -565,7 +565,7 @@ databaseChangeLog:
                   name: creation_time
                   type: TIMESTAMP
                   valueComputed: now()
-              - column:
+              - column: # wywalić
                   name: comment_id
                   type: BIGINT
                   constraints:
@@ -628,3 +628,12 @@ databaseChangeLog:
         - dropColumn:
             tableName: thesis
             columnName: comment_id
+
+  - changeSet:
+      id: modify_content_size_comment
+      author: Kuba
+      changes:
+        - modifyDataType:
+            tableName: comment
+            columnName: content
+            newDataType: varchar(1000)

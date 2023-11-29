@@ -4,6 +4,7 @@ import { Program } from "../university/Program";
 import { Student } from "../user/Student";
 import { StudyCycle } from "../university/StudyCycle";
 import { Status, StatusDTO } from "./Status";
+import { Comment } from './Comment'
 
 export type Thesis = {
     id: number;
@@ -19,6 +20,7 @@ export type Thesis = {
     status: Status;
     occupied: number;
     reservations: Reservation[];
+    comments: Comment[];
 }
 
 export type ThesisFront = {
@@ -36,6 +38,7 @@ export type ThesisFront = {
   occupied: number;
   students: Student[];
   reservations: Reservation[];
+  comments: Comment[];
 }
 
 export type ThesisDTO = {
@@ -46,6 +49,6 @@ export type ThesisDTO = {
   numPeople: number;
   supervisorId: number; 
   programIds: number[];
-  studyCycleId: number | undefined;
+  studyCycleId: number | null;
   statusId: number;
 }

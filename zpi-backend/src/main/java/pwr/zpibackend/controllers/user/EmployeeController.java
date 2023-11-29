@@ -33,12 +33,6 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
 
-    @GetMapping("/match/{prefix}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Employee>> getEmployeesByPrefix(@PathVariable String prefix) {
-        return new ResponseEntity<>(employeeService.getEmployeesByPrefix(prefix.toLowerCase()), HttpStatus.OK);
-    }
-
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeDTO employee) {

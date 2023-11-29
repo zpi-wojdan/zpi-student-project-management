@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class SpecialisationServiceTest {
+public class SpecializationServiceTests {
 
     @MockBean
     private SpecializationRepository specializationRepository;
@@ -32,7 +32,7 @@ public class SpecialisationServiceTest {
     private StudyFieldRepository studyFieldRepository;
 
     @Autowired
-    private SpecialisationService specializationService;
+    private SpecializationService specializationService;
 
     private Specialization specialization;
     private SpecializationDTO specializationDTO;
