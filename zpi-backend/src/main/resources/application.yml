@@ -9,12 +9,12 @@ spring:
     url: ${FRONTEND_URL:http://localhost:3000}
 
   profiles:
-    active: ${ACTIVE_PROFILE:dev}
+    active: ${ACTIVE_PROFILE:test}
 
   datasource:
-    url: jdbc:postgresql://${POSTRESQL_HOST}:${POSTRESQL_PORT}/${POSTRESQL_DB}
-    username: ${POSTRESQL_USER}
-    password: ${POSTRESQL_PASSWORD}
+    url: ${POSTGRES_URL:jdbc:h2:mem:testdb}
+    username: ${POSTRESQL_USER:sa}
+    password: ${POSTRESQL_PASSWORD:password}
 
   jpa:
     generate-ddl: false
