@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import api from '../../../utils/api';
 import { useTranslation } from "react-i18next";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -76,7 +77,7 @@ const StudentDetails: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('student.deleteError'));
+        handleDeletionError(error, t, 'student');
       });
     setShowDeleteConfirmation(false);
   };
