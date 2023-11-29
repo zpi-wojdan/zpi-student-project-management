@@ -1,6 +1,9 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
@@ -22,6 +25,10 @@ import pwr.zpibackend.services.mailing.MailService;
 import pwr.zpibackend.utils.MailTemplates;
 
 import javax.transaction.Transactional;
+
+import static java.time.LocalDateTime.now;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,17 +88,6 @@ public class ThesisService {
 
         newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
         newThesis.setOccupied(0);
-
-        if (newThesis.getStatus().getName().equals("Pending approval")) {
-            mailService.sendHtmlMailMessage(
-                    supervisor.getMail(),
-                    "/thesis/" + newThesis.getId(),
-                    MailTemplates.THESIS_ADDED,
-                    null,
-                    supervisor,
-                    newThesis
-            );
-        }
 
         thesisRepository.saveAndFlush(newThesis);
         return newThesis;
@@ -198,6 +194,5 @@ public class ThesisService {
     public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
         return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames);
     }
-
 
 }

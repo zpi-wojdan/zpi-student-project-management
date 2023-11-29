@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.utils.MailTemplates;
 
 import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -34,12 +35,29 @@ public class MailService {
 
     @Async
     public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, Student student,
-                                    Employee employee, Thesis thesis) {
+            Employee employee, Thesis thesis) {
         try {
             // utworzenie odpowiedniego template html z danymi
-            String language = thesis.getPrograms().stream().findFirst().get().language();
+            String language;
+            if (student != null && student.getStudentProgramCycles() != null
+                    && !student.getStudentProgramCycles().isEmpty()) {
+                language = student.getStudentProgramCycles().stream()
+                        .findFirst()
+                        .map(StudentProgramCycle::getProgram)
+                        .map(Program::language)
+                        .orElse("pl");
+            } else if (thesis != null && thesis.getPrograms() != null && !thesis.getPrograms().isEmpty()) {
+                language = thesis.getPrograms().stream()
+                        .findFirst()
+                        .map(Program::language)
+                        .orElse("pl");
+            } else {
+                // domyślnie język polski
+                language = "pl";
+            }
+
             String name;
-            if (recipient.equals(student.getMail())) {
+            if (student != null && recipient.equals(student.getMail())) {
                 name = student.getName() + " " + student.getSurname();
             } else {
                 name = employee.getName() + " " + employee.getSurname();
@@ -50,8 +68,7 @@ public class MailService {
             context.setVariables(Map.of(
                     "name", name,
                     "thesis", language.equals("pl") ? thesis.getNamePL() : thesis.getNameEN(),
-                    "url", getLinkReservation(urlPath, thesis.getId())
-            ));
+                    "url", getLinkReservation(urlPath, thesis.getId())));
             String html = templateEngine.process(template.getTemplateName(), context);
 
             // utworzenie wiadomości mailowej z załącznikiem w formie obrazu (logo pwr)
