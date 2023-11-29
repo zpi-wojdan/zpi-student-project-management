@@ -256,7 +256,7 @@
   "uploadFiles": {
     "fileName": "Source file name",
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",
-    "tooBigFileError": "Too big size of the file {fileName} - its size: {fileSize} MB",
+    "tooBigFileError": "Too big size of the file: ",
     "filesNotSentError": "Sending files failed",
     "attachStudent": "Attach files with students' data",
     "attachEmployee": "Attach files with employees' data",
