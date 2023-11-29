@@ -53,6 +53,7 @@ public class ThesisServiceTests {
     private Thesis thesis;
     private List<Thesis> publicTheses;
     private List<Status> statuses;
+    private Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
     @BeforeEach
     public void setUp() {
@@ -151,7 +152,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllTheses() {
 
-        when(thesisRepository.findAll()).thenReturn(theses);
+        when(thesisRepository.findAllByOrderByStudyCycleNameDescIdDesc()).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllTheses();
 
@@ -162,7 +163,6 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllPublicTheses() {
         List <String> statusNames = List.of("Approved", "Assigned", "Closed");
-        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
         when(thesisRepository.findAllByStatusNameIn(statusNames, sort)).thenReturn(publicTheses);
 
         List<Thesis> result = thesisService.getAllPublicTheses();
@@ -319,7 +319,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesByStatusId() {
         String statusName = "Draft";
-        when(thesisRepository.findAllByStatusName(statusName)).thenReturn(theses);
+        when(thesisRepository.findAllByStatusName(statusName, sort)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesByStatusName(statusName);
 
@@ -329,7 +329,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesExcludingStatusName() throws NotFoundException {
         String statusName = "Draft";
-        when(thesisRepository.findAll()).thenReturn(
+        when(thesisRepository.findAllByOrderByStudyCycleNameDescIdDesc()).thenReturn(
                 theses.stream()
                         .filter(thesis -> !statusName.equals(thesis.getStatus().getName()))
                         .collect(Collectors.toList()));
@@ -337,7 +337,7 @@ public class ThesisServiceTests {
 
         List<Thesis> result = thesisService.getAllThesesExcludingStatusName(statusName);
         verify(statusRepository).findByName(statusName);
-        verify(thesisRepository).findAll();
+        verify(thesisRepository).findAllByOrderByStudyCycleNameDescIdDesc();
 
         List<Thesis> expectedResult = theses.stream()
                 .filter(thesis -> !statusName.equals(thesis.getStatus().getName()))
@@ -357,7 +357,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusId() {
         Long empId = 1L;
         String statName = "Draft";
-        when(thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName, sort)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusName(empId, statName);
 
@@ -368,7 +368,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusIdNotFound() {
         Long empId = 1L;
         String statName = "Draft";
-        when(thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName, sort)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployeeByStatusName(empId, statName), Collections.emptyList());
     }
@@ -377,7 +377,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesForEmployee() {
         Long empId = 1L;
-        when(thesisRepository.findAllBySupervisorId(empId)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisorId(empId, sort)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployee(empId);
 
@@ -387,7 +387,7 @@ public class ThesisServiceTests {
     @Test
     public void testGetAllThesesForEmployeeNotFound() {
         Long empId = 1L;
-        when(thesisRepository.findAllBySupervisorId(empId)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisorId(empId, sort)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployee(empId), Collections.emptyList());
     }
@@ -396,7 +396,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusNameList(){
         Long empId = 1L;
         List<String> statName = Arrays.asList("Draft", "Rejected");
-        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName, sort)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName);
         assertEquals(theses, result);
@@ -406,7 +406,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusNameListNotFound(){
         Long empId = 5L;
         List<String> statName = Arrays.asList("Draft", "Rejected");
-        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName, sort)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName), Collections.emptyList());
     }
