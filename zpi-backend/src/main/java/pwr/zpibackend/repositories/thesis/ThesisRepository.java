@@ -20,4 +20,5 @@ public interface ThesisRepository extends JpaRepository<Thesis, Long>{
     List<Thesis> findAllBySupervisor_IdAndAndStatus_NameIn(Long empId, List<String> statNames);
 
     List<Thesis> findAllByStatusNameIn(List<String> statusNames, Sort sort);
+    List<Thesis> findAllByLeader_Id(Long leaderId);
 }

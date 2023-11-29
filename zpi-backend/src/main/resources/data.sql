@@ -375,7 +375,7 @@ VALUES
     ((SELECT id FROM student WHERE mail = '456789@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '567890@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '789012@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '890123@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2022/23-Z')),
+    ((SELECT id FROM student WHERE mail = '890123@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
 
     ((SELECT id FROM student WHERE mail = '234567@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '123450@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),

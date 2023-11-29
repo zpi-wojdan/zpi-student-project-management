@@ -7,11 +7,15 @@ import pwr.zpibackend.dto.user.StudentDTO;
 import pwr.zpibackend.dto.university.StudentProgramCycleDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
+import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudentProgramCycle;
 import pwr.zpibackend.models.university.StudentProgramCycleId;
 import pwr.zpibackend.models.university.StudyCycle;
+import pwr.zpibackend.repositories.thesis.ReservationRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudentProgramCycleRepository;
@@ -27,6 +31,8 @@ public class StudentService {
     private ProgramRepository programRepository;
     private StudyCycleRepository studyCycleRepository;
     private StudentProgramCycleRepository studentProgramCycleRepository;
+    private ThesisRepository thesisRepository;
+    private ReservationRepository reservationRepository;
     private RoleService roleService;
 
     @Transactional(readOnly = true)
@@ -135,4 +141,59 @@ public class StudentService {
         }
         return newSpcSet;
     }
+
+    public List<Student> deleteStudentByProgramCycleId(Long cycleId) {
+        List<Student> studentsToDelete = studentRepository.findByStudentProgramCycles_Cycle_Id(cycleId);
+        List<Student> deletedStudents = new ArrayList<>();
+
+        for (Student stud : studentsToDelete) {
+            Set<StudentProgramCycle> studentProgramCycles = stud.getStudentProgramCycles();
+            List<StudentProgramCycle> spcsToDeleteLater = new ArrayList<>();
+
+            //  przygotowanie do wywalenia studentaProgramCycles
+            for (StudentProgramCycle spc : studentProgramCycles) {
+                if (spc.getCycle().getId().equals(cycleId)) {
+                    spcsToDeleteLater.add(spc);
+                }
+            }
+
+            //  usuwam w ten sposób, bo jak było w pętli to: ConcurrentModificationException
+            spcsToDeleteLater.forEach(studentProgramCycles::remove);
+            spcsToDeleteLater.forEach(spc -> System.out.println("SPC ID - " + spc.getId()));
+            studentProgramCycleRepository.deleteAll(spcsToDeleteLater);
+            studentProgramCycleRepository.flush();
+
+            //  odpinam rezerwacje
+            List<Reservation> reservations = reservationRepository.findAllByStudent_Id(stud.getId());
+            for (Reservation r : reservations){
+                if (r.getThesis().getStudyCycle().getId().equals(cycleId)){
+                    reservationRepository.delete(r);
+                }
+            }
+            reservationRepository.flush();
+
+            //  odpinam tematy
+            List<Thesis> theses = thesisRepository.findAllByLeader_Id(stud.getId());
+            for (Thesis t : theses){
+                if (t.getStudyCycle().getId().equals(cycleId)){
+                    t.setLeader(null);
+//                    thesisRepository.delete(t);
+                    // nie usuwam tylko aktualizuję, żeby temat został
+                    thesisRepository.save(t);   }
+            }
+            thesisRepository.flush();
+
+            if (studentProgramCycles.isEmpty()) {
+                studentRepository.delete(stud);
+                studentRepository.flush();
+                deletedStudents.add(stud);
+            } else {
+                studentRepository.save(stud);
+            }
+        }
+
+        return deletedStudents;
+    }
+
+
 }

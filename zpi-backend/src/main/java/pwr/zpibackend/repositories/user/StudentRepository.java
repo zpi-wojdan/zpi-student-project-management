@@ -18,4 +18,5 @@ public interface StudentRepository extends JpaRepository<Student, Long>{
     boolean existsByIndex(String index);
 
     List<Student> findAllByOrderByIndexAsc();
+    List<Student> findByStudentProgramCycles_Cycle_Id(Long cycleId);
 }
