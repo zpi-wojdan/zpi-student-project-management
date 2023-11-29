@@ -274,7 +274,7 @@
     "accessDenied": "Zaloguj sie, aby uzyskać dostęp do tej strony.",
     "loginError": "Wystąpił błąd logowania. Spróbuj ponownie.",
     "welcome": "Witaj w systemie logowania",
-    "instruction": "Kliknij przycisk poniżej, aby zalogować się za pomocą adresu email z domeny pwr.",
+    "instruction": "Kliknij przycisk poniżej, aby zalogować się za pomocą adresu email z\u00A0domeny pwr.",
     "imageAlt": "Budynek PWr"
   },
   "missingPage": {
