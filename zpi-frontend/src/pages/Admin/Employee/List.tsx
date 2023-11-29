@@ -175,6 +175,15 @@ const EmployeeList: React.FC = () => {
     }
   }
 
+  const filtered = () => {
+    if (submittedDepartmentCode ||
+      submittedRoleName ||
+      submittedTitleName) {
+      return true
+    }
+    return false
+  }
+
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [afterSearchEmployees, setAfterSearchEmployees] = useState<Employee[]>(employees);
@@ -236,7 +245,7 @@ const EmployeeList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>

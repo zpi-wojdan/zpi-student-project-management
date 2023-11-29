@@ -46,7 +46,8 @@ const ProgramList: React.FC = () => {
     const searchText = searchTerm.toLowerCase();
     const filteredList = programs.filter((program) => {
       return (
-        program.name.toLowerCase().includes(searchText)
+        program.name.toLowerCase().includes(searchText) ||
+        getLatestCycle(program).toLowerCase().includes(searchText)
       );
     });
     setAfterSearchPrograms(() => filteredList);
@@ -121,6 +122,16 @@ const ProgramList: React.FC = () => {
 
   const handleCancelDelete = () => {
     setShowDeleteConfirmation(false);
+  };
+
+  const getLatestCycle = (program: Program) => {
+    if (program.studyCycles.length === 0) {
+      return "-";
+    }
+  
+    const sortedCycles = program.studyCycles.slice().sort((a, b) => b.name.localeCompare(a.name));
+  
+    return sortedCycles[0].name;
   };
 
   return (
@@ -217,7 +228,8 @@ const ProgramList: React.FC = () => {
               <thead>
                 <tr>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '77%' }}>{t('general.university.name')}</th>
+                  <th style={{ width: '65%' }}>{t('general.university.name')}</th>
+                  <th style={{ width: '12%', textAlign: 'center' }}>{t('general.university.latestStudyCycle')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
                 </tr>
@@ -228,6 +240,7 @@ const ProgramList: React.FC = () => {
                     <tr>
                       <td className="centered">{indexOfFirstItem + index + 1}</td>
                       <td>{program.name}</td>
+                      <td className="centered">{getLatestCycle(program)}</td>
                       <td>
                         <button
                           className="custom-button coverall"

@@ -28,7 +28,6 @@ const ThesisList: React.FC = () => {
   useEffect(() => {
     api.get('http://localhost:8080/thesis/public')
       .then((response) => {
-        response.data.sort((a: Thesis, b: Thesis) => a.id - b.id);
         setTheses(response.data);
         setFilteredTheses(response.data);
         setAfterSearchTheses(response.data);
@@ -301,6 +300,20 @@ const ThesisList: React.FC = () => {
     }
   }
 
+  const filtered = () => {
+    if (selectedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr ||
+      submittedMinVacancies != 0 ||
+      submittedMaxVacancies != 5 ||
+      submittedCycleName ||
+      submittedSupervisors.length > 0 ||
+      submittedStatusName) {
+      return true
+    }
+    return false
+  }
+
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [afterSearchTheses, setAfterSearchTheses] = useState<Thesis[]>(theses);
@@ -372,7 +385,7 @@ const ThesisList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -651,8 +664,9 @@ const ThesisList: React.FC = () => {
               <thead>
                 <tr>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                  <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '50%' }}>{t('general.university.thesis')}</th>
+                  <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '12%', textAlign: 'center'  }}>{t('general.university.studyCycle')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.university.status')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
                 </tr>
@@ -669,6 +683,7 @@ const ThesisList: React.FC = () => {
                       )}
                     </td>
                     <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+                    <td className="centered">{thesis.studyCycle?.name}</td>
                     <td className="centered">{statusLabels[thesis.status.name] || thesis.status.name}</td>
                     <td>
                       <button

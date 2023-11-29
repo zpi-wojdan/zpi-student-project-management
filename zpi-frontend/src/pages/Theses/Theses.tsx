@@ -49,7 +49,6 @@ const ThesesTable: React.FC = () => {
           };
           return thesis;
         });
-        thesis_response.sort((a: ThesisFront, b: ThesisFront) => a.id - b.id);
         setTheses(thesis_response);
         setFilteredTheses(thesis_response);
         setAfterSearchTheses(thesis_response);
@@ -299,6 +298,19 @@ const ThesesTable: React.FC = () => {
       setFilteredTheses(newFilteredTheses);
     }
   }
+  
+  const filtered = () => {
+    if (selectedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr ||
+      submittedMinVacancies != 0 ||
+      submittedMaxVacancies != 5 ||
+      submittedCycleName ||
+      submittedSupervisors.length > 0) {
+      return true
+    }
+    return false
+  }
 
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -361,7 +373,7 @@ const ThesesTable: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -612,8 +624,9 @@ const ThesesTable: React.FC = () => {
               <thead>
                 <tr>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                  <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '50%' }}>{t('general.university.thesis')}</th>
+                  <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '12%', textAlign: 'center' }}>{t('general.university.studyCycle')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('thesis.occupiedSeats')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
                 </tr>
@@ -630,7 +643,8 @@ const ThesesTable: React.FC = () => {
                       )}
                     </td>
                     <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
-                    <td className="centered">{thesis.occupied + "/" + thesis.numPeople}</td>
+                    <td className="centered">{thesis.studyCycle?.name}</td>
+                    <td className="centered">{thesis.status.name === "Closed" ? "-" : thesis.occupied + "/" + thesis.numPeople}</td>
                     <td>
                       <button
                         className="custom-button coverall"
