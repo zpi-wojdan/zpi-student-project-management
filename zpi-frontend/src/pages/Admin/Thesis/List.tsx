@@ -163,31 +163,36 @@ const ThesisList: React.FC = () => {
 
   useEffect(() => {
     if (loaded)
-      handleFiltration(false);
+      handleFiltration(false, false);
   }, [loaded]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleToggleSidebar = (submitted: boolean) => {
+  const handleSubmitFilters = (toogle: boolean) => {
 
-    if (submitted) {
-      setSubmittedFacultyAbbr(selectedFacultyAbbr)
-      setSubmittedFieldAbbr(selectedFieldAbbr)
-      setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-      setSubmittedMinVacancies(selectedMinVacancies)
-      setSubmittedMaxVacancies(selectedMaxVacancies)
-      setSubmittedCycleName(selectedCycleName)
-      setSubmittedSupervisors(selectedSupervisors)
-      setSubmittedStatusName(selectedStatusName)
-      localStorage.setItem('adminThesesFilterFaculty', selectedFacultyAbbr);
-      localStorage.setItem('adminThesesFilterField', selectedFieldAbbr);
-      localStorage.setItem('adminThesesFilterSpecialization', selectedSpecializationAbbr);
-      localStorage.setItem('adminThesesFilterMinVacancies', selectedMinVacancies.toString());
-      localStorage.setItem('adminThesesFilterMaxVacancies', selectedMaxVacancies.toString());
-      localStorage.setItem('adminThesesFilterCycle', selectedCycleName);
-      localStorage.setItem('adminThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
-      localStorage.setItem('adminThesesFilterStatus', selectedStatusName);
-    }
+    setSubmittedFacultyAbbr(selectedFacultyAbbr)
+    setSubmittedFieldAbbr(selectedFieldAbbr)
+    setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
+    setSubmittedMinVacancies(selectedMinVacancies)
+    setSubmittedMaxVacancies(selectedMaxVacancies)
+    setSubmittedCycleName(selectedCycleName)
+    setSubmittedSupervisors(selectedSupervisors)
+    setSubmittedStatusName(selectedStatusName)
+    localStorage.setItem('adminThesesFilterFaculty', selectedFacultyAbbr);
+    localStorage.setItem('adminThesesFilterField', selectedFieldAbbr);
+    localStorage.setItem('adminThesesFilterSpecialization', selectedSpecializationAbbr);
+    localStorage.setItem('adminThesesFilterMinVacancies', selectedMinVacancies.toString());
+    localStorage.setItem('adminThesesFilterMaxVacancies', selectedMaxVacancies.toString());
+    localStorage.setItem('adminThesesFilterCycle', selectedCycleName);
+    localStorage.setItem('adminThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
+    localStorage.setItem('adminThesesFilterStatus', selectedStatusName);
+
+    if (toogle)
+      handleToggleSidebar()
+  };
+
+  const handleToggleSidebar = () => {
+
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
@@ -201,10 +206,41 @@ const ThesisList: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = (toggle: boolean) => {
+  const handleDeleteFilters = () => {
+    setSelectedCycleName("");
+    setSelectedFacultyAbbr("");
+    setSelectedFieldAbbr("");
+    setSelectedSpecializationAbbr("");
+    setSelectedMinVacancies(0);
+    setSelectedMaxVacancies(5);
+    setSelectedSupervisors([]);
+    setSelectedStatusName("");
 
-    if (toggle) {
-      handleToggleSidebar(true)
+    localStorage.removeItem('adminThesesFilterFaculty');
+    localStorage.removeItem('adminThesesFilterField');
+    localStorage.removeItem('adminThesesFilterSpecialization');
+    localStorage.removeItem('adminThesesFilterMinVacancies');
+    localStorage.removeItem('adminThesesFilterMaxVacancies');
+    localStorage.removeItem('adminThesesFilterCycle');
+    localStorage.removeItem('adminThesesFilterSupervisors');
+    localStorage.removeItem('adminThesesFilterStatus');
+
+    setSubmittedCycleName("");
+    setSubmittedFacultyAbbr("");
+    setSubmittedFieldAbbr("");
+    setSubmittedSpecializationAbbr("");
+    setSubmittedMinVacancies(0);
+    setSubmittedMaxVacancies(5);
+    setSubmittedSupervisors([]);
+    setSubmittedStatusName("")
+
+    setFilteredTheses(theses);
+  };
+
+  const handleFiltration = (submitted: boolean, toggle: boolean) => {
+
+    if (submitted) {
+      handleSubmitFilters(toggle)
 
       const facultyFilter = selectedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
@@ -336,7 +372,7 @@ const ThesisList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -514,19 +550,10 @@ const ThesisList: React.FC = () => {
         <hr className="my-4" />
         <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
-            onClick={() => {
-              setSelectedCycleName("");
-              setSelectedFacultyAbbr("");
-              setSelectedFieldAbbr("");
-              setSelectedSpecializationAbbr("");
-              setSelectedMinVacancies(0);
-              setSelectedMaxVacancies(5);
-              setSelectedSupervisors([]);
-              setSelectedStatusName("");
-            }}>
+            onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true)}>
+          <button className="custom-button" onClick={() => handleFiltration(true, true)}>
             {t('general.management.filter')}
           </button>
         </div>
