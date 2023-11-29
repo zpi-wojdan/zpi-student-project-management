@@ -52,7 +52,7 @@ export const handleDeletionError = (error: any, t: TFunction<"translation", unde
                 toast.error(translatedMessage);
                 return;
             }
-        } else if (errorMessage.includes('narusza klucz obcy'))) {
+        } else if (errorMessage.includes('narusza klucz obcy')) {
             const tableNameRegex = /tabeli "(?<table>[a-zA-Z0-9_]+)"/mg;
             const tableNames = [];
 
