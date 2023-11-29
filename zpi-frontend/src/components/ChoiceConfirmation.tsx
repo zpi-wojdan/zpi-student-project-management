@@ -1,7 +1,7 @@
 import React from 'react';
 import {useTranslation} from "react-i18next";
 
-interface DeleteConfirmationProps {
+interface ChoiceConfirmationProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -9,7 +9,7 @@ interface DeleteConfirmationProps {
   questionText: string;
 }
 
-const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({ isOpen, onClose, onConfirm, onCancel, questionText }) => {
+const ChoiceConfirmation: React.FC<ChoiceConfirmationProps> = ({ isOpen, onClose, onConfirm, onCancel, questionText }) => {
   const { i18n, t } = useTranslation();
 
   if (!isOpen) {
@@ -27,4 +27,4 @@ const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({ isOpen, onClose
   );
 };
 
-export default DeleteConfirmation;
+export default ChoiceConfirmation;

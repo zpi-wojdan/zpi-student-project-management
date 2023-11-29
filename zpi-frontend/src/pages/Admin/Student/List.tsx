@@ -5,7 +5,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 import { Faculty } from '../../../models/university/Faculty';
 import { StudyField } from '../../../models/university/StudyField';
 import { Specialization } from '../../../models/university/Specialization';
@@ -102,15 +102,28 @@ const StudentList: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (loaded)
+      handleFiltration(false);
+  }, [loaded]);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleToggleSidebar = (submitted: boolean) => {
+  const handleSubmitFilters = (toogle: boolean) => {
 
-    if (submitted) {
-      setSubmittedFacultyAbbr(selectedFacultyAbbr)
-      setSubmittedFieldAbbr(selectedFieldAbbr)
-      setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-    }
+    setSubmittedFacultyAbbr(selectedFacultyAbbr)
+    setSubmittedFieldAbbr(selectedFieldAbbr)
+    setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
+    localStorage.setItem('studentFilterFaculty', selectedFacultyAbbr);
+    localStorage.setItem('studentFilterField', selectedFieldAbbr);
+    localStorage.setItem('studentFilterSpecialization', selectedSpecializationAbbr);
+
+    if (toogle)
+      handleToggleSidebar()
+  };
+
+  const handleToggleSidebar = () => {
+
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
@@ -119,19 +132,59 @@ const StudentList: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = () => {
-    handleToggleSidebar(true)
+  const handleDeleteFilters = () => {
 
-    const facultyFilter = selectedFacultyAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.faculty.abbreviation === selectedFacultyAbbr) : () => true;
-    const fieldFilter = selectedFieldAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.studyField ? sp.program.studyField.abbreviation === selectedFieldAbbr : sp.program.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
-    const specializationFilter = selectedSpecializationAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.specialization ? sp.program.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
+    setSelectedFacultyAbbr("");
+    setSelectedFieldAbbr("");
+    setSelectedSpecializationAbbr("");
 
-    const newFilteredStudents = students.filter(student =>
-      facultyFilter(student) &&
-      fieldFilter(student) &&
-      specializationFilter(student)
-    );
-    setFilteredStudents(newFilteredStudents);
+    localStorage.removeItem('studentFilterFaculty');
+    localStorage.removeItem('studentFilterField');
+    localStorage.removeItem('studentFilterSpecialization');
+
+    setSubmittedFacultyAbbr("");
+    setSubmittedFieldAbbr("");
+    setSubmittedSpecializationAbbr("");
+
+    setFilteredStudents(students);
+  };
+
+  const handleFiltration = (toggle: boolean) => {
+
+    if (toggle) {
+      handleSubmitFilters(true)
+
+      const facultyFilter = selectedFacultyAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.faculty.abbreviation === selectedFacultyAbbr) : () => true;
+      const fieldFilter = selectedFieldAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.studyField ? sp.program.studyField.abbreviation === selectedFieldAbbr : sp.program.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+      const specializationFilter = selectedSpecializationAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.specialization ? sp.program.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
+
+      const newFilteredStudents = students.filter(student =>
+        facultyFilter(student) &&
+        fieldFilter(student) &&
+        specializationFilter(student)
+      );
+      setFilteredStudents(newFilteredStudents);
+    }
+    else {
+      const savedFacultyAbbr = localStorage.getItem('studentFilterFaculty') || '';
+      const savedFieldAbbr = localStorage.getItem('studentFilterField') || '';
+      const savedSpecializationAbbr = localStorage.getItem('studentFilterSpecialization') || '';
+
+      setSubmittedFacultyAbbr(savedFacultyAbbr);
+      setSubmittedFieldAbbr(savedFieldAbbr);
+      setSubmittedSpecializationAbbr(savedSpecializationAbbr);
+
+      const facultyFilter = savedFacultyAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.faculty.abbreviation === savedFacultyAbbr) : () => true;
+      const fieldFilter = savedFieldAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.studyField ? sp.program.studyField.abbreviation === savedFieldAbbr : sp.program.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+      const specializationFilter = savedSpecializationAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.specialization ? sp.program.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
+
+      const newFilteredStudents = students.filter(student =>
+        facultyFilter(student) &&
+        fieldFilter(student) &&
+        specializationFilter(student)
+      );
+      setFilteredStudents(newFilteredStudents);
+    }
   }
 
   const filtered = () => {
@@ -204,7 +257,7 @@ const StudentList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -285,14 +338,10 @@ const StudentList: React.FC = () => {
         <hr className="my-4" />
         <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
-            onClick={() => {
-              setSelectedFacultyAbbr("");
-              setSelectedFieldAbbr("");
-              setSelectedSpecializationAbbr("");
-            }}>
+            onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration()}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>

@@ -8,7 +8,7 @@ import api from "../../../utils/api";
 import { Department } from '../../../models/university/Department'
 import { Role } from '../../../models/user/Role';
 import { Title } from './Form';
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
@@ -91,15 +91,28 @@ const EmployeeList: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (loaded)
+      handleFiltration(false);
+  }, [loaded]);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleToggleSidebar = (submitted: boolean) => {
+  const handleSubmitFilters = (toogle: boolean) => {
 
-    if (submitted) {
-      setSubmittedDepartmentCode(selectedDepartmentCode)
-      setSubmittedRoleName(selectedRoleName)
-      setSubmittedTitleName(selectedTitleName)
-    }
+    setSubmittedDepartmentCode(selectedDepartmentCode)
+    setSubmittedRoleName(selectedRoleName)
+    setSubmittedTitleName(selectedTitleName)
+    localStorage.setItem('employeeFilterDepartment', selectedDepartmentCode);
+    localStorage.setItem('employeeFilterRole', selectedRoleName);
+    localStorage.setItem('employeeFilterTitle', selectedTitleName);
+
+    if (toogle)
+      handleToggleSidebar()
+  };
+
+  const handleToggleSidebar = () => {
+
     if (!sidebarOpen) {
       setSelectedDepartmentCode(submittedDepartmentCode)
       setSelectedRoleName(submittedRoleName)
@@ -108,19 +121,58 @@ const EmployeeList: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleFiltration = () => {
-    handleToggleSidebar(true)
+  const handleDeleteFilters = () => {
+    setSelectedDepartmentCode("");
+    setSelectedRoleName("");
+    setSelectedTitleName("");
 
-    const departmentFilter = selectedDepartmentCode ? (employee: Employee) => employee.department.code === selectedDepartmentCode : () => true;
-    const roleFilter = selectedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === selectedRoleName) : () => true;
-    const titleFilter = selectedTitleName ? (employee: Employee) => employee.title.name === selectedTitleName : () => true;
+    localStorage.removeItem('employeeFilterDepartment');
+    localStorage.removeItem('employeeFilterRole');
+    localStorage.removeItem('employeeFilterTitle');
 
-    const newFilteredEmployees = employees.filter(employee =>
-      departmentFilter(employee) &&
-      roleFilter(employee) &&
-      titleFilter(employee)
-    );
-    setFilteredEmployees(newFilteredEmployees);
+    setSubmittedDepartmentCode("");
+    setSubmittedRoleName("");
+    setSubmittedTitleName("");
+
+    setFilteredEmployees(employees);
+  };
+
+  const handleFiltration = (toggle: boolean) => {
+
+    if (toggle) {
+      handleSubmitFilters(true)
+
+      const departmentFilter = selectedDepartmentCode ? (employee: Employee) => employee.department.code === selectedDepartmentCode : () => true;
+      const roleFilter = selectedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === selectedRoleName) : () => true;
+      const titleFilter = selectedTitleName ? (employee: Employee) => employee.title.name === selectedTitleName : () => true;
+
+      const newFilteredEmployees = employees.filter(employee =>
+        departmentFilter(employee) &&
+        roleFilter(employee) &&
+        titleFilter(employee)
+      );
+      setFilteredEmployees(newFilteredEmployees);
+    }
+    else {
+      const savedDepartmentCode = localStorage.getItem('employeeFilterDepartment') || '';
+      const savedRoleName = localStorage.getItem('employeeFilterRole') || '';
+      const savedTitleName = localStorage.getItem('employeeFilterTitle') || '';
+
+      setSubmittedDepartmentCode(savedDepartmentCode)
+      setSubmittedRoleName(savedRoleName)
+      setSubmittedTitleName(savedTitleName)
+
+      const departmentFilter = savedDepartmentCode ? (employee: Employee) => employee.department.code === savedDepartmentCode : () => true;
+      const roleFilter = savedRoleName ? (employee: Employee) => employee.roles.some(r => r.name === savedRoleName) : () => true;
+      const titleFilter = savedTitleName ? (employee: Employee) => employee.title.name === savedTitleName : () => true;
+
+      const newFilteredEmployees = employees.filter(employee =>
+        departmentFilter(employee) &&
+        roleFilter(employee) &&
+        titleFilter(employee)
+      );
+      setFilteredEmployees(newFilteredEmployees);
+    }
   }
 
   const filtered = () => {
@@ -193,7 +245,7 @@ const EmployeeList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -265,14 +317,10 @@ const EmployeeList: React.FC = () => {
         <hr className="my-4" />
         <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
-            onClick={() => {
-              setSelectedDepartmentCode("");
-              setSelectedRoleName("");
-              setSelectedTitleName("");
-            }}>
+            onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration()}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>

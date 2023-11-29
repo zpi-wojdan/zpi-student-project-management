@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 // @ts-ignore
 import Cookies from "js-cookie";
@@ -44,6 +44,49 @@ const Navigation = ({ children }: NavigationProps) => {
             Cookies.set('lang', lang);
         }
     };
+
+    const [prevPath, setPrevPath] = useState<string>("");
+
+    useEffect(() => {
+        const path = location.pathname;
+        if (prevPath.startsWith('/students') && !path.startsWith('/students')) {
+            localStorage.removeItem('studentFilterFaculty');
+            localStorage.removeItem('studentFilterField');
+            localStorage.removeItem('studentFilterSpecialization');
+        }
+        if (prevPath.startsWith('/employees') && !path.startsWith('/employees')) {
+            localStorage.removeItem('employeeFilterDepartment');
+            localStorage.removeItem('employeeFilterRole');
+            localStorage.removeItem('employeeFilterTitle')
+        }
+        if (prevPath.startsWith('/theses') && !path.startsWith('/theses')) {
+            localStorage.removeItem('adminThesesFilterFaculty');
+            localStorage.removeItem('adminThesesFilterField');
+            localStorage.removeItem('adminThesesFilterSpecialization');
+            localStorage.removeItem('adminThesesFilterMinVacancies');
+            localStorage.removeItem('adminThesesFilterMaxVacancies');
+            localStorage.removeItem('adminThesesFilterCycle');
+            localStorage.removeItem('adminThesesFilterSupervisors');
+            localStorage.removeItem('adminThesesFilterStatus')
+        }
+        if (prevPath.startsWith('/public-theses') && !path.startsWith('/public-theses')) {
+            localStorage.removeItem('publicThesesFilterFaculty');
+            localStorage.removeItem('publicThesesFilterField');
+            localStorage.removeItem('publicThesesFilterSpecialization');
+            localStorage.removeItem('publicThesesFilterMinVacancies');
+            localStorage.removeItem('publicThesesFilterMaxVacancies');
+            localStorage.removeItem('publicThesesFilterCycle');
+            localStorage.removeItem('publicThesesFilterSupervisors');
+        }
+        if (prevPath.startsWith('/manage') && !path.startsWith('/manage')) {
+            localStorage.removeItem('approverFilterFaculty');
+            localStorage.removeItem('approverFilterField');
+            localStorage.removeItem('approverFilterSpecialization');
+            localStorage.removeItem('approverFilterCycle');
+            localStorage.removeItem('approverFilterSupervisors');
+        }
+        setPrevPath(path);
+    }, [location.pathname]);
 
     return (
         <>
@@ -197,6 +240,14 @@ const Navigation = ({ children }: NavigationProps) => {
                                                     <NavLink className={({ isActive }) => isActive ?
                                                         "nav-link active px-2" : "nav-link px-2"} to="/my">
                                                         {t('navigation.myTheses')}
+                                                    </NavLink>
+                                                </li>
+                                            ) : null}
+                                            {user?.roles?.some((role: Role) => role.name === 'approver') ? (
+                                                <li className="nav-item">
+                                                    <NavLink className={({ isActive }) => isActive ?
+                                                        "nav-link active" : "nav-link"} to="/manage">
+                                                        {t('navigation.confirm')}
                                                     </NavLink>
                                                 </li>
                                             ) : null}

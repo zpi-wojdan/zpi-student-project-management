@@ -1,36 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Thesis } from '../../../models/thesis/Thesis';
-import api from '../../../utils/api';
-import handleSignOut from "../../../auth/Logout";
-import useAuth from "../../../auth/useAuth";
+import { ThesisFront, Thesis } from '../../models/thesis/Thesis';
+import api from '../../utils/api';
+import handleSignOut from "../../auth/Logout";
+import useAuth from "../../auth/useAuth";
 import { useTranslation } from "react-i18next";
-import SearchBar from '../../../components/SearchBar';
+import SearchBar from '../../components/SearchBar';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { Faculty } from '../../../models/university/Faculty';
-import { Specialization } from '../../../models/university/Specialization';
-import { StudyCycle } from '../../../models/university/StudyCycle';
-import { StudyField } from '../../../models/university/StudyField';
-import { Employee } from '../../../models/user/Employee';
+import { Role } from '../../models/user/Role';
+import { Faculty } from '../../models/university/Faculty';
+import { Specialization } from '../../models/university/Specialization';
+import { StudyCycle } from '../../models/university/StudyCycle';
+import { StudyField } from '../../models/university/StudyField';
+import { Employee } from '../../models/user/Employee';
 
 
-const ThesisList: React.FC = () => {
+const ApproveList: React.FC = () => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
-  const [theses, setTheses] = useState<Thesis[]>([]);
+  const [theses, setTheses] = useState<ThesisFront[]>([]);
   const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
   const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis/public')
+    api.get(`http://localhost:8080/thesis/status/Pending_approval`)
       .then((response) => {
-        setTheses(response.data);
-        setFilteredTheses(response.data);
-        setAfterSearchTheses(response.data);
+        console.log(response);
+        const thesis_response = response.data.map((thesisDb: Thesis) => {
+          const thesis: ThesisFront = {
+            id: thesisDb.id,
+            namePL: thesisDb.namePL,
+            nameEN: thesisDb.nameEN,
+            descriptionPL: thesisDb.descriptionPL,
+            descriptionEN: thesisDb.descriptionEN,
+            programs: thesisDb.programs,
+            studyCycle: thesisDb.studyCycle,
+            numPeople: thesisDb.numPeople,
+            occupied: thesisDb.occupied,
+            supervisor: thesisDb.supervisor,
+            status: thesisDb.status,
+            leader: thesisDb.leader,
+            students: thesisDb.reservations.map((reservation) => reservation.student),
+            reservations: thesisDb.reservations,
+            comments: thesisDb.comments,
+          };
+          return thesis;
+        });
+        thesis_response.sort((a: ThesisFront, b: ThesisFront) => a.id - b.id);
+        setTheses(thesis_response);
+        setFilteredTheses(thesis_response);
+        setAfterSearchTheses(thesis_response);
         setLoaded(true);
       })
       .catch((error) => {
@@ -43,15 +66,11 @@ const ThesisList: React.FC = () => {
   }, []);
 
   // Filtrowanie
-  const [filteredTheses, setFilteredTheses] = useState<Thesis[]>(theses);
+  const [filteredTheses, setFilteredTheses] = useState<ThesisFront[]>(theses);
 
   const [availableSupervisors, setAvailableSupervisor] = useState<Employee[]>([]);
   const [selectedSupervisors, setSelectedSupervisors] = useState<number[]>([]);
   const [submittedSupervisors, setSubmittedSupervisors] = useState<number[]>([]);
-  const [selectedMinVacancies, setSelectedMinVacancies] = useState<number>(0);
-  const [submittedMinVacancies, setSubmittedMinVacancies] = useState<number>(0);
-  const [selectedMaxVacancies, setSelectedMaxVacancies] = useState<number>(5);
-  const [submittedMaxVacancies, setSubmittedMaxVacancies] = useState<number>(5);
   const [availableCycles, setAvailableCycles] = useState<StudyCycle[]>([]);
   const [selectedCycleName, setSelectedCycleName] = useState<string>("");
   const [submittedCycleName, setSubmittedCycleName] = useState<string>("");
@@ -64,22 +83,12 @@ const ThesisList: React.FC = () => {
   const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
   const [selectedSpecializationAbbr, setSelectedSpecializationAbbr] = useState<string>("");
   const [submittedSpecializationAbbr, setSubmittedSpecializationAbbr] = useState<string>("");
-  const availableStatuses: { [key: string]: string } = {
-    Draft: t('status.draft'),
-    "Pending approval": t('status.pending'),
-    Rejected: t('status.rejected'),
-    Approved: t('status.approved'),
-    Assigned: t('status.assigned'),
-    Closed: t('status.closed'),
-  };
-  const [selectedStatusName, setSelectedStatusName] = useState<string>("");
-  const [submittedStatusName, setSubmittedStatusName] = useState<string>("");
 
   useEffect(() => {
     api.get('http://localhost:8080/employee')
       .then((response) => {
         const supervisors = response.data
-          .filter((employee: Employee) => employee.roles.some((role) => role.name === 'supervisor'))
+          .filter((employee: Employee) => employee.roles.some((role: Role) => role.name === 'supervisor'))
           .sort((a: Employee, b: Employee) => a.surname.localeCompare(b.surname));;
         setAvailableSupervisor(supervisors);
       })
@@ -162,7 +171,7 @@ const ThesisList: React.FC = () => {
 
   useEffect(() => {
     if (loaded)
-      handleFiltration(false, false);
+      handleFiltration(false);
   }, [loaded]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -172,19 +181,13 @@ const ThesisList: React.FC = () => {
     setSubmittedFacultyAbbr(selectedFacultyAbbr)
     setSubmittedFieldAbbr(selectedFieldAbbr)
     setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-    setSubmittedMinVacancies(selectedMinVacancies)
-    setSubmittedMaxVacancies(selectedMaxVacancies)
     setSubmittedCycleName(selectedCycleName)
     setSubmittedSupervisors(selectedSupervisors)
-    setSubmittedStatusName(selectedStatusName)
-    localStorage.setItem('adminThesesFilterFaculty', selectedFacultyAbbr);
-    localStorage.setItem('adminThesesFilterField', selectedFieldAbbr);
-    localStorage.setItem('adminThesesFilterSpecialization', selectedSpecializationAbbr);
-    localStorage.setItem('adminThesesFilterMinVacancies', selectedMinVacancies.toString());
-    localStorage.setItem('adminThesesFilterMaxVacancies', selectedMaxVacancies.toString());
-    localStorage.setItem('adminThesesFilterCycle', selectedCycleName);
-    localStorage.setItem('adminThesesFilterSupervisors', JSON.stringify(selectedSupervisors));
-    localStorage.setItem('adminThesesFilterStatus', selectedStatusName);
+    localStorage.setItem('approverFilterFaculty', selectedFacultyAbbr);
+    localStorage.setItem('approverFilterField', selectedFieldAbbr);
+    localStorage.setItem('approverFilterSpecialization', selectedSpecializationAbbr);
+    localStorage.setItem('approverFilterCycle', selectedCycleName);
+    localStorage.setItem('approverFilterSupervisors', JSON.stringify(selectedSupervisors));
 
     if (toogle)
       handleToggleSidebar()
@@ -196,11 +199,8 @@ const ThesisList: React.FC = () => {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
       setSelectedSpecializationAbbr(submittedSpecializationAbbr)
-      setSelectedMinVacancies(submittedMinVacancies)
-      setSelectedMaxVacancies(submittedMaxVacancies)
       setSelectedCycleName(submittedCycleName)
       setSelectedSupervisors(submittedSupervisors)
-      setSelectedStatusName(submittedStatusName)
     }
     setSidebarOpen(!sidebarOpen);
   };
@@ -210,113 +210,76 @@ const ThesisList: React.FC = () => {
     setSelectedFacultyAbbr("");
     setSelectedFieldAbbr("");
     setSelectedSpecializationAbbr("");
-    setSelectedMinVacancies(0);
-    setSelectedMaxVacancies(5);
     setSelectedSupervisors([]);
-    setSelectedStatusName("");
 
-    localStorage.removeItem('adminThesesFilterFaculty');
-    localStorage.removeItem('adminThesesFilterField');
-    localStorage.removeItem('adminThesesFilterSpecialization');
-    localStorage.removeItem('adminThesesFilterMinVacancies');
-    localStorage.removeItem('adminThesesFilterMaxVacancies');
-    localStorage.removeItem('adminThesesFilterCycle');
-    localStorage.removeItem('adminThesesFilterSupervisors');
-    localStorage.removeItem('adminThesesFilterStatus');
+    localStorage.removeItem('approverFilterFaculty');
+    localStorage.removeItem('approverFilterField');
+    localStorage.removeItem('approverFilterSpecialization');
+    localStorage.removeItem('approverFilterCycle');
+    localStorage.removeItem('approverFilterSupervisors');
 
     setSubmittedCycleName("");
     setSubmittedFacultyAbbr("");
     setSubmittedFieldAbbr("");
     setSubmittedSpecializationAbbr("");
-    setSubmittedMinVacancies(0);
-    setSubmittedMaxVacancies(5);
     setSubmittedSupervisors([]);
-    setSubmittedStatusName("")
 
     setFilteredTheses(theses);
   };
 
-  const handleFiltration = (submitted: boolean, toggle: boolean) => {
+  const handleFiltration = (toggle: boolean) => {
 
-    if (submitted) {
-      handleSubmitFilters(toggle)
+    if (toggle) {
+      handleSubmitFilters(true)
 
-      const facultyFilter = selectedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
-      const fieldFilter = selectedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
-      const specializationFilter = selectedSpecializationAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: Thesis) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
-      const cycleFilter = selectedCycleName ? (thesis: Thesis) => thesis.studyCycle?.name === selectedCycleName : () => true;
-      const supervisorFilter = selectedSupervisors.length ? (thesis: Thesis) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
-      const statusFilter = selectedStatusName ? (thesis: Thesis) => thesis.status.name === selectedStatusName : () => true;
+      const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
+      const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+      const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
+      const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
+      const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
 
       const newFilteredTheses = theses.filter(thesis =>
         facultyFilter(thesis) &&
         fieldFilter(thesis) &&
         specializationFilter(thesis) &&
-        vacanciesFilter(thesis) &&
         cycleFilter(thesis) &&
-        supervisorFilter(thesis) &&
-        statusFilter(thesis)
+        supervisorFilter(thesis)
       );
       setFilteredTheses(newFilteredTheses);
     }
     else {
-      const savedFacultyAbbr = localStorage.getItem('adminThesesFilterFaculty') || '';
-      const savedFieldAbbr = localStorage.getItem('adminThesesFilterField') || '';
-      const savedSpecializationAbbr = localStorage.getItem('adminThesesFilterSpecialization') || '';
-      const savedMinVacancies = parseInt(localStorage.getItem('adminThesesFilterMinVacancies') || '0', 10);
-      const savedMaxVacancies = parseInt(localStorage.getItem('adminThesesFilterMaxVacancies') || '5', 10);
-      const savedCycleName = localStorage.getItem('adminThesesFilterCycle') || '';
-      const savedsupervisors = JSON.parse(localStorage.getItem('adminThesesFilterSupervisors') || '[]');
-      const savedStatusName = localStorage.getItem('adminThesesFilterStatus') || '';
+      const savedFacultyAbbr = localStorage.getItem('approverFilterFaculty') || '';
+      const savedFieldAbbr = localStorage.getItem('approverFilterField') || '';
+      const savedSpecializationAbbr = localStorage.getItem('approverFilterSpecialization') || '';
+      const savedCycleName = localStorage.getItem('approverFilterCycle') || '';
+      const savedsupervisors = JSON.parse(localStorage.getItem('approverFilterSupervisors') || '[]');
 
       setSubmittedFacultyAbbr(savedFacultyAbbr)
       setSubmittedFieldAbbr(savedFieldAbbr)
       setSubmittedSpecializationAbbr(savedSpecializationAbbr)
-      setSubmittedMinVacancies(savedMinVacancies)
-      setSubmittedMaxVacancies(savedMaxVacancies)
       setSubmittedCycleName(savedCycleName)
       setSubmittedSupervisors(savedsupervisors)
-      setSubmittedStatusName(savedStatusName)
 
-      const facultyFilter = savedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
-      const fieldFilter = savedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
-      const specializationFilter = savedSpecializationAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: Thesis) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
-      const cycleFilter = savedCycleName ? (thesis: Thesis) => thesis.studyCycle?.name === savedCycleName : () => true;
-      const supervisorFilter = savedsupervisors.length ? (thesis: Thesis) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
-      const statusFilter = savedStatusName ? (thesis: Thesis) => thesis.status.name === savedStatusName : () => true;
+      const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
+      const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
+      const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
+      const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
+      const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
 
       const newFilteredTheses = theses.filter(thesis =>
         facultyFilter(thesis) &&
         fieldFilter(thesis) &&
         specializationFilter(thesis) &&
-        vacanciesFilter(thesis) &&
         cycleFilter(thesis) &&
-        supervisorFilter(thesis) &&
-        statusFilter(thesis)
+        supervisorFilter(thesis)
       );
       setFilteredTheses(newFilteredTheses);
     }
   }
 
-  const filtered = () => {
-    if (selectedFacultyAbbr ||
-      submittedFieldAbbr ||
-      submittedSpecializationAbbr ||
-      submittedMinVacancies != 0 ||
-      submittedMaxVacancies != 5 ||
-      submittedCycleName ||
-      submittedSupervisors.length > 0 ||
-      submittedStatusName) {
-      return true
-    }
-    return false
-  }
-
   // Wyszukiwanie
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [afterSearchTheses, setAfterSearchTheses] = useState<Thesis[]>(theses);
+  const [afterSearchTheses, setAfterSearchTheses] = useState<ThesisFront[]>(theses);
 
   useEffect(() => {
     const searchText = searchTerm.toLowerCase();
@@ -372,20 +335,10 @@ const ThesisList: React.FC = () => {
     }
   };
 
-  const statusLabels: { [key:string]:string } = {
-    "Draft": t('status.draft'),
-    "Pending approval": t('status.pending'),
-    "Rejected": t('status.rejected'),
-    "Approved": t('status.approved'),
-    "Assigned": t('status.assigned'),
-    "Closed": t('status.closed')
-  }
-
-
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
+        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -415,53 +368,6 @@ const ThesisList: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-        <hr className="my-4" />
-        <div className="mb-4">
-          <label className="bold" htmlFor="vacancies">
-            {t('general.management.vacancies')}:
-          </label>
-          <Slider
-            range
-            min={0}
-            max={5}
-            value={[selectedMinVacancies, selectedMaxVacancies]}
-            onChange={(value: number | number[]) => {
-              if (Array.isArray(value)) {
-                setSelectedMinVacancies(value[0]);
-                setSelectedMaxVacancies(value[1]);
-              } else {
-                setSelectedMinVacancies(value);
-                setSelectedMaxVacancies(value);
-              }
-            }}
-            marks={{ 0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }}
-            dots={false}
-            dotStyle={{ display: 'none' }}
-            className='mt-4 mb-5 custom-slider'
-          />
-        </div>
-        <hr className="my-4" />
-        <div className="mb-4">
-          <label className="bold" htmlFor="status">
-            {t('general.university.status')}:
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={selectedStatusName}
-            onChange={(e) => {
-              setSelectedStatusName(e.target.value);
-            }}
-            className="form-control"
-          >
-            <option value="">{t('general.management.choose')}</option>
-            {Object.keys(availableStatuses).map((statusKey) => (
-              <option key={statusKey} value={statusKey}>
-                {availableStatuses[statusKey]}
-              </option>
-            ))}
-          </select>
         </div>
         <hr className="my-4" />
         <div className="mb-4">
@@ -566,15 +472,10 @@ const ThesisList: React.FC = () => {
             onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
-          <button className="custom-button" onClick={() => handleFiltration(true, true)}>
+          <button className="custom-button" onClick={() => handleFiltration(true)}>
             {t('general.management.filter')}
           </button>
         </div>
-      </div>
-      <div >
-        <button className="custom-button" onClick={() => { navigate('/theses/add') }}>
-          {t('thesis.add')}
-        </button>
       </div>
       {!loaded ? (
         <div className='info-no-data'>
@@ -654,20 +555,17 @@ const ThesisList: React.FC = () => {
               </div>
             )}
           </div>
-
           {afterSearchTheses.length === 0 ? (
-            <div className='info-no-data'>
-              <p>{t('general.management.noSearchData')}</p>
+            <div style={{ textAlign: 'center', marginTop: '40px' }}>
+              <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
             </div>
           ) : (
             <table className="custom-table">
               <thead>
                 <tr>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '50%' }}>{t('general.university.thesis')}</th>
-                  <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
-                  <th style={{ width: '12%', textAlign: 'center'  }}>{t('general.university.studyCycle')}</th>
-                  <th style={{ width: '10%', textAlign: 'center' }}>{t('general.university.status')}</th>
+                  <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
+                  <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
                 </tr>
               </thead>
@@ -683,12 +581,10 @@ const ThesisList: React.FC = () => {
                       )}
                     </td>
                     <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
-                    <td className="centered">{thesis.studyCycle?.name}</td>
-                    <td className="centered">{statusLabels[thesis.status.name] || thesis.status.name}</td>
                     <td>
                       <button
                         className="custom-button coverall"
-                        onClick={() => { navigate(`/theses/${thesis.id}`) }}
+                        onClick={() => { navigate(`/manage/${thesis.id}`) }}
                       >
                         <i className="bi bi-arrow-right"></i>
                       </button>
@@ -698,7 +594,6 @@ const ThesisList: React.FC = () => {
               </tbody>
             </table>
           )}
-
           {currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && (
             <div className="pagination">
               <button
@@ -743,4 +638,4 @@ const ThesisList: React.FC = () => {
   );
 }
 
-export default ThesisList;
+export default ApproveList;

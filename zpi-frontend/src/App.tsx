@@ -44,6 +44,8 @@ import Reports from "./pages/Admin/Reports";
 import DeadlineList from "./pages/Admin/Deadline/List";
 import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
+import ApproveDetails from './pages/Approver/ApproveDetails';
+import ApproveList from './pages/Approver/ApproveList';
 
 
 export interface IAppProps {
@@ -76,6 +78,16 @@ export default function App(props: IAppProps) {
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
                   <Route path='public-theses' element={<ThesesTable />} />
                   <Route path='public-theses/:id' element={<ThesesDetails />} />
+                </Route>
+
+                <Route element={<RequireAuth allowedRoles={['approver']} />}>
+                  <Route path='manage' element={<ApproveList />} />
+                  <Route path='manage/:id' element={<ApproveDetails />} />
+                </Route>
+
+                <Route element={<RequireAuth allowedRoles={['approver']} />}>
+                  <Route path='manage' element={<ApproveList />} />
+                  <Route path='manage/:id' element={<ApproveDetails />} />
                 </Route>
 
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
