@@ -9,6 +9,7 @@ import { Department } from '../../../models/university/Department'
 import { Role } from '../../../models/user/Role';
 import { Title } from './Form';
 import SearchBar from '../../../components/SearchBar';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
@@ -334,9 +335,7 @@ const EmployeeList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) :
         (<React.Fragment>
 

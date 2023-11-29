@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import api from '../../../utils/api';
 import handleSignOut from '../../../auth/Logout';
 import useAuth from "../../../auth/useAuth";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const EmployeeDetails: React.FC = () => {
   // @ts-ignore
@@ -98,9 +99,7 @@ const EmployeeDetails: React.FC = () => {
       </div>
       <div>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+          <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {employee ? (
             <div>

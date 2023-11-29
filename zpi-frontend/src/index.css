@@ -314,3 +314,16 @@ ul > li > ul {
   height: 100%;
   object-fit: cover;
 }
+
+/* Spinner */
+.custom-spinner {
+  border-color: #9A342D !important;
+  border-right-color: transparent !important;
+  width: 4rem;
+  height: 4rem;
+}
+
+.spinner-text {
+  font-size: 1.5em;
+}
+

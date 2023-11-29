@@ -37,7 +37,7 @@ import DepartmentForm from './pages/Admin/Department/Form';
 import DepartmentList from './pages/Admin/Department/List';
 import StudyFieldForm from './pages/Admin/Field/Form';
 import StudyFieldList from './pages/Admin/Field/List';
-import {Suspense} from "react";
+import React, {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
 import Reports from "./pages/Admin/Reports";
@@ -46,6 +46,7 @@ import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
+import LoadingSpinner from "./components/LoadingSpinner";
 
 
 export interface IAppProps {
@@ -54,7 +55,7 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
 
   return (
-      <Suspense fallback="loading..">
+      <Suspense fallback={<LoadingSpinner height="90vh" />}>
         <AuthProvider>
           <BrowserRouter>
             <Navigation>

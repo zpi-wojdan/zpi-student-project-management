@@ -9,6 +9,7 @@ import SearchBar from '../../../components/SearchBar';
 import { Faculty } from '../../../models/university/Faculty';
 import { StudyField } from '../../../models/university/StudyField';
 import { Specialization } from '../../../models/university/Specialization';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudentList: React.FC = () => {
   // @ts-ignore
@@ -355,9 +356,7 @@ const StudentList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {students.length === 0 ? (
           <div className='info-no-data'>

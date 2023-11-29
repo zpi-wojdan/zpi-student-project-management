@@ -8,6 +8,7 @@ import useAuth from '../../../auth/useAuth';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SearchBar';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudyFieldList: React.FC = () => {
   // @ts-ignore
@@ -132,9 +133,7 @@ const StudyFieldList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {studyFields.length === 0 ? (
           <div className='info-no-data'>

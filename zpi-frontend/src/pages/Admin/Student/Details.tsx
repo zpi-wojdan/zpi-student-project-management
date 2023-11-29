@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import api from '../../../utils/api';
 import { useTranslation } from "react-i18next";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -103,9 +104,7 @@ const StudentDetails: React.FC = () => {
       </div>
       <div>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+            <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {student ? (
             <div>
