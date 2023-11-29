@@ -357,6 +357,7 @@
     "department": "department",
     "employee": "employee",
     "student": "student",
-    "thesis": "thesis"
+    "thesis": "thesis",
+    "reservation": "reservation"
   }
 }

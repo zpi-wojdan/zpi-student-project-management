@@ -355,6 +355,7 @@
     "department": "katedra",
     "employee": "pracownik",
     "student": "student",
-    "thesis": "temat"
+    "thesis": "temat",
+    "reservation": "rezerwacje"
   }
 }
