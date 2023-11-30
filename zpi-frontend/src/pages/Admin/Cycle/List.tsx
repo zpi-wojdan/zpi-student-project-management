@@ -7,6 +7,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SearchBar';
 
 const StudyCycleList: React.FC = () => {
@@ -103,7 +104,7 @@ const StudyCycleList: React.FC = () => {
   const handleConfirmDelete = () => {
     api.delete(`http://localhost:8080/studycycle/${studyCycleToDelete}`)
       .then(() => {
-        toast.success(t('cycle.deleteSuccessful'));
+        toast.success(t('study_cycle.deleteSuccessful'));
         setRefreshList(!refreshList);
       })
       .catch((error) => {
@@ -112,7 +113,7 @@ const StudyCycleList: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('cycle.deleteError'));
+        handleDeletionError(error, t, 'study_cycle');
       });
     setShowDeleteConfirmation(false);
   };
@@ -125,7 +126,7 @@ const StudyCycleList: React.FC = () => {
     <div className='page-margin'>
       <div >
         <button className="custom-button" onClick={() => { navigate('/cycles/add') }}>
-          {t('cycle.add')}
+          {t('study_cycle.add')}
         </button>
       </div>
       {!loaded ? (
@@ -253,7 +254,7 @@ const StudyCycleList: React.FC = () => {
                             onClose={handleCancelDelete}
                             onConfirm={handleConfirmDelete}
                             onCancel={handleCancelDelete}
-                            questionText={t('cycle.deleteConfirmation')}
+                            questionText={t('study_cycle.deleteConfirmation')}
                           />
                         </td>
                       </tr>

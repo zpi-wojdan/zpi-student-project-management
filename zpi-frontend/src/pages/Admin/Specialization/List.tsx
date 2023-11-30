@@ -7,6 +7,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SearchBar';
 
 const SpecializationList: React.FC = () => {
@@ -120,7 +121,7 @@ const SpecializationList: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('specialization.deleteError'));
+        handleDeletionError(error, t, 'specialization');
       });
     setShowDeleteConfirmation(false);
   };
