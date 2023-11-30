@@ -250,7 +250,9 @@
     "rejectionError": "Thesis has not been rejected",
     "acceptSuccesful": "Thesis has been accepted",
     "acceptError": "Thesis has not been accepted",
-    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!"
+    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!",
+    "errorStudents": "Student with index {{index}} already has a thesis!",
+    "addStudentsWarning": "Students will not be saved if the thesis is save as a draft!"
   },
   "status": {
     "draft": "Draft",

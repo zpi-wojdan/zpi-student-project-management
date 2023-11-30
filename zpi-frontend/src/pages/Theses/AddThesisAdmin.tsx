@@ -94,7 +94,7 @@ function AddThesisPageAdmin() {
   useEffect(() => {
     api.get('http://localhost:8080/studycycle')
       .then((response) => {
-        setStudyCycles(response.data);
+        setStudyCycles(response.data.sort((a: StudyCycle, b: StudyCycle) => b.name.localeCompare(a.name)));
       })
       .catch((error) => {
         if (error.response.status === 401 || error.response.status === 403) {
@@ -342,8 +342,14 @@ function AddThesisPageAdmin() {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            navigate("/theses");
-            toast.error(t("thesis.updateError"));
+            if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+              const index = (error.response.data.message as string).split(' ')[3];
+              toast.error(t(`thesis.errorStudents`, {
+                index: index
+            }));
+            } else {
+              toast.error(t("thesis.updateError"));
+            }
           });
       }
       else {
@@ -366,8 +372,14 @@ function AddThesisPageAdmin() {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              navigate("/theses");
-              toast.error(t("thesis.addError"));
+              if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+                const index = (error.response.data.message as string).split(' ')[3];
+                toast.error(t(`thesis.errorStudents`, {
+                  index: index
+              }));
+              } else {
+                toast.error(t("thesis.updateError"));
+              }
             }
           })
       }
@@ -698,14 +710,23 @@ function AddThesisPageAdmin() {
           </select>
           {errors.status && <div className="text-danger">{errors.status}</div>}
         </div>
-        {!thesis &&
+        {!thesis ? (
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
               setStudentIndexes={setStudentIndexes}
             />
           </div>
-        }
+        ) : (
+          thesis.status.name === 'Draft' && (
+            <div key={numPeople}>
+              <SupervisorReservationPage
+                numPeople={numPeople}
+                setStudentIndexes={setStudentIndexes}
+              />
+            </div>
+          )
+        )}
       </form>
     </div>
   )

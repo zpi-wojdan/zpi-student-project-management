@@ -2,8 +2,6 @@ package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
@@ -13,10 +11,8 @@ import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Student;
-import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
@@ -25,15 +21,10 @@ import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.services.mailing.MailService;
-import pwr.zpibackend.utils.MailTemplates;
 
 import javax.transaction.Transactional;
 
 import java.time.LocalDateTime;
-
-import static java.time.LocalDateTime.now;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +42,6 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
-    private final MailService mailService;
     private final StudentRepository studentRepository;
     private final ReservationRepository reservationRepository;
 
@@ -94,11 +84,12 @@ public class ThesisService {
         newThesis.setStudyCycle(thesis.getStudyCycleId()
                 .map(index -> studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)).orElse(null));
 
-        newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
+        Status draftStatus = statusRepository.findByName("Draft").orElseThrow(NotFoundException::new);
+        newThesis.setStatus(draftStatus);
 
         thesisRepository.saveAndFlush(newThesis);
         
-        if (!thesis.getStudentIndexes().isEmpty()) {
+        if (!thesis.getStudentIndexes().isEmpty() && !thesis.getStatusId().equals(draftStatus.getId())) {
             for (String index : thesis.getStudentIndexes()) {
                 Student student = studentRepository.findByIndex(index)
                         .orElseThrow(() -> new NotFoundException("Student with index " + index + " does not exist"));
@@ -121,6 +112,7 @@ public class ThesisService {
         } else {
             newThesis.setOccupied(0);
         }
+        newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
 
         thesisRepository.saveAndFlush(newThesis);
         return newThesis;

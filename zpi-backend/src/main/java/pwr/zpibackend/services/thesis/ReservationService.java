@@ -76,7 +76,7 @@ public class ReservationService {
                         student, null, thesis);
             } else {
                 mailService.sendHtmlMailMessage(student.getMail(), "thesis",
-                        MailTemplates.RESERVATION_SUPERVISOR, student, null, thesis);
+                        MailTemplates.RESERVATION_ADMIN, student, null, thesis);
             }
         } else {
             throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
