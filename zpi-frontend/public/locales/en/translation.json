@@ -72,6 +72,7 @@
       "specialization": "Specialization",
       "specializations": "Specializations",
       "studyCycle": "Study cycle",
+      "latestStudyCycle": "Latest study cycle",
       "studyCycles": "Study cycles",
       "studyProgram": "Study program",
       "studyPrograms": "Study programs",
@@ -90,7 +91,7 @@
     "reports": "Reports",
     "confirm": "To be approved"
   },
-  "cycle": {
+  "study_cycle": {
     "deleteSuccessful": "Study cycle has been deleted",
     "deleteError": "Study cycle cannot be deleted!",
     "deleteConfirmation": "Are you sure you want to delete this study cycle?",
@@ -100,7 +101,8 @@
     "addError": "Study cycle has not been added",
     "updateSuccessful": "Study cycle has been updated",
     "updateError": "Study cycle has not been updated",
-    "goodFormat": "Correct format: \"xxxx/xx-XYZ\", where \"xxxx\" are 4 digits, \"xx\" are 2 digits, \"XYZ\" are from 1 to 3 capital letters."
+    "goodFormat": "Correct format: \"xxxx/xx-XYZ\", where \"xxxx\" are 4 digits, \"xx\" are 2 digits, \"XYZ\" are from 1 to 3 capital letters.",
+    "deleteErrorWithReference": "Study cycle cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "department": {
     "deleteSuccessful": "Department has been deleted",
@@ -112,7 +114,8 @@
     "addError": "Department has not been added",
     "updateSuccessful": "Department has been updated",
     "updateError": "Department has not been updated",
-    "goodCodeFormat": "Correct format: a string of 1 to 10 characters, containing only uppercase letters, digits, and forward slashes (/)."
+    "goodCodeFormat": "Correct format: a string of 1 to 10 characters, containing only uppercase letters, digits, and forward slashes (/).",
+    "deleteErrorWithReference": "Department cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "employee": {
     "add": "Add employee",
@@ -128,7 +131,8 @@
     "updateError": "Employee has not been updated",
     "rolesRequired": "Employee must have at least one role.",
     "import": "Import employees",
-    "cantBecomeASupervisor": "This employee can't become a supervisor."
+    "cantBecomeASupervisor": "This employee can't become a supervisor.",
+    "deleteErrorWithReference": "Field cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "student": {
     "add": "Add student",
@@ -145,7 +149,8 @@
     "indexLength": "Index must have 6 digits!",
     "cycleProgramRequired": "Choose study cycle and study program for all entries.",
     "duplicatedPrograms": "List of programs contains duplicates!",
-    "import": "Import students"
+    "import": "Import students",
+    "deleteErrorWithReference": "Student cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "faculty": {
     "updateSuccessful": "Faculty has been updated",
@@ -157,9 +162,10 @@
     "add": "Add faculty",
     "save": "Save faculty",
     "deleteConfirmation": "Are you sure you want to delete this faculty?",
-    "goodAbbrFormat": "Correct format: \"W\", two digits, optionally one uppercase letter"
+    "goodAbbrFormat": "Correct format: \"W\", two digits, optionally one uppercase letter",
+    "deleteErrorWithReference": "Faculty cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
-  "field": {
+  "study_field": {
     "deleteSuccessful": "Field has been deleted",
     "deleteError": "Field cannot be deleted!",
     "deleteConfirmation": "Are you sure you want to delete this field?",
@@ -169,7 +175,8 @@
     "addError": "Field has not been added",
     "updateSuccessful": "Field has been updated",
     "updateError": "Field has not been updated",
-    "goodAbbrFormat": "Correct format: three uppercase letters"
+    "goodAbbrFormat": "Correct format: three uppercase letters",
+    "deleteErrorWithReference": "Field cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "program": {
     "deleteSuccessful": "Study program has been deleted",
@@ -183,7 +190,8 @@
     "updateError": "Study program has not been updated",
     "cycleRequired": "Study program must have assigned at least one study cycle.",
     "nameExists": "Given program name already exists!",
-    "goodNameFormat": "Correct format: faculty abbreviation - study field abbreviation - specialization abbreviation - characteristics e.g. W04-INAP-CCSA-OSME3"
+    "goodNameFormat": "Correct format: faculty abbreviation - study field abbreviation - specialization abbreviation - characteristics e.g. W04-INAP-CCSA-OSME3",
+    "deleteErrorWithReference": "Program cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "specialization": {
     "deleteSuccessful": "Specialization has been deleted",
@@ -195,7 +203,8 @@
     "addError": "Specialization has not been added",
     "updateSuccessful": "Specialization has been updated",
     "updateError": "Specialization has not been updated",
-    "goodAbbrFormat": "Correct format: three uppercase letters"
+    "goodAbbrFormat": "Correct format: three uppercase letters",
+    "deleteErrorWithReference": "Specialization cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "reservation": {
     "reservationSuccessful": "Reservation completed successfully!",
@@ -240,7 +249,8 @@
     "rejectionSuccessful": "Thesis has been rejected",
     "rejectionError": "Thesis has not been rejected",
     "acceptSuccesful": "Thesis has been accepted",
-    "acceptError": "Thesis has not been accepted"
+    "acceptError": "Thesis has not been accepted",
+    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "status": {
     "draft": "Draft",
@@ -286,8 +296,8 @@
     "accessDenied": "Log in to access this page.",
     "loginError": "Login error occurred. Please try again.",
     "welcome": "Welcome to the login system",
-    "instruction": "Click the button below to log in using your academic email address.",
-    "imageAlt": "A1 building in the campus of the Wrocław University of Science and Technology"
+    "instruction": "Click the button below to log in using your email address from pwr domain.",
+    "imageAlt": "Building in the campus of the Wrocław University of Science and Technology"
   },
   "missingPage": {
     "title": "Page not found",
@@ -338,5 +348,17 @@
     "content": "Comment",
     "author": "Author",
     "empty": "No comments"
+  },
+  "tables": {
+    "study_field": "study field",
+    "specialization": "specialization",
+    "study_cycle": "study cycle",
+    "program": "program",
+    "faculty": "faculty",
+    "department": "department",
+    "employee": "employee",
+    "student": "student",
+    "thesis": "thesis",
+    "reservation": "reservation"
   }
 }
