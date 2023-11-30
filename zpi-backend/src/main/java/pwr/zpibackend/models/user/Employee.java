@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pwr.zpibackend.models.thesis.Comment;
+import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.models.university.Title;
 
@@ -45,5 +46,9 @@ public class Employee {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "supervisor", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Thesis> supervisedTheses;
 
 }

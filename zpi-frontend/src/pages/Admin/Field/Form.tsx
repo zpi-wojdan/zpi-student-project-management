@@ -69,7 +69,7 @@ const StudyFieldForm: React.FC = () => {
         api.put(`http://localhost:8080/studyfield/${fieldId}`, formData)
           .then(() => {
             navigate("/fields")
-            toast.success(t("field.updateSuccessful"));
+            toast.success(t("study_field.updateSuccessful"));
           })
           .catch((error) => {
             if (error.response && error.response.status === 409) {
@@ -85,14 +85,14 @@ const StudyFieldForm: React.FC = () => {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error(t("field.updateError"));
+              toast.error(t("study_field.updateError"));
             }
           });
       } else {
         api.post('http://localhost:8080/studyfield', formData)
           .then(() => {
             navigate("/fields")
-            toast.success(t("field.addSuccessful"));
+            toast.success(t("study_field.addSuccessful"));
           })
           .catch((error) => {
             if (error.response && error.response.status === 409) {
@@ -159,7 +159,7 @@ const StudyFieldForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {studyField ? t('field.save') : t('field.add')}
+            {studyField ? t('study_field.save') : t('study_field.add')}
           </button>
         </div>
         <div className="mb-3">
@@ -195,7 +195,7 @@ const StudyFieldForm: React.FC = () => {
             className="form-control"
           />
           <div className="text-info">
-            {t('field.goodAbbrFormat')}
+            {t('study_field.goodAbbrFormat')}
           </div>
           {errors.abbreviation && <div className="text-danger">{errors.abbreviation}</div>}
         </div>

@@ -8,6 +8,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SearchBar';
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 
 const ProgramList: React.FC = () => {
   // @ts-ignore
@@ -115,7 +116,7 @@ const ProgramList: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('program.deleteError'));
+        handleDeletionError(error, t, 'program');
       });
     setShowDeleteConfirmation(false);
   };
