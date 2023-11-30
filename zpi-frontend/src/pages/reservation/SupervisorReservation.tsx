@@ -6,36 +6,36 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { Student } from '../../models/user/Student';
 import { Thesis } from '../../models/thesis/Thesis';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import api from "../../utils/api";
 
 type SupervisorReservationProps = {
+    numPeople: number;
+    setStudentIndexes: (indexes: string[]) => void;
 }
 
-function SupervisorReservationPage({ }: SupervisorReservationProps) {
+function SupervisorReservationPage({ numPeople, setStudentIndexes }: SupervisorReservationProps) {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
-    const location = useLocation();
-    const thesis = location.state?.thesis as Thesis;
 
-    const [reservations, setReservations] = useState<string[]>(Array(thesis?.numPeople || 0).fill(""));
+    const [numPeopleState, setNumPeopleState] = useState<number>(numPeople);
+    const [reservations, setReservations] = useState<string[]>(Array(numPeopleState).fill(""));
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
-    const [user, setUser] = useState<Student>();
+    const [showList, setShowList] = useState<boolean>(true);
 
     useEffect(() => {
-        setUser(JSON.parse(Cookies.get("user") || "{}"));
-        reservations[0] = user?.index || "";
-        setReservations(reservations);
-    }, []);
+        setNumPeopleState(numPeople);
+    }, [numPeople]);
 
     const handleReservationChange = (index: number, value: string) => {
         const updatedReservations = [...reservations];
         updatedReservations[index] = value;
         setReservations(updatedReservations);
+        setStudentIndexes(updatedReservations);
     };
 
     const isReservationValid = (index: number, reservation: string) => {
@@ -94,75 +94,16 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
             })
         setStudents(newStudents);
         setErrors(newErrors);
-    };
-
-    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault();
-        if (reservations.every((reservation, index) => isReservationValid(index, reservation))) {
-            let allReservationsSuccessful = true;
-
-            for (const reservation of reservations) {
-                const responseBody = {
-                    thesisId: thesis.id,
-                    student: students.find(student => student.index === reservation),
-                    reservationDate: new Date(),
-                    readyForApproval: true,
-                    confirmedByLeader: true,
-                    confirmedBySupervisor: true,
-                    confirmedByStudent: true,
-                };
-                console.log(JSON.stringify(responseBody));
-
-                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                
-                })
-                    .then(response => {
-                        if (response.status === 201) {
-                            console.log(`Reservation ${reservation} created successfully`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`Failed to submit reservation ${reservation}`);
-                        console.error(error)
-                        allReservationsSuccessful = false;
-                        if (error.response.status === 401 || error.response.status === 403) {
-                            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-                            handleSignOut(navigate);
-                        }
-                    });
-            }
-
-            if (allReservationsSuccessful) {
-                toast.success(t('reservation.reservationSuccessful'));
-                navigate("/public-theses/" + thesis.id)
-            } else {
-                toast.error(t('reservation.reservationError'));
-            }
-        } else {
-            for (const reservation of reservations) {
-                handleReservationBlur(reservations.indexOf(reservation));
-            }
-            console.error("Invalid reservation numbers");
-        }
+        setStudentIndexes(reservations);
     };
 
     return (
-        <div className="container page-margin">
-            <div className="d-flex">
-                <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-                    &larr; {t('general.management.goBack')}
-                </button>
-                <button type="submit" className="custom-button" onClick={handleSubmit}>
-                    {t('general.management.reserve')}
-                </button>
-            </div>
-            <h1 className='my-3'>{t('reservation.reservation')}:</h1>
-            <h3>{t('general.university.thesis')}: {thesis?.namePL}</h3>
-            <form>
-            <table className="table table-borderless">
+        <div className="page-margin">
+            <label className="bold" onClick={() => setShowList(!showList)}>
+                {t('general.people.students')} {showList ? '▲' : '▼'}
+            </label>
+            {showList &&
+                <table className="table table-borderless">
                     <thead>
                         <tr>
                             <th scope="col" style={{ width: '10%' }}></th>
@@ -173,7 +114,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                     <tbody>
                         {reservations.map((reservation, index) => (
                             <tr key={index}>
-                                <td style={{whiteSpace: "nowrap"}}>
+                                <td style={{ whiteSpace: "nowrap" }}>
                                     <label htmlFor={`reservation-${index}`} className="col-form-label">
                                         {t('general.people.student')} {index + 1}:
                                     </label>
@@ -204,7 +145,7 @@ function SupervisorReservationPage({ }: SupervisorReservationProps) {
                         ))}
                     </tbody>
                 </table>
-            </form>
+            }
         </div>
     );
 

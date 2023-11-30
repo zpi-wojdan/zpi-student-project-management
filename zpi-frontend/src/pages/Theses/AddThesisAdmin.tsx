@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
 import useAuth from "../../auth/useAuth";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import handleSignOut from "../../auth/Logout";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import api from "../../utils/api";
 import { Thesis, ThesisDTO } from '../../models/thesis/Thesis';
 import { Status } from '../../models/thesis/Status';
@@ -11,6 +11,7 @@ import { Employee } from '../../models/user/Employee';
 import { toast } from 'react-toastify';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
+import SupervisorReservationPage from '../reservation/SupervisorReservation';
 
 
 function AddThesisPageAdmin() {
@@ -28,7 +29,7 @@ function AddThesisPageAdmin() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
-  
+
   const thesis = location.state?.thesis as Thesis;
   const [thesisId, setThesisId] = useState<number>();
   const [formData, setFormData] = useState<ThesisDTO>({
@@ -41,6 +42,7 @@ function AddThesisPageAdmin() {
     programIds: [-1],
     studyCycleId: -1,
     statusId: -1,
+    studentIndexes: [],
   });
 
   const [statuses, setStatuses] = useState<Status[]>([]);
@@ -55,7 +57,8 @@ function AddThesisPageAdmin() {
   const [mailAbbrev, setMailAbbrev] = useState<string>('');
   const [user, setUser] = useState<Employee | null>(null);
 
-  
+  const [numPeople, setNumPeople] = useState<number>(formData.numPeople);
+
   useEffect(() => {
     const newErrors: Record<string, string> = {};
     Object.keys(errorKeys).forEach((key) => {
@@ -65,10 +68,10 @@ function AddThesisPageAdmin() {
   }, [i18n.language]);
 
   useEffect(() => {
-    if (user === null){
+    if (user === null) {
       const u = JSON.parse(Cookies.get("user") || "{}")
       setUser(u);
-      if (!formData.supervisorId || formData.supervisorId === -1){
+      if (!formData.supervisorId || formData.supervisorId === -1) {
         const cookieId = u?.id ?? -1;
         setFormData({ ...formData, supervisorId: cookieId });
       }
@@ -81,7 +84,7 @@ function AddThesisPageAdmin() {
         setStatuses(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status ===403){
+        if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -90,56 +93,56 @@ function AddThesisPageAdmin() {
 
   useEffect(() => {
     api.get('http://localhost:8080/studycycle')
-    .then((response) => {
-      setStudyCycles(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
+      .then((response) => {
+        setStudyCycles(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, []);
 
   useEffect(() => {
     api.get('http://localhost:8080/program')
-    .then((response) => {
-      setPrograms(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
+      .then((response) => {
+        setPrograms(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, []);
 
   useEffect(() => {
     api.get('http://localhost:8080/employee')
-    .then((response) => {
-      setEmployees(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
+      .then((response) => {
+        setEmployees(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
   }, []);
 
   useEffect(() => {
     const emp = employees.find(elem => elem.id === formData.supervisorId);
     const mail = emp ? emp.mail : '';
-    if (mail){
+    if (mail) {
       setMailAbbrev(mail);
     }
   }, [employees, formData.supervisorId])
 
 
   useEffect(() => {
-    if (thesis){
+    if (thesis) {
       setFormData((prev) => {
-        return{
+        return {
           ...prev,
           namePL: thesis.namePL,
           nameEN: thesis.nameEN,
@@ -169,7 +172,7 @@ function AddThesisPageAdmin() {
   // }, [thesis]);
 
   const validateForm = (): [boolean, ThesisDTO | null] => {
-    const newErrors: Record<string, string> =  {};
+    const newErrors: Record<string, string> = {};
     const newErrorsKeys: Record<string, string> = {};
     let isValid = true;
 
@@ -185,119 +188,119 @@ function AddThesisPageAdmin() {
     let pplCount = formData.numPeople;
     let cycleId: number | null;
 
-    if (formData.studyCycleId && formData.studyCycleId !== -1){
+    if (formData.studyCycleId && formData.studyCycleId !== -1) {
       cycleId = formData.studyCycleId;
     }
-    else{
+    else {
       cycleId = null;
     }
 
     const filteredPrograms = formData.programIds.filter((num) => num !== -1);
     const statusName = statuses.find((s) => s.id === formData.statusId);
 
-    if (!formData.namePL || formData.namePL === ''){
+    if (!formData.namePL || formData.namePL === '') {
       newErrors.namePL = errorRequireText
       newErrorsKeys.namePL = "general.management.fieldIsRequired";
       isValid = false;
     }
 
-    if (!formData.nameEN || formData.nameEN === ''){
+    if (!formData.nameEN || formData.nameEN === '') {
       newErrors.nameEN = errorRequireText
       newErrorsKeys.nameEN = "general.management.fieldIsRequired";
       isValid = false;
     }
 
-    if (!statusName || statusName.name !== 'Draft'){
-      if (!formData.descriptionPL || formData.namePL === ''){
+    if (!statusName || statusName.name !== 'Draft') {
+      if (!formData.descriptionPL || formData.namePL === '') {
         newErrors.descriptionPL = errorRequireText
         newErrorsKeys.descriptionPL = "general.management.fieldIsRequired";
         isValid = false;
       }
-  
-      if (!formData.numPeople){
+
+      if (!formData.numPeople) {
         newErrors.numPeople = errorRequireText
         newErrorsKeys.numPeople = "general.management.fieldIsRequired";
         isValid = false;
       }
-  
-      if (formData.numPeople > 5){
+
+      if (formData.numPeople > 5) {
         newErrors.numPeople = errorBigNumberText
         newErrorsKeys.numPeople = "thesis.numPeopleTooBig";
         isValid = false;
       }
-  
-      if (formData.numPeople < 3){
+
+      if (formData.numPeople < 3) {
         newErrors.numPeople = errorSmallNumberText
         newErrorsKeys.numPeople = "thesis.numPeopleTooSmall";
         isValid = false;
       }
-      
+
       if ((!formData.supervisorId || formData.supervisorId === -1) &&
-            mailAbbrev.trim() === ''){
+        mailAbbrev.trim() === '') {
         newErrors.supervisor = errorRequireText
         newErrorsKeys.supervisor = "general.management.fieldIsRequired";
         isValid = false;
       }
       else if (formData.supervisorId === -1 &&
-            (!employees.some(e => e.mail === mailAbbrev ||
-              !mailRegex.test(mailAbbrev)))){
+        (!employees.some(e => e.mail === mailAbbrev ||
+          !mailRegex.test(mailAbbrev)))) {
         newErrors.supervisor = mailDoesNotExistText
         newErrorsKeys.supervisor = "employee.doesNotExist";
         isValid = false;
       }
       else if (employees.some(e =>
-            (e.id === formData.supervisorId &&
-              !e.roles.some(r => r.name === 'supervisor')))){
+      (e.id === formData.supervisorId &&
+        !e.roles.some(r => r.name === 'supervisor')))) {
         newErrors.supervisor = regularEmployeeAsSupervisorText
         newErrorsKeys.supervisor = "employee.cantBecomeASupervisor";
         isValid = false;
       }
-      
-      if (filteredPrograms.length === 0){
+
+      if (filteredPrograms.length === 0) {
         newErrors.programIds = errorRequireText
         newErrorsKeys.programIds = "general.management.fieldIsRequired";
         isValid = false;
       }
-  
-      if (!formData.studyCycleId || formData.studyCycleId === -1){
+
+      if (!formData.studyCycleId || formData.studyCycleId === -1) {
         newErrors.studyCycle = errorRequireText
         newErrorsKeys.studyCycle = "general.management.fieldIsRequired";
         isValid = false;
       }
-  
-      if (!formData.statusId || formData.statusId === -1){
+
+      if (!formData.statusId || formData.statusId === -1) {
         newErrors.status = errorRequireText
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
     }
-    else{
-      if (!formData.statusId || formData.statusId === -1){
+    else {
+      if (!formData.statusId || formData.statusId === -1) {
         newErrors.status = errorRequireText
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
-      else{
-        if (!formData.supervisorId || formData.supervisorId === -1){
-          if (user === null){
+      else {
+        if (!formData.supervisorId || formData.supervisorId === -1) {
+          if (user === null) {
             const cookieUser = JSON.parse(Cookies.get("user") || "{}");
             setFormData({ ...formData, supervisorId: cookieUser?.id })
             setUser(cookieUser);
             setMailAbbrev(cookieUser?.mail);
             supervisorIndex = cookieUser?.id;
           }
-          else{
+          else {
             setFormData({ ...formData, supervisorId: user?.id })
             setMailAbbrev(user?.name);
             supervisorIndex = user?.id;
           }
         }
-        else{
+        else {
           supervisorIndex = formData.supervisorId;
         }
 
         setFormData({ ...formData, programIds: filteredPrograms })
-        if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3){
+        if (!formData.numPeople || formData.numPeople > 5 || formData.numPeople < 3) {
           setFormData({ ...formData, numPeople: 4 })
           pplCount = 4;
         }
@@ -325,9 +328,9 @@ function AddThesisPageAdmin() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const [isValid, dto] = validateForm();
-
-    if (isValid){
-      if (thesis){
+    console.log(dto);
+    if (isValid) {
+      if (thesis) {
         api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
           .then(() => {
             navigate("/theses");
@@ -343,7 +346,7 @@ function AddThesisPageAdmin() {
             toast.error(t("thesis.updateError"));
           });
       }
-      else{
+      else {
         api.post('http://localhost:8080/thesis', dto)
           .then(() => {
             navigate("/theses");
@@ -374,7 +377,7 @@ function AddThesisPageAdmin() {
   const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const abbrev = e.target.value;
     setMailAbbrev(abbrev);
-    
+
     const filteredSupervisors = employees.filter(
       (supervisor) =>
         supervisor.mail.includes(abbrev.toLowerCase())
@@ -384,10 +387,10 @@ function AddThesisPageAdmin() {
     const selectedSupervisor = employeeSuggestions.find(
       (supervisor) => supervisor.mail.toLowerCase() === abbrev.toLowerCase()
     );
-    if (selectedSupervisor){
+    if (selectedSupervisor) {
       setFormData({ ...formData, supervisorId: selectedSupervisor.id });
     }
-    else{
+    else {
       setFormData({ ...formData, supervisorId: -1 });
     }
   };
@@ -398,7 +401,10 @@ function AddThesisPageAdmin() {
       ...formData,
       [name]: value,
     });
+    setNumPeople(parseInt(value, 10));
   };
+
+
 
   const handleTextAreaChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
@@ -417,12 +423,12 @@ function AddThesisPageAdmin() {
   };
 
   const handleCycleChange = (selectedCycleId: number | null) => {
-    if (selectedCycleId !== null){
+    if (selectedCycleId !== null) {
       const updatedProgramSuggestions = programs
-                  .filter((p) => p.studyCycles
-                  .map((c)=> c.id === selectedCycleId));
+        .filter((p) => p.studyCycles
+          .map((c) => c.id === selectedCycleId));
       setProgramSuggestions(updatedProgramSuggestions);
-      setFormData({ ...formData, studyCycleId: selectedCycleId});
+      setFormData({ ...formData, studyCycleId: selectedCycleId });
     }
   }
 
@@ -446,7 +452,7 @@ function AddThesisPageAdmin() {
     setFormData({ ...formData, programIds: newProgram });
   }
 
-  const statusLabels: { [key:string]:string } = {
+  const statusLabels: { [key: string]: string } = {
     "Pending approval": t('status.pending'),
     "Rejected": t('status.rejected'),
     "Approved": t('status.approved'),
@@ -454,74 +460,77 @@ function AddThesisPageAdmin() {
     "Closed": t('status.closed')
   }
 
+  const setStudentIndexes = (indexes: string[]) => {
+    setFormData({ ...formData, studentIndexes: indexes });
+  }
 
   return (
     <div className='page-margin'>
       <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
 
-      <div className='d-flex justify-content-begin  align-items-center mb-3'>
+        <div className='d-flex justify-content-begin  align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-          &larr; {t('general.management.goBack')}
+            &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-          {thesis ? t('general.management.save') : t('general.management.add')}
+            {thesis ? t('general.management.save') : t('general.management.add')}
           </button>
-      </div>
+        </div>
 
 
-      <div className="mb-3">
-        <label className="bold" htmlFor="namePL">
-          {t('general.title')} (PL):
-        </label>
-        <textarea
-          className="form-control resizable-input"
-          id="namePL"
-          name="namePL"
-          value={formData.namePL}
-          onChange={(event) => handleTextAreaChange(event, namePLRef)}
-          maxLength={1000}
-          ref={namePLRef}
-        />
-        {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
-      </div>
-    
-      <div className="mb-3">
-        <label className="bold" htmlFor="nameEN">
-          {t('general.title')} (EN):
-        </label>
-        <textarea
-          className="form-control resizable-input"
-          id="nameEN"
-          name="nameEN"
-          value={formData.nameEN}
-          onChange={(event) => handleTextAreaChange(event, nameENRef)}
-          maxLength={200}
-          ref={nameENRef}
-        />
-        {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
-      </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="namePL">
+            {t('general.title')} (PL):
+          </label>
+          <textarea
+            className="form-control resizable-input"
+            id="namePL"
+            name="namePL"
+            value={formData.namePL}
+            onChange={(event) => handleTextAreaChange(event, namePLRef)}
+            maxLength={1000}
+            ref={namePLRef}
+          />
+          {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
+        </div>
 
-      <div className="mb-3">
-        <label className="bold" htmlFor="descriptionPL">
-          {t('general.university.description')} (PL):
-        </label>
-        <textarea
-          className="form-control resizable-input"
-          id="descriptionPL"
-          name="descriptionPL"
-          value={formData.descriptionPL}
-          onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
-          maxLength={1000}
-          ref={descriptionPLRef}
-        />
-        {errors.descriptionPL && <div className="text-danger">{errors.descriptionPL}</div>}
-      </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="nameEN">
+            {t('general.title')} (EN):
+          </label>
+          <textarea
+            className="form-control resizable-input"
+            id="nameEN"
+            name="nameEN"
+            value={formData.nameEN}
+            onChange={(event) => handleTextAreaChange(event, nameENRef)}
+            maxLength={200}
+            ref={nameENRef}
+          />
+          {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
+        </div>
 
-      <div className="mb-3">
-        <label className="bold" htmlFor="descriptionEN">
-          {t('general.university.description')} (EN):
-        </label>
-        <textarea
+        <div className="mb-3">
+          <label className="bold" htmlFor="descriptionPL">
+            {t('general.university.description')} (PL):
+          </label>
+          <textarea
+            className="form-control resizable-input"
+            id="descriptionPL"
+            name="descriptionPL"
+            value={formData.descriptionPL}
+            onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
+            maxLength={1000}
+            ref={descriptionPLRef}
+          />
+          {errors.descriptionPL && <div className="text-danger">{errors.descriptionPL}</div>}
+        </div>
+
+        <div className="mb-3">
+          <label className="bold" htmlFor="descriptionEN">
+            {t('general.university.description')} (EN):
+          </label>
+          <textarea
             className="form-control resizable-input"
             id="descriptionEN"
             name="descriptionEN"
@@ -529,134 +538,134 @@ function AddThesisPageAdmin() {
             onChange={(event) => handleTextAreaChange(event, descriptionENRef)}
             maxLength={1000}
             ref={descriptionENRef}
-        />
-        <div className="text-info">
-          {t('general.management.fieldIsOptional')}
+          />
+          <div className="text-info">
+            {t('general.management.fieldIsOptional')}
+          </div>
         </div>
-      </div>
 
-      <div className="mb-3">
-        <label className="bold" htmlFor="numPeople">
-          {t('thesis.peopleLimit')}:
-        </label>
-        <input
-          type="number"
-          className="form-control"
-          id="numPeople"
-          name="numPeople"
-          value={formData.numPeople}
-          onChange={handleNumPeopleChange}
-          min={3}
-          max={5}
-        />
-        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
-      </div>
-
-      
-
-      <div className='mb-3'>
-      <label className='bold' htmlFor='supervisor'>
-        {t('general.people.supervisor')}:
-      </label>
-      <div className="dropdown">
-        <input
-          type="text"
-          id="supervisor"
-          name="supervisor"
-          value={mailAbbrev}
-          onChange={handleMailSearchChange}
-          list="supervisorList"
-          className="form-control"
-        />
-        <datalist id="supervisorList">
-          {employeeSuggestions.map((supervisor) => (
-            <option 
-              key={supervisor.mail} 
-              value={supervisor.mail}
-              >
-              {supervisor.title.name} {supervisor.surname} {supervisor.name}
-            </option>
-          ))}
-        </datalist>
-      </div>
-      {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-    </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="numPeople">
+            {t('thesis.peopleLimit')}:
+          </label>
+          <input
+            type="number"
+            className="form-control"
+            id="numPeople"
+            name="numPeople"
+            value={formData.numPeople}
+            onChange={handleNumPeopleChange}
+            min={3}
+            max={5}
+          />
+          {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
+        </div>
 
 
-      <div className='mb-3'>
-        <label className='bold' htmlFor='studyCycle'>
-          {t('general.university.studyCycle')}:
-        </label>
-        <select
-          id={'studyCycleSel'}
-          name={`studyCycle`}
-          value={formData.studyCycleId || -1}
-          onChange={(e) => {
-            const selectedCycleId = e.target.value === '' ? null : parseInt(e.target.value, 10);
-            handleCycleChange(selectedCycleId);
-          }}
-          className='form-control'
-        >
-          <option value={-1}>{t('general.management.choose')}</option>
-          {studyCycles.map((cyc, cycIndex) => (
-            <option key={cycIndex} value={cyc.id}>
-              {cyc.name}
-            </option>
-          ))}
-        </select>
-        {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
-      </div>
 
-     <div className="mb-3">{/*key={suggestionsKey} */}
-        <label className="bold">{t('general.university.studyPrograms')}:</label>  
-
-        <ul>
-
-          {formData.programIds.map((programId, index) => (
-            
-            <li key={index}>
-              <div className='mb-3'>
-                <select
-                  id={`programId${index}`}
-                  name={`programId${index}`}
-                  value={formData.programIds[index]} 
-                  onChange={(e) => {
-                    const selectedProgramId = parseInt(e.target.value, 10);    
-                    handleProgramChange(index, selectedProgramId);
-                  }}
-                  className='form-control'
-                  disabled={formData.studyCycleId === -1}
+        <div className='mb-3'>
+          <label className='bold' htmlFor='supervisor'>
+            {t('general.people.supervisor')}:
+          </label>
+          <div className="dropdown">
+            <input
+              type="text"
+              id="supervisor"
+              name="supervisor"
+              value={mailAbbrev}
+              onChange={handleMailSearchChange}
+              list="supervisorList"
+              className="form-control"
+            />
+            <datalist id="supervisorList">
+              {employeeSuggestions.map((supervisor) => (
+                <option
+                  key={supervisor.mail}
+                  value={supervisor.mail}
                 >
-                  {/* <option value={-1}>
+                  {supervisor.title.name} {supervisor.surname} {supervisor.name}
+                </option>
+              ))}
+            </datalist>
+          </div>
+          {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+        </div>
+
+
+        <div className='mb-3'>
+          <label className='bold' htmlFor='studyCycle'>
+            {t('general.university.studyCycle')}:
+          </label>
+          <select
+            id={'studyCycleSel'}
+            name={`studyCycle`}
+            value={formData.studyCycleId || -1}
+            onChange={(e) => {
+              const selectedCycleId = e.target.value === '' ? null : parseInt(e.target.value, 10);
+              handleCycleChange(selectedCycleId);
+            }}
+            className='form-control'
+          >
+            <option value={-1}>{t('general.management.choose')}</option>
+            {studyCycles.map((cyc, cycIndex) => (
+              <option key={cycIndex} value={cyc.id}>
+                {cyc.name}
+              </option>
+            ))}
+          </select>
+          {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
+        </div>
+
+        <div className="mb-3">{/*key={suggestionsKey} */}
+          <label className="bold">{t('general.university.studyPrograms')}:</label>
+
+          <ul>
+
+            {formData.programIds.map((programId, index) => (
+
+              <li key={index}>
+                <div className='mb-3'>
+                  <select
+                    id={`programId${index}`}
+                    name={`programId${index}`}
+                    value={formData.programIds[index]}
+                    onChange={(e) => {
+                      const selectedProgramId = parseInt(e.target.value, 10);
+                      handleProgramChange(index, selectedProgramId);
+                    }}
+                    className='form-control'
+                    disabled={formData.studyCycleId === -1}
+                  >
+                    {/* <option value={-1}>
                   {programSuggestions ? programs[formData.programIds[programId]]?.name : t('general.management.choose')}
                     {programSuggestions ? programs[1]?.name : t('general.management.choose')}
                     {thesis.program ? thesis.program.name : t('general.management.choose')}
                   </option> */}
 
-                  <option value={-1}>{t('general.management.choose')}</option>
-                  {programSuggestions
-                    .filter((p) =>
-                      p.studyCycles.some((cycle) => cycle.id === formData.studyCycleId)
-                    )
-                    .map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                </select>
-                {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
-              </div>
-              {formData.programIds.length > 1 && (
-                <button
-                  type="button"
-                  className="custom-button another-color"
-                  onClick={() => handleRemove(index)}
-                >
-                  {t('general.management.delete')}
-                </button>
-              )}  
-            </li>
-          ))}
+                    <option value={-1}>{t('general.management.choose')}</option>
+                    {programSuggestions
+                      .filter((p) =>
+                        p.studyCycles.some((cycle) => cycle.id === formData.studyCycleId)
+                      )
+                      .map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                  </select>
+                  {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
+                </div>
+                {formData.programIds.length > 1 && (
+                  <button
+                    type="button"
+                    className="custom-button another-color"
+                    onClick={() => handleRemove(index)}
+                  >
+                    {t('general.management.delete')}
+                  </button>
+                )}
+              </li>
+            ))}
             <li>
               <button
                 type="button"
@@ -666,30 +675,37 @@ function AddThesisPageAdmin() {
                 {t('general.management.addNext')}
               </button>
             </li>
-        </ul>
-      </div>
+          </ul>
+        </div>
 
-      <div className='mb-3'>
-        <label className="bold" htmlFor="status">
-          {t('general.university.status')}:
-        </label>
-        <select
-          id="status"
-          name="status"
-          value={formData.statusId}
-          className="form-control"
-          onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
-        >
-          <option value={-1}>{t('general.management.choose')}</option>
-          {statuses.map((status) => (
-            <option key={status.id} value={status.id}>
-              {statusLabels[status.name] || status.name}
-            </option>
-          ))}
-        </select>
-        {errors.status && <div className="text-danger">{errors.status}</div>}
-      </div>
-
+        <div className='mb-3'>
+          <label className="bold" htmlFor="status">
+            {t('general.university.status')}:
+          </label>
+          <select
+            id="status"
+            name="status"
+            value={formData.statusId}
+            className="form-control"
+            onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
+          >
+            <option value={-1}>{t('general.management.choose')}</option>
+            {statuses.map((status) => (
+              <option key={status.id} value={status.id}>
+                {statusLabels[status.name] || status.name}
+              </option>
+            ))}
+          </select>
+          {errors.status && <div className="text-danger">{errors.status}</div>}
+        </div>
+        {!thesis &&
+          <div key={numPeople}>
+            <SupervisorReservationPage
+              numPeople={numPeople}
+              setStudentIndexes={setStudentIndexes}
+            />
+          </div>
+        }
       </form>
     </div>
   )

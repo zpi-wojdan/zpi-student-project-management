@@ -11,6 +11,7 @@ import { Employee } from '../../models/user/Employee';
 import { toast } from 'react-toastify';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
+import SupervisorReservationPage from '../reservation/SupervisorReservation';
 
 
 function AddThesisPageSupervisor() {
@@ -42,6 +43,7 @@ function AddThesisPageSupervisor() {
     programIds: [-1],
     studyCycleId: -1,
     statusId: -1,
+    studentIndexes: [],
   });
 
   const [statuses, setStatuses] = useState<Status[]>([]);
@@ -52,6 +54,7 @@ function AddThesisPageSupervisor() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
 
+  const [numPeople, setNumPeople] = useState<number>(formData.numPeople);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -329,6 +332,7 @@ function AddThesisPageSupervisor() {
       ...formData,
       [name]: value,
     });
+    setNumPeople(parseInt(value, 10));
   };
 
   const handleTextAreaChange = (
@@ -375,6 +379,10 @@ function AddThesisPageSupervisor() {
     const newProgram = [...formData.programIds];
     newProgram.push(-1);
     setFormData({ ...formData, programIds: newProgram });
+  }
+
+  const setStudentIndexes = (indexes: string[]) => {
+    setFormData({ ...formData, studentIndexes: indexes });
   }
 
   return (
@@ -574,6 +582,14 @@ function AddThesisPageSupervisor() {
             </li>
         </ul>
       </div>
+      {!thesis &&
+          <div key={numPeople}>
+          <SupervisorReservationPage
+            numPeople={numPeople}
+            setStudentIndexes={setStudentIndexes}
+          />
+        </div>
+        }
       </form>
     </div>
   )
