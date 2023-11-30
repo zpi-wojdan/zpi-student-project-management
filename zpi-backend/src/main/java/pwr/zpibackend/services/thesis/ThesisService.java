@@ -5,16 +5,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.models.thesis.Comment;
-import pwr.zpibackend.models.thesis.Status;
-import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.models.thesis.*;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.repositories.thesis.CommentRepository;
-import pwr.zpibackend.repositories.thesis.StatusRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.repositories.thesis.*;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
@@ -37,6 +33,7 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
+    private final ReservationRepository reservationRepository;
 
     private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
@@ -184,6 +181,19 @@ public class ThesisService {
 
     public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
         return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames, sort);
+    }
+
+    public List<Thesis> deleteThesisByStudyCycle(Long cycId) {
+        List<Thesis> thesesInCycle = thesisRepository.findAllByStudyCycle_Id(cycId);
+        List<Thesis> closedTheses = thesesInCycle.stream()
+                .filter(thesis -> "Closed".equals(thesis.getStatus().getName()))
+                .toList();
+
+        reservationRepository.deleteAll(closedTheses.stream()
+                .flatMap(thesis -> thesis.getReservations().stream())
+                .collect(Collectors.toList()));
+        thesisRepository.deleteAll(closedTheses);
+        return closedTheses;
     }
 
 

@@ -58,12 +58,12 @@ public class Thesis {
     private Status status;
     @Column(nullable = false)
     private Integer occupied = 0;
-    @JoinColumn(name = "thesis_id")
-    @OneToMany(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "thesis_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis", orphanRemoval = true)
     private List<Reservation> reservations;
     @CreationTimestamp
     @Column(name = "creation_time", updatable = false)
     private LocalDateTime creationTime;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis", orphanRemoval = true)
     private List<Comment> comments;
 }

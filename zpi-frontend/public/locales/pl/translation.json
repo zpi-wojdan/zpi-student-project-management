@@ -256,7 +256,7 @@
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",
-    "tooBigFileError": "Zbyt duży rozmiar pliku: ",
+    "tooBigFileError": "Zbyt duży rozmiar pliku {{fileName}} - jego rozmiar: {{fileSize}} MB",
     "filesNotSentError": "Nie udało się przesłać plików",
     "attachStudent": "Załącz pliki z danymi studentów",
     "attachEmployee": "Załącz pliki z danymi pracowników",

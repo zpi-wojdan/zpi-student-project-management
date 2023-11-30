@@ -4,7 +4,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.university.Deadline;
 
 import java.util.List;
 
@@ -23,4 +22,5 @@ public interface ThesisRepository extends JpaRepository<Thesis, Long>{
     List<Thesis> findAllByStatusNameIn(List<String> statusNames, Sort sort);
     List<Thesis> findAllByLeader_Id(Long leaderId);
     List<Thesis> findAllByOrderByStudyCycleNameDescIdDesc();
+    List<Thesis> findAllByStudyCycle_Id(Long cycId);
 }

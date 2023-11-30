@@ -131,7 +131,7 @@ function UplaodEmployeeFilePage() {
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
-        const errorMessage = t('uploadFiles.tooBigFileError') + file.name + ' - ' + size + " MB";
+        const errorMessage = t('uploadFiles.tooBigFileError', {fileName: file.name, fileSize: size});
         toast.error(errorMessage);
         return;
       }

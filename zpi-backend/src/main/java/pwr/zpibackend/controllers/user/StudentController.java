@@ -58,8 +58,8 @@ public class StudentController {
 
     @DeleteMapping("/cycle/{id}")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Student>> deleteStudentByProgramCycleId(@PathVariable Long id) {
-        return new ResponseEntity<>(studentService.deleteStudentByProgramCycleId(id), HttpStatus.OK);
+    public ResponseEntity<List<Student>> deleteStudentByStudyCycleId(@PathVariable Long id) {
+        return new ResponseEntity<>(studentService.deleteStudentByStudyCycleId(id), HttpStatus.OK);
     }
 
 }

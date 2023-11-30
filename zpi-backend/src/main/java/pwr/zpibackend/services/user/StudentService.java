@@ -142,7 +142,7 @@ public class StudentService {
         return newSpcSet;
     }
 
-    public List<Student> deleteStudentByProgramCycleId(Long cycleId) {
+    public List<Student> deleteStudentByStudyCycleId(Long cycleId) {
         List<Student> studentsToDelete = studentRepository.findByStudentProgramCycles_Cycle_Id(cycleId);
         List<Student> deletedStudents = new ArrayList<>();
 

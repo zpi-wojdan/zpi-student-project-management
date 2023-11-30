@@ -21,7 +21,7 @@ public class ThesisController {
     private final ThesisService thesisService;
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisService.getAllTheses(), HttpStatus.OK);
     }
@@ -94,4 +94,11 @@ public class ThesisController {
         }
         return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusNameList(empId, fixedNames), HttpStatus.OK);
     }
+
+    @DeleteMapping("/cycle/{id}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Thesis>> deleteThesisByStudyCycle(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.deleteThesisByStudyCycle(id), HttpStatus.OK);
+    }
+
 }
