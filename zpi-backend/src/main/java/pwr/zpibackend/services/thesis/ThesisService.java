@@ -3,24 +3,22 @@ package pwr.zpibackend.services.thesis;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
 
-import javax.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +51,7 @@ public class ThesisService {
                 .orElseThrow(() -> new NotFoundException("Thesis with id " + id + " does not exist"));
     }
 
+    @Transactional
     public Thesis addThesis(ThesisDTO thesis) {
         Employee supervisor = employeeRepository
                 .findById(thesis.getSupervisorId())
@@ -85,6 +84,7 @@ public class ThesisService {
         return newThesis;
     }
 
+    @Transactional
     public Thesis updateThesis(Long id, ThesisDTO thesis) {
         if (thesisRepository.existsById(id)) {
             Thesis updated = thesisRepository.findById(id).get();

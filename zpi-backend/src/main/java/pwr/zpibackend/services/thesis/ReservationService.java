@@ -3,6 +3,8 @@ package pwr.zpibackend.services.thesis;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
@@ -28,6 +30,7 @@ public class ReservationService {
     private final ThesisRepository thesisRepository;
     private final StudentRepository studentRepository;
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Reservation addReservation(ReservationDTO reservation) {
         if (reservation.getThesisId() == null || reservation.getStudent() == null || reservation.getReservationDate() == null) {
             throw new IllegalArgumentException("Thesis, student and reservation date must be provided.");
@@ -82,6 +85,7 @@ public class ReservationService {
         }
     }
 
+    @Transactional
     public Reservation updateReservation(Reservation newReservation, Long id) {
         return reservationRepository.findById(id)
                 .map(reservation -> {
@@ -95,6 +99,7 @@ public class ReservationService {
                 .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " does not exist."));
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Reservation deleteReservation(Long id) {
         return reservationRepository.findById(id)
                 .map(reservation -> {
