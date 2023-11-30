@@ -25,7 +25,11 @@ const SpecializationList: React.FC = () => {
     api.get('http://localhost:8080/specialization')
       .then((response) => {
         const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
-          return a.abbreviation.localeCompare(b.abbreviation);
+          const studyFieldComparison = a.studyField.name.localeCompare(b.studyField.name);
+          if (studyFieldComparison === 0) {
+            return a.abbreviation.localeCompare(b.abbreviation);
+          }
+          return studyFieldComparison;
         });
         setSpecializations(sortedSpecializations);
         setLoaded(true);
@@ -48,7 +52,8 @@ const SpecializationList: React.FC = () => {
     const filteredList = specializations.filter((specialization) => {
       return (
         specialization.abbreviation.toLowerCase().includes(searchText) ||
-        specialization.name.toLowerCase().includes(searchText)
+        specialization.name.toLowerCase().includes(searchText) ||
+        specialization.studyField.name.toLowerCase().includes(searchText)
       );
     });
     setAfterSearchSpecializations(() => filteredList);
@@ -220,7 +225,8 @@ const SpecializationList: React.FC = () => {
                 <tr>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
                   <th style={{ width: '15%', textAlign: 'center' }}>{t('general.university.abbreviation')}</th>
-                  <th style={{ width: '62%' }}>{t('general.university.name')}</th>
+                  <th style={{ width: '40%' }}>{t('general.university.name')}</th>
+                  <th style={{ width: '22%' }}>{t('general.university.field')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
                 </tr>
@@ -232,6 +238,7 @@ const SpecializationList: React.FC = () => {
                       <td className="centered">{indexOfFirstItem + index + 1}</td>
                       <td className="centered">{specialization.abbreviation}</td>
                       <td>{specialization.name}</td>
+                      <td>{specialization.studyField.name}</td>
                       <td>
                         <button
                           className="custom-button coverall"

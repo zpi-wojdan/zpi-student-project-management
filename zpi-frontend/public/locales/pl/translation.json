@@ -71,6 +71,7 @@
       "specialization": "Specjalność",
       "specializations": "Specjalności",
       "studyCycle": "Cykl nauczania",
+      "latestStudyCycle": "Ostatni cykl nauczania",
       "studyCycles": "Cykle nauczania",
       "studyProgram": "Program studiów",
       "studyPrograms": "Programy studiów",
@@ -293,8 +294,8 @@
     "accessDenied": "Zaloguj sie, aby uzyskać dostęp do tej strony.",
     "loginError": "Wystąpił błąd logowania. Spróbuj ponownie.",
     "welcome": "Witaj w systemie logowania",
-    "instruction": "Kliknij przycisk poniżej, aby zalogować się za pomocą uczelnianego adresu email.",
-    "imageAlt": "Budynek A1 z logo PWr"
+    "instruction": "Kliknij przycisk poniżej, aby zalogować się za pomocą adresu email z\u00A0domeny pwr.",
+    "imageAlt": "Budynek PWr"
   },
   "missingPage": {
     "title": "Nie znaleziono strony",

@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         return new ErrorDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler(SQLException.class)
     public ResponseEntity<ErrorDetails> handleDataIntegrityViolationException(SQLException e, WebRequest request) {
         ErrorDetails errorDetails = getErrorDetails(e, request);
         return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);

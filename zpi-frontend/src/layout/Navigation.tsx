@@ -78,6 +78,13 @@ const Navigation = ({ children }: NavigationProps) => {
             localStorage.removeItem('publicThesesFilterCycle');
             localStorage.removeItem('publicThesesFilterSupervisors');
         }
+        if (prevPath.startsWith('/manage') && !path.startsWith('/manage')) {
+            localStorage.removeItem('approverFilterFaculty');
+            localStorage.removeItem('approverFilterField');
+            localStorage.removeItem('approverFilterSpecialization');
+            localStorage.removeItem('approverFilterCycle');
+            localStorage.removeItem('approverFilterSupervisors');
+        }
         setPrevPath(path);
     }, [location.pathname]);
 
@@ -160,7 +167,7 @@ const Navigation = ({ children }: NavigationProps) => {
                 )}
             </div>
             <div className='container'>
-                <div className={`container p-0 ${isLoginPage ? 'd-none' : ''}`}>
+                <div className={'container p-0'}>
                     <nav className="navbar navbar-expand-lg navbar-light bg-light">
                         <div className="container">
                             <button className="navbar-toggler ms-auto" type="button" onClick={() => setShowNav(!showNav)}>
