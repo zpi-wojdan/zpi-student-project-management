@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Thesis } from '../../../models/thesis/Thesis';
+import {Thesis, ThesisFront} from '../../../models/thesis/Thesis';
 import api from '../../../utils/api';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
@@ -244,7 +244,13 @@ const ThesisList: React.FC = () => {
       const facultyFilter = selectedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = selectedSpecializationAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: Thesis) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
+      const vacanciesFilter = (thesis: Thesis) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= selectedMinVacancies && vacancies <= selectedMaxVacancies;
+      };
       const cycleFilter = selectedCycleName ? (thesis: Thesis) => thesis.studyCycle?.name === selectedCycleName : () => true;
       const supervisorFilter = selectedSupervisors.length ? (thesis: Thesis) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
       const statusFilter = selectedStatusName ? (thesis: Thesis) => thesis.status.name === selectedStatusName : () => true;
@@ -282,7 +288,13 @@ const ThesisList: React.FC = () => {
       const facultyFilter = savedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
       const fieldFilter = savedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = savedSpecializationAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: Thesis) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
+      const vacanciesFilter = (thesis: Thesis) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= savedMinVacancies && vacancies <= savedMaxVacancies;
+      };
       const cycleFilter = savedCycleName ? (thesis: Thesis) => thesis.studyCycle?.name === savedCycleName : () => true;
       const supervisorFilter = savedsupervisors.length ? (thesis: Thesis) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
       const statusFilter = savedStatusName ? (thesis: Thesis) => thesis.status.name === savedStatusName : () => true;

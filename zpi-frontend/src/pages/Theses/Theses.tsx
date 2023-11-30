@@ -249,7 +249,13 @@ const ThesesTable: React.FC = () => {
       const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
+      const vacanciesFilter = (thesis: ThesisFront) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= selectedMinVacancies && vacancies <= selectedMaxVacancies;
+      };
       const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
       const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
 
@@ -283,7 +289,13 @@ const ThesesTable: React.FC = () => {
       const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
       const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
+      const vacanciesFilter = (thesis: ThesisFront) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= savedMinVacancies && vacancies <= savedMaxVacancies;
+      };
       const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
       const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
 
