@@ -8,7 +8,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { handleDeletionError } from '../../../utils/handleDeleteError';
-import SearchBar from '../../../components/SeatchBar';
+import SearchBar from '../../../components/SearchBar';
 import api_access from '../../../utils/api_access';
 
 import LoadingSpinner from "../../../components/LoadingSpinner";

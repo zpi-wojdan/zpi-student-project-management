@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import { Reservation } from '../models/thesis/Reservation';
-import DeleteConfirmation from './DeleteConfirmation';
 import api_access from '../utils/api_access';
 import ChoiceConfirmation from './ChoiceConfirmation';
 
