@@ -14,6 +14,8 @@ import { Reservation } from "../../models/thesis/Reservation";
 import { toast } from "react-toastify";
 import { Comment } from '../../models/thesis/Comment';
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { handleDeletionError } from '../../utils/handleDeleteError';
+import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 
 const ThesesDetails: React.FC = () => {
   // @ts-ignore
@@ -84,6 +86,34 @@ const ThesesDetails: React.FC = () => {
     }
   };
 
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
+  const handleDeleteClick = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    api.delete(`http://localhost:8080/thesis/${id}`)
+      .then(() => {
+        toast.success(t('thesis.deleteSuccessful'));
+        navigate("/theses");
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+        handleDeletionError(error, t, 'thesis');
+
+      });
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+  };
+
   const [user, setUser] = useState<Student & Employee>();
   const [commentSectionRights, setCommentSectionRights] = useState(false);
 
@@ -94,7 +124,8 @@ const ThesesDetails: React.FC = () => {
   useEffect(() => {
     const byRoles = gotCommentSectionRightsByRoles();
     const bySupervisor = gotCommentSectionRightsBySupervisor();
-    setCommentSectionRights(byRoles || bySupervisor);
+    const isDraft = thesis?.status.name == "Draft";
+    setCommentSectionRights(!isDraft && (byRoles || bySupervisor));
   }, [user, thesis])
 
   const handleReadyForApproval = async () => {
@@ -224,17 +255,41 @@ const ThesesDetails: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='row d-flex justify-content-between'>
-        <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
-          &larr; {t('general.management.goBack')}
-        </button>
+      <div className='d-flex justify-content-between align-items-center mb-3'>
+        <div className='d-flex justify-content-begin align-items-center mb-3'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+            &larr; {t('general.management.goBack')}
+          </button>
+          {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
+            <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
+              {t('thesis.edit')}
+            </button>
+            <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
+              <i className="bi bi-trash"></i>
+            </button>
+            {showDeleteConfirmation && (
+              <tr>
+                <td colSpan={5}>
+                  <ChoiceConfirmation
+                    isOpen={showDeleteConfirmation}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                    questionText={t('thesis.deleteConfirmation')}
+                  />
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
+          ) : (<></>)}
+        </div>
         {loaded ? (<React.Fragment>
           {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
             (user?.mail === thesis?.supervisor.mail ||
               thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
             thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
             (
-              <button className="col-sm-2 custom-button m-3" onClick={downloadDeclaration}>
+              <button className="col-sm-2 custom-button mb-3" onClick={downloadDeclaration}>
                 {t('thesis.downloadDeclaration')}
               </button>
             ) : null}
@@ -246,7 +301,7 @@ const ThesesDetails: React.FC = () => {
             user?.mail === thesis?.supervisor.mail) ||
             user?.roles?.some(role => role.name === 'admin')) ?
             (
-              <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
+              <button type="button" className="col-sm-2 custom-button mb-3" onClick={() => {
                 if (user?.role?.name === 'student') {
                   if (thesis?.reservations.length === 0) {
                     navigate('/reservation', { state: { thesis: thesis } })
@@ -282,7 +337,7 @@ const ThesesDetails: React.FC = () => {
       </div>
       <div>
         {!loaded ? (
-            <LoadingSpinner height="50vh" />
+          <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {thesis ? (
             <div>

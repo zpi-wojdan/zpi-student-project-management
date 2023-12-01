@@ -250,7 +250,8 @@
     "rejectionError": "Thesis has not been rejected",
     "acceptSuccesful": "Thesis has been accepted",
     "acceptError": "Thesis has not been accepted",
-    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!"
+    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!",
+    "drafts": "Drafts"
   },
   "status": {
     "draft": "Draft",

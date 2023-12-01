@@ -44,6 +44,7 @@ import Reports from "./pages/Admin/Reports";
 import DeadlineList from "./pages/Admin/Deadline/List";
 import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
+import ThesesSupervisor from './pages/Theses/ThesesSupervisor';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -71,19 +72,15 @@ export default function App(props: IAppProps) {
 
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
-                  <Route path='my' element={<ReservationPage admin={false}/>} />
-                  <Route path='sup-theses/add' element={<AddThesisPageSupervisor />} />
-                  <Route path='sup-theses/edit/:id' element={<AddThesisPageSupervisor />} />
+                  <Route path='my' element={<ThesesSupervisor />} />
+                  <Route path='my/:id' element={<ThesesDetails />} />
+                  <Route path='my/add' element={<AddThesisPageSupervisor />} />
+                  <Route path='my/edit/:id' element={<AddThesisPageSupervisor />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
                   <Route path='public-theses' element={<ThesesTable />} />
                   <Route path='public-theses/:id' element={<ThesesDetails />} />
-                </Route>
-
-                <Route element={<RequireAuth allowedRoles={['approver']} />}>
-                  <Route path='manage' element={<ApproveList />} />
-                  <Route path='manage/:id' element={<ApproveDetails />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['approver']} />}>

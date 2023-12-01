@@ -251,7 +251,8 @@
     "rejectionError": "Temat nie został odrzucony",
     "acceptSuccesful": "Temat został zaakceptowany",
     "acceptError": "Temat nie został zaakceptowany",
-    "deleteErrorWithReference": "Temat nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
+    "deleteErrorWithReference": "Temat nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
+    "drafts": "Wersje robocze"
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",
