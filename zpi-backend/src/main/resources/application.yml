@@ -69,9 +69,6 @@ spring:
           starttls:
             enable: true
             required: true
-    verify:
-      host:
-        res_leader: ${FRONTEND_URL}/public-theses
 
   messages:
     basename: messages
