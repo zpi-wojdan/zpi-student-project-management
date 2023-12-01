@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import api from '../../../utils/api';
 import handleSignOut from '../../../auth/Logout';
 import useAuth from "../../../auth/useAuth";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const EmployeeDetails: React.FC = () => {
@@ -59,7 +60,7 @@ const EmployeeDetails: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t("employee.deleteError"));
+        handleDeletionError(error, t, 'employee');
       });
     setShowDeleteConfirmation(false);
   };

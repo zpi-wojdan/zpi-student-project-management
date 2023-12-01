@@ -118,15 +118,11 @@ public class EmployeeService {
         return newRoles;
     }
 
-    public Employee deleteEmployee(Long id) throws NotFoundException, CannotDeleteException {
+    public Employee deleteEmployee(Long id) throws NotFoundException {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Employee with id " + id + " does not exist"));
 
-        try {
-            employeeRepository.delete(employee);
-        } catch (Exception e) {
-            throw new CannotDeleteException("Employee with email " + employee.getMail() + " cannot be deleted");
-        }
+        employeeRepository.delete(employee);
         return employee;
     }
 
