@@ -9,11 +9,12 @@ services:
     environment:
       ACTIVE_PROFILE: prod
       FRONTEND_PORT: 80
-      FRONTEND_HOST: localhost
+      FRONTEND_HOST: proj01.zpi.wit.pwr.edu.pl
       POSTRESQL_HOST: db
       POSTRESQL_DB: zpi_db2
       POSTRESQL_USER: postgres
       POSTRESQL_PASSWORD: asdlkj000
+      KEY_STORE_PASSWORD: asdlkj000
     depends_on:
       - db
 
@@ -22,7 +23,7 @@ services:
     ports:
       - 80:80
     environment:
-      REACT_APP_BACKEND_HOST: http://localhost:8080/
+      REACT_APP_BACKEND_HOST: https://proj01.zpi.wit.pwr.edu.pl:8080/
     depends_on:
       - backend
   db:

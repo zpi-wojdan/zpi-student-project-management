@@ -4,6 +4,11 @@ spring:
 
   server:
     port: ${PORT:8080}
+    ssl:
+      key-store: classpath:keystore/keystore.p12
+      key-store-password: ${KEY_STORE_PASSWORD}
+      keyStoreType: PKCS12
+      keyAlias: 1
 
   frontend:
     url: ${FRONTEND_URL:http://${FRONTEND_HOST}:${FRONTEND_PORT}}
