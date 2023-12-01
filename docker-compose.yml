@@ -19,6 +19,7 @@ services:
       MAIL_PORT: 587
       MAIL_USERNAME: 260452@student.pwr.edu.pl
       MAIL_PASSWORD: asdlkj000
+      GOOGLE_CLIENT_ID: 333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com
     depends_on:
       - db
 
