@@ -25,7 +25,7 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
-    const [showList, setShowList] = useState<boolean>(true);
+    const [showList, setShowList] = useState<boolean>(false);
 
     useEffect(() => {
         const updatedReservations = [...reservations].slice(0, numPeople);
@@ -105,7 +105,7 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
     return (
         <div className="page-margin">
             <label className="bold" onClick={() => setShowList(!showList)}>
-                {t('general.people.students')} {showList ? '▲' : '▼'}
+                {t('general.people.students')} {showList ? '▼' : '▶'}
             </label>
             {showList &&
                 <table className="table table-borderless">
@@ -151,6 +151,9 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
                     </tbody>
                 </table>
             }
+            <div className="text-info">
+                {t('thesis.addStudentsMessage')}
+            </div>
         </div>
     );
 
