@@ -8,11 +8,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private ErrorDetails getErrorDetails(Exception e, WebRequest request) {
+        return new ErrorDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDetails> handleIllegalArgumentException(IllegalArgumentException e, WebRequest request) {
@@ -27,13 +32,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
-    private ErrorDetails getErrorDetails(Exception e, WebRequest request) {
-        return new ErrorDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        return new ResponseEntity<>("A data integrity violation occurred.", HttpStatus.METHOD_NOT_ALLOWED);
+    @ExceptionHandler(SQLException.class)
+    public ResponseEntity<ErrorDetails> handleDataIntegrityViolationException(SQLException e, WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -58,4 +60,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMaxSizeExceededException(MaxUploadSizeExceededException exception){
         return ResponseEntity.status(400).body("File was too large\n" + Arrays.toString(exception.getStackTrace()));
     }
+
+    @ExceptionHandler(ThesisOccupancyFullException.class)
+    public ResponseEntity<ErrorDetails> handleThesisOccupancyFullException(ThesisOccupancyFullException e,
+                                                                           WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
 }
+

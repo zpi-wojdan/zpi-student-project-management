@@ -10,6 +10,7 @@ import { Faculty } from '../../../models/university/Faculty';
 import { StudyField } from '../../../models/university/StudyField';
 import { Specialization } from '../../../models/university/Specialization';
 import api_access from '../../../utils/api_access';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudentList: React.FC = () => {
   // @ts-ignore
@@ -110,16 +111,21 @@ const StudentList: React.FC = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleToggleSidebar = (submitted: boolean) => {
+  const handleSubmitFilters = (toogle: boolean) => {
 
-    if (submitted) {
-      setSubmittedFacultyAbbr(selectedFacultyAbbr)
-      setSubmittedFieldAbbr(selectedFieldAbbr)
-      setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
-      localStorage.setItem('studentFilterFaculty', selectedFacultyAbbr);
-      localStorage.setItem('studentFilterField', selectedFieldAbbr);
-      localStorage.setItem('studentFilterSpecialization', selectedSpecializationAbbr);
-    }
+    setSubmittedFacultyAbbr(selectedFacultyAbbr)
+    setSubmittedFieldAbbr(selectedFieldAbbr)
+    setSubmittedSpecializationAbbr(selectedSpecializationAbbr)
+    localStorage.setItem('studentFilterFaculty', selectedFacultyAbbr);
+    localStorage.setItem('studentFilterField', selectedFieldAbbr);
+    localStorage.setItem('studentFilterSpecialization', selectedSpecializationAbbr);
+
+    if (toogle)
+      handleToggleSidebar()
+  };
+
+  const handleToggleSidebar = () => {
+
     if (!sidebarOpen) {
       setSelectedFacultyAbbr(submittedFacultyAbbr)
       setSelectedFieldAbbr(submittedFieldAbbr)
@@ -128,10 +134,28 @@ const StudentList: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const handleDeleteFilters = () => {
+
+    setSelectedFacultyAbbr("");
+    setSelectedFieldAbbr("");
+    setSelectedSpecializationAbbr("");
+
+    localStorage.removeItem('studentFilterFaculty');
+    localStorage.removeItem('studentFilterField');
+    localStorage.removeItem('studentFilterSpecialization');
+
+    setSubmittedFacultyAbbr("");
+    setSubmittedFieldAbbr("");
+    setSubmittedSpecializationAbbr("");
+
+    setFilteredStudents(students);
+  };
+
   const handleFiltration = (toggle: boolean) => {
 
     if (toggle) {
-      handleToggleSidebar(true)
+      handleSubmitFilters(true)
+
       const facultyFilter = selectedFacultyAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.studyField ? sp.program.studyField.abbreviation === selectedFieldAbbr : sp.program.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = selectedSpecializationAbbr ? (student: Student) => student.studentProgramCycles.some(sp => sp.program.specialization ? sp.program.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
@@ -163,8 +187,15 @@ const StudentList: React.FC = () => {
       );
       setFilteredStudents(newFilteredStudents);
     }
+  }
 
-
+  const filtered = () => {
+    if (submittedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr) {
+      return true
+    }
+    return false
   }
 
   // Wyszukiwanie
@@ -228,7 +259,7 @@ const StudentList: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar(false)}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -309,11 +340,7 @@ const StudentList: React.FC = () => {
         <hr className="my-4" />
         <div className="d-flex justify-content-center my-4">
           <button className="custom-button another-color"
-            onClick={() => {
-              setSelectedFacultyAbbr("");
-              setSelectedFieldAbbr("");
-              setSelectedSpecializationAbbr("");
-            }}>
+            onClick={() => { handleDeleteFilters() }}>
             {t('general.management.filterClear')}
           </button>
           <button className="custom-button" onClick={() => handleFiltration(true)}>
@@ -330,9 +357,7 @@ const StudentList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {students.length === 0 ? (
           <div className='info-no-data'>

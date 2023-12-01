@@ -1,8 +1,12 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
@@ -10,7 +14,6 @@ import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
@@ -18,8 +21,12 @@ import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.services.mailing.MailService;
+import pwr.zpibackend.utils.MailTemplates;
 
-import javax.transaction.Transactional;
+import static java.time.LocalDateTime.now;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,13 +43,15 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
+    private final MailService mailService;
+
+    private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
     public List<Thesis> getAllTheses() {
-        return thesisRepository.findAll();
+        return thesisRepository.findAllByOrderByStudyCycleNameDescIdDesc();
     }
 
     public List<Thesis> getAllPublicTheses() {
-        Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
         return thesisRepository.findAllByStatusNameIn(Arrays.asList("Approved", "Assigned", "Closed"), sort);
     }
 
@@ -51,6 +60,7 @@ public class ThesisService {
                 .orElseThrow(() -> new NotFoundException("Thesis with id " + id + " does not exist"));
     }
 
+    @Transactional
     public Thesis addThesis(ThesisDTO thesis) {
         Employee supervisor = employeeRepository
                 .findById(thesis.getSupervisorId())
@@ -83,6 +93,7 @@ public class ThesisService {
         return newThesis;
     }
 
+    @Transactional
     public Thesis updateThesis(Long id, ThesisDTO thesis) {
         if (thesisRepository.existsById(id)) {
             Thesis updated = thesisRepository.findById(id).get();
@@ -154,10 +165,9 @@ public class ThesisService {
         throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
-
     //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
     public List<Thesis> getAllThesesByStatusName(String name) {
-        return thesisRepository.findAllByStatusName(name);
+        return thesisRepository.findAllByStatusName(name, sort);
     }
 
     //  np na zwrócenie wszystkich tematów, które nie są draftami
@@ -166,24 +176,23 @@ public class ThesisService {
         if (excludedStatus.isEmpty()) {
             throw new NotFoundException("Status with name " + name + " does not exist");
         }
-        return thesisRepository.findAll().stream()
+        return thesisRepository.findAllByOrderByStudyCycleNameDescIdDesc().stream()
                 .filter(thesis -> !name.equals(thesis.getStatus().getName()))
                 .collect(Collectors.toList());
     }
 
     //  np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusName(Long empId, String statName) {
-        return thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName);
+        return thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName, sort);
     }
 
     //  np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
-        return thesisRepository.findAllBySupervisorId(id);
+        return thesisRepository.findAllBySupervisorId(id, sort);
     }
 
     public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
-        return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames);
+        return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames, sort);
     }
-
 
 }

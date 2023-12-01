@@ -23,10 +23,6 @@ code {
   accent-color: #9A342D;
 }
 
-#sign-in-button {
-  width: 20%;
-}
-
 /* Navbar */
 .custom-dropdown .dropdown-menu a:focus {
   background-color: transparent;
@@ -300,3 +296,34 @@ ul > li > ul {
   text-decoration: underline;
   color: #9A342D !important;
 }
+
+/* Login page */
+.login-page {
+  margin-top: 20px;
+  margin-bottom: 60px;
+  height: 55vh;
+}
+
+.login-page .image-div {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.login-page .image-div .image {
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Spinner */
+.custom-spinner {
+  border-color: #9A342D !important;
+  border-right-color: transparent !important;
+  width: 4rem;
+  height: 4rem;
+}
+
+.spinner-text {
+  font-size: 1.5em;
+}
+

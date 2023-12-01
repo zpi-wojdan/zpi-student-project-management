@@ -56,7 +56,7 @@ const StudyCycleForm: React.FC = () => {
         api.put(api_access + `studycycle/${cycleId}`, formData)
           .then(() => {
             navigate("/cycles")
-            toast.success(t("cycle.updateSuccessful"));
+            toast.success(t("study_cycle.updateSuccessful"));
           })
           .catch((error) => {
             console.error(error);
@@ -64,13 +64,13 @@ const StudyCycleForm: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error(t("cycle.updateError"));
+            toast.error(t("study_cycle.updateError"));
           });
       } else {
         api.post(api_access + 'studycycle', formData)
           .then(() => {
             navigate("/cycles")
-            toast.success(t("cycle.addSuccessful"));
+            toast.success(t("study_cycle.addSuccessful"));
           })
           .catch((error) => {
             console.error(error);
@@ -78,7 +78,7 @@ const StudyCycleForm: React.FC = () => {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            toast.error(t("cycle.addError"));
+            toast.error(t("study_cycle.addError"));
           });
       }
     }
@@ -115,7 +115,7 @@ const StudyCycleForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {studyCycle ? t('cycle.save') : t('cycle.add')}
+            {studyCycle ? t('study_cycle.save') : t('study_cycle.add')}
           </button>
         </div>
         <div className="mb-3">
@@ -131,7 +131,7 @@ const StudyCycleForm: React.FC = () => {
             className="form-control"
           />
           <div className="text-info">
-            {t('cycle.goodFormat')}
+            {t('study_cycle.goodFormat')}
           </div>
           {errors.name && <div className="text-danger">{errors.name}</div>}
         </div>

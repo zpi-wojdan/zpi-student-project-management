@@ -7,7 +7,9 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SeatchBar';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 import api_access from '../../../utils/api_access';
 
 
@@ -105,7 +107,7 @@ const StudyCycleList: React.FC = () => {
   const handleConfirmDelete = () => {
     api.delete(api_access + `studycycle/${studyCycleToDelete}`)
       .then(() => {
-        toast.success(t('cycle.deleteSuccessful'));
+        toast.success(t('study_cycle.deleteSuccessful'));
         setRefreshList(!refreshList);
       })
       .catch((error) => {
@@ -114,7 +116,7 @@ const StudyCycleList: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('cycle.deleteError'));
+        handleDeletionError(error, t, 'study_cycle');
       });
     setShowDeleteConfirmation(false);
   };
@@ -127,13 +129,11 @@ const StudyCycleList: React.FC = () => {
     <div className='page-margin'>
       <div >
         <button className="custom-button" onClick={() => { navigate('/cycles/add') }}>
-          {t('cycle.add')}
+          {t('study_cycle.add')}
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {cycles.length === 0 ? (
           <div className='info-no-data'>
@@ -255,7 +255,7 @@ const StudyCycleList: React.FC = () => {
                             onClose={handleCancelDelete}
                             onConfirm={handleConfirmDelete}
                             onCancel={handleCancelDelete}
-                            questionText={t('cycle.deleteConfirmation')}
+                            questionText={t('study_cycle.deleteConfirmation')}
                           />
                         </td>
                       </tr>

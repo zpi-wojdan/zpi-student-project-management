@@ -7,8 +7,10 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SeatchBar';
 import api_access from '../../../utils/api_access';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudyFieldList: React.FC = () => {
   // @ts-ignore
@@ -116,7 +118,7 @@ const StudyFieldList: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('field.deleteError'));
+        handleDeletionError(error, t, 'study_field');
       });
     setShowDeleteConfirmation(false);
   };
@@ -129,13 +131,11 @@ const StudyFieldList: React.FC = () => {
     <div className='page-margin'>
       <div >
         <button className="custom-button" onClick={() => { navigate('/fields/add') }}>
-          {t('field.add')}
+          {t('study_field.add')}
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {studyFields.length === 0 ? (
           <div className='info-no-data'>
@@ -259,7 +259,7 @@ const StudyFieldList: React.FC = () => {
                             onClose={handleCancelDelete}
                             onConfirm={handleConfirmDelete}
                             onCancel={handleCancelDelete}
-                            questionText={t('field.deleteConfirmation')}
+                            questionText={t('study_field.deleteConfirmation')}
                           />
                         </td>
                       </tr>
