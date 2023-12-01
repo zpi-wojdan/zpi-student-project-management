@@ -411,6 +411,34 @@ public class ThesisServiceTests {
         assertEquals(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName), Collections.emptyList());
     }
 
+    @Test
+    public void testUpdateThesesStatusInBulk(){
+        String statName = "Pending_approval";
+        List<Long> thesesIds = List.of(6L, -1L);
+        Status newStatus = new Status(2L, "Pending approval");
 
+        List<Thesis> updatedTheses = new ArrayList<>();
+        updatedTheses.add(theses.get(0));
+        for (Thesis up : updatedTheses){
+            up.setStatus(newStatus);
+        }
+
+        when(statusRepository.findByName(statName)).thenReturn(Optional.of(newStatus));
+        when(thesisRepository.findById(thesesIds.get(0))).thenReturn(Optional.of(theses.get(0)));
+        when(thesisRepository.findById(thesesIds.get(1))).thenReturn(Optional.empty());
+        when(thesisRepository.saveAll(updatedTheses)).thenReturn(updatedTheses);
+
+        List<Thesis> result = thesisService.updateThesesStatusInBulk(statName, thesesIds);
+        assertEquals(updatedTheses, result);
+    }
+
+    @Test
+    public void testUpdateThesesStatusInBulkNotFound(){
+        String statName = "foo";
+        List<Long> thesesIds = mock(List.class);
+
+        when(statusRepository.findByName(statName)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> thesisService.updateThesesStatusInBulk(statName, thesesIds));
+    }
 
 }

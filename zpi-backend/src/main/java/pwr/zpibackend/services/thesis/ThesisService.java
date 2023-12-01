@@ -186,5 +186,19 @@ public class ThesisService {
         return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames, sort);
     }
 
+    public List<Thesis> updateThesesStatusInBulk(String statName, List<Long> thesesIds) {
+        Status newStatus = statusRepository.findByName(statName).orElseThrow(NotFoundException::new);
+        List<Thesis> thesesForUpdate = new ArrayList<>();
+        thesesIds.forEach(id -> {
+            Optional<Thesis> thesisOptional = thesisRepository.findById(id);
+            if (thesisOptional.isPresent()) {
+                Thesis thesis = thesisOptional.get();
+                thesis.setStatus(newStatus);
+                thesesForUpdate.add(thesis);
+            }
+        });
+        return thesisRepository.saveAll(thesesForUpdate);
+    }
+
 
 }

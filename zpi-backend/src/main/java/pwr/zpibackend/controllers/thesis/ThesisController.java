@@ -94,4 +94,12 @@ public class ThesisController {
         }
         return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusNameList(empId, fixedNames), HttpStatus.OK);
     }
+
+
+    @PutMapping("/bulk/{statName}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_APPROVER')")
+    public ResponseEntity<List<Thesis>> updateThesesStatusInBulk(@PathVariable String statName, @RequestBody List<Long> thesesIds) {
+        String realName = statName.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.updateThesesStatusInBulk(realName, thesesIds), HttpStatus.OK);
+    }
 }
