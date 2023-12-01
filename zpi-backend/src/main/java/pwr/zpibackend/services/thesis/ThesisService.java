@@ -1,6 +1,9 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +20,13 @@ import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
+import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.services.mailing.MailService;
+import pwr.zpibackend.utils.MailTemplates;
 
+import static java.time.LocalDateTime.now;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +43,7 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
+    private final MailService mailService;
 
     private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
@@ -185,6 +194,5 @@ public class ThesisService {
     public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
         return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames, sort);
     }
-
 
 }

@@ -1,6 +1,8 @@
 package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +20,8 @@ import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.services.mailing.MailService;
+import pwr.zpibackend.utils.MailTemplates;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -33,6 +37,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ThesisRepository thesisRepository;
     private final StudentRepository studentRepository;
+    private final MailService mailService;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Reservation addReservation(ReservationDTO reservation) {
@@ -74,9 +79,23 @@ public class ReservationService {
             thesis.setReservations(reservations);
             thesis.setOccupied(thesis.getOccupied() + 1);
             newReservation.setThesis(thesis);
+
+            if (newReservation.isConfirmedByLeader() && !newReservation.isConfirmedByStudent()) {
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_LEADER,
+                        student, null, thesis);
+            } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_STUDENT,
+                        student, null, thesis);
+            } else {
+                mailService.sendHtmlMailMessage(student.getMail(), "thesis",
+                        MailTemplates.RESERVATION_SUPERVISOR, student, null, thesis);
+            }
         } else {
             throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
         }
+
+
+
         reservationRepository.saveAndFlush(newReservation);
         return newReservation;
     }
@@ -96,8 +115,16 @@ public class ReservationService {
 
     @Transactional
     public Reservation updateReservation(Reservation newReservation, Long id) {
+
         return reservationRepository.findById(id)
                 .map(reservation -> {
+                    if (!reservation.isReadyForApproval() && newReservation.isReadyForApproval()) {
+                        mailService.sendHtmlMailMessage(reservation.getThesis().getSupervisor().getMail(),
+                                "thesis", MailTemplates.RESERVATION_SENT_TO_SUPERVISOR,
+                                reservation.getStudent(), reservation.getThesis().getSupervisor(),
+                                reservation.getThesis());
+                    }
+
                     reservation.setConfirmedByLeader(newReservation.isConfirmedByLeader());
                     reservation.setConfirmedBySupervisor(newReservation.isConfirmedBySupervisor());
                     reservation.setReadyForApproval(newReservation.isReadyForApproval());
@@ -146,6 +173,12 @@ public class ReservationService {
                 .filter(reservation -> reservation.getReservationDate().isBefore(threshold))
                 .forEach(reservation -> {
                     reservationRepository.delete(reservation);
+
+                    mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
+                            "thesis", MailTemplates.RESERVATION_CANCELED,
+                            reservation.getStudent(), null,
+                            reservation.getThesis());
+
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
                                 thesis.setOccupied(Math.min(thesis.getOccupied() - 1, 0));
