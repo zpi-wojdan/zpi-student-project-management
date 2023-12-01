@@ -31,7 +31,7 @@ public class TitleService {
         if (titleRepository.existsByName(title.getName())) {
             throw new AlreadyExistsException("title with name " + title.getName() + " already exists");
         }
-        Title newtitle = new Title(title.getName());
+        Title newtitle = new Title(title.getName(), title.getNumTheses());
         return titleRepository.save(newtitle);
     }
 

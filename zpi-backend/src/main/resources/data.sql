@@ -108,14 +108,14 @@ VALUES
     ('W04-TINP-000P-OSIE7', (SELECT id FROM study_field WHERE abbreviation = 'TIN'), NULL, (SELECT id FROM faculty WHERE abbreviation = 'W04N')),   /*  2022/23-Z   */
     ('W04-TINP-000P-OSME3', (SELECT id FROM study_field WHERE abbreviation = 'TIN'), NULL, (SELECT id FROM faculty WHERE abbreviation = 'W04N'));   /*  2022/23-Z   */
 
-INSERT INTO title (name)
+INSERT INTO title (name, num_theses)
 VALUES
-    ('mgr inż.'),
-    ('dr'),
-    ('dr hab.'),
-    ('prof'),
-    ('prof. dr hab.'),
-    ('mgr');
+    ('mgr', 1),
+    ('mgr inż.', 1),
+    ('dr', 2),
+    ('dr hab.', 2),
+    ('prof', 3),
+    ('prof. dr hab.', 3);
 
 INSERT INTO status (name)
 VALUES
@@ -174,35 +174,35 @@ VALUES
     ('211017@student.pwr.edu.pl', 'Olivia', 'Moran', '211017', (SELECT id FROM role WHERE name = 'student'), ''),
     ('100918@student.pwr.edu.pl', 'Daniel', 'Haynes', '100918', (SELECT id FROM role WHERE name = 'student'), 'STU');
 
-INSERT INTO employee (mail, name, surname, title, department_id)
+INSERT INTO employee (mail, name, surname, title, num_theses, department_id)
 VALUES
-    ('john.doe@pwr.edu.pl', 'John', 'Doe', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('alice.smith@pwr.edu.pl', 'Alice', 'Smith', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('michael.johnson@pwr.edu.pl', 'Michael', 'Johnson', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('sarah.williams@pwr.edu.pl', 'Sarah', 'Williams', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('david.brown@pwr.edu.pl', 'David', 'Brown', (SELECT id FROM title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('jennifer.lee@pwr.edu.pl', 'Jennifer', 'Lee', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('christopher.taylor@pwr.edu.pl', 'Christopher', 'Taylor', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('jessica.harris@pwr.edu.pl', 'Jessica', 'Harris', (SELECT id FROM title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('matthew.clark@pwr.edu.pl', 'Matthew', 'Clark', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('emily.anderson@pwr.edu.pl', 'Emily', 'Anderson', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('daniel.lewis@pwr.edu.pl', 'Daniel', 'Lewis', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('olivia.ward@pwr.edu.pl', 'Olivia', 'Ward', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('andrew.scott@pwr.edu.pl', 'Andrew', 'Scott', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('sophia.baker@pwr.edu.pl', 'Sophia', 'Baker', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('william.taylor@pwr.edu.pl', 'William', 'Taylor', (SELECT id FROM title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('ava.green@pwr.edu.pl', 'Ava', 'Green', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('olivia.young@pwr.edu.pl', 'Olivia', 'Young', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('daniel.king@pwr.edu.pl', 'Daniel', 'King', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('sophia.cooper@pwr.edu.pl', 'Sophia', 'Cooper', (SELECT id FROM title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('william.khan@pwr.edu.pl', 'William', 'Khan', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('ava.bryant@pwr.edu.pl', 'Ava', 'Bryant', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('michael.evans@pwr.edu.pl', 'Michael', 'Evans', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('olivia.fisher@pwr.edu.pl', 'Olivia', 'Fisher', (SELECT id FROM title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('daniel.nelson@pwr.edu.pl', 'Daniel', 'Nelson', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('sophia.wells@pwr.edu.pl', 'Sophia', 'Wells', (SELECT id FROM title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('william.rose@pwr.edu.pl', 'William', 'Rose', (SELECT id FROM title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('ava.chapman@pwr.edu.pl', 'Ava', 'Chapman', (SELECT id FROM title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
+    ('john.doe@pwr.edu.pl', 'John', 'Doe', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('alice.smith@pwr.edu.pl', 'Alice', 'Smith', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('michael.johnson@pwr.edu.pl', 'Michael', 'Johnson', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('sarah.williams@pwr.edu.pl', 'Sarah', 'Williams', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('david.brown@pwr.edu.pl', 'David', 'Brown', (select id from title WHERE name = 'mgr'), (select num_theses from title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('jennifer.lee@pwr.edu.pl', 'Jennifer', 'Lee', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('christopher.taylor@pwr.edu.pl', 'Christopher', 'Taylor', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('jessica.harris@pwr.edu.pl', 'Jessica', 'Harris', (select id from title WHERE name = 'mgr'), (select num_theses from title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('matthew.clark@pwr.edu.pl', 'Matthew', 'Clark', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('emily.anderson@pwr.edu.pl', 'Emily', 'Anderson', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('daniel.lewis@pwr.edu.pl', 'Daniel', 'Lewis', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('olivia.ward@pwr.edu.pl', 'Olivia', 'Ward', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('andrew.scott@pwr.edu.pl', 'Andrew', 'Scott', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('sophia.baker@pwr.edu.pl', 'Sophia', 'Baker', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('william.taylor@pwr.edu.pl', 'William', 'Taylor', (select id from title WHERE name = 'mgr'), (select num_theses from title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('ava.green@pwr.edu.pl', 'Ava', 'Green', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('olivia.young@pwr.edu.pl', 'Olivia', 'Young', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('daniel.king@pwr.edu.pl', 'Daniel', 'King', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('sophia.cooper@pwr.edu.pl', 'Sophia', 'Cooper', (select id from title WHERE name = 'mgr'), (select num_theses from title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('william.khan@pwr.edu.pl', 'William', 'Khan', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('ava.bryant@pwr.edu.pl', 'Ava', 'Bryant', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('michael.evans@pwr.edu.pl', 'Michael', 'Evans', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('olivia.fisher@pwr.edu.pl', 'Olivia', 'Fisher', (select id from title WHERE name = 'mgr'), (select num_theses from title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('daniel.nelson@pwr.edu.pl', 'Daniel', 'Nelson', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('sophia.wells@pwr.edu.pl', 'Sophia', 'Wells', (select id from title WHERE name = 'dr hab.'), (select num_theses from title WHERE name = 'dr hab.'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('william.rose@pwr.edu.pl', 'William', 'Rose', (select id from title WHERE name = 'prof'), (select num_theses from title WHERE name = 'prof'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('ava.chapman@pwr.edu.pl', 'Ava', 'Chapman', (select id from title WHERE name = 'mgr'), (select num_theses from title WHERE name = 'mgr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
 
 INSERT INTO employee_role (employee_id, role_id)
 VALUES
@@ -238,12 +238,12 @@ VALUES
     ((SELECT id FROM employee WHERE mail = 'ava.chapman@pwr.edu.pl'), (SELECT id FROM role WHERE name = 'admin'));
 
 
-INSERT INTO employee(mail, name, surname, title, department_id)
+INSERT INTO employee(mail, name, surname, title, num_theses, department_id)
 VALUES
-    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
-    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', (SELECT id FROM title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
+    ('260452@student.pwr.edu.pl', 'Piotr', 'Wojdan', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('260466@student.pwr.edu.pl', 'Marta', 'Rzepka', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('260464@student.pwr.edu.pl', 'Zuzanna', 'Sikorska', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03')),
+    ('255356@student.pwr.edu.pl', 'Jakub', 'Krupiński', (select id from title WHERE name = 'dr'), (select num_theses from title WHERE name = 'dr'), (SELECT id FROM department WHERE code = 'K34W04ND03'));
 
 INSERT INTO employee_role(employee_id, role_id)
 VALUES

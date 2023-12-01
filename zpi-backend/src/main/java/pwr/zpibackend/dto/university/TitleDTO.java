@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TitleDTO {
     private String name;
+    private Integer numTheses;
 }
