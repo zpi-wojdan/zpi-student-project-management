@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import SearchBar from '../../../components/SearchBar';
 import { handleDeletionError } from '../../../utils/handleDeleteError';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const ProgramList: React.FC = () => {
   // @ts-ignore
@@ -143,9 +144,7 @@ const ProgramList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {programs.length === 0 ? (
           <div className='info-no-data'>

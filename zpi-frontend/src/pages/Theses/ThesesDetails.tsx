@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Reservation } from "../../models/thesis/Reservation";
 import { toast } from "react-toastify";
 import { Comment } from '../../models/thesis/Comment';
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const ThesesDetails: React.FC = () => {
   // @ts-ignore
@@ -281,9 +282,7 @@ const ThesesDetails: React.FC = () => {
       </div>
       <div>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+            <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {thesis ? (
             <div>

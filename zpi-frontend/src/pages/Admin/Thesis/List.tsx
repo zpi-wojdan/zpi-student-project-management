@@ -13,6 +13,7 @@ import { Specialization } from '../../../models/university/Specialization';
 import { StudyCycle } from '../../../models/university/StudyCycle';
 import { StudyField } from '../../../models/university/StudyField';
 import { Employee } from '../../../models/user/Employee';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 
 const ThesisList: React.FC = () => {
@@ -577,9 +578,7 @@ const ThesisList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {theses.length === 0 ? (
           <div className='info-no-data'>

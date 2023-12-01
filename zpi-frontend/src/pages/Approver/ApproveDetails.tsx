@@ -12,6 +12,7 @@ import { CommentDTO, Comment } from '../../models/thesis/Comment';
 import { Status } from '../../models/thesis/Status';
 import { Employee } from '../../models/user/Employee';
 import Cookies from 'js-cookie';
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const ApproveDetails: React.FC = () => {
   // @ts-ignore
@@ -550,9 +551,7 @@ const ApproveDetails: React.FC = () => {
       )}
       <div className='mt-3'>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+            <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {thesis ? (
             <div>

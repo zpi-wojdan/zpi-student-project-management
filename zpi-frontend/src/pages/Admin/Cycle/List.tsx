@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SearchBar';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const StudyCycleList: React.FC = () => {
   // @ts-ignore
@@ -130,9 +131,7 @@ const StudyCycleList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {cycles.length === 0 ? (
           <div className='info-no-data'>

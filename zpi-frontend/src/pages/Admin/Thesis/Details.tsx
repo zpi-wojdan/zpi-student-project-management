@@ -10,6 +10,7 @@ import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import { toast } from 'react-toastify';
 import { handleDeletionError } from '../../../utils/handleDeleteError';
 import { Comment } from '../../../models/thesis/Comment';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const ThesisDetails: React.FC = () => {
   // @ts-ignore
@@ -160,9 +161,7 @@ const ThesisDetails: React.FC = () => {
       </div>
       <div>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+            <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {thesis ? (
             <div>

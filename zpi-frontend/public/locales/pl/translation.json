@@ -333,7 +333,8 @@
   },
   "home":{
     "welcome": "Witaj na stronie ZPI Helper!",
-    "schedule": "Harmonogram"
+    "schedule": "Harmonogram",
+    "noSchedule": "Niestety najnowszy harmonogram nie został jeszcze opublikowany"
   },
   "comment": {
     "addSuccessful": "Komentarz został dodany",
