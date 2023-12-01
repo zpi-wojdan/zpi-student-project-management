@@ -2,31 +2,29 @@ package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
+import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
+import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
+import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
-import pwr.zpibackend.services.mailing.MailService;
-import pwr.zpibackend.utils.MailTemplates;
-
-import static java.time.LocalDateTime.now;
+import pwr.zpibackend.repositories.user.StudentRepository;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +41,8 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
-    private final MailService mailService;
+    private final StudentRepository studentRepository;
+    private final ReservationRepository reservationRepository;
 
     private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
@@ -65,8 +64,8 @@ public class ThesisService {
         Employee supervisor = employeeRepository
                 .findById(thesis.getSupervisorId())
                 .orElseThrow(
-                        () -> new NotFoundException("Employee with id " + thesis.getSupervisorId() + " does not exist")
-                );
+                        () -> new NotFoundException(
+                                "Employee with id " + thesis.getSupervisorId() + " does not exist"));
 
         Thesis newThesis = new Thesis();
         newThesis.setNamePL(thesis.getNamePL());
@@ -82,12 +81,38 @@ public class ThesisService {
             newThesis.getPrograms().add(program);
         });
 
-        newThesis.setStudyCycle(thesis.getStudyCycleId().map(index ->
-                studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
-        ).orElse(null));
+        newThesis.setStudyCycle(thesis.getStudyCycleId()
+                .map(index -> studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)).orElse(null));
 
+        Status draftStatus = statusRepository.findByName("Draft").orElseThrow(NotFoundException::new);
+        newThesis.setStatus(draftStatus);
+
+        thesisRepository.saveAndFlush(newThesis);
+        
+        if (!thesis.getStudentIndexes().isEmpty() && !thesis.getStatusId().equals(draftStatus.getId())) {
+            for (String index : thesis.getStudentIndexes()) {
+                Student student = studentRepository.findByIndex(index)
+                        .orElseThrow(() -> new NotFoundException("Student with index " + index + " does not exist"));
+                if (reservationRepository.findByStudent_Mail(student.getMail()) != null) {
+                    throw new IllegalArgumentException("Student with index " + index + " already has a reservation");
+                } else {
+                    Reservation reservation = new Reservation();
+                    reservation.setStudent(student);
+                    reservation.setThesis(newThesis);
+                    reservation.setConfirmedByLeader(false);
+                    reservation.setConfirmedBySupervisor(true);
+                    reservation.setConfirmedByStudent(false);
+                    reservation.setReadyForApproval(true);
+                    reservation.setReservationDate(LocalDateTime.now());
+                    reservation.setSentForApprovalDate(LocalDateTime.now());
+                    reservationRepository.saveAndFlush(reservation);
+                }
+            }
+            newThesis.setOccupied(thesis.getNumPeople());
+        } else {
+            newThesis.setOccupied(0);
+        }
         newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
-        newThesis.setOccupied(0);
 
         thesisRepository.saveAndFlush(newThesis);
         return newThesis;
@@ -105,8 +130,8 @@ public class ThesisService {
 
             updated.setSupervisor(employeeRepository.findById(
                     thesis.getSupervisorId()).orElseThrow(
-                    () -> new NotFoundException("Employee with id " + thesis.getSupervisorId() + " does not exist"))
-            );
+                            () -> new NotFoundException(
+                                    "Employee with id " + thesis.getSupervisorId() + " does not exist")));
             List<Program> programList = new ArrayList<>();
             thesis.getProgramIds().forEach(programId -> {
                 Program program = programRepository.findById(programId).orElseThrow(
@@ -115,19 +140,38 @@ public class ThesisService {
             });
             updated.setPrograms(programList);
 
-            updated.setStudyCycle(thesis.getStudyCycleId().map(index ->
-                    studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
-            ).orElse(null));
+            updated.setStudyCycle(thesis.getStudyCycleId()
+                    .map(index -> studyCycleRepository.findById(index).orElseThrow(NotFoundException::new))
+                    .orElse(null));
 
-            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
+            Status status = statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new);
+
+            if (status.getName().equals("Rejected")) {
+                reservationRepository.deleteAll(updated.getReservations());
+                updated.setOccupied(0);
+            } else if (status.getName().equals("Approved") && updated.getOccupied() > 0) {
+                boolean allConfirmed = true;
+                for (Reservation reservation : updated.getReservations()) {
+                    if (!reservation.isConfirmedByStudent() || !reservation.isConfirmedBySupervisor()) {
+                        allConfirmed = false;
+                        break;
+                    }
+                }
+                if (allConfirmed) {
+                    status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+                } 
+            }
+
+            updated.setStatus(status);
+
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
         throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
-    //  brakowało metody do usuwania tematu
-    //  co z rozłączaniem z employee/studentem itp? dobrze to jest?
+    // brakowało metody do usuwania tematu
+    // co z rozłączaniem z employee/studentem itp? dobrze to jest?
     @Transactional
     public Thesis deleteThesis(Long id) {
         Optional<Thesis> thesisOptional = thesisRepository.findById(id);
@@ -165,13 +209,13 @@ public class ThesisService {
         throw new NotFoundException("Thesis with id " + id + " does not exist");
     }
 
-    //  np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
+    // np na zwrócenie: wszystkich zaakceptowanych, wszystkich archiwalnych itp
     public List<Thesis> getAllThesesByStatusName(String name) {
         return thesisRepository.findAllByStatusName(name, sort);
     }
 
-    //  np na zwrócenie wszystkich tematów, które nie są draftami
-    public List<Thesis> getAllThesesExcludingStatusName(String name){
+    // np na zwrócenie wszystkich tematów, które nie są draftami
+    public List<Thesis> getAllThesesExcludingStatusName(String name) {
         Optional<Status> excludedStatus = statusRepository.findByName(name);
         if (excludedStatus.isEmpty()) {
             throw new NotFoundException("Status with name " + name + " does not exist");
@@ -181,12 +225,12 @@ public class ThesisService {
                 .collect(Collectors.toList());
     }
 
-    //  np na zwrócenie wszystkich draftów danego pracownika
+    // np na zwrócenie wszystkich draftów danego pracownika
     public List<Thesis> getAllThesesForEmployeeByStatusName(Long empId, String statName) {
         return thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName, sort);
     }
 
-    //  np na zwrócenie wszystkich tematów danego pracownika
+    // np na zwrócenie wszystkich tematów danego pracownika
     public List<Thesis> getAllThesesForEmployee(Long id) {
         return thesisRepository.findAllBySupervisorId(id, sort);
     }

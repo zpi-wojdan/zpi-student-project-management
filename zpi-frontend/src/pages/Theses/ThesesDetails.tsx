@@ -226,7 +226,7 @@ const ThesesDetails: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='row d-flex justify-content-between'>
-        <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
+        <button type="button" className="col-sm-2 custom-button another-color my-3" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
         {loaded ? (<React.Fragment>
@@ -235,19 +235,17 @@ const ThesesDetails: React.FC = () => {
               thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
             thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
             (
-              <button className="col-sm-2 custom-button m-3" onClick={downloadDeclaration}>
+              <button className="col-sm-2 custom-button my-3" onClick={downloadDeclaration}>
                 {t('thesis.downloadDeclaration')}
               </button>
             ) : null}
 
-          {(thesis && thesis?.occupied < thesis?.numPeople && (
+          {(thesis && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
-            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
-            user?.roles?.some(role => role.name === 'supervisor') &&
-            user?.mail === thesis?.supervisor.mail) ||
-            user?.roles?.some(role => role.name === 'admin')) ?
+            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
+            user?.roles?.some(role => role.name === 'admin' && thesis?.status.name !== 'Closed'))) ?
             (
-              <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
+              <button type="button" className="col-sm-2 custom-button my-3" onClick={() => {
                 if (user?.role?.name === 'student') {
                   if (thesis?.reservations.length === 0) {
                     navigate('/reservation', { state: { thesis: thesis } })
@@ -255,23 +253,14 @@ const ThesesDetails: React.FC = () => {
                     navigate('/single-reservation', { state: { thesis: thesis } })
                   }
                 } else {
-                  if (user?.mail === thesis?.supervisor.mail) {
-                    navigate('/supervisor-reservation', { state: { thesis: thesis } })
-                  } else {
-                    navigate('/admin-reservation', { state: { thesis: thesis } })
-                  }
+                  navigate('/admin-reservation', { state: { thesis: thesis } })
                 }
               }
               }>
                 {user?.role?.name === 'student' ? (
                   <span>{t('general.management.reserve')}</span>
                 ) : (
-                  user?.mail === thesis?.supervisor.mail ?
-                    (
-                      <span>{t('thesis.enrollStudents')}</span>
-                    ) : (
-                      user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
-                    )
+                  user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
                 )}
               </button>
             ) : (
