@@ -71,7 +71,7 @@ spring:
             required: true
     verify:
       host:
-        res_leader: ${VERIFY_RES_LEADER_URL}
+        res_leader: ${FRONTEND_URL}/public-theses
 
   messages:
     basename: messages
