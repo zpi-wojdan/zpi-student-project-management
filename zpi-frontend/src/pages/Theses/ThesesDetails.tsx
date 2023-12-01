@@ -284,54 +284,56 @@ const ThesesDetails: React.FC = () => {
           ) : (<></>)}
         </div>
         {loaded ? (<React.Fragment>
-          {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
-            (user?.mail === thesis?.supervisor.mail ||
-              thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
-            thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
-            (
-              <button className="col-sm-2 custom-button mb-3" onClick={downloadDeclaration}>
-                {t('thesis.downloadDeclaration')}
-              </button>
-            ) : null}
+          <div className='d-flex justify-content-end align-items-center mb-3'>
+            {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
+              (user?.mail === thesis?.supervisor.mail ||
+                thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
+              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
+              (
+                <button className="custom-button" onClick={downloadDeclaration}>
+                  {t('thesis.downloadDeclaration')}
+                </button>
+              ) : null}
 
-          {(thesis && thesis?.occupied < thesis?.numPeople && (
-            user?.role?.name === 'student' &&
-            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
-            user?.roles?.some(role => role.name === 'supervisor') &&
-            user?.mail === thesis?.supervisor.mail) ||
-            user?.roles?.some(role => role.name === 'admin')) ?
-            (
-              <button type="button" className="col-sm-2 custom-button mb-3" onClick={() => {
-                if (user?.role?.name === 'student') {
-                  if (thesis?.reservations.length === 0) {
-                    navigate('/reservation', { state: { thesis: thesis } })
+            {(thesis && thesis?.occupied < thesis?.numPeople && (
+              user?.role?.name === 'student' &&
+              user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
+              user?.roles?.some(role => role.name === 'supervisor') &&
+              user?.mail === thesis?.supervisor.mail) ||
+              user?.roles?.some(role => role.name === 'admin')) ?
+              (
+                <button type="button" className="custom-button" onClick={() => {
+                  if (user?.role?.name === 'student') {
+                    if (thesis?.reservations.length === 0) {
+                      navigate('/reservation', { state: { thesis: thesis } })
+                    } else {
+                      navigate('/single-reservation', { state: { thesis: thesis } })
+                    }
                   } else {
-                    navigate('/single-reservation', { state: { thesis: thesis } })
-                  }
-                } else {
-                  if (user?.mail === thesis?.supervisor.mail) {
-                    navigate('/supervisor-reservation', { state: { thesis: thesis } })
-                  } else {
-                    navigate('/admin-reservation', { state: { thesis: thesis } })
+                    if (user?.mail === thesis?.supervisor.mail) {
+                      navigate('/supervisor-reservation', { state: { thesis: thesis } })
+                    } else {
+                      navigate('/admin-reservation', { state: { thesis: thesis } })
+                    }
                   }
                 }
-              }
-              }>
-                {user?.role?.name === 'student' ? (
-                  <span>{t('general.management.reserve')}</span>
-                ) : (
-                  user?.mail === thesis?.supervisor.mail ?
-                    (
-                      <span>{t('thesis.enrollStudents')}</span>
-                    ) : (
-                      user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
-                    )
-                )}
-              </button>
-            ) : (
-              <span></span>
-            )
-          }
+                }>
+                  {user?.role?.name === 'student' ? (
+                    <span>{t('general.management.reserve')}</span>
+                  ) : (
+                    user?.mail === thesis?.supervisor.mail ?
+                      (
+                        <span>{t('thesis.enrollStudents')}</span>
+                      ) : (
+                        user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
+                      )
+                  )}
+                </button>
+              ) : (
+                <span></span>
+              )
+            }
+          </div>
         </React.Fragment>
         ) : (<></>)}
       </div>
