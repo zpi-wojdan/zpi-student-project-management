@@ -149,7 +149,16 @@ public class ThesisService {
                 reservationRepository.deleteAll(updated.getReservations());
                 updated.setOccupied(0);
             } else if (status.getName().equals("Approved") && updated.getOccupied() > 0) {
-                status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+                boolean allConfirmed = true;
+                for (Reservation reservation : updated.getReservations()) {
+                    if (!reservation.isConfirmedByStudent() || !reservation.isConfirmedBySupervisor()) {
+                        allConfirmed = false;
+                        break;
+                    }
+                }
+                if (allConfirmed) {
+                    status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+                } 
             }
 
             updated.setStatus(status);
