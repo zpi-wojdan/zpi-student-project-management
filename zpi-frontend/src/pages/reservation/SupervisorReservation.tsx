@@ -8,6 +8,7 @@ import { Student } from '../../models/user/Student';
 import { Thesis } from '../../models/thesis/Thesis';
 import { useTranslation } from "react-i18next";
 import api from "../../utils/api";
+import api_access from '../../utils/api_access';
 
 type SupervisorReservationProps = {
     numPeople: number;
@@ -85,7 +86,7 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
             newErrors[index] = false;
         }
 
-        await api.get(`http://localhost:8080/student/index/${reservation}`)
+        await api.get(api_access + `student/index/${reservation}`)
             .then(response => {
                 newStudents[index] = response.data as Student;
             })

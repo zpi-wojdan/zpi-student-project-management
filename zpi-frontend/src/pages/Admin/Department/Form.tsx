@@ -7,6 +7,7 @@ import useAuth from "../../../auth/useAuth";
 import { Faculty } from '../../../models/university/Faculty';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import api_access from '../../../utils/api_access';
 
 const DepartmentForm: React.FC = () => {
   // @ts-ignore
@@ -49,7 +50,7 @@ const DepartmentForm: React.FC = () => {
   const [faculties, setFaculties] = useState<Faculty[]>([]);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         setFaculties(response.data);
       })
@@ -67,7 +68,7 @@ const DepartmentForm: React.FC = () => {
 
     if (validateForm()) {
       if (department) {
-        api.put(`http://localhost:8080/departments/${departmentId}`, formData)
+        api.put(api_access + `departments/${departmentId}`, formData)
           .then(() => {
             navigate("/departments")
             toast.success(t("department.updateSuccessful"));
@@ -90,7 +91,7 @@ const DepartmentForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/departments', formData)
+        api.post(api_access + 'departments', formData)
           .then(() => {
             navigate("/departments")
             toast.success(t("department.addSuccessful"));

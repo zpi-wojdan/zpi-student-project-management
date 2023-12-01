@@ -10,7 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import handleSignOut from "../auth/Logout";
 import useAuth from "../auth/useAuth";
 import { Reservation } from '../models/thesis/Reservation';
+import DeleteConfirmation from './DeleteConfirmation';
+import api_access from '../utils/api_access';
 import ChoiceConfirmation from './ChoiceConfirmation';
+
 
 type StudentTableProps = {
   students: Student[];
@@ -39,7 +42,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
   const handleAcceptReservation = (reservation: Reservation) => {
     reservation.confirmedByLeader = true;
     reservation.confirmedByStudent = true;
-    api.put(`http://localhost:8080/reservation/${reservation.id}`, reservation)
+    api.put(api_access + `reservation/${reservation.id}`, reservation)
       .then((response) => {
         if (response.status === 200) {
           toast.success(t('reservation.deleteSuccessful'));
@@ -98,7 +101,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
   }
 
   function handleConfirmDelete(): void {
-    api.delete(`http://localhost:8080/reservation/${reservationToDelete.id}`)
+    api.delete(api_access + `reservation/${reservationToDelete.id}`)
       .then((response) => {
         if (response.status === 200) {
           toast.success(t('reservation.reservationDeleted'));

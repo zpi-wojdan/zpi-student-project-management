@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
 import SupervisorReservationPage from '../reservation/SupervisorReservation';
+import api_access from '../../utils/api_access';
 
 
 function AddThesisPageAdmin() {
@@ -79,7 +80,7 @@ function AddThesisPageAdmin() {
   }, [])
 
   useEffect(() => {
-    api.get('http://localhost:8080/status/exclude/Draft')
+    api.get(api_access + 'status/exclude/Draft')
       .then((response) => {
         setStatuses(response.data);
       })
@@ -92,7 +93,7 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         setStudyCycles(response.data.sort((a: StudyCycle, b: StudyCycle) => b.name.localeCompare(a.name)));
       })
@@ -105,7 +106,7 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
       })
@@ -118,7 +119,7 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get(api_access + 'employee')
       .then((response) => {
         setEmployees(response.data);
       })
@@ -328,9 +329,10 @@ function AddThesisPageAdmin() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const [isValid, dto] = validateForm();
+
     if (isValid) {
       if (thesis) {
-        api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
+        api.put(api_access + `thesis/${thesis.id}`, dto)
           .then(() => {
             navigate("/theses");
             toast.success(t("thesis.updateSuccessful"));
@@ -345,14 +347,14 @@ function AddThesisPageAdmin() {
               const index = (error.response.data.message as string).split(' ')[3];
               toast.error(t(`thesis.errorStudents`, {
                 index: index
-            }));
+              }));
             } else {
               toast.error(t("thesis.updateError"));
             }
           });
       }
       else {
-        api.post('http://localhost:8080/thesis', dto)
+        api.post(api_access + 'thesis', dto)
           .then(() => {
             navigate("/theses");
             toast.success(t("thesis.addSuccessful"));
@@ -375,341 +377,350 @@ function AddThesisPageAdmin() {
                 const index = (error.response.data.message as string).split(' ')[3];
                 toast.error(t(`thesis.errorStudents`, {
                   index: index
-              }));
+                }));
               } else {
                 toast.error(t("thesis.updateError"));
               }
             }
-          })
-      }
-    }
-  };
-
-  const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const abbrev = e.target.value;
-    setMailAbbrev(abbrev);
-
-    const filteredSupervisors = employees.filter(
-      (supervisor) =>
-        supervisor.mail.includes(abbrev.toLowerCase())
-    );
-    setEmployeeSuggestions(filteredSupervisors);
-
-    const selectedSupervisor = employeeSuggestions.find(
-      (supervisor) => supervisor.mail.toLowerCase() === abbrev.toLowerCase()
-    );
-    if (selectedSupervisor) {
-      setFormData({ ...formData, supervisorId: selectedSupervisor.id });
-    }
-    else {
-      setFormData({ ...formData, supervisorId: -1 });
-    }
-  };
-
-  const handleNumPeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setNumPeople(parseInt(value, 10));
-  };
-
-
-
-  const handleTextAreaChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-    textareaRef: React.RefObject<HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    if (textareaRef.current) {
-      const textarea = textareaRef.current;
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  };
-
-  const handleCycleChange = (selectedCycleId: number | null) => {
-    if (selectedCycleId !== null) {
-      const updatedProgramSuggestions = programs
-        .filter((p) => p.studyCycles
-          .map((c) => c.id === selectedCycleId));
-      setProgramSuggestions(updatedProgramSuggestions);
-      setFormData({ ...formData, studyCycleId: selectedCycleId });
+          });
     }
   }
+};
 
-  const handleProgramChange = (index: number, selectedProgramId: number) => {
-    if (!formData.programIds.includes(selectedProgramId)) {
-      const updatedPrograms = [...formData.programIds];
-      updatedPrograms[index] = selectedProgramId;
-      setFormData({ ...formData, programIds: updatedPrograms });
-    }
+const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const abbrev = e.target.value;
+  setMailAbbrev(abbrev);
+
+  const filteredSupervisors = employees.filter(
+    (supervisor) =>
+      supervisor.mail.includes(abbrev.toLowerCase())
+  );
+  setEmployeeSuggestions(filteredSupervisors);
+
+  const selectedSupervisor = employeeSuggestions.find(
+    (supervisor) => supervisor.mail.toLowerCase() === abbrev.toLowerCase()
+  );
+  if (selectedSupervisor) {
+    setFormData({ ...formData, supervisorId: selectedSupervisor.id });
   }
+  else {
+    setFormData({ ...formData, supervisorId: -1 });
+  }
+};
 
-  const handleRemove = (index: number) => {
+const handleNumPeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = event.target;
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+  setNumPeople(parseInt(value, 10));
+};
+
+
+
+const handleTextAreaChange = (
+  event: React.ChangeEvent<HTMLTextAreaElement>,
+  textareaRef: React.RefObject<HTMLTextAreaElement>
+) => {
+  const { name, value } = event.target;
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+  if (textareaRef.current) {
+    const textarea = textareaRef.current;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+};
+
+const handleCycleChange = (selectedCycleId: number | null) => {
+  if (selectedCycleId !== null) {
+    const updatedProgramSuggestions = programs
+      .filter((p) => p.studyCycles
+        .map((c) => c.id === selectedCycleId));
+    setProgramSuggestions(updatedProgramSuggestions);
+    setFormData({ ...formData, studyCycleId: selectedCycleId });
+  }
+}
+
+const handleProgramChange = (index: number, selectedProgramId: number) => {
+  if (!formData.programIds.includes(selectedProgramId)) {
     const updatedPrograms = [...formData.programIds];
-    updatedPrograms.splice(index, 1);
+    updatedPrograms[index] = selectedProgramId;
     setFormData({ ...formData, programIds: updatedPrograms });
   }
+}
 
-  const handleAddNext = () => {
-    const newProgram = [...formData.programIds];
-    newProgram.push(-1);
-    setFormData({ ...formData, programIds: newProgram });
-  }
+const handleRemove = (index: number) => {
+  const updatedPrograms = [...formData.programIds];
+  updatedPrograms.splice(index, 1);
+  setFormData({ ...formData, programIds: updatedPrograms });
+}
 
-  const statusLabels: { [key: string]: string } = {
-    "Pending approval": t('status.pending'),
-    "Rejected": t('status.rejected'),
-    "Approved": t('status.approved'),
-    "Assigned": t('status.assigned'),
-    "Closed": t('status.closed')
-  }
+const handleAddNext = () => {
+  const newProgram = [...formData.programIds];
+  newProgram.push(-1);
+  setFormData({ ...formData, programIds: newProgram });
+}
 
-  const setStudentIndexes = (indexes: string[]) => {
-    setFormData({ ...formData, studentIndexes: indexes });
-  }
+const statusLabels: { [key: string]: string } = {
+  "Pending approval": t('status.pending'),
+  "Rejected": t('status.rejected'),
+  "Approved": t('status.approved'),
+  "Assigned": t('status.assigned'),
+  "Closed": t('status.closed')
+}
 
-  return (
-    <div className='page-margin'>
-      <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
+const setStudentIndexes = (indexes: string[]) => {
+  setFormData({ ...formData, studentIndexes: indexes });
+}
 
-        <div className='d-flex justify-content-begin  align-items-center mb-3'>
-          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-            &larr; {t('general.management.goBack')}
-          </button>
-          <button type="submit" className="custom-button">
-            {thesis ? t('general.management.save') : t('general.management.add')}
-          </button>
+return (
+  <div className='page-margin'>
+    <form noValidate onSubmit={(event) => handleSubmit(event)} className="form">
+
+      <div className='d-flex justify-content-begin  align-items-center mb-3'>
+        <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+          &larr; {t('general.management.goBack')}
+        </button>
+        <button type="submit" className="custom-button">
+          {thesis ? t('general.management.save') : t('general.management.add')}
+        </button>
+      </div>
+
+
+      <div className="mb-3">
+        <label className="bold" htmlFor="namePL">
+          {t('general.title')} (PL):
+        </label>
+        <textarea
+          className="form-control resizable-input"
+          id="namePL"
+          name="namePL"
+          value={formData.namePL}
+          onChange={(event) => handleTextAreaChange(event, namePLRef)}
+          maxLength={1000}
+          ref={namePLRef}
+        />
+        {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
+      </div>
+
+      <div className="mb-3">
+        <label className="bold" htmlFor="nameEN">
+          {t('general.title')} (EN):
+        </label>
+        <textarea
+          className="form-control resizable-input"
+          id="nameEN"
+          name="nameEN"
+          value={formData.nameEN}
+          onChange={(event) => handleTextAreaChange(event, nameENRef)}
+          maxLength={200}
+          ref={nameENRef}
+        />
+        {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
+      </div>
+
+      <div className="mb-3">
+        <label className="bold" htmlFor="descriptionPL">
+          {t('general.university.description')} (PL):
+        </label>
+        <textarea
+          className="form-control resizable-input"
+          id="descriptionPL"
+          name="descriptionPL"
+          value={formData.descriptionPL}
+          onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
+          maxLength={1000}
+          ref={descriptionPLRef}
+        />
+        {errors.descriptionPL && <div className="text-danger">{errors.descriptionPL}</div>}
+      </div>
+
+      <div className="mb-3">
+        <label className="bold" htmlFor="descriptionEN">
+          {t('general.university.description')} (EN):
+        </label>
+        <textarea
+          className="form-control resizable-input"
+          id="descriptionEN"
+          name="descriptionEN"
+          value={formData.descriptionEN}
+          onChange={(event) => handleTextAreaChange(event, descriptionENRef)}
+          maxLength={1000}
+          ref={descriptionENRef}
+        />
+        <div className="text-info">
+          {t('general.management.fieldIsOptional')}
         </div>
+      </div>
+
+      <div className="mb-3">
+        <label className="bold" htmlFor="numPeople">
+          {t('thesis.peopleLimit')}:
+        </label>
+        <input
+          type="number"
+          className="form-control"
+          id="numPeople"
+          name="numPeople"
+          value={formData.numPeople}
+          onChange={handleNumPeopleChange}
+          min={3}
+          max={5}
+        />
+        {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
+      </div>
 
 
-        <div className="mb-3">
-          <label className="bold" htmlFor="namePL">
-            {t('general.title')} (PL):
-          </label>
-          <textarea
-            className="form-control resizable-input"
-            id="namePL"
-            name="namePL"
-            value={formData.namePL}
-            onChange={(event) => handleTextAreaChange(event, namePLRef)}
-            maxLength={1000}
-            ref={namePLRef}
-          />
-          {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
-        </div>
 
-        <div className="mb-3">
-          <label className="bold" htmlFor="nameEN">
-            {t('general.title')} (EN):
-          </label>
-          <textarea
-            className="form-control resizable-input"
-            id="nameEN"
-            name="nameEN"
-            value={formData.nameEN}
-            onChange={(event) => handleTextAreaChange(event, nameENRef)}
-            maxLength={200}
-            ref={nameENRef}
-          />
-          {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
-        </div>
-
-        <div className="mb-3">
-          <label className="bold" htmlFor="descriptionPL">
-            {t('general.university.description')} (PL):
-          </label>
-          <textarea
-            className="form-control resizable-input"
-            id="descriptionPL"
-            name="descriptionPL"
-            value={formData.descriptionPL}
-            onChange={(event) => handleTextAreaChange(event, descriptionPLRef)}
-            maxLength={1000}
-            ref={descriptionPLRef}
-          />
-          {errors.descriptionPL && <div className="text-danger">{errors.descriptionPL}</div>}
-        </div>
-
-        <div className="mb-3">
-          <label className="bold" htmlFor="descriptionEN">
-            {t('general.university.description')} (EN):
-          </label>
-          <textarea
-            className="form-control resizable-input"
-            id="descriptionEN"
-            name="descriptionEN"
-            value={formData.descriptionEN}
-            onChange={(event) => handleTextAreaChange(event, descriptionENRef)}
-            maxLength={1000}
-            ref={descriptionENRef}
-          />
-          <div className="text-info">
-            {t('general.management.fieldIsOptional')}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <label className="bold" htmlFor="numPeople">
-            {t('thesis.peopleLimit')}:
-          </label>
+      <div className='mb-3'>
+        <label className='bold' htmlFor='supervisor'>
+          {t('general.people.supervisor')}:
+        </label>
+        <div className="dropdown">
           <input
-            type="number"
+            type="text"
+            id="supervisor"
+            name="supervisor"
+            value={mailAbbrev}
+            onChange={handleMailSearchChange}
+            list="supervisorList"
             className="form-control"
-            id="numPeople"
-            name="numPeople"
-            value={formData.numPeople}
-            onChange={handleNumPeopleChange}
-            min={3}
-            max={5}
           />
-          {errors.numPeople && <div className="text-danger">{errors.numPeople}</div>}
-        </div>
-
-
-
-        <div className='mb-3'>
-          <label className='bold' htmlFor='supervisor'>
-            {t('general.people.supervisor')}:
-          </label>
-          <div className="dropdown">
-            <input
-              type="text"
-              id="supervisor"
-              name="supervisor"
-              value={mailAbbrev}
-              onChange={handleMailSearchChange}
-              list="supervisorList"
-              className="form-control"
-            />
-            <datalist id="supervisorList">
-              {employeeSuggestions.map((supervisor) => (
-                <option
-                  key={supervisor.mail}
-                  value={supervisor.mail}
-                >
-                  {supervisor.title.name} {supervisor.surname} {supervisor.name}
-                </option>
-              ))}
-            </datalist>
-          </div>
-          {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
-        </div>
-
-
-        <div className='mb-3'>
-          <label className='bold' htmlFor='studyCycle'>
-            {t('general.university.studyCycle')}:
-          </label>
-          <select
-            id={'studyCycleSel'}
-            name={`studyCycle`}
-            value={formData.studyCycleId || -1}
-            onChange={(e) => {
-              const selectedCycleId = e.target.value === '' ? null : parseInt(e.target.value, 10);
-              handleCycleChange(selectedCycleId);
-            }}
-            className='form-control'
-          >
-            <option value={-1}>{t('general.management.choose')}</option>
-            {studyCycles.map((cyc, cycIndex) => (
-              <option key={cycIndex} value={cyc.id}>
-                {cyc.name}
+          <datalist id="supervisorList">
+            {employeeSuggestions.map((supervisor) => (
+              <option
+                key={supervisor.mail}
+                value={supervisor.mail}
+              >
+                {supervisor.title.name} {supervisor.surname} {supervisor.name}
               </option>
             ))}
-          </select>
-          {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
+          </datalist>
         </div>
+        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+      </div>
 
-        <div className="mb-3">{/*key={suggestionsKey} */}
-          <label className="bold">{t('general.university.studyPrograms')}:</label>
 
-          <ul>
+      <div className='mb-3'>
+        <label className='bold' htmlFor='studyCycle'>
+          {t('general.university.studyCycle')}:
+        </label>
+        <select
+          id={'studyCycleSel'}
+          name={`studyCycle`}
+          value={formData.studyCycleId || -1}
+          onChange={(e) => {
+            const selectedCycleId = e.target.value === '' ? null : parseInt(e.target.value, 10);
+            handleCycleChange(selectedCycleId);
+          }}
+          className='form-control'
+        >
+          <option value={-1}>{t('general.management.choose')}</option>
+          {studyCycles.map((cyc, cycIndex) => (
+            <option key={cycIndex} value={cyc.id}>
+              {cyc.name}
+            </option>
+          ))}
+        </select>
+        {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
+      </div>
 
-            {formData.programIds.map((programId, index) => (
+      <div className="mb-3">{/*key={suggestionsKey} */}
+        <label className="bold">{t('general.university.studyPrograms')}:</label>
 
-              <li key={index}>
-                <div className='mb-3'>
-                  <select
-                    id={`programId${index}`}
-                    name={`programId${index}`}
-                    value={formData.programIds[index]}
-                    onChange={(e) => {
-                      const selectedProgramId = parseInt(e.target.value, 10);
-                      handleProgramChange(index, selectedProgramId);
-                    }}
-                    className='form-control'
-                    disabled={formData.studyCycleId === -1}
-                  >
-                    {/* <option value={-1}>
+        <ul>
+
+          {formData.programIds.map((programId, index) => (
+
+            <li key={index}>
+              <div className='mb-3'>
+                <select
+                  id={`programId${index}`}
+                  name={`programId${index}`}
+                  value={formData.programIds[index]}
+                  onChange={(e) => {
+                    const selectedProgramId = parseInt(e.target.value, 10);
+                    handleProgramChange(index, selectedProgramId);
+                  }}
+                  className='form-control'
+                  disabled={formData.studyCycleId === -1}
+                >
+                  {/* <option value={-1}>
                   {programSuggestions ? programs[formData.programIds[programId]]?.name : t('general.management.choose')}
                     {programSuggestions ? programs[1]?.name : t('general.management.choose')}
                     {thesis.program ? thesis.program.name : t('general.management.choose')}
                   </option> */}
 
-                    <option value={-1}>{t('general.management.choose')}</option>
-                    {programSuggestions
-                      .filter((p) =>
-                        p.studyCycles.some((cycle) => cycle.id === formData.studyCycleId)
-                      )
-                      .map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name}
-                        </option>
-                      ))}
-                  </select>
-                  {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
-                </div>
-                {formData.programIds.length > 1 && (
-                  <button
-                    type="button"
-                    className="custom-button another-color"
-                    onClick={() => handleRemove(index)}
-                  >
-                    {t('general.management.delete')}
-                  </button>
-                )}
-              </li>
-            ))}
-            <li>
-              <button
-                type="button"
-                className="custom-button"
-                onClick={handleAddNext}
-              >
-                {t('general.management.addNext')}
-              </button>
+                  <option value={-1}>{t('general.management.choose')}</option>
+                  {programSuggestions
+                    .filter((p) =>
+                      p.studyCycles.some((cycle) => cycle.id === formData.studyCycleId)
+                    )
+                    .map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                </select>
+                {errors.programIds && <div className="text-danger">{errors.programIds}</div>}
+              </div>
+              {formData.programIds.length > 1 && (
+                <button
+                  type="button"
+                  className="custom-button another-color"
+                  onClick={() => handleRemove(index)}
+                >
+                  {t('general.management.delete')}
+                </button>
+              )}
             </li>
-          </ul>
-        </div>
+          ))}
+          <li>
+            <button
+              type="button"
+              className="custom-button"
+              onClick={handleAddNext}
+            >
+              {t('general.management.addNext')}
+            </button>
+          </li>
+        </ul>
+      </div>
 
-        <div className='mb-3'>
-          <label className="bold" htmlFor="status">
-            {t('general.university.status')}:
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={formData.statusId}
-            className="form-control"
-            onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
-          >
-            <option value={-1}>{t('general.management.choose')}</option>
-            {statuses.map((status) => (
-              <option key={status.id} value={status.id}>
-                {statusLabels[status.name] || status.name}
-              </option>
-            ))}
-          </select>
-          {errors.status && <div className="text-danger">{errors.status}</div>}
+      <div className='mb-3'>
+        <label className="bold" htmlFor="status">
+          {t('general.university.status')}:
+        </label>
+        <select
+          id="status"
+          name="status"
+          value={formData.statusId}
+          className="form-control"
+          onChange={(s) => setFormData({ ...formData, statusId: parseInt(s.target.value, 10) })}
+        >
+          <option value={-1}>{t('general.management.choose')}</option>
+          {statuses.map((status) => (
+            <option key={status.id} value={status.id}>
+              {statusLabels[status.name] || status.name}
+            </option>
+          ))}
+        </select>
+        {errors.status && <div className="text-danger">{errors.status}</div>}
+      </div>
+      {!thesis ? (
+        <div key={numPeople}>
+          <SupervisorReservationPage
+            numPeople={numPeople}
+            studentIndexes={formData.studentIndexes}
+            setStudentIndexes={setStudentIndexes}
+          />
         </div>
-        {!thesis ? (
+      ) : (
+        thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
@@ -717,20 +728,11 @@ function AddThesisPageAdmin() {
               setStudentIndexes={setStudentIndexes}
             />
           </div>
-        ) : (
-          thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
-            <div key={numPeople}>
-              <SupervisorReservationPage
-                numPeople={numPeople}
-                studentIndexes={formData.studentIndexes}
-                setStudentIndexes={setStudentIndexes}
-              />
-            </div>
-          )
-        )}
-      </form>
-    </div>
-  )
+        )
+      )}
+    </form>
+  </div>
+)
 };
 
 export default AddThesisPageAdmin;

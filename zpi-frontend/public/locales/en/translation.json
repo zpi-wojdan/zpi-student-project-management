@@ -338,7 +338,8 @@
   },
   "home":{
     "welcome": "Welcome to ZPI Helper website!",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "noSchedule": "Unfortunately the newest schedule is not available yet"
   },
   "comment": {
     "addSuccessful": "Comment has been added",

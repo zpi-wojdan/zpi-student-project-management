@@ -35,11 +35,7 @@ public class ReservationController {
     @PostMapping("")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
     public ResponseEntity<Reservation> addReservation(@RequestBody ReservationDTO reservation) {
-        try {
-            return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
-        } catch (ThesisOccupancyFullException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
