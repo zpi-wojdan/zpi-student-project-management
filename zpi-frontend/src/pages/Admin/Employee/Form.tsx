@@ -8,6 +8,7 @@ import { Role, RoleDTO } from '../../../models/user/Role';
 import { Department } from '../../../models/university/Department';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import api_access from '../../../utils/api_access';
 
 export type Title = {
   name: string;
@@ -60,7 +61,7 @@ const EmployeeForm: React.FC = () => {
 
     if (validateForm()) {
       if (employee) {
-        api.put(`http://localhost:8080/employee/${employee.id}`, formData)
+        api.put(api_access + `employee/${employee.id}`, formData)
           .then(() => {
             navigate("/employees");
             toast.success(t("employee.updateSuccessful"));
@@ -84,7 +85,7 @@ const EmployeeForm: React.FC = () => {
             }
           })
       } else {
-        api.post('http://localhost:8080/employee', formData)
+        api.post(api_access + 'employee', formData)
           .then(() => {
             navigate("/employees");
             toast.success(t("employee.addSuccessful"));
@@ -173,8 +174,7 @@ const EmployeeForm: React.FC = () => {
   const [availableTitles, setAvailableTitles] = useState<Title[]>([]);
 
   useEffect(() => {
-    console.log('departments fetch');
-    api.get('http://localhost:8080/departments')
+    api.get(api_access + 'departments')
       .then((response) => {
         setAvailableDepartments(response.data);
       })
@@ -188,7 +188,7 @@ const EmployeeForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/role')
+    api.get(api_access + 'role')
       .then((response) => {
         const filteredRoles = response.data.filter((role: Role) => role.name !== "student");
         setAvailableRoles(filteredRoles);
@@ -203,7 +203,7 @@ const EmployeeForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/title')
+    api.get(api_access + 'title')
       .then((response) => {
         setAvailableTitles(response.data);
       })

@@ -11,6 +11,7 @@ import api from '../../../utils/api';
 import { useTranslation } from "react-i18next";
 import { handleDeletionError } from '../../../utils/handleDeleteError';
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import api_access from '../../../utils/api_access';
 
 const StudentDetails: React.FC = () => {
   // @ts-ignore
@@ -22,7 +23,7 @@ const StudentDetails: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get(`http://localhost:8080/student/${id}`)
+    api.get(api_access + `student/${id}`)
       .then((response) => {
         setStudent(response.data);
         setLoaded(true);
@@ -54,7 +55,7 @@ const StudentDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/student/${student?.id}`)
+    api.delete(api_access + `student/${student?.id}`)
       .then(() => {
         toast.success(t('student.deleteSuccessful'));
         navigate("/students");

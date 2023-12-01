@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import ChoiceConfirmation from '../../../components/ChoiceConfirmation';
 import { toast } from 'react-toastify';
 import { handleDeletionError } from '../../../utils/handleDeleteError';
+import api_access from '../../../utils/api_access';
 import { Comment } from '../../../models/thesis/Comment';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -23,7 +24,7 @@ const ThesisDetails: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const response = api.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(api_access + `thesis/${id}`)
       .then((response) => {
         setThesis(response.data);
         setLoaded(true);
@@ -39,7 +40,7 @@ const ThesisDetails: React.FC = () => {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
         console.log(programs);
@@ -70,7 +71,7 @@ const ThesisDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/thesis/${id}`)
+    api.delete(api_access + `thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
         navigate("/theses");

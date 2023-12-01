@@ -7,6 +7,7 @@ import {toast} from "react-toastify";
 import handleSignOut from "../../auth/Logout";
 import {Faculty} from "../../models/university/Faculty";
 import {StudyField} from "../../models/university/StudyField";
+import api_access from "../../utils/api_access";
 
 const Reports = () => {
     // @ts-ignore
@@ -32,7 +33,7 @@ const Reports = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (validateForm()) {
-            let url = 'http://localhost:8080/report/pdf/'
+            let url = api_access + 'report/pdf/'
             if (formData.reportType === 'thesisGroups')
                 url += "thesis-groups"
             else
@@ -125,7 +126,7 @@ const Reports = () => {
     const [availableFields, setAvailableFields] = useState<StudyField[]>([]);
 
     useEffect(() => {
-        api.get('http://localhost:8080/faculty/ordered')
+        api.get(api_access + 'faculty/ordered')
             .then((response) => {
                 setAvailableFaculties(response.data);
             })
@@ -139,7 +140,7 @@ const Reports = () => {
     }, []);
 
     useEffect(() => {
-        api.get('http://localhost:8080/studyfield/ordered')
+        api.get(api_access + 'studyfield/ordered')
             .then((response) => {
                 setAvailableFields(response.data);
             })

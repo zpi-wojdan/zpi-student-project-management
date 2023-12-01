@@ -8,7 +8,8 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { handleDeletionError } from '../../../utils/handleDeleteError';
-import SearchBar from '../../../components/SearchBar';
+import SearchBar from '../../../components/SeatchBar';
+import api_access from '../../../utils/api_access';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const FacultyList: React.FC = () => {
@@ -23,7 +24,7 @@ const FacultyList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
           return a.abbreviation.localeCompare(b.abbreviation);
@@ -106,7 +107,7 @@ const FacultyList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/faculty/${facultyToDelete}`)
+    api.delete(api_access + `faculty/${facultyToDelete}`)
       .then(() => {
         toast.success(t('faculty.deleteSuccessful'));
         setRefreshList(!refreshList);

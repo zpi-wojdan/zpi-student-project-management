@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import api from "../utils/api";
 import { Deadline } from "../models/Deadline";
+import api_access from '../utils/api_access';
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const HomePage: React.FC = () => {
@@ -12,7 +13,7 @@ const HomePage: React.FC = () => {
     const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        api.get('http://localhost:8080/deadline/ordered')
+        api.get(api_access + 'deadline/ordered')
             .then((response) => {
                 setDeadlines(response.data);
                 const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
