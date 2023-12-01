@@ -143,7 +143,17 @@ public class ThesisService {
                     .map(index -> studyCycleRepository.findById(index).orElseThrow(NotFoundException::new))
                     .orElse(null));
 
-            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
+            Status status = statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new);
+
+            if (status.getName().equals("Rejected")) {
+                reservationRepository.deleteAll(updated.getReservations());
+                updated.setOccupied(0);
+            } else if (status.getName().equals("Approved") && updated.getOccupied() > 0) {
+                status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+            }
+
+            updated.setStatus(status);
+
             thesisRepository.saveAndFlush(updated);
             return updated;
         }

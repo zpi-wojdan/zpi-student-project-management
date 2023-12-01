@@ -238,9 +238,9 @@ const ThesesDetails: React.FC = () => {
               </button>
             ) : null}
 
-          {(thesis && thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
+          {(thesis && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
-            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
+            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
             user?.roles?.some(role => role.name === 'admin'))) ?
             (
               <button type="button" className="col-sm-2 custom-button my-3" onClick={() => {

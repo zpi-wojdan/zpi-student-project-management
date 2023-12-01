@@ -599,14 +599,16 @@ function AddThesisPageSupervisor() {
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
+              studentIndexes={formData.studentIndexes}
               setStudentIndexes={setStudentIndexes}
             />
           </div>
         ) : (
-          thesis.status.name === 'Draft' && (
+          thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
             <div key={numPeople}>
               <SupervisorReservationPage
                 numPeople={numPeople}
+                studentIndexes={formData.studentIndexes}
                 setStudentIndexes={setStudentIndexes}
               />
             </div>

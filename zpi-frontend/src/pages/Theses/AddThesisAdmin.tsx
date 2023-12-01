@@ -328,7 +328,6 @@ function AddThesisPageAdmin() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const [isValid, dto] = validateForm();
-    console.log(dto);
     if (isValid) {
       if (thesis) {
         api.put(`http://localhost:8080/thesis/${thesis.id}`, dto)
@@ -714,14 +713,16 @@ function AddThesisPageAdmin() {
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
+              studentIndexes={formData.studentIndexes}
               setStudentIndexes={setStudentIndexes}
             />
           </div>
         ) : (
-          thesis.status.name === 'Draft' && (
+          thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
             <div key={numPeople}>
               <SupervisorReservationPage
                 numPeople={numPeople}
+                studentIndexes={formData.studentIndexes}
                 setStudentIndexes={setStudentIndexes}
               />
             </div>

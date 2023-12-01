@@ -11,24 +11,29 @@ import api from "../../utils/api";
 
 type SupervisorReservationProps = {
     numPeople: number;
+    studentIndexes: string[];
     setStudentIndexes: (indexes: string[]) => void;
 }
 
-function SupervisorReservationPage({ numPeople, setStudentIndexes }: SupervisorReservationProps) {
+function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexes }: SupervisorReservationProps) {
     // @ts-ignore
     const { auth, setAuth } = useAuth();
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
 
-    const [numPeopleState, setNumPeopleState] = useState<number>(numPeople);
-    const [reservations, setReservations] = useState<string[]>(Array(numPeopleState).fill(""));
+    const [reservations, setReservations] = useState<string[]>(Array(numPeople).fill(""));
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
     const [showList, setShowList] = useState<boolean>(true);
 
     useEffect(() => {
-        setNumPeopleState(numPeople);
+        const updatedReservations = [...reservations].slice(0, numPeople);
+        studentIndexes?.slice(0, numPeople).forEach((v, i) => {
+            updatedReservations[i] = v;
+        });
+        setReservations(updatedReservations);
+        setStudentIndexes(updatedReservations);
     }, [numPeople]);
 
     const handleReservationChange = (index: number, value: string) => {
