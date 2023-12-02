@@ -252,6 +252,7 @@
     "acceptSuccesful": "Temat został zaakceptowany",
     "acceptError": "Temat nie został zaakceptowany",
     "deleteErrorWithReference": "Temat nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
+    "drafts": "Wersje robocze",
     "errorStudents": "Student z indeksem {{index}} ma juź przydzielony temat!",
     "addStudentsWarning": "Studenci nie zostaną zapisani, jeśli temat zostanie zapisany do wersji roboczych!",
     "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne."
