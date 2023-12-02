@@ -71,17 +71,10 @@ export default function App(props: IAppProps) {
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
-<<<<<<< HEAD
-                  <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
                   <Route path='my' element={<ThesesSupervisor />} />
                   <Route path='my/:id' element={<ThesesDetails />} />
                   <Route path='my/add' element={<AddThesisPageSupervisor />} />
                   <Route path='my/edit/:id' element={<AddThesisPageSupervisor />} />
-=======
-                  <Route path='my' element={<ReservationPage admin={false}/>} />
-                  <Route path='sup-theses/add' element={<AddThesisPageSupervisor />} />
-                  <Route path='sup-theses/edit/:id' element={<AddThesisPageSupervisor />} />
->>>>>>> main
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
