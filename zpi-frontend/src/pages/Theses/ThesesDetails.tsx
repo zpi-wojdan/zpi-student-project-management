@@ -12,6 +12,7 @@ import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import { Reservation } from "../../models/thesis/Reservation";
 import { toast } from "react-toastify";
+import api_access from '../../utils/api_access';
 import { Comment } from '../../models/thesis/Comment';
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { handleDeletionError } from '../../utils/handleDeleteError';
@@ -28,7 +29,7 @@ const ThesesDetails: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const response = api.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(api_access + `thesis/${id}`)
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const thesis: ThesisFront = {
@@ -63,7 +64,7 @@ const ThesesDetails: React.FC = () => {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
       })
@@ -134,7 +135,7 @@ const ThesesDetails: React.FC = () => {
         try {
           reservation.readyForApproval = true;
           reservation.sentForApprovalDate = new Date();
-          const response = await api.put('http://localhost:8080/reservation/' + reservation.id,
+          const response = await api.put(api_access + 'reservation/' + reservation.id,
             JSON.stringify(reservation)
           );
 
@@ -151,7 +152,7 @@ const ThesesDetails: React.FC = () => {
   };
 
   const downloadDeclaration = () => {
-    let url = 'http://localhost:8080/report/pdf/thesis-declaration/' + thesis?.id;
+    let url = api_access + 'report/pdf/thesis-declaration/' + thesis?.id;
 
     let toastId: any = null;
     toastId = toast.info(t('thesis.generating'), { autoClose: false });
@@ -295,44 +296,33 @@ const ThesesDetails: React.FC = () => {
                 </button>
               ) : null}
 
-            {(thesis && thesis?.occupied < thesis?.numPeople && (
-              user?.role?.name === 'student' &&
-              user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
-              user?.roles?.some(role => role.name === 'supervisor') &&
-              user?.mail === thesis?.supervisor.mail) ||
-              user?.roles?.some(role => role.name === 'admin')) ?
-              (
-                <button type="button" className="custom-button" onClick={() => {
-                  if (user?.role?.name === 'student') {
-                    if (thesis?.reservations.length === 0) {
-                      navigate('/reservation', { state: { thesis: thesis } })
-                    } else {
-                      navigate('/single-reservation', { state: { thesis: thesis } })
-                    }
+          {(thesis && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
+            user?.role?.name === 'student' &&
+            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
+            user?.roles?.some(role => role.name === 'admin' && thesis?.status.name !== 'Closed'))) ?
+            (
+              <button type="button" className="col-sm-2 custom-button my-3" onClick={() => {
+                if (user?.role?.name === 'student') {
+                  if (thesis?.reservations.length === 0) {
+                    navigate('/reservation', { state: { thesis: thesis } })
                   } else {
-                    if (user?.mail === thesis?.supervisor.mail) {
-                      navigate('/supervisor-reservation', { state: { thesis: thesis } })
-                    } else {
-                      navigate('/admin-reservation', { state: { thesis: thesis } })
-                    }
+                    navigate('/single-reservation', { state: { thesis: thesis } })
                   }
+                } else {
+                  navigate('/admin-reservation', { state: { thesis: thesis } })
                 }
-                }>
-                  {user?.role?.name === 'student' ? (
-                    <span>{t('general.management.reserve')}</span>
-                  ) : (
-                    user?.mail === thesis?.supervisor.mail ?
-                      (
-                        <span>{t('thesis.enrollStudents')}</span>
-                      ) : (
-                        user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
-                      )
-                  )}
-                </button>
-              ) : (
-                <span></span>
-              )
-            }
+              }
+              }>
+                {user?.role?.name === 'student' ? (
+                  <span>{t('general.management.reserve')}</span>
+                ) : (
+                  user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
+                )}
+              </button>
+            ) : (
+              <span></span>
+            )
+          }
           </div>
         </React.Fragment>
         ) : (<></>)}

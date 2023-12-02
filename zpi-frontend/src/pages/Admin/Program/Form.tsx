@@ -10,6 +10,7 @@ import { StudyCycle } from '../../../models/university/StudyCycle';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { Specialization } from '../../../models/university/Specialization';
+import api_access from '../../../utils/api_access';
 
 const ProgramForm: React.FC = () => {
   // @ts-ignore
@@ -59,7 +60,7 @@ const ProgramForm: React.FC = () => {
     if (validateForm()) {
       if (program) {
         console.log(formData)
-        api.put(`http://localhost:8080/program/${programId}`, formData)
+        api.put(api_access + `program/${programId}`, formData)
           .then(() => {
             navigate("/programs")
             toast.success(t("program.updateSuccessful"));
@@ -83,7 +84,7 @@ const ProgramForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/program', formData)
+        api.post(api_access + 'program', formData)
           .then(() => {
             navigate("/programs")
             toast.success(t("program.addSuccessful"));
@@ -158,7 +159,7 @@ const ProgramForm: React.FC = () => {
   const [availableStudyCycles, setAvailableStudyCycles] = useState<StudyCycle[]>([]);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         setAvailableFaculties(response.data);
       })
@@ -172,7 +173,7 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access + 'studyfield')
       .then((response) => {
         setAvailableFields(response.data);
       })
@@ -186,7 +187,7 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
+    api.get(api_access + 'specialization')
       .then((response) => {
         setAvailableSpecializations(response.data);
       })
@@ -200,7 +201,7 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         setAvailableStudyCycles(response.data);
       })

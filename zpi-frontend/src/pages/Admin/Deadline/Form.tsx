@@ -6,6 +6,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import {Deadline, DeadlineDTO} from "../../../models/Deadline";
+import api_access from '../../../utils/api_access';
 
 const DeadlineForm: React.FC = () => {
   // @ts-ignore
@@ -50,7 +51,7 @@ const DeadlineForm: React.FC = () => {
 
     if (validateForm()) {
       if (deadline) {
-        api.put(`http://localhost:8080/deadline/${deadlineId}`, formData)
+        api.put(api_access + `deadline/${deadlineId}`, formData)
           .then(() => {
             navigate("/deadlines")
             toast.success(t("deadline.updateSuccessful"));
@@ -68,7 +69,7 @@ const DeadlineForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/deadline', formData)
+        api.post(api_access + 'deadline', formData)
           .then(() => {
             navigate("/deadlines")
             toast.success(t("deadline.addSuccessful"));

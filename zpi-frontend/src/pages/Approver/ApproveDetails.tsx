@@ -46,6 +46,7 @@ const ApproveDetails: React.FC = () => {
     programIds: [-1],
     studyCycleId: -1,
     statusId: -1,
+    studentIndexes: []
   });
   const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -452,7 +453,8 @@ const ApproveDetails: React.FC = () => {
         supervisorId: thesis.supervisor.id,
         programIds: thesis.programs.map(p => p.id),
         studyCycleId: thesis.studyCycle?.id ?? null,
-        statusId: id
+        statusId: id,
+        studentIndexes: thesis.reservations.map(r => r.student.index)
       }
       return [isValid, dto];
     }

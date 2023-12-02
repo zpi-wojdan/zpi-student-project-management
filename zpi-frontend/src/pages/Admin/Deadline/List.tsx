@@ -7,6 +7,7 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { Deadline } from "../../../models/Deadline";
+import api_access from '../../../utils/api_access';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const DeadlineList: React.FC = () => {
@@ -20,7 +21,7 @@ const DeadlineList: React.FC = () => {
     const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        api.get('http://localhost:8080/deadline/ordered')
+        api.get(api_access + 'deadline/ordered')
             .then((response) => {
                 setDeadlines(response.data);
                 const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
@@ -77,7 +78,7 @@ const DeadlineList: React.FC = () => {
     };
 
     const handleConfirmDelete = () => {
-        api.delete(`http://localhost:8080/deadline/${deadlineToDelete}`)
+        api.delete(api_access + `deadline/${deadlineToDelete}`)
             .then(() => {
                 toast.success(t('deadline.deleteSuccessful'));
                 setRefreshList(!refreshList);

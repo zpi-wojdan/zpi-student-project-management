@@ -10,6 +10,8 @@ import api from "../../../utils/api";
 import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SearchBar';
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import api_access from '../../../utils/api_access';
+
 
 const StudyCycleList: React.FC = () => {
   // @ts-ignore
@@ -23,7 +25,7 @@ const StudyCycleList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => a.id - b.id);
         setCycles(sortedCycles);
@@ -103,7 +105,7 @@ const StudyCycleList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/studycycle/${studyCycleToDelete}`)
+    api.delete(api_access + `studycycle/${studyCycleToDelete}`)
       .then(() => {
         toast.success(t('study_cycle.deleteSuccessful'));
         setRefreshList(!refreshList);
