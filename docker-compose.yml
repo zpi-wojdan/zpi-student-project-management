@@ -31,7 +31,7 @@ services:
     ports:
       - 443:443
     environment:
-      REACT_APP_BACKEND_HOST: https://proj01.zpi.wit.pwr.edu.pl:8080/
+      REACT_APP_BACKEND_HOST: https://proj01.zpi.wit.pwr.edu.pl:8443/
     depends_on:
       - backend
 
