@@ -7,6 +7,7 @@ import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Deadline;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RepositoryRestResource
@@ -22,4 +23,5 @@ public interface ThesisRepository extends JpaRepository<Thesis, Long>{
 
     List<Thesis> findAllByStatusNameIn(List<String> statusNames, Sort sort);
     List<Thesis> findAllByOrderByStudyCycleNameDescIdDesc();
+    Optional<Thesis> findByReservations_Id(Long id);
 }
