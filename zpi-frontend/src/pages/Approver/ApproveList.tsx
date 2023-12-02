@@ -16,6 +16,8 @@ import { StudyField } from '../../models/university/StudyField';
 import { Employee } from '../../models/user/Employee';
 import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 import { Status } from '../../models/thesis/Status';
+import { stat } from 'fs';
+import { toast } from 'react-toastify';
 
 
 
@@ -28,6 +30,8 @@ const ApproveList: React.FC = () => {
   const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
   const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
   const [loaded, setLoaded] = useState<boolean>(false);
+
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
     api.get(`http://localhost:8080/thesis/status/Pending_approval`)
@@ -64,7 +68,7 @@ const ApproveList: React.FC = () => {
           handleSignOut(navigate);
         }
       });
-  }, []);
+  }, [key]);
 
   // Filtrowanie
   const [filteredTheses, setFilteredTheses] = useState<ThesisFront[]>(theses);
@@ -338,16 +342,13 @@ const ApproveList: React.FC = () => {
 
 
   //  hurtowa akceptacja/odrzucanie tematów
-  const [statuses, setStatuses] = useState<Status[]>([]);
-  const [thesesFormIndexes, setThesesFormIndexes] = useState(new Set());
+  const [thesesFormIndexes, setThesesFormIndexes] = useState(new Set<number>());
   const [checkedRows, setCheckedRows] = useState(new Set());
+  const [checkAllCheckbox, setCheckAllCheckbox] = useState(false);
 
   const [confirmClicked, setConfirmClicked] = useState(false);
   const [rejectClicked, setRejectClicked] = useState(false);
-  const [showRejectConfirmation, setShowRejectConfirmation] = useState(false);
   const [showAcceptConfirmation, setShowAcceptConfirmation] = useState(false);
-
-  //  add errors
 
   const checkCheckbox = (rowId: number, thesisId: number) => {
     setThesesFormIndexes((prev) => {
@@ -375,13 +376,24 @@ const ApproveList: React.FC = () => {
       });
   }
 
-  const getApprovedStatusId = () => {
-    return statuses.find(s => s.name === 'Approved')?.id ?? -1;
+  const checkAllCheckboxesChange = () => {
+    setCheckAllCheckbox(!checkAllCheckbox);
+    if (checkAllCheckbox){
+      setCheckedRows(new Set());
+      setThesesFormIndexes(new Set());
+    }
+    else{
+      let thesisIds = new Set<number>();
+      let rowIds = new Set<number>();
+      currentTheses.map((thesis, index) => {
+        thesisIds.add(thesis.id)
+        rowIds.add(index)
+      });
+      setThesesFormIndexes(thesisIds);
+      setCheckedRows(rowIds);
+    }
   }
-  const getRejectedStatusId = () => {
-    return statuses.find(s => s.name === 'Rejected')?.id ?? -1;
-  }
-  
+
   const handleConfirmClick = () => {
     setShowAcceptConfirmation(true);
     setConfirmClicked(true);
@@ -389,51 +401,57 @@ const ApproveList: React.FC = () => {
   };
 
   const handleConfirmAccept = () => {
-    const isValid = validateTheses();
+    const [isValid, statName] = validateTheses();
     if (isValid){
-
-      let id: number;
-      if (confirmClicked && !rejectClicked) {
-        id = getApprovedStatusId();
-      }
-      else if (!confirmClicked && rejectClicked) {
-        id = getRejectedStatusId();
-      }
-      else {
-        id = -1;
-      }
-
-      for (let i = 0; i < thesesFormIndexes.size; i++){
-
-        //  api.put for every thesis with a newly created dto
-        console.log('Boo');
-
-      }
+      api.put(`http://localhost:8080/thesis/bulk/${statName}`, Array.from(thesesFormIndexes))
+        .then(() => {
+          setKey(k => k+1);
+          setThesesFormIndexes(new Set());
+          setCheckedRows(new Set());
+          toast.success(t("thesis.acceptSuccesfulBulk"));
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+          toast.error(t("thesis.acceptErrorBulk"));
+        });
     }
-    
-
+    else{
+      toast.error(t("thesis.acceptErrorBulk")); 
+    }
+    setShowAcceptConfirmation(false);
   }
 
   const handleConfirmCancel = () => {
     setShowAcceptConfirmation(false);
   }
 
-  const handleRejectClick = () => {
-    setShowRejectConfirmation(true);
-    setConfirmClicked(false);
-    setRejectClicked(true);
-  }
-
-  const handleRejectConfirm = () => {
-    //  api.put shenanigans
-  }
-
-  const handleRejectCancel = () => {
-    setShowRejectConfirmation(false);
-  }
-
   const validateTheses = () => {
-    return true;
+    let name: string;
+    if (confirmClicked && !rejectClicked) {
+      name = "Approved";
+    }
+    else if (!confirmClicked && rejectClicked) {
+      name = "Rejected";
+    }
+    else {
+      name = "";
+    }
+    
+    let allIdsArePresent = true;
+    const indexes = theses.map(t => t.id);
+    for (var index of Array.from(thesesFormIndexes.values())) {
+      if (!indexes.includes(index)){
+        allIdsArePresent = false;
+        break;
+      }
+    }
+
+    const isValid = (name !== "") && (allIdsArePresent !== false);
+    return [isValid, name];
   }
 
 
@@ -594,7 +612,7 @@ const ApproveList: React.FC = () => {
               type="button"
               className="custom-button"
               onClick={() => handleConfirmClick()}
-              disabled={showRejectConfirmation}
+              disabled={checkedRows.size === 0}
             >
               {t('general.management.acceptSelected')}
             </button>
@@ -613,28 +631,6 @@ const ApproveList: React.FC = () => {
               </tr>
             )}
 
-            <button
-              type="button"
-              className="custom-button"
-              onClick={() => handleRejectClick()}
-              disabled={showAcceptConfirmation}
-            >
-              {t('general.management.rejectSelected')}
-            </button>
-
-            {showRejectConfirmation && (
-              <tr>
-                <td colSpan={5}>
-                  <ChoiceConfirmation
-                    isOpen={showRejectConfirmation}
-                    onClose={handleRejectCancel}
-                    onConfirm={handleRejectConfirm}
-                    onCancel={handleRejectCancel}
-                    questionText={t('thesis.rejectConfirmationBulk')}
-                  />
-                </td>
-            </tr>
-            )}
           </div>
           <div className='d-flex justify-content-between  align-items-center'>
             <SearchBar
@@ -709,10 +705,18 @@ const ApproveList: React.FC = () => {
               <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
             </div>
           ) : (
-            <table className="custom-table">
+            <table className="custom-table" key={key}>
               <thead>
                 <tr>
-                  <th style={{ width: '3%', textAlign: 'center' }}>{t('general.management.select')}</th>
+                  <th style={{ width: '3%', textAlign: 'center' }}>
+                    <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
+                    <input
+                      type='checkbox'
+                      className='custom-checkbox'
+                      checked={checkAllCheckbox}
+                      onChange={checkAllCheckboxesChange}
+                    />
+                    </th>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
                   <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
                   <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
@@ -726,6 +730,7 @@ const ApproveList: React.FC = () => {
                     <div style={{ textAlign: 'center' }}>
                       <input
                         type="checkbox"
+                        className='custom-checkbox'
                         checked={checkedRows.has(index)}
                         onChange={(e) => {
                           if (e.target.checked) {

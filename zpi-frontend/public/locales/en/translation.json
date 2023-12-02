@@ -24,6 +24,7 @@
       "reserve": "Reserve",
       "save": "Save",
       "select": "Select",
+      "selectAll": "Select all",
       "view": "View",
       "wrongData": "Wrong data",
       "wrongFormat": "Wrong format",
@@ -255,6 +256,8 @@
     "rejectionError": "Thesis has not been rejected",
     "acceptSuccesful": "Thesis has been accepted",
     "acceptError": "Thesis has not been accepted",
+    "acceptSuccesfulBulk": "Selected theses have been accepted",
+    "acceptErrorBulk": "Selected theses have not been accepted",
     "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "status": {

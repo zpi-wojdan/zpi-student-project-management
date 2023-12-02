@@ -23,6 +23,7 @@
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
       "select": "Wybierz",
+      "selectAll": "Zaznacz wszystkie",
       "view": "Widok",
       "wrongData": "Niepoprawne dane",
       "wrongFormat": "Zły format",
@@ -256,6 +257,8 @@
     "rejectionError": "Temat nie został odrzucony",
     "acceptSuccesful": "Temat został zaakceptowany",
     "acceptError": "Temat nie został zaakceptowany",
+    "acceptSuccesfulBulk": "Zaznaczone tematy zostały zaakceptowane",
+    "acceptErrorBulk": "Zaznaczone tematy nie zostały zaakceptowane",
     "deleteErrorWithReference": "Temat nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
   },
   "uploadFiles": {
