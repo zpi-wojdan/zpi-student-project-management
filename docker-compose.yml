@@ -33,7 +33,7 @@ services:
       REACT_APP_BACKEND_HOST: https://proj01.zpi.wit.pwr.edu.pl:8080/
     depends_on:
       - backend
-      
+
   db:
     image: postgres:16.1-alpine
     ports:
@@ -54,3 +54,4 @@ volumes:
 
 networks:
   db:
+  
