@@ -89,22 +89,30 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
-    .then((response) => {
-      setStudyCycles(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     api.get('http://localhost:8080/program')
     .then((response) => {
-      setPrograms(response.data);
+
+      const programsResponse: Program[] = response.data;
+      setPrograms(programsResponse);
+
+      let studyCycleIds: number[] = [];
+      api.get('http://localhost:8080/studycycle')
+        .then((response) => {
+          const cyclesResponse: StudyCycle[] = response.data;
+          setStudyCycles(cyclesResponse);
+          studyCycleIds = cyclesResponse.map(c => c.id);
+          const updatedProgramSuggestions = programsResponse
+                    .filter((p) => p.studyCycles
+                    .map(c => studyCycleIds.includes(c.id)));
+          setProgramSuggestions(updatedProgramSuggestions);
+        })
+        .catch((error) => {
+          if (error.response.status === 401 || error.response.status ===403){
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+        });
+
     })
     .catch((error) => {
       if (error.response.status === 401 || error.response.status ===403){
@@ -155,18 +163,6 @@ function AddThesisPageAdmin() {
       setThesisId(thesis.id);
     }
   }, [thesis]);
-
-  // useEffect(() => {
-  //   const index = thesis.studyCycle?.id;
-  //     if (index !== null){
-  //       const updatedProgramSuggestions = programs
-  //                 .filter((p) => p.studyCycles
-  //                 .map((c)=> c.id === thesis.studyCycle?.id));
-  //       console.log('suggestions: ' + updatedProgramSuggestions.map(p => p.name));
-  //       setProgramSuggestions(updatedProgramSuggestions);
-  //       setSuggestionsKey(k => k+1);
-  //     }
-  // }, [thesis]);
 
   const validateForm = (): [boolean, ThesisDTO | null] => {
     const newErrors: Record<string, string> =  {};
@@ -607,7 +603,7 @@ function AddThesisPageAdmin() {
         {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
       </div>
 
-     <div className="mb-3">{/*key={suggestionsKey} */}
+     <div className="mb-3">
         <label className="bold">{t('general.university.studyPrograms')}:</label>  
 
         <ul>
@@ -619,7 +615,7 @@ function AddThesisPageAdmin() {
                 <select
                   id={`programId${index}`}
                   name={`programId${index}`}
-                  value={formData.programIds[index]} 
+                  value={programId} 
                   onChange={(e) => {
                     const selectedProgramId = parseInt(e.target.value, 10);    
                     handleProgramChange(index, selectedProgramId);
@@ -627,12 +623,6 @@ function AddThesisPageAdmin() {
                   className='form-control'
                   disabled={formData.studyCycleId === -1}
                 >
-                  {/* <option value={-1}>
-                  {programSuggestions ? programs[formData.programIds[programId]]?.name : t('general.management.choose')}
-                    {programSuggestions ? programs[1]?.name : t('general.management.choose')}
-                    {thesis.program ? thesis.program.name : t('general.management.choose')}
-                  </option> */}
-
                   <option value={-1}>{t('general.management.choose')}</option>
                   {programSuggestions
                     .filter((p) =>

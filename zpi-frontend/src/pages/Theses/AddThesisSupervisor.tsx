@@ -87,23 +87,33 @@ function AddThesisPageSupervisor() {
       });
   }, []);
 
-  useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
-    .then((response) => {
-      setStudyCycles(response.data);
-    })
-    .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
-        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-        handleSignOut(navigate);
-      }
-    });
-  }, []);
+
 
   useEffect(() => {
     api.get('http://localhost:8080/program')
     .then((response) => {
-      setPrograms(response.data);
+      
+      const programsResponse: Program[] = response.data;
+      setPrograms(programsResponse);
+
+      let studyCycleIds: number[] = [];
+      api.get('http://localhost:8080/studycycle')
+        .then((response) => {
+          const cyclesResponse: StudyCycle[] = response.data;
+          setStudyCycles(cyclesResponse);
+          studyCycleIds = cyclesResponse.map(c => c.id);
+          const updatedProgramSuggestions = programsResponse
+                    .filter((p) => p.studyCycles
+                    .map(c => studyCycleIds.includes(c.id)));
+          setProgramSuggestions(updatedProgramSuggestions);
+        })
+        .catch((error) => {
+          if (error.response.status === 401 || error.response.status ===403){
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+        });
+
     })
     .catch((error) => {
       if (error.response.status === 401 || error.response.status ===403){
@@ -531,7 +541,7 @@ function AddThesisPageSupervisor() {
                 <select
                   id={`programId${index}`}
                   name={`programId${index}`}
-                  value={formData.programIds[index]} 
+                  value={programId} 
                   onChange={(e) => {
                     const selectedProgramId = parseInt(e.target.value, 10);    
                     handleProgramChange(index, selectedProgramId);
