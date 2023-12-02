@@ -62,21 +62,6 @@ const ThesesDetails: React.FC = () => {
 
   }, [id]);
 
-  const [programs, setPrograms] = useState<Program[]>([]);
-  useEffect(() => {
-    api.get(api_access + 'program')
-      .then((response) => {
-        setPrograms(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
-
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
   const toggleProgramExpansion = (programId: number) => {
@@ -237,7 +222,7 @@ const ThesesDetails: React.FC = () => {
     else {
       u = user;
     }
-    return u?.roles.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
+    return u?.roles?.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
   }
   const gotCommentSectionRightsBySupervisor = () => {
     let u: (Student & Employee) | undefined;

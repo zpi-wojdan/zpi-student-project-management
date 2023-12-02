@@ -86,6 +86,7 @@
     "home": "Strona główna",
     "manage": "Zarządzaj",
     "myTheses": "Moje tematy",
+    "myThesis": "Mój temat",
     "imageAlt": "Logo Politechniki Wrocławskiej",
     "reports": "Raporty",
     "confirm": "Do zatwierdzenia"
@@ -363,5 +364,11 @@
     "student": "student",
     "thesis": "temat",
     "reservation": "rezerwacje"
+  },
+  "studentThesis": {
+    "noReservation" : "Nie jesteś jeszcze zapisany na żaden temat",
+    "pendingApproval" : "Temat oczekuje na akceptacje komisji",
+    "beforeSupervisorAccept" : "Rezerwacja oczekuje na akceptacje prowadzącego",
+    "afterSupervisorAccept" : "Rezerwacja została zaakceptowana przez prowadzącego"
   }
 }

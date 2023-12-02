@@ -87,6 +87,7 @@
     "home": "Home",
     "manage": "Manage",
     "myTheses": "My theses",
+    "myThesis": "My thesis",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology",
     "reports": "Reports",
     "confirm": "To be approved"
@@ -365,5 +366,11 @@
     "student": "student",
     "thesis": "thesis",
     "reservation": "reservation"
+  },
+  "studentThesis": {
+    "noReservation" : "You are not assigned to any thesis yet",
+    "pendingApproval" : "Thesis is waiting for the committee's approval",
+    "beforeSupervisorAccept" : "Reservation is waiting for supervisor's approval",
+    "afterSupervisorAccept" : "Reservation has been accepted by supervisor"
   }
 }

@@ -7,6 +7,7 @@ import useAuth from "../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import Cookies from 'js-cookie';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import api_access from '../../utils/api_access';
 
 const SupervisorMy: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const SupervisorMy: React.FC = () => {
   useEffect(() => {
     const user = JSON.parse(Cookies.get("user") || "{}")
     const statNames = ['Pending approval', 'Rejected', 'Approved', 'Assigned'];
-    api.get(`http://localhost:8080/thesis/employee/${user.id}/statuses?statName=${statNames.join(',')}`)
+    api.get(api_access + `thesis/employee/${user.id}/statuses?statName=${statNames.join(',')}`)
       .then((response) => {
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
@@ -54,9 +55,8 @@ const SupervisorMy: React.FC = () => {
         }
       });
 
-    api.get(`http://localhost:8080/thesis/${user.id}/Draft`)
+    api.get(api_access + `thesis/${user.id}/Draft`)
       .then((response) => {
-        console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
             id: thesisDb.id,
