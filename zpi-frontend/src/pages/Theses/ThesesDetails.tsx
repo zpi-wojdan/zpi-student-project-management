@@ -257,7 +257,7 @@ const ThesesDetails: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='d-flex justify-content-between align-items-center mb-3'>
-        <div className='d-flex justify-content-begin align-items-center mb-3'>
+        <div className='d-flex justify-content-begin align-items-center'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
             &larr; {t('general.management.goBack')}
           </button>
@@ -285,7 +285,7 @@ const ThesesDetails: React.FC = () => {
           ) : (<></>)}
         </div>
         {loaded ? (<React.Fragment>
-          <div className='d-flex justify-content-end align-items-center mb-3'>
+          <div className='d-flex justify-content-end align-items-center'>
             {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
               (user?.mail === thesis?.supervisor.mail ||
                 thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
@@ -301,7 +301,7 @@ const ThesesDetails: React.FC = () => {
             user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
             user?.roles?.some(role => role.name === 'admin' && thesis?.status.name !== 'Closed'))) ?
             (
-              <button type="button" className="col-sm-2 custom-button my-3" onClick={() => {
+              <button type="button" className="custom-button" onClick={() => {
                 if (user?.role?.name === 'student') {
                   if (thesis?.reservations.length === 0) {
                     navigate('/reservation', { state: { thesis: thesis } })
