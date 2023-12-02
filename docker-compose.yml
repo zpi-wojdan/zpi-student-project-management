@@ -9,6 +9,7 @@ services:
       - db
     environment:
       ACTIVE_PROFILE: prod
+      SERVER_PORT: 8443
       FRONTEND_PORT: 443
       FRONTEND_HOST: proj01.zpi.wit.pwr.edu.pl
       POSTRESQL_HOST: db
