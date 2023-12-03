@@ -10,10 +10,13 @@ services:
       - frontend
 
   backend:
-    image: backend:latest
+    build:
+      context: ./backend
     ports:
-      - 8080:8080
+      - "8080:8080"
     networks:
+      - db
+    depends_on:
       - db
     environment:
       ACTIVE_PROFILE: prod
@@ -30,13 +33,13 @@ services:
       MAIL_USERNAME: 260452@student.pwr.edu.pl
       MAIL_PASSWORD: asdlkj000
       GOOGLE_CLIENT_ID: 333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com
-    depends_on:
-      - db
+
 
   frontend:
-    image: frontend:latest
+    build:
+      context: ./frontend
     ports:
-      - 3000:80
+      - "3000:3000"
     environment:
       - REACT_APP_BACKEND_HOST=https://proj01.zpi.wit.pwr.edu.pl/api/
     networks:
@@ -59,8 +62,6 @@ services:
       - db
 
 volumes:
-  nginx:
-    driver: local
   db:
     driver: local
 
