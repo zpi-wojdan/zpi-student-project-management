@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
+import pwr.zpibackend.exceptions.LimitOfThesesReachedException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Reservation;
@@ -70,6 +71,20 @@ public class ThesisService {
                         () -> new NotFoundException(
                                 "Employee with id " + thesis.getSupervisorId() + " does not exist"));
 
+        Status draftStatus = statusRepository.findByName("Draft").orElseThrow(NotFoundException::new);
+        Status rejectedStatus = statusRepository.findByName("Rejected").orElseThrow(NotFoundException::new);
+        Status closedStatus = statusRepository.findByName("Closed").orElseThrow(NotFoundException::new);
+
+        if ((!thesis.getStatusId().equals(draftStatus.getId()) &&
+                !thesis.getStatusId().equals(rejectedStatus.getId()) &&
+                !thesis.getStatusId().equals(closedStatus.getId())) &&
+                thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(supervisor.getId(),
+                        Arrays.asList("Pending approval", "Approved", "Assigned"), sort).size() >=
+                        supervisor.getNumTheses()) {
+            throw new LimitOfThesesReachedException("Employee with id " + thesis.getSupervisorId() +
+                    " has reached the limit of theses");
+        }
+
         Thesis newThesis = new Thesis();
         newThesis.setNamePL(thesis.getNamePL());
         newThesis.setNameEN(thesis.getNameEN());
@@ -87,7 +102,6 @@ public class ThesisService {
         newThesis.setStudyCycle(thesis.getStudyCycleId()
                 .map(index -> studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)).orElse(null));
 
-        Status draftStatus = statusRepository.findByName("Draft").orElseThrow(NotFoundException::new);
         newThesis.setStatus(draftStatus);
 
         thesisRepository.saveAndFlush(newThesis);
@@ -127,6 +141,24 @@ public class ThesisService {
     public Thesis updateThesis(Long id, ThesisDTO thesis) {
         if (thesisRepository.existsById(id)) {
             Thesis updated = thesisRepository.findById(id).get();
+
+            Status draftStatus = statusRepository.findByName("Draft").orElseThrow(NotFoundException::new);
+            Status rejectedStatus = statusRepository.findByName("Rejected").orElseThrow(NotFoundException::new);
+            Status closedStatus = statusRepository.findByName("Closed").orElseThrow(NotFoundException::new);
+
+            if ((updated.getStatus().getName().equals("Draft") || updated.getStatus().getName().equals("Rejected") ||
+                    updated.getStatus().getName().equals("Closed")) &&
+                    (!thesis.getStatusId().equals(draftStatus.getId()) &&
+                            !thesis.getStatusId().equals(rejectedStatus.getId()) &&
+                            !thesis.getStatusId().equals(closedStatus.getId())) &&
+                    thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(updated.getSupervisor().getId(),
+                            Arrays.asList("Pending approval", "Approved", "Assigned"), sort).size() >=
+                            updated.getSupervisor().getNumTheses()
+            ) {
+                throw new LimitOfThesesReachedException("Employee with id " + updated.getSupervisor().getId() +
+                        " has reached the limit of theses");
+            }
+
             updated.setNamePL(thesis.getNamePL());
             updated.setNameEN(thesis.getNameEN());
             updated.setDescriptionPL(thesis.getDescriptionPL());
@@ -247,7 +279,7 @@ public class ThesisService {
     }
 
     public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
-        return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames, sort);
+        return thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statNames, sort);
     }
 
 }
