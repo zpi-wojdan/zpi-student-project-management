@@ -369,7 +369,7 @@
   },
   "title": {
     "deleteSuccessful": "Tytuł został usunięty",
-    "deleteError": "Tytuł nie może zostać usunięty!",
+    "deleteError": "Tytuł nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą pracownik!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten tytuł?",
     "add": "Dodaj tytuł",
     "save": "Zapisz tytuł",

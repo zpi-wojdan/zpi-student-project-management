@@ -371,7 +371,7 @@
   },
   "title": {
     "deleteSuccessful": "Title has been deleted",
-    "deleteError": "Title cannot be deleted!",
+    "deleteError": "Title cannot be deleted because it is still referenced by employee table!",
     "deleteConfirmation": "Are you sure you want to delete this title?",
     "add": "Add title",
     "save": "Save title",
