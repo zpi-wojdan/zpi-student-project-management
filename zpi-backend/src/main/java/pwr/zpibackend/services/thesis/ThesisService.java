@@ -9,12 +9,9 @@ import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.university.StudyCycle;
+import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.repositories.thesis.CommentRepository;
-import pwr.zpibackend.repositories.thesis.StatusRepository;
-import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.repositories.thesis.*;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
@@ -37,6 +34,7 @@ public class ThesisService {
     private final StudyCycleRepository studyCycleRepository;
     private final StatusRepository statusRepository;
     private final CommentRepository commentRepository;
+    private final ReservationRepository reservationRepository;
 
     private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
@@ -110,7 +108,27 @@ public class ThesisService {
                     studyCycleRepository.findById(index).orElseThrow(NotFoundException::new)
             ).orElse(null));
 
-            updated.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
+            Status status = statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new);
+
+            if (status.getName().equals("Rejected")) {
+                reservationRepository.deleteAll(updated.getReservations());
+                updated.getReservations().clear();
+                updated.setOccupied(0);
+            } else if (status.getName().equals("Approved") && updated.getOccupied() > 0) {
+                boolean allConfirmed = true;
+                for (Reservation reservation : updated.getReservations()) {
+                    if (!reservation.isConfirmedByStudent() || !reservation.isConfirmedBySupervisor()) {
+                        allConfirmed = false;
+                        break;
+                    }
+                }
+                if (allConfirmed) {
+                    status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+                }
+            }
+
+            updated.setStatus(status);
+
             thesisRepository.saveAndFlush(updated);
             return updated;
         }
@@ -186,19 +204,43 @@ public class ThesisService {
         return thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statNames, sort);
     }
 
+    @Transactional
     public List<Thesis> updateThesesStatusInBulk(String statName, List<Long> thesesIds) {
-        Status newStatus = statusRepository.findByName(statName).orElseThrow(NotFoundException::new);
+        Status status = statusRepository.findByName(statName).orElseThrow(NotFoundException::new);
         List<Thesis> thesesForUpdate = new ArrayList<>();
-        thesesIds.forEach(id -> {
+
+        for (Long id : thesesIds) {
             Optional<Thesis> thesisOptional = thesisRepository.findById(id);
             if (thesisOptional.isPresent()) {
                 Thesis thesis = thesisOptional.get();
-                thesis.setStatus(newStatus);
+
+                if (status.getName().equals("Rejected")){
+                    reservationRepository.deleteAll(new ArrayList<>(thesis.getReservations()));
+                    thesis.getReservations().clear();
+                    thesis.setOccupied(0);
+                }
+                else if (status.getName().equals("Approved") && thesis.getOccupied() > 0){
+                    boolean allConfirmed = true;
+                    for (Reservation reservation : thesis.getReservations()) {
+                        if (!reservation.isConfirmedByStudent() || !reservation.isConfirmedBySupervisor()) {
+                            allConfirmed = false;
+                            break;
+                        }
+                    }
+                    if (allConfirmed) {
+                        status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+                    }
+                }
+
+                thesis.setStatus(status);
                 thesesForUpdate.add(thesis);
             }
-        });
-        return thesisRepository.saveAll(thesesForUpdate);
-    }
+            else {
+                throw new NotFoundException("Thesis with id " + id + " does not exist");
+            }
+        }
 
+        return thesisRepository.saveAllAndFlush(thesesForUpdate);
+    }
 
 }
