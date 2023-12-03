@@ -396,7 +396,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusNameList(){
         Long empId = 1L;
         List<String> statName = Arrays.asList("Draft", "Rejected");
-        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName, sort)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statName, sort)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName);
         assertEquals(theses, result);
@@ -406,7 +406,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusNameListNotFound(){
         Long empId = 5L;
         List<String> statName = Arrays.asList("Draft", "Rejected");
-        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName, sort)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statName, sort)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName), Collections.emptyList());
     }

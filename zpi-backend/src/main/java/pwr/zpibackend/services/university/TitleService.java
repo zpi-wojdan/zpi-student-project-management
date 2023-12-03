@@ -2,6 +2,7 @@ package pwr.zpibackend.services.university;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
@@ -39,6 +40,7 @@ public class TitleService {
         return titleRepository.save(newtitle);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Title updateTitle(Long titleId, TitleDTO updatedTitle) {
         if (titleRepository.existsByName(updatedTitle.getName())) {
             if (!(Objects.equals(titleRepository.findByName(updatedTitle.getName()).get().getId(), titleId))) {
