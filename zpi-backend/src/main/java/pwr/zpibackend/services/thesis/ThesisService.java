@@ -22,6 +22,8 @@ import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
+import pwr.zpibackend.services.mailing.MailService;
+import pwr.zpibackend.utils.MailTemplates;
 
 import java.time.LocalDateTime;
 
@@ -43,6 +45,7 @@ public class ThesisService {
     private final CommentRepository commentRepository;
     private final StudentRepository studentRepository;
     private final ReservationRepository reservationRepository;
+    private final MailService mailService;
 
     private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
 
@@ -88,7 +91,7 @@ public class ThesisService {
         newThesis.setStatus(draftStatus);
 
         thesisRepository.saveAndFlush(newThesis);
-        
+
         if (!thesis.getStudentIndexes().isEmpty() && !thesis.getStatusId().equals(draftStatus.getId())) {
             for (String index : thesis.getStudentIndexes()) {
                 Student student = studentRepository.findByIndex(index)
@@ -106,6 +109,8 @@ public class ThesisService {
                     reservation.setReservationDate(LocalDateTime.now());
                     reservation.setSentForApprovalDate(LocalDateTime.now());
                     reservationRepository.saveAndFlush(reservation);
+
+                    mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_SUPERVISOR, student, supervisor, newThesis);
                 }
             }
             newThesis.setOccupied(thesis.getNumPeople());
@@ -147,6 +152,12 @@ public class ThesisService {
             Status status = statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new);
 
             if (status.getName().equals("Rejected")) {
+                for (Reservation reservation : updated.getReservations()) {
+                    mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
+                            MailTemplates.RESERVATION_CANCELED, 
+                            reservation.getStudent(), null, updated);
+
+                }
                 reservationRepository.deleteAll(updated.getReservations());
                 updated.setOccupied(0);
             } else if (status.getName().equals("Approved") && updated.getOccupied() > 0) {
@@ -159,7 +170,7 @@ public class ThesisService {
                 }
                 if (allConfirmed) {
                     status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
-                } 
+                }
             }
 
             updated.setStatus(status);

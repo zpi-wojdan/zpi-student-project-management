@@ -226,7 +226,7 @@ const ThesesDetails: React.FC = () => {
   return (
     <div className='page-margin'>
       <div className='row d-flex justify-content-between'>
-        <button type="button" className="col-sm-2 custom-button another-color my-3" onClick={() => navigate(-1)}>
+        <button type="button" className="col-sm-2 custom-button another-color my-3" onClick={() => navigate("/public-theses")}>
           &larr; {t('general.management.goBack')}
         </button>
         {loaded ? (<React.Fragment>
