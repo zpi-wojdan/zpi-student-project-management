@@ -2,11 +2,14 @@ package pwr.zpibackend.services.university;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Title;
+import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.repositories.university.TitleRepository;
+import pwr.zpibackend.repositories.user.EmployeeRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +19,7 @@ import java.util.Objects;
 public class TitleService {
 
     private final TitleRepository titleRepository;
+    private final EmployeeRepository employeeRepository;
 
     public List<Title> getAllTitles() {
         return titleRepository.findAll();
@@ -43,7 +47,19 @@ public class TitleService {
         }
         Title title = titleRepository.findById(titleId).orElse(null);
         if (title != null) {
+            List<Employee> employees = employeeRepository.findAllByTitleId(titleId);
+            for (Employee employee : employees) {
+                // if the employee had the limit of thesis based on the title, update it
+                if (Objects.equals(employee.getNumTheses(), title.getNumTheses()))
+                    employee.setNumTheses(updatedTitle.getNumTheses());
+                else
+                    // if the employee had a custom limit of thesis, update it only if the new limit is higher
+                    employee.setNumTheses(Math.max(employee.getNumTheses(), updatedTitle.getNumTheses()));
+                employeeRepository.save(employee);
+            }
+
             title.setName(updatedTitle.getName());
+            title.setNumTheses(updatedTitle.getNumTheses());
             return titleRepository.save(title);
         }
         throw new NotFoundException("title with id " + titleId + " does not exist");
