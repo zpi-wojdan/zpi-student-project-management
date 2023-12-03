@@ -80,7 +80,8 @@
       "thesis": "Thesis",
       "theses": "Theses"
     },
-    "title": "Title"
+    "title": "Title",
+    "titles": "Titles"
   },
   "navigation": {
     "logout": "Log out",

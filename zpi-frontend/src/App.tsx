@@ -48,6 +48,8 @@ import ThesesSupervisor from './pages/Theses/ThesesSupervisor';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
 import LoadingSpinner from "./components/LoadingSpinner";
+import TitleList from './pages/Admin/Title/List';
+import TitleForm from "./pages/Admin/Title/Form";
 
 
 export interface IAppProps {
@@ -121,6 +123,9 @@ export default function App(props: IAppProps) {
                 <Route path='deadlines' element={<DeadlineList />} />
                 <Route path='deadlines/add' element={<DeadlineForm />} />
                 <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
+                <Route path='titles' element={<TitleList />} />
+                <Route path='titles/add' element={<TitleForm />} />
+                <Route path='titles/edit/:id' element={<TitleForm />} />
                 <Route path="/students/file" element={<UploadStudentFilePage />} />
                 <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />

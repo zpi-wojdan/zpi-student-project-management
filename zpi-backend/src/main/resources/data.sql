@@ -110,6 +110,7 @@ VALUES
 
 INSERT INTO title (name, num_theses)
 VALUES
+    ('N/A', 0),
     ('mgr', 1),
     ('mgr inż.', 1),
     ('dr', 2),

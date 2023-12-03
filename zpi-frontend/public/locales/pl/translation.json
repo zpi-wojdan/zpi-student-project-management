@@ -79,7 +79,8 @@
       "thesis": "Temat",
       "theses": "Tematy"
     },
-    "title": "Tytuł"
+    "title": "Tytuł",
+    "titles": "Tytuły"
   },
   "navigation": {
     "logout": "Wyloguj",
@@ -365,5 +366,17 @@
     "student": "student",
     "thesis": "temat",
     "reservation": "rezerwacje"
+  },
+  "title": {
+    "deleteSuccessful": "Tytuł został usunięty",
+    "deleteError": "Tytuł nie może zostać usunięty!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten tytuł?",
+    "add": "Dodaj tytuł",
+    "save": "Zapisz tytuł",
+    "addSuccessful": "Tytuł został dodany",
+    "addError": "Tytuł nie został dodany",
+    "updateSuccessful": "Tytuł został zaktualizowany",
+    "updateError": "Tytuł nie został zaktualizowany",
+    "activityExists": "Podany tytuł już istnieje!"
   }
 }
