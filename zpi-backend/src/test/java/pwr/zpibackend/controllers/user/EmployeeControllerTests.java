@@ -85,7 +85,7 @@ public class EmployeeControllerTests {
         employeeDTO.setName("John");
         employeeDTO.setSurname("Doe");
         employeeDTO.setDepartmentCode(null);
-        employeeDTO.setTitle(new TitleDTO("mgr inż."));
+        employeeDTO.setTitle(new TitleDTO("mgr inż.", 1));
         List<RoleDTO> roleDTOS = new ArrayList<>();
         roleDTOS.add(new RoleDTO("admin"));
         employeeDTO.setRoles(roleDTOS);
