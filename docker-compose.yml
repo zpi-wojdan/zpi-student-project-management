@@ -38,7 +38,7 @@ services:
   frontend:
     image: frontend:latest
     ports:
-      - 80:80
+      - 3000:80
     environment:
       - REACT_APP_BACKEND_HOST=https://proj01.zpi.wit.pwr.edu.pl/api/
     networks:
