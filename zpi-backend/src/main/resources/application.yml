@@ -76,18 +76,6 @@ spring:
 
   web:
     locale: pl_PL
-  
-  tomcat:
-    accesslog:
-      enabled: true
-      pattern: "%t %a \"%r\" %s (%D ms)"
 
 frontend:
   url: ${FRONTEND_URL:http://${FRONTEND_HOST}:${FRONTEND_PORT}}
-
-logging:
-  level:
-    org.springframework.web: DEBUG
-
-
-  
