@@ -52,7 +52,8 @@
       "students": "Studenci",
       "supervisorLC": "prowadzący",
       "supervisor": "Prowadzący",
-      "surname": "Nazwisko"
+      "surname": "Nazwisko",
+      "thesesLimit": "Limit tematów"
     },
     "university": {
       "abbreviation": "Skrót",
@@ -131,7 +132,8 @@
     "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę.",
     "import": "Importuj pracowników",
     "cantBecomeASupervisor": "Dany pracownik nie może zostać promotorem.",
-    "deleteErrorWithReference": "Pracownik nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
+    "deleteErrorWithReference": "Pracownik nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
+    "thesesLimitError": "Limit tematów musi być liczbą całkowitą z przedziału [0, 10]."
   },
   "student": {
     "add": "Dodaj studenta",
