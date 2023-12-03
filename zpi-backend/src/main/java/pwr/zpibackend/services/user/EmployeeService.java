@@ -6,7 +6,6 @@ import pwr.zpibackend.dto.user.EmployeeDTO;
 import pwr.zpibackend.dto.user.RoleDTO;
 import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
-import pwr.zpibackend.exceptions.CannotDeleteException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Role;
@@ -69,6 +68,7 @@ public class EmployeeService {
         newEmployee.setName(employee.getName());
         newEmployee.setSurname(employee.getSurname());
         newEmployee.setTitle(validateTitle(employee.getTitle()));
+        newEmployee.setNumTheses(employee.getNumTheses());
         newEmployee.setRoles(validateRoles(employee.getRoles()));
         newEmployee.setDepartment(departmentService.getDepartmentByCode(employee.getDepartmentCode()));
 
@@ -87,6 +87,7 @@ public class EmployeeService {
         existingEmployee.setName(updatedEmployee.getName());
         existingEmployee.setSurname(updatedEmployee.getSurname());
         existingEmployee.setTitle(validateTitle(updatedEmployee.getTitle()));
+        existingEmployee.setNumTheses(updatedEmployee.getNumTheses());
         existingEmployee.setDepartment(departmentService.getDepartmentByCode(updatedEmployee.getDepartmentCode()));
         existingEmployee.getRoles().clear();
         existingEmployee.getRoles().addAll(validateRoles(updatedEmployee.getRoles()));

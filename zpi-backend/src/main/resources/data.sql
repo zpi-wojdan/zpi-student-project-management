@@ -114,8 +114,8 @@ VALUES
     ('mgr inż.', 1),
     ('dr', 2),
     ('dr hab.', 2),
-    ('prof', 3),
-    ('prof. dr hab.', 3);
+    ('prof', 2),
+    ('prof. dr hab.', 2);
 
 INSERT INTO status (name)
 VALUES
