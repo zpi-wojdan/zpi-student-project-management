@@ -6,6 +6,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import api_access from '../../../utils/api_access';
 
 const FacultyForm: React.FC = () => {
   // @ts-ignore
@@ -48,7 +49,7 @@ const FacultyForm: React.FC = () => {
 
     if (validateForm()) {
       if (faculty) {
-        api.put(`http://localhost:8080/faculty/${facultyId}`, formData)
+        api.put(api_access + `faculty/${facultyId}`, formData)
           .then(() => {
             navigate("/faculties")
             toast.success(t("faculty.updateSuccessful"));
@@ -72,7 +73,7 @@ const FacultyForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/faculty', formData)
+        api.post(api_access + 'faculty', formData)
           .then(() => {
             navigate("/faculties")
             toast.success(t("faculty.addSuccessful"));

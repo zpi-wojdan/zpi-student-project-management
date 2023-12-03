@@ -6,6 +6,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import api_access from '../../../utils/api_access';
 
 const StudyCycleForm: React.FC = () => {
   // @ts-ignore
@@ -52,7 +53,7 @@ const StudyCycleForm: React.FC = () => {
 
     if (validateForm()) {
       if (studyCycle) {
-        api.put(`http://localhost:8080/studycycle/${cycleId}`, formData)
+        api.put(api_access + `studycycle/${cycleId}`, formData)
           .then(() => {
             navigate("/cycles")
             toast.success(t("study_cycle.updateSuccessful"));
@@ -66,7 +67,7 @@ const StudyCycleForm: React.FC = () => {
             toast.error(t("study_cycle.updateError"));
           });
       } else {
-        api.post('http://localhost:8080/studycycle', formData)
+        api.post(api_access + 'studycycle', formData)
           .then(() => {
             navigate("/cycles")
             toast.success(t("study_cycle.addSuccessful"));

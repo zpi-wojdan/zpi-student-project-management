@@ -250,7 +250,11 @@
     "rejectionError": "Thesis has not been rejected",
     "acceptSuccesful": "Thesis has been accepted",
     "acceptError": "Thesis has not been accepted",
-    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!"
+    "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!",
+    "drafts": "Drafts",
+    "errorStudents": "Student with index {{index}} already has a thesis!",
+    "addStudentsWarning": "Students will not be saved if the thesis is save as a draft!",
+    "addStudentsMessage": "Adding students to the thesis is optional."
   },
   "status": {
     "draft": "Draft",
@@ -335,7 +339,8 @@
   },
   "home":{
     "welcome": "Welcome to ZPI Helper website!",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "noSchedule": "Unfortunately the newest schedule is not available yet"
   },
   "comment": {
     "addSuccessful": "Comment has been added",

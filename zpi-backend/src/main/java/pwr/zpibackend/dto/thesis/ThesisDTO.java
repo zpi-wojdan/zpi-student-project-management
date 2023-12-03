@@ -20,4 +20,5 @@ public class ThesisDTO {
     private List<Long> programIds;
     private Optional<Long> studyCycleId;
     private Long statusId;
+    private List<String> studentIndexes;
 }

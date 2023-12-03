@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import useAuth from "../auth/useAuth";
 import api from "../utils/api";
 import {useTranslation} from "react-i18next";
+import api_access from "../utils/api_access";
 
 const LoginPage = () => {
     // @ts-ignore
@@ -61,7 +62,7 @@ const LoginPage = () => {
         const decodedUser: any = jwt_decode(response.credential);
         console.log(decodedUser);
 
-        api.get(`http://localhost:8080/user/${decodedUser.email}/details`)
+        api.get(api_access + `user/${decodedUser.email}/details`)
             .then((res) => {
                 Cookies.set('user', JSON.stringify(res.data));
                 setShowAlert(false)

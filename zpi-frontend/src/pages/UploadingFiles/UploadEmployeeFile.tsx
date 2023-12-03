@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import { InvalidEmployeeData, ImportedEmployee } from '../../models/ImportedData';
 import {useTranslation} from "react-i18next";
 import api from '../../utils/api';
+import api_access from '../../utils/api_access';
 
 function UplaodEmployeeFilePage() {
   // @ts-ignore
@@ -158,7 +159,7 @@ function UplaodEmployeeFilePage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      api.post('http://localhost:8080/file/employee', formData)
+      api.post(api_access + 'file/employee', formData)
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);

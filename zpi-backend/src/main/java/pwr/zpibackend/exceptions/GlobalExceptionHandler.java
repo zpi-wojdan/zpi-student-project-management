@@ -15,6 +15,10 @@ import java.util.Arrays;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ErrorDetails getErrorDetails(Exception e, WebRequest request) {
+        return new ErrorDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDetails> handleIllegalArgumentException(IllegalArgumentException e, WebRequest request) {
         ErrorDetails errorDetails = getErrorDetails(e, request);
@@ -26,10 +30,6 @@ public class GlobalExceptionHandler {
             EmployeeAndStudentWithTheSameEmailException e, WebRequest request) {
         ErrorDetails errorDetails = getErrorDetails(e, request);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
-    }
-
-    private ErrorDetails getErrorDetails(Exception e, WebRequest request) {
-        return new ErrorDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
     }
 
     @ExceptionHandler(SQLException.class)
@@ -59,6 +59,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeExceededException(MaxUploadSizeExceededException exception){
         return ResponseEntity.status(400).body("File was too large\n" + Arrays.toString(exception.getStackTrace()));
+    }
+
+    @ExceptionHandler(ThesisOccupancyFullException.class)
+    public ResponseEntity<ErrorDetails> handleThesisOccupancyFullException(ThesisOccupancyFullException e,
+                                                                           WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 }
 

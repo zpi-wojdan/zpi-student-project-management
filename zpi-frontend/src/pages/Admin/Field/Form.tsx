@@ -7,6 +7,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from '../../../auth/useAuth';
 import api from '../../../utils/api';
 import { useTranslation } from "react-i18next";
+import api_access from '../../../utils/api_access';
 
 const StudyFieldForm: React.FC = () => {
   // @ts-ignore
@@ -48,7 +49,7 @@ const StudyFieldForm: React.FC = () => {
   }, [studyField]);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         setFaculties(response.data);
       })
@@ -66,7 +67,7 @@ const StudyFieldForm: React.FC = () => {
 
     if (validateForm()) {
       if (studyField) {
-        api.put(`http://localhost:8080/studyfield/${fieldId}`, formData)
+        api.put(api_access + `studyfield/${fieldId}`, formData)
           .then(() => {
             navigate("/fields")
             toast.success(t("study_field.updateSuccessful"));
@@ -89,7 +90,7 @@ const StudyFieldForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/studyfield', formData)
+        api.post(api_access + 'studyfield', formData)
           .then(() => {
             navigate("/fields")
             toast.success(t("study_field.addSuccessful"));
