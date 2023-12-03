@@ -711,16 +711,7 @@ return (
         </select>
         {errors.status && <div className="text-danger">{errors.status}</div>}
       </div>
-      {!thesis ? (
-        <div key={numPeople}>
-          <SupervisorReservationPage
-            numPeople={numPeople}
-            studentIndexes={formData.studentIndexes}
-            setStudentIndexes={setStudentIndexes}
-          />
-        </div>
-      ) : (
-        thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
+      {(!thesis  || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
@@ -728,8 +719,7 @@ return (
               setStudentIndexes={setStudentIndexes}
             />
           </div>
-        )
-      )}
+        )}
     </form>
   </div>
 )

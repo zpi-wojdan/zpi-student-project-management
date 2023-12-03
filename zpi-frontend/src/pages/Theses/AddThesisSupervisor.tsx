@@ -596,7 +596,7 @@ function AddThesisPageSupervisor() {
           </ul>
         </div>
         <p className='text-danger m-0'>{t("thesis.addStudentsWarning")}</p>
-        {!thesis ? (
+        {(!thesis  || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
@@ -604,16 +604,6 @@ function AddThesisPageSupervisor() {
               setStudentIndexes={setStudentIndexes}
             />
           </div>
-        ) : (
-          thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
-            <div key={numPeople}>
-              <SupervisorReservationPage
-                numPeople={numPeople}
-                studentIndexes={formData.studentIndexes}
-                setStudentIndexes={setStudentIndexes}
-              />
-            </div>
-          )
         )}
         
       </form>
