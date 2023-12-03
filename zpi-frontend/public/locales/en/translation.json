@@ -53,8 +53,7 @@
       "students": "Students",
       "supervisorLC": "supervisor",
       "supervisor": "Supervisor",
-      "surname": "Surname",
-      "thesesLimit": "Theses limit"
+      "surname": "Surname"
     },
     "university": {
       "abbreviation": "Abbreviation",
@@ -81,7 +80,9 @@
       "theses": "Theses"
     },
     "title": "Title",
-    "titles": "Titles"
+    "titles": "Titles",
+    "thesesLimit": "Theses limit",
+    "thesesLimitError": "Theses limit must be a number between 0 and 10."
   },
   "navigation": {
     "logout": "Log out",
@@ -134,8 +135,7 @@
     "rolesRequired": "Employee must have at least one role.",
     "import": "Import employees",
     "cantBecomeASupervisor": "This employee can't become a supervisor.",
-    "deleteErrorWithReference": "Field cannot be deleted because it is still referenced by {{referencedTable}}!",
-    "thesesLimitError": "Theses limit must be a number between 0 and 10."
+    "deleteErrorWithReference": "Field cannot be deleted because it is still referenced by {{referencedTable}}!"
   },
   "student": {
     "add": "Add student",
@@ -368,5 +368,17 @@
     "student": "student",
     "thesis": "thesis",
     "reservation": "reservation"
+  },
+  "title": {
+    "deleteSuccessful": "Title has been deleted",
+    "deleteError": "Title cannot be deleted!",
+    "deleteConfirmation": "Are you sure you want to delete this title?",
+    "add": "Add title",
+    "save": "Save title",
+    "addSuccessful": "Title has been added",
+    "addError": "Title has not been added",
+    "updateSuccessful": "Title has been updated",
+    "updateError": "Title has not been updated",
+    "titleExists": "Given title already exists!"
   }
 }

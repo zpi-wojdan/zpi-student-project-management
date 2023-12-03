@@ -134,15 +134,9 @@ const EmployeeForm: React.FC = () => {
       isValid = false;
     }
 
-    if (!formData.numTheses) {
-        newErrors.numTheses = errorRequireText;
-        newErrorsKeys.numTheses = "general.management.fieldIsRequired"
-        isValid = false;
-    }
-
     if (formData.numTheses < 0 || formData.numTheses > 10) {
       newErrors.numTheses = t('general.thesesLimitError');
-      newErrorsKeys.numTheses = "employee.thesesLimitError"
+      newErrorsKeys.numTheses = "general.thesesLimitError"
       isValid = false;
     }
 
@@ -363,7 +357,7 @@ const EmployeeForm: React.FC = () => {
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="numTheses">
-            {t('general.people.thesesLimit')}:
+            {t('general.thesesLimit')}:
           </label>
           <input
               type="number"

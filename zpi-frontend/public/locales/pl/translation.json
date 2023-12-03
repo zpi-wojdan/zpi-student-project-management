@@ -52,8 +52,7 @@
       "students": "Studenci",
       "supervisorLC": "prowadzący",
       "supervisor": "Prowadzący",
-      "surname": "Nazwisko",
-      "thesesLimit": "Limit tematów"
+      "surname": "Nazwisko"
     },
     "university": {
       "abbreviation": "Skrót",
@@ -80,7 +79,9 @@
       "theses": "Tematy"
     },
     "title": "Tytuł",
-    "titles": "Tytuły"
+    "titles": "Tytuły",
+    "thesesLimit": "Limit tematów",
+    "thesesLimitError": "Limit tematów musi być liczbą całkowitą z przedziału [0, 10]."
   },
   "navigation": {
     "logout": "Wyloguj",
@@ -133,8 +134,7 @@
     "rolesRequired": "Pracownik musi mieć przypisaną conajmniej jedną rolę.",
     "import": "Importuj pracowników",
     "cantBecomeASupervisor": "Dany pracownik nie może zostać promotorem.",
-    "deleteErrorWithReference": "Pracownik nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
-    "thesesLimitError": "Limit tematów musi być liczbą całkowitą z przedziału [0, 10]."
+    "deleteErrorWithReference": "Pracownik nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
   },
   "student": {
     "add": "Dodaj studenta",
@@ -377,6 +377,6 @@
     "addError": "Tytuł nie został dodany",
     "updateSuccessful": "Tytuł został zaktualizowany",
     "updateError": "Tytuł nie został zaktualizowany",
-    "activityExists": "Podany tytuł już istnieje!"
+    "titleExists": "Podany tytuł już istnieje!"
   }
 }

@@ -181,7 +181,7 @@ const TitleList: React.FC = () => {
                             <tr>
                                 <th style={{ width: '3%', textAlign: 'center' }}>#</th>
                                 <th style={{ width: '62%' }}>{t('general.university.name')}</th>
-                                <th style={{ width: '15%', textAlign: 'center' }}>{t('general.people.thesesLimit')}</th>
+                                <th style={{ width: '15%', textAlign: 'center' }}>{t('general.thesesLimit')}</th>
                                 <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.edit')}</th>
                                 <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.delete')}</th>
                             </tr>

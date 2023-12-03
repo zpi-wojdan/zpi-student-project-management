@@ -5,8 +5,8 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
-import {Deadline, DeadlineDTO} from "../../../models/Deadline";
 import api_access from '../../../utils/api_access';
+import {Title, TitleDTO} from "../../../models/user/Title";
 
 const TitleForm: React.FC = () => {
   // @ts-ignore
@@ -14,12 +14,11 @@ const TitleForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { i18n, t } = useTranslation();
-  const deadline = location.state?.deadline as Deadline;
-  const [deadlineId, setDeadlineId] = useState<number>();
-  const [formData, setFormData] = useState<DeadlineDTO>({
-    namePL: "",
-    nameEN: "",
-    deadlineDate: new Date().toISOString().slice(0, 10),
+  const title = location.state?.title as Title;
+  const [titleId, setTitleId] = useState<number>();
+  const [formData, setFormData] = useState<TitleDTO>({
+    name: '',
+    numTheses: 2,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorsKeys, setErrorsKeys] = useState<Record<string, string>>({});
@@ -33,57 +32,56 @@ const TitleForm: React.FC = () => {
   }, [i18n.language]);
 
   useEffect(() => {
-    if (deadline) {
+    if (title) {
       setFormData((prevFormData) => {
         return {
           ...prevFormData,
-          namePL: deadline.namePL,
-          nameEN: deadline.nameEN,
-          deadlineDate: deadline.deadlineDate,
+          name: title.name,
+          numTheses: title.numTheses,
         };
       });
-      setDeadlineId(deadline.id);
+      setTitleId(title.id);
     }
-  }, [deadline]);
+  }, [title]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (validateForm()) {
-      if (deadline) {
-        api.put(api_access + `deadline/${deadlineId}`, formData)
+      if (title) {
+        api.put(api_access + `title/${titleId}`, formData)
           .then(() => {
-            navigate("/deadlines")
-            toast.success(t("deadline.updateSuccessful"));
+            navigate("/titles")
+            toast.success(t("title.updateSuccessful"));
           })
           .catch((error) => {
             if (error.response && error.response.status === 409) {
-              toast.error(t("deadline.activityExists"));
+              toast.error(t("title.titleExists"));
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error(t("deadline.updateError"));
+              toast.error(t("title.updateError"));
             }
           });
       } else {
-        api.post(api_access + 'deadline', formData)
+        api.post(api_access + 'title', formData)
           .then(() => {
-            navigate("/deadlines")
-            toast.success(t("deadline.addSuccessful"));
+            navigate("/titles")
+            toast.success(t("title.addSuccessful"));
           })
           .catch((error) => {
             if (error.response && error.response.status === 409) {
-              toast.error(t("deadline.activityExists"));
+              toast.error(t("title.titleExists"));
             } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              toast.error(t("deadline.addError"));
+              toast.error(t("title.addError"));
             }
           });
       }
@@ -98,27 +96,16 @@ const TitleForm: React.FC = () => {
     const errorRequireText = t('general.management.fieldIsRequired');
     const errorRequireTextKey = 'general.management.fieldIsRequired';
 
-    if (!formData.namePL) {
-      newErrors.namePL = errorRequireText;
-      newErrorsKeys.namePL = errorRequireTextKey;
+    if (!formData.name) {
+      newErrors.name = errorRequireText;
+      newErrorsKeys.name = errorRequireTextKey;
       isValid = false;
     }
 
-    if (!formData.nameEN) {
-      newErrors.nameEN = errorRequireText;
-      newErrorsKeys.nameEN = errorRequireTextKey;
+    if (formData.numTheses < 0 || formData.numTheses > 10){
+      newErrors.numTheses = t('general.thesesLimitError');
+      newErrorsKeys.numTheses = 'general.thesesLimitError';
       isValid = false;
-    }
-
-    if (!formData.deadlineDate) {
-      newErrors.deadlineDate = errorRequireText;
-      newErrorsKeys.deadlineDate = errorRequireTextKey;
-      isValid = false;
-    }
-    else if(new Date(formData.deadlineDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
-        newErrors.deadlineDate = t('deadline.dateInPast');
-        newErrorsKeys.deadlineDate = 'deadline.dateInPast';
-        isValid = false;
     }
 
     setErrors(newErrors);
@@ -134,50 +121,38 @@ const TitleForm: React.FC = () => {
             &larr; {t('general.management.goBack')}
           </button>
           <button type="submit" className="custom-button">
-            {deadline ? t('deadline.save') : t('deadline.add')}
+            {title ? t('title.save') : t('title.add')}
           </button>
         </div>
         <div className="mb-3">
-          <label className="bold" htmlFor="namePL">
-            {t('deadline.activity')} (PL):
+          <label className="bold" htmlFor="name">
+            {t('general.university.name')}:
           </label>
           <input
             type="text"
-            id="namePL"
-            name="namePL"
-            value={formData.namePL}
-            onChange={(e) => setFormData({ ...formData, namePL: e.target.value })}
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="form-control"
           />
-          {errors.namePL && <div className="text-danger">{errors.namePL}</div>}
+          {errors.name && <div className="text-danger">{errors.name}</div>}
         </div>
         <div className="mb-3">
-          <label className="bold" htmlFor="nameEN">
-            {t('deadline.activity')} (EN):
+          <label className="bold" htmlFor="numTheses">
+            {t('general.thesesLimit')}:
           </label>
           <input
-              type="text"
-              id="nameEN"
-              name="nameEN"
-              value={formData.nameEN}
-              onChange={(e) => setFormData({ ...formData, nameEN: e.target.value })}
+              type="number"
               className="form-control"
+              id="numTheses"
+              name="numTheses"
+              value={formData.numTheses}
+              onChange={(e) => setFormData({ ...formData, numTheses: parseInt(e.target.value) })}
+              min={0}
+              max={10}
           />
-          {errors.nameEN && <div className="text-danger">{errors.nameEN}</div>}
-        </div>
-        <div className="mb-3">
-          <label className="bold" htmlFor="deadlineDate">
-            {t('deadline.deadline')}:
-          </label>
-          <input
-              type="date"
-              id="deadlineDate"
-              name="deadlineDate"
-              value={formData.deadlineDate}
-              onChange={(e) => setFormData({ ...formData, deadlineDate: e.target.value })}
-              className="form-control"
-          />
-          {errors.deadlineDate && <div className="text-danger">{errors.deadlineDate}</div>}
+          {errors.numTheses && <div className="text-danger">{errors.numTheses}</div>}
         </div>
       </form>
     </div>
