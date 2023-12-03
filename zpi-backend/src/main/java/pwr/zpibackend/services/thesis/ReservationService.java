@@ -160,6 +160,9 @@ public class ReservationService {
                                 thesis.setOccupied(Math.max(thesis.getOccupied() - 1, 0));
                                 if (thesis.getOccupied() == 0) {
                                     thesis.setLeader(null);
+                                    if (thesis.getStatus() == statusRepository.findByName("Assigned").orElse(null)) {
+                                        thesis.setStatus(statusRepository.findByName("Approved").orElse(null));
+                                    }
                                 }
                                 thesisRepository.save(thesis);
                             });
