@@ -7,6 +7,8 @@ spring:
     servlet:
       context-path: /api
 
+  forward-headers-strategy: framework
+
   frontend:
     url: ${FRONTEND_URL:http://${FRONTEND_HOST}:${FRONTEND_PORT}}
 
