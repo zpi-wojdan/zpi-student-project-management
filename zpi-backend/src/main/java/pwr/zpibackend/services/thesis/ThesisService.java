@@ -69,8 +69,12 @@ public class ThesisService {
                                 "Employee with id " + thesis.getSupervisorId() + " does not exist"));
 
         Status draftStatus = statusRepository.findByName("Draft").orElseThrow(NotFoundException::new);
+        Status rejectedStatus = statusRepository.findByName("Rejected").orElseThrow(NotFoundException::new);
+        Status closedStatus = statusRepository.findByName("Closed").orElseThrow(NotFoundException::new);
 
-        if (!thesis.getStatusId().equals(draftStatus.getId()) &&
+        if ((!thesis.getStatusId().equals(draftStatus.getId()) &&
+                !thesis.getStatusId().equals(rejectedStatus.getId()) &&
+                !thesis.getStatusId().equals(closedStatus.getId())) &&
                 thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(supervisor.getId(),
                         Arrays.asList("Pending approval", "Approved", "Assigned"), sort).size() >=
                         supervisor.getNumTheses()) {
@@ -137,11 +141,11 @@ public class ThesisService {
             Status rejectedStatus = statusRepository.findByName("Rejected").orElseThrow(NotFoundException::new);
             Status closedStatus = statusRepository.findByName("Closed").orElseThrow(NotFoundException::new);
 
-            if ((updated.getStatus().getName().equals("Draft") || updated.getStatus().getName().equals("Rejected")) &&
-                    (!thesis.getStatusId().equals(draftStatus.getId()) ||
-                            !thesis.getStatusId().equals(rejectedStatus.getId()) ||
-                            !thesis.getStatusId().equals(closedStatus.getId())
-                    ) &&
+            if ((updated.getStatus().getName().equals("Draft") || updated.getStatus().getName().equals("Rejected") ||
+                    updated.getStatus().getName().equals("Closed")) &&
+                    (!thesis.getStatusId().equals(draftStatus.getId()) &&
+                            !thesis.getStatusId().equals(rejectedStatus.getId()) &&
+                            !thesis.getStatusId().equals(closedStatus.getId())) &&
                     thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(updated.getSupervisor().getId(),
                             Arrays.asList("Pending approval", "Approved", "Assigned"), sort).size() >=
                             updated.getSupervisor().getNumTheses()
