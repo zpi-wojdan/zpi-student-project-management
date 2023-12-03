@@ -5,8 +5,6 @@ services:
     ports:
       - 8080:8080
       - 8443:8443
-    networks:
-      - db
     environment:
       ACTIVE_PROFILE: prod
       SERVER_PORT: 8443
@@ -33,6 +31,7 @@ services:
       REACT_APP_BACKEND_HOST: https://proj01.zpi.wit.pwr.edu.pl:8443/
     depends_on:
       - backend
+
   db:
     image: postgres:16.1-alpine
     ports:
@@ -44,12 +43,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d
-    networks:
-      - db
 
 volumes:
   db:
     driver: local
-
-networks:
-  db:
