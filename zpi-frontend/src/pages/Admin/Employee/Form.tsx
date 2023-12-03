@@ -9,10 +9,7 @@ import { Department } from '../../../models/university/Department';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import api_access from '../../../utils/api_access';
-
-export type Title = {
-  name: string;
-}
+import {Title} from "../../../models/user/Title";
 
 const EmployeeForm: React.FC = () => {
   // @ts-ignore
@@ -288,13 +285,20 @@ const EmployeeForm: React.FC = () => {
               if (selectedTitle) {
                 setFormData({
                   ...formData,
-                  title: selectedTitle,
+                  title: {
+                    name: selectedTitleName,
+                    numTheses: selectedTitle.numTheses,
+                  },
                   numTheses: selectedTitle.numTheses,
                 });
-              } else {
+              }
+              else {
                 setFormData({
                   ...formData,
-                  title: { name: '', numTheses: 2 },
+                  title: {
+                    name: '',
+                    numTheses: 2,
+                  },
                 });
               }
             }}
@@ -308,22 +312,6 @@ const EmployeeForm: React.FC = () => {
             ))}
           </select>
           {errors.title && <div className="text-danger">{errors.title}</div>}
-        </div>
-        <div className="mb-3">
-          <label className="bold" htmlFor="numTheses">
-            {t('general.people.thesesLimit')}:
-          </label>
-          <input
-              type="number"
-              className="form-control"
-              id="numTheses"
-              name="numTheses"
-              value={formData.numTheses}
-              onChange={(e) => setFormData({ ...formData, numTheses: parseInt(e.target.value) })}
-              min={0}
-              max={10}
-          />
-          {errors.numTheses && <div className="text-danger">{errors.numTheses}</div>}
         </div>
         <div className="mb-3">
           <label className="bold" htmlFor="name">
@@ -372,6 +360,22 @@ const EmployeeForm: React.FC = () => {
             ))}
           </select>
           {errors.department && <div className="text-danger">{errors.department}</div>}
+        </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="numTheses">
+            {t('general.people.thesesLimit')}:
+          </label>
+          <input
+              type="number"
+              className="form-control"
+              id="numTheses"
+              name="numTheses"
+              value={formData.numTheses}
+              onChange={(e) => setFormData({ ...formData, numTheses: parseInt(e.target.value) })}
+              min={0}
+              max={10}
+          />
+          {errors.numTheses && <div className="text-danger">{errors.numTheses}</div>}
         </div>
         <div className="mb-3">
           <label className="bold">{t('general.people.roles')}:</label>
