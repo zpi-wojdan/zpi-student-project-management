@@ -48,7 +48,7 @@ public class ReservationService {
             throw new IllegalArgumentException("Thesis, student and reservation date must be provided.");
         }
         if (reservationRepository.findByStudent_Mail(reservation.getStudent().getMail()) != null) {
-            throw new AlreadyExistsException("Reservation for this student already exists.");
+            throw new AlreadyExistsException(reservation.getStudent().getIndex());
         }
 
         Reservation newReservation = new Reservation();

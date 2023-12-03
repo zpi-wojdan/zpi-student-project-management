@@ -215,7 +215,8 @@
     "addPerson": "Add person",
     "deleteSuccessful": "Reservation has ben deleted",
     "deleteError": "Reservation cannot be deleted",
-    "deleteConfirmation": "Are you sure you want to delete this reservation?"
+    "deleteConfirmation": "Are you sure you want to delete this reservation?",
+    "studentAlreadyReserved": "Student with index {{index}} already has a reservation!"
   },
   "thesis": {
     "supervisorNotExists": "Supervisor does not exist!",
