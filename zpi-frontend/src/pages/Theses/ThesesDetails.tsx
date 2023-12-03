@@ -231,9 +231,9 @@ const ThesesDetails: React.FC = () => {
         </button>
         {loaded ? (<React.Fragment>
           {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
+            thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent) &&
             (user?.mail === thesis?.supervisor.mail ||
-              thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
-            thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
+              thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail))) ?
             (
               <button className="col-sm-2 custom-button my-3" onClick={downloadDeclaration}>
                 {t('thesis.downloadDeclaration')}
@@ -243,7 +243,7 @@ const ThesesDetails: React.FC = () => {
           {(thesis && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
             user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
-            user?.roles?.some(role => role.name === 'admin' && thesis?.status.name !== 'Closed'))) ?
+            user?.roles?.some(role => role.name === 'admin') && thesis?.status.name !== 'Closed')) ?
             (
               <button type="button" className="col-sm-2 custom-button my-3" onClick={() => {
                 if (user?.role?.name === 'student') {

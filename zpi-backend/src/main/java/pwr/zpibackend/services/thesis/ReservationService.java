@@ -165,6 +165,11 @@ public class ReservationService {
                                     }
                                 }
                                 thesisRepository.save(thesis);
+
+                                mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
+                                        MailTemplates.RESERVATION_CANCELED,
+                                        reservation.getStudent(), null,
+                                        reservation.getThesis());
                             });
                     return reservation;
                 })
