@@ -29,7 +29,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - REACT_APP_BACKEND_HOST=https://proj01.zpi.wit.pwr.edu.pl/api/
+      - REACT_APP_BACKEND_HOST=https://api.proj01.zpi.wit.pwr.edu.pl/api/
     networks:
       - db
     depends_on:
