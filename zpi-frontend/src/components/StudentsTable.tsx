@@ -140,12 +140,12 @@ function StudentTable({ students, thesis }: StudentTableProps) {
         }
         setShowButtonDelete(newShowButtonDelete)
 
-      } else if (user.roles && user.roles.some(role => role.name === "supervisor") && user.mail === thesis.supervisor.mail) {
-        const newShowButtonsSupervisor = thesis.reservations.every((res) => res.readyForApproval && !res.confirmedBySupervisor);
-        setShowButtonsSupervisor(newShowButtonsSupervisor);
       } else if (user.roles && user.roles.some(role => role.name === "admin")) {
         const newShowButtonsDelete = students.map((s) => true);
         setShowButtonDelete(newShowButtonsDelete);
+      } else if (user.roles && user.roles.some(role => role.name === "supervisor") && user.mail === thesis.supervisor.mail) {
+        const newShowButtonsSupervisor = thesis.reservations.every((res) => res.readyForApproval && !res.confirmedBySupervisor);
+        setShowButtonsSupervisor(newShowButtonsSupervisor);
       } else {
         setShowButtons(showButtons.map((s) => false));
       }
