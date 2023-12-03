@@ -38,8 +38,6 @@ public class WebSecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(STATELESS);
 
         http.headers().frameOptions().disable();
-        http.requiresChannel(channel -> 
-                channel.anyRequest().requiresSecure());
         return http.build();
     }
 
