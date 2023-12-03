@@ -8,6 +8,7 @@ import { Student } from '../../models/user/Student';
 import { Thesis } from '../../models/thesis/Thesis';
 import api from '../../utils/api';
 import { useTranslation } from "react-i18next";
+import api_access from '../../utils/api_access';
 
 type ReservationProps = {
     admin: boolean;
@@ -110,7 +111,7 @@ function ReservationPage({ admin }: ReservationProps) {
             newErrors[index] = false;
         }
 
-        await api.get(`http://localhost:8080/student/index/${reservation}`)
+        await api.get(api_access + `student/index/${reservation}`)
             .then(response => {
                 newStudents[index] = response.data as Student;
             })
@@ -142,7 +143,7 @@ function ReservationPage({ admin }: ReservationProps) {
                 };
                 console.log(JSON.stringify(responseBody));
 
-                const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
+                const response = await api.post(api_access + "reservation", JSON.stringify(responseBody), {
                     headers: {
                         'Content-Type': 'application/json'
                     }

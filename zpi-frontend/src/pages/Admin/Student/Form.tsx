@@ -9,6 +9,7 @@ import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
+import api_access from '../../../utils/api_access';
 
 const StudentForm: React.FC = () => {
   // @ts-ignore
@@ -62,7 +63,7 @@ const StudentForm: React.FC = () => {
 
     if (validateForm()) {
       if (student) {
-        api.put(`http://localhost:8080/student/${studentId}`, formData)
+        api.put(api_access + `student/${studentId}`, formData)
           .then(() => {
             navigate("/students");
             toast.success(t("student.updateSuccessful"));
@@ -86,7 +87,7 @@ const StudentForm: React.FC = () => {
             }
           });
       } else {
-        api.post('http://localhost:8080/student', formData)
+        api.post(api_access + 'student', formData)
           .then(() => {
             navigate("/students");
             toast.success(t("student.addSuccessful"));
@@ -180,7 +181,7 @@ const StudentForm: React.FC = () => {
   const [availablePrograms, setAvailablePrograms] = useState<Program[]>([]);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         setAvailableCycles(response.data);
       })
@@ -194,7 +195,7 @@ const StudentForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access + 'program')
       .then((response) => {
         setAvailablePrograms(response.data);
       })

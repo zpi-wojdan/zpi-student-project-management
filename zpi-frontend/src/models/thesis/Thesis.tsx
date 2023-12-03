@@ -51,4 +51,5 @@ export type ThesisDTO = {
   programIds: number[];
   studyCycleId: number | null;
   statusId: number;
+  studentIndexes: string[];
 }
