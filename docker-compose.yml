@@ -1,15 +1,4 @@
 services:
-  proxy:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - frontend
-    networks:
-      - db
 
   backend:
     image: backend:latest
@@ -21,7 +10,7 @@ services:
       ACTIVE_PROFILE: prod
       SERVER_PORT: 8080
       FRONTEND_PORT: 3000
-      FRONTEND_HOST: db
+      FRONTEND_HOST: frontend
       POSTRESQL_HOST: db
       POSTRESQL_DB: zpi_db2
       POSTRESQL_USER: postgres
