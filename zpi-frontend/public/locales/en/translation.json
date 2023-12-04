@@ -37,7 +37,8 @@
       "filterClear": "Clear filters",
       "vacancies": "Vacancies",
       "cancel": "Cancel",
-      "send": "Send"
+      "send": "Send",
+      "refresh": "Refresh"
     },
     "people": {
       "adminLC": "administrator",
@@ -310,6 +311,10 @@
   "unauthorizedPage": {
     "title": "Access denied",
     "description": "You do not have permission to access this page."
+  },
+  "networkErrorPage": {
+    "title": "Server error",
+    "description": "Server is not responding, please try again later."
   },
   "reports": {
     "reportType": "Type of report",

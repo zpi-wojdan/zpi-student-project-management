@@ -36,7 +36,8 @@
       "filterClear": "Wyczyść filtry",
       "vacancies": "Wolne miejsca",
       "cancel": "Anuluj",
-      "send": "Wyślij"
+      "send": "Wyślij",
+      "refresh": "Odśwież"
     },
     "people": {
       "adminLC": "administrator",
@@ -308,6 +309,10 @@
   "unauthorizedPage": {
     "title": "Brak dostępu",
     "description": "Nie masz uprawnień do wyświetlenia tej strony."
+  },
+  "networkErrorPage": {
+    "title": "Błąd serwera",
+    "description": "Serwer nie odpowiada, spróbuj ponownie później."
   },
   "reports": {
     "reportType": "Typ raportu",
