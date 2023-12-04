@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ReservationController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class ReservationControllerTests {
-    private static final String BASE_URL = "/reservation";
+    private static final String BASE_URL = "/api/reservation";
     @Autowired
     private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;

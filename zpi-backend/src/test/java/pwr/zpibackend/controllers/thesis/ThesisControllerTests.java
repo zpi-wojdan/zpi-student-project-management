@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class ThesisControllerTests {
 
-    private static final String BASE_URL = "/thesis";
+    private static final String BASE_URL = "/api/thesis";
 
     @Autowired private ObjectMapper objectMapper;
     @MockBean

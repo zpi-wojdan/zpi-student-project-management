@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(StudyFieldController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class StudyFieldControllerTests {
-    private static final String BASE_URL = "/studyfield";
+    private static final String BASE_URL = "/api/studyfield";
 
     @Autowired
     private ObjectMapper objectMapper;
