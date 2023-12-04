@@ -151,13 +151,16 @@ const ThesisStudent: React.FC = () => {
       {loaded ? (<React.Fragment>
         <div className='d-flex justify-content-between align-items-center'>
           <div>
-            {(thesis && thesis.status.name === "PendingApproval") &&
+            {thesis && thesis.leader?.id === user?.id && thesis.reservations.some((r) => !r.confirmedByLeader) &&
+              <Alert variant="info">
+                {t('studentThesis.leaderAccept')}
+              </Alert>}
+            {(thesis && thesis.status.name === "PendingApproval") ? (
               <Alert variant="info">
                 {t('studentThesis.pendingApproval')}
               </Alert>
-            }
-            {(thesis && thesis.reservations.every(r => r.readyForApproval)) &&
-              (thesis.reservations.some(r => r.confirmedBySupervisor) ?
+            ) : ((thesis && thesis.reservations.every(r => r.readyForApproval)) ? (
+              (thesis.reservations.every(r => r.confirmedBySupervisor) ?
                 <Alert variant="info">
                   {t('studentThesis.afterSupervisorAccept')}
                 </Alert>
@@ -165,7 +168,13 @@ const ThesisStudent: React.FC = () => {
                 <Alert variant="info">
                   {t('studentThesis.beforeSupervisorAccept')}
                 </Alert>)
-            }
+            ) : (thesis && !thesis.reservations.find(
+              (reservation) => reservation.student.id === user?.id)?.confirmedByLeader &&
+              <Alert variant="info">
+                {t('studentThesis.beforeLeaderAccept')}
+              </Alert>
+            )
+            )}
           </div>
           <div className='d-flex justify-content-end align-items-center  mb-3'>
             {thesis && thesis.reservations && thesis.reservations.length > 0 && thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor) ?

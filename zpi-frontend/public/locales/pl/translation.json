@@ -336,7 +336,7 @@
     "activityExists": "Podana czynność już istnieje!",
     "dateInPast": "Termin zakończenia nie może być w przeszłości!"
   },
-  "home":{
+  "home": {
     "welcome": "Witaj na stronie ZPI Helper!",
     "schedule": "Harmonogram",
     "noSchedule": "Niestety najnowszy harmonogram nie został jeszcze opublikowany"
@@ -352,7 +352,7 @@
     "content": "Komentarz",
     "author": "Autor",
     "empty": "Brak komentarzy"
-    },
+  },
   "tables": {
     "study_field": "kierunek",
     "specialization": "specjalność",
@@ -366,9 +366,12 @@
     "reservation": "rezerwacje"
   },
   "studentThesis": {
-    "noReservation" : "Nie jesteś jeszcze zapisany na żaden temat",
-    "pendingApproval" : "Temat oczekuje na akceptacje komisji",
-    "beforeSupervisorAccept" : "Rezerwacja oczekuje na akceptacje prowadzącego",
-    "afterSupervisorAccept" : "Rezerwacja została zaakceptowana przez prowadzącego"
+    "noReservation": "Nie jesteś jeszcze zapisany na żaden temat",
+    "pendingApproval": "Temat oczekuje na akceptacje komisji",
+    "beforeSupervisorAccept": "Rezerwacja oczekuje na akceptacje prowadzącego",
+    "afterSupervisorAccept": "Rezerwacja została zaakceptowana przez prowadzącego",
+    "beforeLeaderAccept": "Rezerwacja oczekuje na akceptacje lidera",
+    "afterLeaderAccept": "Rezerwacja została zaakceptowana przez lidera",
+    "leaderAccept": "Nowa rezerwacja oczekuje na Twoje zatwierdzenie"
   }
 }
