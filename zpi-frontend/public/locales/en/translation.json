@@ -79,7 +79,10 @@
       "thesis": "Thesis",
       "theses": "Theses"
     },
-    "title": "Title"
+    "title": "Title",
+    "titles": "Titles",
+    "thesesLimit": "Theses limit",
+    "thesesLimitError": "Theses limit must be a number between 0 and 10."
   },
   "navigation": {
     "logout": "Log out",
@@ -386,5 +389,17 @@
     "beforeLeaderAccept": "Reservation is waiting for leader's approval",
     "afterLeaderAccept": "Reservation has been accepted by leader",
     "leaderAccept": "New reservation is waiting for your approval"
+  },
+  "title": {
+    "deleteSuccessful": "Title has been deleted",
+    "deleteError": "Title cannot be deleted because it is still referenced by employee table!",
+    "deleteConfirmation": "Are you sure you want to delete this title?",
+    "add": "Add title",
+    "save": "Save title",
+    "addSuccessful": "Title has been added",
+    "addError": "Title has not been added",
+    "updateSuccessful": "Title has been updated",
+    "updateError": "Title has not been updated",
+    "titleExists": "Given title already exists!"
   }
 }

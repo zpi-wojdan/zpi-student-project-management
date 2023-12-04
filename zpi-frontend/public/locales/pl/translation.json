@@ -78,7 +78,10 @@
       "thesis": "Temat",
       "theses": "Tematy"
     },
-    "title": "Tytuł"
+    "title": "Tytuł",
+    "titles": "Tytuły",
+    "thesesLimit": "Limit tematów",
+    "thesesLimitError": "Limit tematów musi być liczbą całkowitą z przedziału [0, 10]."
   },
   "navigation": {
     "logout": "Wyloguj",
@@ -384,5 +387,17 @@
     "beforeLeaderAccept": "Rezerwacja oczekuje na akceptacje lidera",
     "afterLeaderAccept": "Rezerwacja została zaakceptowana przez lidera",
     "leaderAccept": "Nowa rezerwacja oczekuje na Twoje zatwierdzenie"
+  },
+  "title": {
+    "deleteSuccessful": "Tytuł został usunięty",
+    "deleteError": "Tytuł nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą pracownik!",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć ten tytuł?",
+    "add": "Dodaj tytuł",
+    "save": "Zapisz tytuł",
+    "addSuccessful": "Tytuł został dodany",
+    "addError": "Tytuł nie został dodany",
+    "updateSuccessful": "Tytuł został zaktualizowany",
+    "updateError": "Tytuł nie został zaktualizowany",
+    "titleExists": "Podany tytuł już istnieje!"
   }
 }

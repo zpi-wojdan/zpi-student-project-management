@@ -110,6 +110,7 @@ VALUES
 
 INSERT INTO title (name, num_theses)
 VALUES
+    ('N/A', 0),
     ('mgr', 1),
     ('mgr inż.', 1),
     ('dr', 2),
@@ -460,6 +461,7 @@ VALUES
 
 INSERT INTO deadline(name_pl, name_en, deadline_date)
 VALUES
+    ('Dodanie nowych pracowników i studentów do systemu', 'Adding new employees and students to the system', '2023-12-01'),
     ('Zgłaszanie tematów przez prowadzących', 'Submitting topics by supervisors', '2024-04-01'),
     ('Rozpatrywanie tematów przez zatwierdzających', 'Reviewing topics by approvers', '2024-04-10'),
     ('Rezerwowanie tematów przez studentów', 'Reserving topics by students', '2024-05-15'),
