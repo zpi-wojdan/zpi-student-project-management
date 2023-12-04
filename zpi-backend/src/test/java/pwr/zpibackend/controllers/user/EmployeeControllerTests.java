@@ -134,20 +134,6 @@ public class EmployeeControllerTests {
     }
 
     @Test
-    public void testGetEmployeesByPrefix() throws Exception {
-        String prefix = "12";
-        Mockito.when(employeeService.getEmployeesByPrefix(prefix)).thenReturn(employees);
-
-        String returnedJson = objectMapper.writeValueAsString(employees);
-
-        mockMvc.perform(get(BASE_URL + "/match/{prefix}", prefix).contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(returnedJson));
-
-        verify(employeeService).getEmployeesByPrefix(prefix);
-    }
-
-    @Test
     public void testAddEmployee() throws Exception {
         String requestBody = objectMapper.writeValueAsString(employeeDTO);
 

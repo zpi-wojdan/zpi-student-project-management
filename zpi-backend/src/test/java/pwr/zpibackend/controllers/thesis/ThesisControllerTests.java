@@ -1,6 +1,5 @@
 package pwr.zpibackend.controllers.thesis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -242,7 +241,7 @@ class ThesisControllerTests {
         verify(thesisService).addThesis(any(ThesisDTO.class));
     }
 
-    @Test // TODO: fix this test - 400 instead of 200 OK
+    @Test
     public void testUpdateThesisSuccess() throws Exception {
         Employee supervisor = new Employee();
         Student leader = new Student();
@@ -250,6 +249,7 @@ class ThesisControllerTests {
         ThesisDTO thesisDTO = createTestThesisDTO(0L);
         thesisDTO.setDescriptionEN("UPDATED DESCRIPTION");
         thesisDTO.setNamePL("UPDATED NAME");
+
         existingThesis.setId(1L);
         existingThesis.setNamePL("UPDATED NAME");
         existingThesis.setDescriptionEN("UPDATED DESCRIPTION");
@@ -257,21 +257,20 @@ class ThesisControllerTests {
         Thesis updatedThesis = createTestThesis(supervisor, leader);
         updatedThesis.setId(1L);
 
-        doReturn(updatedThesis).when(thesisService).updateThesis(1L, thesisDTO);
+        when(thesisService.updateThesis(1L, thesisDTO)).thenReturn(updatedThesis);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+        String requestBody = objectMapper.writeValueAsString(thesisDTO);
+        String responseBody = objectMapper.writeValueAsString(updatedThesis);
+
+        mockMvc.perform(MockMvcRequestBuilders
                         .put("/thesis/1")
-                        .content(asJsonString(thesisDTO))
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(content().json(responseBody));
 
-        MockHttpServletResponse response = result.getResponse();
-        String jsonResponse = response.getContentAsString();
-        Thesis updatedResponse = new ObjectMapper().readValue(jsonResponse, Thesis.class);
-
-        assertTestData(updatedResponse, supervisor, leader);
+        assertTestData(updatedThesis, supervisor, leader);
     }
 
 
