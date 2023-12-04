@@ -593,7 +593,7 @@ const ApproveList: React.FC = () => {
             {t('general.management.filterClear')}
           </button>
           <button className="custom-button" onClick={() => handleFiltration(true)}>
-            {t('general.management.reject')}
+            {t('general.management.filter')}
           </button>
         </div>
       </div>

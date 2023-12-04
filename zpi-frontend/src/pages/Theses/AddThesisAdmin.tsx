@@ -565,13 +565,21 @@ function AddThesisPageAdmin() {
           className="form-control"
         />
         <datalist id="supervisorList">
-          {employeeSuggestions.map((supervisor) => (
-            <option 
-              key={supervisor.mail} 
-              value={supervisor.mail}
-              >
-              {supervisor.title.name} {supervisor.surname} {supervisor.name}
-            </option>
+          {employeeSuggestions
+              .sort((a, b) => {
+                const surnameComparison = a.surname.localeCompare(b.surname);
+                if (surnameComparison !== 0) {
+                  return surnameComparison;
+                }
+                return a.name.localeCompare(b.name);  //  nazwisko to samo -> po imieniu
+              })
+              .map((supervisor) => (
+                <option 
+                  key={supervisor.mail} 
+                  value={supervisor.mail}
+                  >
+                  {supervisor.title.name} {supervisor.surname} {supervisor.name}
+                </option>
           ))}
         </datalist>
       </div>
