@@ -148,7 +148,8 @@ const HomePage: React.FC = () => {
                                 <React.Fragment key={deadline.id}>
                                     <tr>
                                         <td className="centered">{indexOfFirstItem + index + 1}</td>
-                                        <td style={new Date(deadline.deadlineDate) < new Date() ?
+                                        <td style={new Date(deadline.deadlineDate).setHours(0, 0, 0, 0) <
+                                            new Date().setHours(0, 0, 0, 0) ?
                                             { textDecoration: 'line-through' } : {}}>
                                             {i18n.language === 'pl' ? (
                                                 deadline.namePL

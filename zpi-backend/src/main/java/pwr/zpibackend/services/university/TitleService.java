@@ -33,7 +33,6 @@ public class TitleService {
     }
 
     public Title addTitle(TitleDTO title) {
-        System.out.println(title);
         if (titleRepository.existsByName(title.getName())) {
             throw new AlreadyExistsException("title with name " + title.getName() + " already exists");
         }
