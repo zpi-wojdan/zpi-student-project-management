@@ -87,6 +87,7 @@
     "home": "Home",
     "manage": "Manage",
     "myTheses": "My theses",
+    "myThesis": "My thesis",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology",
     "reports": "Reports",
     "confirm": "To be approved"
@@ -339,7 +340,7 @@
     "activityExists": "Given activity already exists!",
     "dateInPast": "Deadline cannot be in the past!"
   },
-  "home":{
+  "home": {
     "welcome": "Welcome to ZPI Helper website!",
     "schedule": "Schedule",
     "noSchedule": "Unfortunately the newest schedule is not available yet"
@@ -367,5 +368,14 @@
     "student": "student",
     "thesis": "thesis",
     "reservation": "reservation"
+  },
+  "studentThesis": {
+    "noReservation": "You are not assigned to any thesis yet",
+    "pendingApproval": "Thesis is waiting for the committee's approval",
+    "beforeSupervisorAccept": "Reservation is waiting for supervisor's approval",
+    "afterSupervisorAccept": "Reservation has been accepted by supervisor",
+    "beforeLeaderAccept": "Reservation is waiting for leader's approval",
+    "afterLeaderAccept": "Reservation has been accepted by leader",
+    "leaderAccept": "New reservation is waiting for your approval"
   }
 }

@@ -38,6 +38,12 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
     }
 
+    @GetMapping("student/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT')")
+    public ResponseEntity<Thesis> getThesisByStudentId(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.getThesisByStudentId(id), HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Thesis> addThesis(@RequestBody ThesisDTO thesis) throws NotFoundException {
