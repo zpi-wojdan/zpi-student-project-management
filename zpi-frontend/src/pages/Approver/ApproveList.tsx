@@ -30,7 +30,7 @@ const ApproveList: React.FC = () => {
     api.get(`http://localhost:8080/thesis/status/Pending_approval`)
       .then((response) => {
         console.log(response);
-        const thesis_response = response.data.map((thesisDb: Thesis) => {
+        const thesisResponse = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
             id: thesisDb.id,
             namePL: thesisDb.namePL,
@@ -50,9 +50,9 @@ const ApproveList: React.FC = () => {
           };
           return thesis;
         });
-        setTheses(thesis_response);
-        setFilteredTheses(thesis_response);
-        setAfterSearchTheses(thesis_response);
+        setTheses(thesisResponse);
+        setFilteredTheses(thesisResponse);
+        setAfterSearchTheses(thesisResponse);
         setLoaded(true);
       })
       .catch((error) => {

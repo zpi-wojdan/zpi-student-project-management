@@ -78,6 +78,10 @@
       "thesis": "Temat",
       "theses": "Tematy"
     },
+    "clearData": {
+      "clearSystem": "Czyść system",
+      "choice": "Wybierz \"Tematy\" lub \"Studenci\""
+    },
     "title": "Tytuł"
   },
   "navigation": {

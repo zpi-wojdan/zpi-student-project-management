@@ -36,11 +36,11 @@ public class Reservation {
     private LocalDateTime sentForApprovalDate;
     @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
     @OneToOne
-//    @NotNull(message = "Student cannot be null")
+    @NotNull(message = "Student cannot be null")
     private Student student;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id", nullable = false)
     @ManyToOne
-//    @NotNull(message = "Thesis cannot be null")
+    @NotNull(message = "Thesis cannot be null")
     @JsonIgnore
     private Thesis thesis;
 }

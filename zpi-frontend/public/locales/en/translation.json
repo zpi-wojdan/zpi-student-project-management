@@ -79,6 +79,10 @@
       "thesis": "Thesis",
       "theses": "Theses"
     },
+    "clearData": {
+      "clearSystem": "Clear system",
+      "choice": "Choose either \"Theses\" or \"Students\""
+    },
     "title": "Title"
   },
   "navigation": {

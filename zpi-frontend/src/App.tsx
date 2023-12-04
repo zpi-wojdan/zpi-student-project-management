@@ -8,7 +8,7 @@ import ThesesDetails from './pages/Theses/ThesesDetails';
 import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/reservation/SingleReservation';
 import {AuthProvider} from "./auth/AuthProvider";
-import AddThesisPageAdmin from './pages/Theses/AddThesisAdmin';
+import AddThesisPageAdmin from './pages/Admin/Thesis/AddThesisAdmin';
 import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
@@ -46,6 +46,7 @@ import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
+import ClearDataByCycle from './pages/Admin/BulkDeletion/ClearDataByCycle';
 
 
 export interface IAppProps {
@@ -78,11 +79,6 @@ export default function App(props: IAppProps) {
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
                   <Route path='public-theses' element={<ThesesTable />} />
                   <Route path='public-theses/:id' element={<ThesesDetails />} />
-                </Route>
-
-                <Route element={<RequireAuth allowedRoles={['approver']} />}>
-                  <Route path='manage' element={<ApproveList />} />
-                  <Route path='manage/:id' element={<ApproveDetails />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['approver']} />}>
@@ -128,6 +124,7 @@ export default function App(props: IAppProps) {
                 <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/admin-reservation" element={<ReservationPage admin={true}/>} />
+                <Route path="/clear" element={<ClearDataByCycle />} />
               </Route>
               <Route path="*" element={<Missing />} />
         </Routes>

@@ -1,15 +1,15 @@
 import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
-import useAuth from "../../auth/useAuth";
+import useAuth from "../../../auth/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
-import handleSignOut from "../../auth/Logout";
+import handleSignOut from "../../../auth/Logout";
 import {useTranslation} from "react-i18next";
-import api from "../../utils/api";
-import { Thesis, ThesisDTO } from '../../models/thesis/Thesis';
-import { Status } from '../../models/thesis/Status';
-import { StudyCycle } from '../../models/university/StudyCycle';
-import { Employee } from '../../models/user/Employee';
+import api from "../../../utils/api";
+import { Thesis, ThesisDTO } from '../../../models/thesis/Thesis';
+import { Status } from '../../../models/thesis/Status';
+import { StudyCycle } from '../../../models/university/StudyCycle';
+import { Employee } from '../../../models/user/Employee';
 import { toast } from 'react-toastify';
-import { Program } from '../../models/university/Program';
+import { Program } from '../../../models/university/Program';
 import Cookies from 'js-cookie';
 
 
