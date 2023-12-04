@@ -184,7 +184,7 @@ const SupervisorMy: React.FC = () => {
       ) : (<React.Fragment>
         {drafts.length === 0 ? (
           <div className='info-no-data'>
-            <p>{t('superVisorTheses.noDrafts')}</p>
+            <p>{t('supervisorTheses.noDrafts')}</p>
           </div>
         ) : (
           <><h3 className="mb-4 text-center">
