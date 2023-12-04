@@ -274,6 +274,13 @@ function AddThesisPageAdmin() {
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
+
+      if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
+        console.log('zleeeee')
+        newErrors.studentIndexes = errorRequireText
+        newErrorsKeys.studentIndexes = "thesis.addStudentsError";
+        isValid = false;
+      }
     }
     else {
       if (!formData.statusId || formData.statusId === -1) {
@@ -711,6 +718,7 @@ return (
         </select>
         {errors.status && <div className="text-danger">{errors.status}</div>}
       </div>
+      {errors.studentIndexes && (<div className="text-danger">{errors.studentIndexes}</div>)}
       {(!thesis  || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage

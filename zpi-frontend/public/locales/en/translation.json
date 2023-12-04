@@ -255,7 +255,8 @@
     "drafts": "Drafts",
     "errorStudents": "Student with index {{index}} already has a thesis!",
     "addStudentsWarning": "Students will not be saved if the thesis is save as a draft!",
-    "addStudentsMessage": "Adding students to the thesis is optional."
+    "addStudentsMessage": "Adding students to the thesis is optional.",
+    "addStudentsError": "All student indexes need to be filled in or all have to be empty!"
   },
   "status": {
     "draft": "Draft",

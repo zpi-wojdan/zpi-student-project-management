@@ -256,7 +256,8 @@
     "drafts": "Wersje robocze",
     "errorStudents": "Student z indeksem {{index}} ma juź przydzielony temat!",
     "addStudentsWarning": "Studenci nie zostaną zapisani, jeśli temat zostanie zapisany do wersji roboczych!",
-    "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne."
+    "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne.",
+    "addStudentsError": "Wszystkie indeksy studentów muszą być wypełnione albo żaden nie może być wpisany!"
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",

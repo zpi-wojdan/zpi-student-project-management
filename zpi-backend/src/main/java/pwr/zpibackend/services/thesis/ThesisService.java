@@ -79,8 +79,8 @@ public class ThesisService {
                 !thesis.getStatusId().equals(rejectedStatus.getId()) &&
                 !thesis.getStatusId().equals(closedStatus.getId())) &&
                 thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(supervisor.getId(),
-                        Arrays.asList("Pending approval", "Approved", "Assigned"), sort).size() >=
-                        supervisor.getNumTheses()) {
+                        Arrays.asList("Pending approval", "Approved", "Assigned"), sort)
+                        .size() >= supervisor.getNumTheses()) {
             throw new LimitOfThesesReachedException("Employee with id " + thesis.getSupervisorId() +
                     " has reached the limit of theses");
         }
@@ -106,30 +106,48 @@ public class ThesisService {
 
         thesisRepository.saveAndFlush(newThesis);
 
-        if (!thesis.getStudentIndexes().isEmpty() && !thesis.getStatusId().equals(draftStatus.getId())) {
+        try {
+            if (!thesis.getStudentIndexes().isEmpty() && !thesis.getStatusId().equals(draftStatus.getId())) {
+                for (String index : thesis.getStudentIndexes()) {
+                    Student student = studentRepository.findByIndex(index)
+                            .orElseThrow(
+                                    () -> new NotFoundException("Student with index " + index + " does not exist"));
+                    if (reservationRepository.findByStudent_Mail(student.getMail()) != null) {
+                        throw new IllegalArgumentException(
+                                "Student with index " + index + " already has a reservation");
+                    } else {
+                        Reservation reservation = new Reservation();
+                        reservation.setStudent(student);
+                        reservation.setThesis(newThesis);
+                        reservation.setConfirmedByLeader(false);
+                        reservation.setConfirmedBySupervisor(true);
+                        reservation.setConfirmedByStudent(false);
+                        reservation.setReadyForApproval(true);
+                        reservation.setReservationDate(LocalDateTime.now());
+                        reservation.setSentForApprovalDate(LocalDateTime.now());
+                        reservationRepository.saveAndFlush(reservation);
+                    }
+                }
+                newThesis.setOccupied(thesis.getNumPeople());
+            }
+        } catch (Exception e) {
             for (String index : thesis.getStudentIndexes()) {
                 Student student = studentRepository.findByIndex(index)
-                        .orElseThrow(() -> new NotFoundException("Student with index " + index + " does not exist"));
-                if (reservationRepository.findByStudent_Mail(student.getMail()) != null) {
-                    throw new IllegalArgumentException("Student with index " + index + " already has a reservation");
-                } else {
-                    Reservation reservation = new Reservation();
-                    reservation.setStudent(student);
-                    reservation.setThesis(newThesis);
-                    reservation.setConfirmedByLeader(false);
-                    reservation.setConfirmedBySupervisor(true);
-                    reservation.setConfirmedByStudent(false);
-                    reservation.setReadyForApproval(true);
-                    reservation.setReservationDate(LocalDateTime.now());
-                    reservation.setSentForApprovalDate(LocalDateTime.now());
-                    reservationRepository.saveAndFlush(reservation);
-
-                    mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_SUPERVISOR, student, supervisor, newThesis);
+                        .orElseThrow(() -> new NotFoundException("Student with index " + index + "does not exist"));
+                Reservation reservation = reservationRepository.findByStudent_Mail(student.getMail());
+                if (reservation != null) {
+                    reservationRepository.delete(reservation);
                 }
             }
-            newThesis.setOccupied(thesis.getNumPeople());
-        } else {
-            newThesis.setOccupied(0);
+            thesisRepository.delete(newThesis);
+            throw e;
+        }
+
+        for (String index : thesis.getStudentIndexes()) {
+            Student student = studentRepository.findByIndex(index)
+                    .orElseThrow(() -> new NotFoundException("Student with index " + index + "does not exist"));
+            mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_SUPERVISOR,
+                                student, supervisor, newThesis);
         }
         newThesis.setStatus(statusRepository.findById(thesis.getStatusId()).orElseThrow(NotFoundException::new));
 
@@ -150,11 +168,11 @@ public class ThesisService {
                     updated.getStatus().getName().equals("Closed")) &&
                     (!thesis.getStatusId().equals(draftStatus.getId()) &&
                             !thesis.getStatusId().equals(rejectedStatus.getId()) &&
-                            !thesis.getStatusId().equals(closedStatus.getId())) &&
+                            !thesis.getStatusId().equals(closedStatus.getId()))
+                    &&
                     thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(updated.getSupervisor().getId(),
-                            Arrays.asList("Pending approval", "Approved", "Assigned"), sort).size() >=
-                            updated.getSupervisor().getNumTheses()
-            ) {
+                            Arrays.asList("Pending approval", "Approved", "Assigned"), sort)
+                            .size() >= updated.getSupervisor().getNumTheses()) {
                 throw new LimitOfThesesReachedException("Employee with id " + updated.getSupervisor().getId() +
                         " has reached the limit of theses");
             }
@@ -186,7 +204,7 @@ public class ThesisService {
             if (status.getName().equals("Rejected")) {
                 for (Reservation reservation : updated.getReservations()) {
                     mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
-                            MailTemplates.RESERVATION_CANCELED, 
+                            MailTemplates.RESERVATION_CANCELED,
                             reservation.getStudent(), null, updated);
 
                 }
@@ -221,32 +239,14 @@ public class ThesisService {
         if (thesisOptional.isPresent()) {
             Thesis deletedThesis = thesisOptional.get();
 
-            Status status = deletedThesis.getStatus();
-            if (status != null) {
-                List<Thesis> theses = status.getTheses();
-                if (theses != null) {
-                    theses.remove(deletedThesis);
-                }
-                deletedThesis.setStatus(null);
-            }
-
+            deletedThesis.setStatus(null);
             deletedThesis.setPrograms(null);
+            deletedThesis.getSupervisor().getSupervisedTheses().remove(deletedThesis);
             deletedThesis.setSupervisor(null);
             deletedThesis.setLeader(null);
             deletedThesis.setStudyCycle(null);
 
-            List<Comment> comments = deletedThesis.getComments();
-            if (comments != null) {
-                comments.forEach(comment -> {
-                    Long commentId = comment.getId();
-                    if (commentId != null && commentRepository.existsById(commentId)) {
-                        commentRepository.deleteById(commentId);
-                    }
-                });
-            }
-            deletedThesis.setComments(null);
-
-            thesisRepository.deleteById(id);
+            thesisRepository.delete(deletedThesis);
             return deletedThesis;
         }
         throw new NotFoundException("Thesis with id " + id + " does not exist");
