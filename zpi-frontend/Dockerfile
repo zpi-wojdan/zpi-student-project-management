@@ -3,8 +3,8 @@ WORKDIR /app
 COPY package*.json .
 RUN npm install
 COPY . .
-REACT_APP_BACKEND_HOST = https://proj01.zpi.wit.pwr.edu.pl/api/
-REACT_APP_GOOGLE_CLIENT_ID = 333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com
+ENV REACT_APP_BACKEND_HOST = https://proj01.zpi.wit.pwr.edu.pl/api/
+ENV REACT_APP_GOOGLE_CLIENT_ID = 333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com
 RUN npm run build
 
 FROM nginx:latest
