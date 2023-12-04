@@ -30,13 +30,13 @@ public class TitleController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Title> addTitle(TitleDTO title) {
+    public ResponseEntity<Title> addTitle(@RequestBody TitleDTO title) {
         return ResponseEntity.ok(titleService.addTitle(title));
     }
 
     @PutMapping("/{titleId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Title> updateTitle(@PathVariable Long titleId, TitleDTO updatedTitle) {
+    public ResponseEntity<Title> updateTitle(@PathVariable Long titleId, @RequestBody TitleDTO updatedTitle) {
         return ResponseEntity.ok(titleService.updateTitle(titleId, updatedTitle));
     }
 

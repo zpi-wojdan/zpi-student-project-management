@@ -49,7 +49,7 @@ public class FileUploadControllerTests {
     private StudentService studentService;
 
     @Test
-    public void testUploadFileSuccess() throws Exception {
+    public void testUploadStudentFileSuccess() throws Exception {
         mockMvc.perform(multipart(BASE_URL_STUDENT)
                         .file("file", "test".getBytes()))
                 .andExpect(status().isOk());
@@ -67,7 +67,7 @@ public class FileUploadControllerTests {
     }
 
     @Test
-    public void testUploadFileFailureEmpty() throws Exception {
+    public void testUploadStudentFileFailureEmpty() throws Exception {
         MockMultipartFile emptyFile = new MockMultipartFile("file", "empty.txt", "text/plain", new byte[0]);
         doThrow(new IOException("Empty file")).when(fileUploadService).processStudentFile(emptyFile);
 
@@ -80,7 +80,7 @@ public class FileUploadControllerTests {
     }
 
     @Test
-    public void testUploadFileFailureHuge() throws Exception {
+    public void testUploadStudentFileFailureHuge() throws Exception {
         byte[] fileContent = new byte[20 * 1024 * 1024]; // 20MB
         new Random().nextBytes(fileContent);
         MockMultipartFile largeFile = new MockMultipartFile("file", "large-file.txt", "text/plain", fileContent);
@@ -95,9 +95,50 @@ public class FileUploadControllerTests {
         assert (status == HttpStatus.BAD_REQUEST.value());
     }
 
+    @Test
+    public void testUploadEmployeeFileSuccess() throws Exception {
+        mockMvc.perform(multipart(BASE_URL_EMPLOYEE)
+                        .file("file", "test".getBytes()))
+                .andExpect(status().isOk());
 
+        MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "File content".getBytes());
+        mockMvc.perform(multipart(BASE_URL_EMPLOYEE)
+                        .file(file))
+                .andExpect(status().isOk());
+
+        MockMultipartFile new_file_type = new MockMultipartFile("file", "test.jpg", "image/jpeg", "Invalid content".getBytes());
+        mockMvc.perform(multipart(BASE_URL_EMPLOYEE)
+                        .file(new_file_type))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void testUploadEmployeeFileFailureEmpty() throws Exception {
+        MockMultipartFile emptyFile = new MockMultipartFile("file", "empty.txt", "text/plain", new byte[0]);
+        doThrow(new IOException("Empty file")).when(fileUploadService).processEmployeeFile(emptyFile);
+
+        MvcResult result = mockMvc.perform(multipart(BASE_URL_EMPLOYEE)
+                        .file(emptyFile))
+                .andReturn();
+
+        int status = result.getResponse().getStatus();
+        assert (status == HttpStatus.EXPECTATION_FAILED.value());
+    }
+
+    @Test
+    public void testUploadEmployeeFileFailureHuge() throws Exception {
+        byte[] fileContent = new byte[20 * 1024 * 1024]; // 20MB
+        new Random().nextBytes(fileContent);
+        MockMultipartFile largeFile = new MockMultipartFile("file", "large-file.txt", "text/plain", fileContent);
+
+        doThrow(MaxUploadSizeExceededException.class).when(fileUploadService).processEmployeeFile(largeFile);
+
+        MvcResult result = mockMvc.perform(multipart(BASE_URL_EMPLOYEE)
+                        .file(largeFile))
+                .andReturn();
+
+        int status = result.getResponse().getStatus();
+        assert (status == HttpStatus.BAD_REQUEST.value());
+    }
 }
-
-
-
-
