@@ -367,6 +367,15 @@
     "thesis": "temat",
     "reservation": "rezerwacje"
   },
+  "supervisorTheses": {
+    "noDrafts": "Nie masz żadnych wersji roboczych",
+    "noTheses": "Nie masz żadnych przesłanych tematów",
+    "thesesLimit": "Twój limit przesłanych tematów to: ",
+    "thesesLimitdescription": "Limit obejmuje tematy o statusach \"Oczekuje na zatwierdzenie\", \"Zatwierdzony\" i \"Przydzielony\" ",
+    "thesesLimitExceeded": "Twój limit przesłanych tematów został osiągnięty!",
+    "remainingThesesToSubmit": "Liczba tematów pozostałych do przesłania: ",
+    "supervisorLimitExceeded": "Limit tematów podanego prowadzącego został osiągnięty!"
+  },
   "studentThesis": {
     "noReservation": "Nie jesteś jeszcze zapisany na żaden temat",
     "pendingApproval": "Temat oczekuje na akceptacje komisji",

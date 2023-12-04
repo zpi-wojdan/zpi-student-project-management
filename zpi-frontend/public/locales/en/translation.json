@@ -369,6 +369,15 @@
     "thesis": "thesis",
     "reservation": "reservation"
   },
+  "supervisorTheses": {
+    "noDrafts": "You don't have any drafts",
+    "noTheses": "You have no theses submitted",
+    "thesesLimit": "Your limit for submitted theses is: ",
+    "thesesLimitdescription": "The limit includes theses with the statuses \"Pending Approval\", \"Approved\" and \"Assigned\" ",
+    "thesesLimitExceeded": "Your limit for submitted theses has been reached!",
+    "remainingThesesToSubmit": "Number of theses remaining to be submitted: ",
+    "supervisorLimitExceeded": "The given supersisor's theses limit has been reached!"
+  },
   "studentThesis": {
     "noReservation": "You are not assigned to any thesis yet",
     "pendingApproval": "Thesis is waiting for the committee's approval",
