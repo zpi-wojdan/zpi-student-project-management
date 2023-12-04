@@ -60,7 +60,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
   const handleAcceptReservationSupervisor = () => {
     thesis.reservations.forEach((res) => {
       res.confirmedBySupervisor = true;
-      api.put(`http://localhost:8080/reservation/${res.id}`, res)
+      api.put(api_access +`reservation/${res.id}`, res)
         .then((response) => {
           if (response.status === 200) {
             toast.success(t('reservation.deleteSuccessful'));
@@ -79,7 +79,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
 
   function handleConfirmDeleteSupervisor(): void {
     thesis.reservations.forEach((res) => {
-      api.delete(`http://localhost:8080/reservation/${res.id}`)
+      api.delete(api_access +`reservation/${res.id}`)
         .then((response) => {
           if (response.status === 200) {
             toast.success(t('reservation.reservationDeleted'));
