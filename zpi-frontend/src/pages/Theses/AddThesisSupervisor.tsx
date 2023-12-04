@@ -603,7 +603,7 @@ function AddThesisPageSupervisor() {
           </ul>
         </div>
         <p className='text-danger m-0'>{t("thesis.addStudentsWarning")}</p>
-        {errors.studentIndexes && (<div className="text-danger">{errors.studentIndexes}</div>)}
+        {errors.studentIndexes && (<div className="text-danger">{t("thesis.addStudentsError")}</div>)}
         {(!thesis || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage

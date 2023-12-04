@@ -718,7 +718,7 @@ return (
         </select>
         {errors.status && <div className="text-danger">{errors.status}</div>}
       </div>
-      {errors.studentIndexes && (<div className="text-danger">{errors.studentIndexes}</div>)}
+      {errors.studentIndexes && (<div className="text-danger">{t("thesis.addStudentsError")}</div>)}
       {(!thesis  || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage
