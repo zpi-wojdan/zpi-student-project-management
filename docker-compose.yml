@@ -8,23 +8,30 @@ services:
       - db
     environment:
       ACTIVE_PROFILE: prod
-      FRONTEND_PORT: 80
-      FRONTEND_HOST: localhost
+      SERVER_PORT: 8080
+      FRONTEND_PORT: 3000
+      FRONTEND_HOST: frontend
       POSTRESQL_HOST: db
       POSTRESQL_DB: zpi_db2
       POSTRESQL_USER: postgres
       POSTRESQL_PASSWORD: asdlkj000
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: <mail here>
+      MAIL_PASSWORD: <password here>
+      GOOGLE_CLIENT_ID: 333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com
     depends_on:
       - db
 
   frontend:
     image: frontend:latest
     ports:
-      - 80:80
-    environment:
-      REACT_APP_BACKEND_HOST: http://localhost:8080/
+      - 3000:3000
+    networks:
+      - db
     depends_on:
       - backend
+      
   db:
     image: postgres:16.1-alpine
     ports:
@@ -45,3 +52,4 @@ volumes:
 
 networks:
   db:
+    driver: bridge
