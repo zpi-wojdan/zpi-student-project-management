@@ -42,6 +42,8 @@ public class Employee {
     @JoinColumn(name = "title", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Title title;
+    @Column(name ="num_theses", nullable = false)
+    private Integer numTheses;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore

@@ -26,7 +26,7 @@ import java.util.Map;
 public class MailService {
     public static final String UTF_8_ENCODING = "UTF-8";
     public static final String IMAGES_LOGO_PNG = "./src/main/resources/images/logoPl.png";
-    @Value("${spring.mail.verify.host.res_leader}")
+    @Value("${spring.frontend.url}")
     private String host_res_leader;
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -34,7 +34,7 @@ public class MailService {
     private final TemplateEngine templateEngine;
 
     @Async
-    public void sendHtmlMailMessage(String recipient, String urlPath, MailTemplates template, Student student,
+    public void sendHtmlMailMessage(String recipient, MailTemplates template, Student student,
             Employee employee, Thesis thesis) {
         try {
             // utworzenie odpowiedniego template html z danymi
@@ -68,7 +68,7 @@ public class MailService {
             context.setVariables(Map.of(
                     "name", name,
                     "thesis", language.equals("pl") ? thesis.getNamePL() : thesis.getNameEN(),
-                    "url", getLinkReservation(urlPath, thesis.getId())));
+                    "url", getLinkReservation(thesis.getId())));
             String html = templateEngine.process(template.getTemplateName(), context);
 
             // utworzenie wiadomości mailowej z załącznikiem w formie obrazu (logo pwr)
@@ -94,7 +94,7 @@ public class MailService {
         return javaMailSender.createMimeMessage();
     }
 
-    private String getLinkReservation(String page, Long id) {
-        return host_res_leader + "/" + page + "/" + id;
+    private String getLinkReservation(Long id) {
+        return host_res_leader + "/" + id;
     }
 }

@@ -17,4 +17,5 @@ public class EmployeeDTO {
     private List<RoleDTO> roles;
     private String departmentCode;
     private TitleDTO title;
+    private Integer numTheses;
 }

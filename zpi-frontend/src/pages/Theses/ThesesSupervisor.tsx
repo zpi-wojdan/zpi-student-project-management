@@ -7,7 +7,7 @@ import useAuth from "../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import Cookies from 'js-cookie';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import api_access from '../../utils/api_access';
+import api_access from "../../utils/api_access";
 
 const SupervisorMy: React.FC = () => {
   // @ts-ignore

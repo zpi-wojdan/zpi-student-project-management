@@ -57,7 +57,7 @@ public class EmployeeServiceTests {
         employee.setName("John");
         employee.setSurname("Doe");
         employee.setDepartment(null);
-        employee.setTitle(new Title("mgr"));
+        employee.setTitle(new Title("mgr", 1));
 
         Role role = new Role("admin");
         List<Role> roles = new ArrayList<>();
@@ -69,7 +69,7 @@ public class EmployeeServiceTests {
         employee2.setName("Jane");
         employee2.setSurname("Doe");
         employee2.setDepartment(null);
-        employee2.setTitle(new Title("dr"));
+        employee2.setTitle(new Title("dr", 2));
         employee2.setRoles(roles);
 
         employeeDTO = new EmployeeDTO();
@@ -77,7 +77,7 @@ public class EmployeeServiceTests {
         employeeDTO.setName("Jo");
         employeeDTO.setSurname("Smith");
         employeeDTO.setDepartmentCode(null);
-        employeeDTO.setTitle(new TitleDTO("dr"));
+        employeeDTO.setTitle(new TitleDTO("dr", 2));
         List<RoleDTO> roleDTOS = new ArrayList<>();
         roleDTOS.add(new RoleDTO("supervisor"));
         employeeDTO.setRoles(roleDTOS);
@@ -152,7 +152,7 @@ public class EmployeeServiceTests {
         newEmployee.setMail(employeeDTO.getMail());
         newEmployee.setName(employeeDTO.getName());
         newEmployee.setSurname(employeeDTO.getSurname());
-        newEmployee.setTitle(new Title(employeeDTO.getTitle().getName()));
+        newEmployee.setTitle(new Title(employeeDTO.getTitle().getName(), employeeDTO.getTitle().getNumTheses()));
         newEmployee.setRoles(List.of(new Role("supervisor")));
         newEmployee.setDepartment(null);
 
@@ -160,7 +160,8 @@ public class EmployeeServiceTests {
         when(roleService.getRoleByName("supervisor")).thenReturn(new Role("supervisor"));
         when(departmentService.getDepartmentByCode(employeeDTO.getDepartmentCode())).thenReturn(null);
         when(employeeRepository.save(newEmployee)).thenReturn(newEmployee);
-        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(
+                new Title(employeeDTO.getTitle().getName(), employeeDTO.getTitle().getNumTheses())));
 
         Employee result = employeeService.addEmployee(employeeDTO);
 
@@ -206,7 +207,8 @@ public class EmployeeServiceTests {
 
         when(employeeRepository.existsByMail(employeeDTO.getMail())).thenReturn(false);
         when(roleService.getRoleByName("student")).thenReturn(new Role("student"));
-        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(
+                new Title(employeeDTO.getTitle().getName(), employeeDTO.getTitle().getNumTheses())));
 
         assertThrows(IllegalArgumentException.class, () -> employeeService.addEmployee(employeeDTO));
     }
@@ -218,7 +220,7 @@ public class EmployeeServiceTests {
         updatedEmployee.setMail(employeeDTO.getMail());
         updatedEmployee.setName(employeeDTO.getName());
         updatedEmployee.setSurname(employeeDTO.getSurname());
-        updatedEmployee.setTitle(new Title(employeeDTO.getTitle().getName()));
+        updatedEmployee.setTitle(new Title(employeeDTO.getTitle().getName(), employeeDTO.getTitle().getNumTheses()));
         updatedEmployee.setRoles(List.of(new Role("supervisor")));
         updatedEmployee.setDepartment(null);
 
@@ -226,7 +228,8 @@ public class EmployeeServiceTests {
         when(roleService.getRoleByName("supervisor")).thenReturn(new Role("supervisor"));
         when(departmentService.getDepartmentByCode(employeeDTO.getDepartmentCode())).thenReturn(null);
         when(employeeRepository.save(any())).thenReturn(updatedEmployee);
-        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(
+                new Title(employeeDTO.getTitle().getName(), employeeDTO.getTitle().getNumTheses())));
 
         Employee result = employeeService.updateEmployee(1L, employeeDTO);
 
@@ -258,7 +261,8 @@ public class EmployeeServiceTests {
 
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
         when(roleService.getRoleByName("student")).thenReturn(new Role("student"));
-        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(new Title(employeeDTO.getTitle().getName())));
+        when(titleRepository.findByName(employeeDTO.getTitle().getName())).thenReturn(Optional.of(
+                new Title(employeeDTO.getTitle().getName(), employeeDTO.getTitle().getNumTheses())));
 
         assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee(1L,
                 employeeDTO));
