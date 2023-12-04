@@ -98,7 +98,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/thesis/${id}`)
+    api.delete(api_access +`thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
         navigate("/theses");
