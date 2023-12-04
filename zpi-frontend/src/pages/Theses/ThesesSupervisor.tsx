@@ -25,7 +25,7 @@ const SupervisorMy: React.FC = () => {
   useEffect(() => {
     const user = JSON.parse(Cookies.get("user") || "{}")
     const statNames = ['Pending approval', 'Rejected', 'Approved', 'Assigned'];
-    api.get(api_access +`thesis/employee/${user.id}/statuses?statName=${statNames.join(',')}`)
+    api.get(api_access + `thesis/employee/${user.id}/statuses?statName=${statNames.join(',')}`)
       .then((response) => {
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
@@ -58,7 +58,7 @@ const SupervisorMy: React.FC = () => {
         }
       });
 
-    api.get(api_access +`thesis/${user.id}/Draft`)
+    api.get(api_access + `thesis/${user.id}/Draft`)
       .then((response) => {
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
