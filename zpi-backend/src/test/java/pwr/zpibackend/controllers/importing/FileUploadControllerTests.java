@@ -29,8 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class FileUploadControllerTests {
 
-    private static final String BASE_URL_STUDENT = "http://localhost:808/file/student";
-    private static final String BASE_URL_EMPLOYEE = "http://localhost:808/file/employee";
+    private static final String BASE_URL_STUDENT = "/api/file/student";
+    private static final String BASE_URL_EMPLOYEE = "/api/file/employee";
     @Autowired
     private MockMvc mockMvc;
 
@@ -78,6 +78,7 @@ public class FileUploadControllerTests {
         int status = result.getResponse().getStatus();
         assert (status == HttpStatus.EXPECTATION_FAILED.value());
     }
+
     @Test
     public void testUploadFileFailureHuge() throws Exception {
         byte[] fileContent = new byte[20 * 1024 * 1024]; // 20MB

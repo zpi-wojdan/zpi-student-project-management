@@ -197,7 +197,7 @@ class ThesisControllerTests {
 
         doReturn(thesisToAdd).when(thesisService).addThesis(any(ThesisDTO.class));
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                        .post("/thesis")
+                        .post(BASE_URL)
                         .content(asJsonString(thesisToAdd))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -263,7 +263,7 @@ class ThesisControllerTests {
         String responseBody = objectMapper.writeValueAsString(updatedThesis);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/thesis/1")
+                        .put(BASE_URL + "/{id}", 1L)
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -285,7 +285,7 @@ class ThesisControllerTests {
         doThrow(NotFoundException.class).when(thesisService).updateThesis(1L, thesisDTO);
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .put("/thesis/1")
+                    .put(BASE_URL + "/{id}", 1L)
                     .content(asJsonString(thesisDTO))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
@@ -297,7 +297,7 @@ class ThesisControllerTests {
     @Test
     public void testDeleteThesisSuccess() throws Exception {
         Mockito.when(thesisService.deleteThesis(1L)).thenReturn(new Thesis());
-        mockMvc.perform(delete("/thesis/1"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", 1L))
                 .andExpect(status().isOk());
         verify(thesisService).deleteThesis(1L);
     }
@@ -305,7 +305,7 @@ class ThesisControllerTests {
     @Test
     public void testDeleteThesisFailure() throws Exception {
         Mockito.when(thesisService.deleteThesis(3L)).thenThrow(new NotFoundException());
-        mockMvc.perform(delete("/thesis/3"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", 3L))
                 .andExpect(status().isNotFound());
         verify(thesisService).deleteThesis(3L);
     }
