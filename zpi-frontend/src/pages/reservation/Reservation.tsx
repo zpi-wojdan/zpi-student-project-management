@@ -162,6 +162,11 @@ function ReservationPage({ admin }: ReservationProps) {
                             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                             handleSignOut(navigate);
                         }
+                        if (error.response.status === 409) {
+                            toast.error(t('reservation.studentAlreadyReserved', {
+                                index: error.response.data.message,
+                            }));
+                        }
                     });
             }
 

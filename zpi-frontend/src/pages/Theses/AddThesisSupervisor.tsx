@@ -231,6 +231,13 @@ function AddThesisPageSupervisor() {
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
+
+      if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
+        console.log('zleeeee')
+        newErrors.studentIndexes = errorRequireText
+        newErrorsKeys.studentIndexes = "thesis.addStudentsError";
+        isValid = false;
+      }
     }
     else {
       if (!statusIndex || statusIndex === -1) {
@@ -299,7 +306,7 @@ function AddThesisPageSupervisor() {
               const index = (error.response.data.message as string).split(' ')[3];
               toast.error(t(`thesis.errorStudents`, {
                 index: index
-            }));
+              }));
             } else {
               toast.error(t("thesis.updateError"));
             }
@@ -329,7 +336,7 @@ function AddThesisPageSupervisor() {
                 const index = (error.response.data.message as string).split(' ')[3];
                 toast.error(t(`thesis.errorStudents`, {
                   index: index
-              }));
+                }));
               } else {
                 toast.error(t("thesis.updateError"));
               }
@@ -596,7 +603,8 @@ function AddThesisPageSupervisor() {
           </ul>
         </div>
         <p className='text-danger m-0'>{t("thesis.addStudentsWarning")}</p>
-        {!thesis ? (
+        {errors.studentIndexes && (<div className="text-danger">{t("thesis.addStudentsError")}</div>)}
+        {(!thesis || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
@@ -604,18 +612,7 @@ function AddThesisPageSupervisor() {
               setStudentIndexes={setStudentIndexes}
             />
           </div>
-        ) : (
-          thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
-            <div key={numPeople}>
-              <SupervisorReservationPage
-                numPeople={numPeople}
-                studentIndexes={formData.studentIndexes}
-                setStudentIndexes={setStudentIndexes}
-              />
-            </div>
-          )
         )}
-        
       </form>
     </div>
   )

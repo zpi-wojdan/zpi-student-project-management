@@ -217,7 +217,8 @@
     "addPerson": "Dodaj osobę",
     "deleteSuccessful": "Rezerwacja została anulowana",
     "deleteError": "Rezerwacja nie może zostać anulowana!",
-    "deleteConfirmation": "Czy na pewno chcesz anulować tę rezerwację?"
+    "deleteConfirmation": "Czy na pewno chcesz anulować tę rezerwację?",
+    "studentAlreadyReserved": "Student o indeksie {{index}} posiada już rezerwację na inny temat!"
   },
   "thesis": {
     "deleteSuccessful": "Temat został usunięty",
@@ -258,7 +259,8 @@
     "drafts": "Wersje robocze",
     "errorStudents": "Student z indeksem {{index}} ma juź przydzielony temat!",
     "addStudentsWarning": "Studenci nie zostaną zapisani, jeśli temat zostanie zapisany do wersji roboczych!",
-    "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne."
+    "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne.",
+    "addStudentsError": "Wszystkie indeksy studentów muszą być wypełnione albo żaden nie może być wpisany!"
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",
