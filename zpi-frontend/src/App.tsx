@@ -18,7 +18,6 @@ import StudentList from './pages/Admin/Student/List';
 import StudentDetails from './pages/Admin/Student/Details';
 import StudentForm from './pages/Admin/Student/Form';
 import FacultyList from './pages/Admin/Faculty/List';
-import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FacultyForm from './pages/Admin/Faculty/Form';
@@ -45,6 +44,7 @@ import DeadlineList from "./pages/Admin/Deadline/List";
 import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
 import ThesesSupervisor from './pages/Theses/ThesesSupervisor';
+import ThesisStudent from './pages/Theses/ThesisStudent';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -70,6 +70,10 @@ export default function App(props: IAppProps) {
                 <Route element={<RequireAuth allowedRoles={['student', 'admin']} />}>
                   <Route path='reservation' element={<ReservationPage admin={false}/>} />
                   <Route path='single-reservation' element={<SingleReservationPage />} />
+                </Route>
+
+                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                  <Route path='myThesis' element={<ThesisStudent/>} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>

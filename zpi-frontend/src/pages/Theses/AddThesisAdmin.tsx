@@ -367,18 +367,14 @@ function AddThesisPageAdmin() {
             toast.success(t("thesis.addSuccessful"));
           })
           .catch((error) => {
-            if (error.response && error.response.status === 409) {
-              const newErrors: Record<string, string> = {};
-              newErrors.index = t("thesis.addError")
-              setErrors(newErrors);
-              const newErrorsKeys: Record<string, string> = {};
-              newErrorsKeys.index = "thesis.addError"
-              setErrorsKeys(newErrorsKeys);
-            } else {
+             
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
+              }
+              if (error.response.status === 409 && error.response.data.message.includes('has reached the limit of theses')) {
+                toast.error(t("supervisorTheses.supervisorLimitExceeded"));
               }
               if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
                 const index = (error.response.data.message as string).split(' ')[3];
@@ -386,9 +382,8 @@ function AddThesisPageAdmin() {
                   index: index
                 }));
               } else {
-                toast.error(t("thesis.updateError"));
+                toast.error(t("thesis.addError"));
               }
-            }
           });
     }
   }

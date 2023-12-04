@@ -2,3 +2,4 @@
 zpi-backend/src/main/resources/application-dev.yml
 zpi-backend/src/main/resources/application-prod.yml
 zpi-backend/src/main/resources/images/logo.png
+zpi-frontend/.env

@@ -13,6 +13,7 @@ import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
 import SupervisorReservationPage from '../reservation/SupervisorReservation';
 import api_access from '../../utils/api_access';
+import { Alert } from 'react-bootstrap';
 
 
 function AddThesisPageSupervisor() {
@@ -56,6 +57,24 @@ function AddThesisPageSupervisor() {
   const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
 
   const [numPeople, setNumPeople] = useState<number>(formData.numPeople);
+  const [submittedTheses, setSubmittedTheses] = useState<number>(0);
+
+  useEffect(() => {
+    const user = JSON.parse(Cookies.get("user") || "{}")
+
+    const statNamesSubmitted = ['Pending approval', 'Approved', 'Assigned'];
+    api.get(`http://localhost:8080/thesis/employee/${user.id}/statuses?statName=${statNamesSubmitted.join(',')}`)
+      .then((response) => {
+        setSubmittedTheses(response.data.length)
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+  }, []);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -319,14 +338,6 @@ function AddThesisPageSupervisor() {
             toast.success(t("thesis.addSuccessful"));
           })
           .catch((error) => {
-            if (error.response && error.response.status === 409) {
-              const newErrors: Record<string, string> = {};
-              newErrors.index = t("thesis.addError")
-              setErrors(newErrors);
-              const newErrorsKeys: Record<string, string> = {};
-              newErrorsKeys.index = "thesis.addError"
-              setErrorsKeys(newErrorsKeys);
-            } else {
               console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
@@ -338,9 +349,8 @@ function AddThesisPageSupervisor() {
                   index: index
                 }));
               } else {
-                toast.error(t("thesis.updateError"));
+                toast.error(t("thesis.addError"));
               }
-            }
           })
       }
     }
@@ -413,14 +423,25 @@ function AddThesisPageSupervisor() {
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
             &larr; {t('general.management.goBack')}
           </button>
+          {submittedTheses < JSON.parse(Cookies.get("user") || "{}").numTheses &&
           <button id="save-button" type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
             {thesis ? t('general.management.save') : t('general.management.add')}
-          </button>
+          </button>}
           <button id="save-draft-button" type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
             {thesis ? t('general.management.save') : t('general.management.addAsDraft')}
           </button>
         </div>
-
+        <div>
+          {submittedTheses >= JSON.parse(Cookies.get("user") || "{}").numTheses ? (
+            <Alert variant="warning">
+              {t('supervisorTheses.thesesLimitExceeded')}
+            </Alert>
+          ) : (
+            <Alert variant="info">
+              {t('supervisorTheses.remainingThesesToSubmit')}{JSON.parse(Cookies.get("user") || "{}").numTheses - submittedTheses}
+            </Alert>
+          )}
+        </div>
         <div className="mb-3">
           <label className="bold" htmlFor="namePL">
             {t('general.title')} (PL):

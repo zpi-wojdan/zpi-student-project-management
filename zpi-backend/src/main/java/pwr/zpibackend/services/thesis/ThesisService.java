@@ -63,6 +63,17 @@ public class ThesisService {
                 .orElseThrow(() -> new NotFoundException("Thesis with id " + id + " does not exist"));
     }
 
+    public Thesis getThesisByStudentId(Long studentId) {
+        Reservation reservation = reservationRepository.findByStudentId(studentId);
+
+        if (reservation == null) {
+            throw new NotFoundException("Reservation for student with id " + studentId + " not found");
+        }
+
+        return thesisRepository.findByReservations_Id(reservation.getId())
+                .orElseThrow(() -> new NotFoundException("Thesis for student with id " + studentId + " not found"));
+    }
+
     @Transactional
     public Thesis addThesis(ThesisDTO thesis) {
         Employee supervisor = employeeRepository
