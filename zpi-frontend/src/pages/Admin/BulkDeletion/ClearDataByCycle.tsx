@@ -14,6 +14,8 @@ import { Role } from "../../../models/user/Role";
 import React from "react";
 import SearchBar from "../../../components/SearchBar";
 import useAuth from "../../../auth/useAuth";
+import { toast } from "react-toastify";
+import ChoiceConfirmation from "../../../components/ChoiceConfirmation";
 
 //  TODO: 
 //      >   podział paginacji między theses a students
@@ -39,6 +41,7 @@ const ClearDataByCycle: React.FC = () => {
     const [students, setStudents] = useState<Student[]>([]);
 
     const [selectedToClear, setSelectedToClear] = useState<SelectedToBeCleared>(SelectedToBeCleared.NONE);
+    const [key, setKey] = useState(0);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     //  filtrowanie:
@@ -79,25 +82,56 @@ const ClearDataByCycle: React.FC = () => {
 
     //  paginacja
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    //  ogólna
     const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
     const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
     const [thesesLoaded, setThesesLoaded] = useState<boolean>(false);
     const [studentsLoaded, setStudentsLoaded] = useState<boolean>(false);
-    const [loaded, setLoaded] = useState<boolean>(false);
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [inputValue, setInputValue] = useState(currentPage);
-    const [itemsPerPage, setItemsPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
-    const [chosenItemsPerPage, setChosenItemsPerPage] = useState(itemsPerPage);
-    const indexOfLastItem = itemsPerPage === 'All' ? afterSearchTheses.length : currentPage * parseInt(itemsPerPage, 10);
-    const indexOfFirstItem = itemsPerPage === 'All' ? 0 : indexOfLastItem - parseInt(itemsPerPage, 10);
-    const totalPages = itemsPerPage === 'All' ? 1 : Math.ceil(afterSearchTheses.length / parseInt(itemsPerPage, 10));
+    //  tematy
+    const [currentPageTheses, setCurrentPageTheses] = useState(1);
+    const [inputValueTheses, setInputValueTheses] = useState(currentPageTheses);
+    const [thesesPerPage, setThesesPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
+    const [chosenThesesPerPage, setChosenThesesPerPage] = useState(thesesPerPage);
+    const indexOfLastTheses = thesesPerPage === 'All' ? afterSearchTheses.length : currentPageTheses * parseInt(thesesPerPage, 10);
+    const indexOfFirstTheses = thesesPerPage === 'All' ? 0 : indexOfLastTheses - parseInt(thesesPerPage, 10);
+    const totalPagesTheses = thesesPerPage === 'All' ? 1 : Math.ceil(afterSearchTheses.length / parseInt(thesesPerPage, 10));
     
-    const currentStudents = afterSearchStudents.slice(indexOfFirstItem, indexOfLastItem);
-    const currentTheses = afterSearchTheses.slice(indexOfFirstItem, indexOfLastItem);
+    //  studenci
+    const [currentPageStudents, setCurrentPageStudents] = useState(1);
+    const [inputValueStudents, setInputValueStudents] = useState(currentPageStudents);
+    const [studentsPerPage, setStudentsPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
+    const [chosenStudentsPerPage, setChosenStudentsPerPage] = useState(studentsPerPage);
+    const indexOfLastStudents = studentsPerPage === 'All' ? afterSearchTheses.length : currentPageStudents * parseInt(studentsPerPage, 10);
+    const indexOfFirstStudents = studentsPerPage === 'All' ? 0 : indexOfLastStudents - parseInt(studentsPerPage, 10);
+    const totalPagesStudents = studentsPerPage === 'All' ? 1 : Math.ceil(afterSearchStudents.length / parseInt(studentsPerPage, 10));
+
+    const currentStudents = afterSearchStudents.slice(indexOfFirstTheses, indexOfLastTheses);
+    const currentTheses = afterSearchTheses.slice(indexOfFirstTheses, indexOfLastTheses);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    //  checkboxy - theses
+    const [thesesFormIndexes, setThesesFormIndexes] = useState(new Set<number>());
+    const [checkedRowsTheses, setCheckedRowsTheses] = useState(new Set());
+    const [checkAllCheckboxTheses, setCheckAllCheckboxTheses] = useState(false);
+
+    const [confirmClickedTheses, setConfirmClickedTheses] = useState(false);
+    const [rejectClickedTheses, setRejectClickedTheses] = useState(false);
+    const [showAcceptConfirmationTheses, setShowAcceptConfirmationTheses] = useState(false);
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    //  checkboxy - students
+    const [studentsFormIndexes, setStudentsFormIndexes] = useState(new Set<number>());
+    const [checkedRowsStudents, setCheckedRowsStudents] = useState(new Set());
+    const [checkAllCheckboxStudents, setCheckAllCheckboxStudents] = useState(false);
+
+    const [confirmClickedStudents, setConfirmClickedStudents] = useState(false);
+    const [rejectClickedStudents, setRejectClickedStudents] = useState(false);
+    const [showAcceptConfirmationStudents, setShowAcceptConfirmationStudents] = useState(false);
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
     //  podstawa - główne dane do tabel:
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     useEffect(() => {
@@ -163,8 +197,7 @@ const ClearDataByCycle: React.FC = () => {
                     handleSignOut(navigate);
                 }
             });
-        setLoaded(true);
-    }, []);
+    }, [key]);
 
     //  dane pomocnicze:
     useEffect(() => {
@@ -398,7 +431,7 @@ const ClearDataByCycle: React.FC = () => {
         setCurrentITEMS_PER_PAGE(() => filteredItemsPerPage);
     
         handlePageChange(1);
-        setItemsPerPage((filteredItemsPerPage.includes(chosenItemsPerPage)) ? chosenItemsPerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
+        setThesesPerPage((filteredItemsPerPage.includes(chosenThesesPerPage)) ? chosenThesesPerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
     
       }, [searchTerm, filteredTheses]);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -407,24 +440,260 @@ const ClearDataByCycle: React.FC = () => {
     //  paginacja:
     const handlePageChange = (newPage: number) => {
         if (!newPage || newPage < 1) {
-          setCurrentPage(1);
-          setInputValue(1);
+          setCurrentPageTheses(1);
+          setInputValueTheses(1);
         }
         else {
-          if (newPage > totalPages) {
-            setCurrentPage(totalPages);
-            setInputValue(totalPages);
+          if (newPage > totalPagesTheses) {
+            setCurrentPageTheses(totalPagesTheses);
+            setInputValueTheses(totalPagesTheses);
           }
           else {
-            setCurrentPage(newPage);
-            setInputValue(newPage);
+            setCurrentPageTheses(newPage);
+            setInputValueTheses(newPage);
           }
         }
       };
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //  checkboxy - tematy
+    const checkCheckboxTheses = (rowId: number, thesisId: number) => {
+        setThesesFormIndexes((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(thesisId);
+          return newSet;
+        });
+        setCheckedRowsTheses((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(rowId);
+          return newSet;
+        });
+      }
+    
+      const uncheckCheckboxTheses = (rowId: number, thesisId: number) => {
+        setThesesFormIndexes((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(thesisId);
+            return newSet;
+          });
+          setCheckedRowsTheses((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(rowId);
+            return newSet;
+          });
+      }
+    
+      const checkAllCheckboxesChangeTheses = () => {
+        setCheckAllCheckboxTheses(!checkAllCheckboxTheses);
+        if (checkAllCheckboxTheses){
+          setCheckedRowsTheses(new Set());
+          setThesesFormIndexes(new Set());
+        }
+        else{
+          let thesisIds = new Set<number>();
+          let rowIds = new Set<number>();
+          currentTheses.map((thesis, index) => {
+            thesisIds.add(thesis.id)
+            rowIds.add(index)
+          });
+          setThesesFormIndexes(thesisIds);
+          setCheckedRowsTheses(rowIds);
+        }
+      }
+    
+      const handleConfirmClickTheses = () => {
+        setShowAcceptConfirmationTheses(true);
+        setConfirmClickedTheses(true);
+        setRejectClickedTheses(false);
+      };
+    
+      const handleConfirmAcceptTheses = () => {
+        const [isValid, statName] = validateTheses();
+        if (isValid){
+          api.put(`http://localhost:8080/thesis/bulk/${statName}`, Array.from(thesesFormIndexes))
+            .then(() => {
+              setKey(k => k+1);
+              setThesesFormIndexes(new Set());
+              setCheckedRowsTheses(new Set());
+              toast.success(t("thesis.deleteSuccesfulBulk"));
+            })
+            .catch((error) => {
+              console.log("Error", error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
+              toast.error(t("thesis.deleteErrorBulk"));
+            });
+        }
+        else{
+          toast.error(t("thesis.deleteErrorBulk")); 
+        }
+        setShowAcceptConfirmationTheses(false);
+      }
+    
+      const handleConfirmCancelTheses = () => {
+        setShowAcceptConfirmationTheses(false);
+      }
+    
+      const validateTheses = () => {
+        let name: string;
+        if (confirmClickedTheses && !rejectClickedTheses) {
+          name = "Approved";
+        }
+        else if (!confirmClickedTheses && rejectClickedTheses) {
+          name = "Rejected";
+        }
+        else {
+          name = "";
+        }
+        
+        let allIdsArePresent = true;
+        const indexes = theses.map(t => t.id);
+        for (var index of Array.from(thesesFormIndexes.values())) {
+          if (!indexes.includes(index)){
+            allIdsArePresent = false;
+            break;
+          }
+        }
+    
+        const isValid = (name !== "") && (allIdsArePresent !== false);
+        return [isValid, name];
+      }
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //  checkboxy - studenci
+
+    const checkCheckboxStudents = (rowId: number, studentId: number) => {
+        setStudentsFormIndexes((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(studentId);
+          return newSet;
+        });
+        setCheckedRowsStudents((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(rowId);
+          return newSet;
+        });
+      }
+    
+      const uncheckCheckboxStudents = (rowId: number, studentId: number) => {
+        setStudentsFormIndexes((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(studentId);
+            return newSet;
+          });
+          setCheckedRowsStudents((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(rowId);
+            return newSet;
+          });
+      }
+    
+      const checkAllCheckboxesChangeStudents = () => {
+        setCheckAllCheckboxStudents(!checkAllCheckboxStudents);
+        if (checkAllCheckboxStudents){
+          setCheckedRowsStudents(new Set());
+          setStudentsFormIndexes(new Set());
+        }
+        else{
+          let studentIds = new Set<number>();
+          let rowIds = new Set<number>();
+          currentStudents.map((stud, index) => {
+            studentIds.add(stud.id)
+            rowIds.add(index);
+          })
+          setStudentsFormIndexes(studentIds);
+          setCheckedRowsStudents(rowIds);
+        }
+        
+      }
+    
+      const handleConfirmClickStudents = () => {
+        setShowAcceptConfirmationStudents(true);
+        setConfirmClickedStudents(true);
+        setRejectClickedStudents(false);
+      };
+    
+      const handleConfirmAcceptStudents = () => {
+        const [isValid, statName] = validateStudents();
+        if (isValid){
+            //  CHANGE THIS - - - - - - - - - - - - - - - - - - 
+          api.put(`http://localhost:8080/thesis/bulk/${statName}`, Array.from(thesesFormIndexes))
+            .then(() => {
+              setKey(k => k+1);
+              setStudentsFormIndexes(new Set());
+              setCheckedRowsStudents(new Set());
+              toast.success(t("student.deleteSuccesfulBulk"));
+            })
+            .catch((error) => {
+              console.log("Error", error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
+              toast.error(t("student.deleteErrorBulk"));
+            });
+        }
+        else{
+          toast.error(t("student.deleteErrorBulk")); 
+        }
+        setShowAcceptConfirmationStudents(false);
+      }
+    
+      const handleConfirmCancelStudents = () => {
+        setShowAcceptConfirmationStudents(false);
+      }
+    
+      const validateStudents = () => {
+        let name: string;
+        if (confirmClickedTheses && !rejectClickedTheses) {
+          name = "Approved";
+        }
+        else if (!confirmClickedTheses && rejectClickedTheses) {
+          name = "Rejected";
+        }
+        else {
+          name = "";
+        }
+        
+        let allIdsArePresent = true;
+        const indexes = students.map(t => t.id);
+        for (var index of Array.from(studentsFormIndexes.values())) {
+          if (!indexes.includes(index)){
+            allIdsArePresent = false;
+            break;
+          }
+        }
+    
+        const isValid = (name !== "") && (allIdsArePresent !== false);
+        return [isValid, name];
+      }
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    const resetCheckboxesToDefault = () => {
+        setThesesFormIndexes(new Set<number>());
+        setCheckedRowsTheses(new Set<number>());
+        setCheckAllCheckboxTheses(false);
+        setConfirmClickedTheses(false);
+        setRejectClickedTheses(false);
+        setShowAcceptConfirmationTheses(false)
+
+        setStudentsFormIndexes(new Set<number>());
+        setCheckedRowsStudents(new Set<number>());
+        setCheckAllCheckboxStudents(false);
+        setConfirmClickedStudents(false);
+        setRejectClickedStudents(false);
+        setShowAcceptConfirmationStudents(false)
+    }
+
     const chooseTheses = () => {
         if (selectedToClear !== SelectedToBeCleared.THESES){
+            resetCheckboxesToDefault()
             setSelectedToClear(SelectedToBeCleared.THESES);
         }
         else{
@@ -433,6 +702,7 @@ const ClearDataByCycle: React.FC = () => {
     }
     const chooseStudents = () => {
         if (selectedToClear !== SelectedToBeCleared.STUDENTS){
+            resetCheckboxesToDefault()            
             setSelectedToClear(SelectedToBeCleared.STUDENTS);
         }
         else{
@@ -589,7 +859,7 @@ const ClearDataByCycle: React.FC = () => {
             
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
             {/* wspólne */}
-            {(!loaded || !thesesLoaded || !studentsLoaded) ? (
+            {(!thesesLoaded || !studentsLoaded) ? (
                 <div className='info-no-data'>
                     <p>{t('general.management.load')}</p>
                 </div>
@@ -600,19 +870,75 @@ const ClearDataByCycle: React.FC = () => {
                 </div>
                 ) : (<React.Fragment>
                     
-                <div className="justify-content-begin">
+                <div className="d-flex justify-content-begin align-items-center">
                     <button 
                         className={`custom-button ${selectedToClear === SelectedToBeCleared.THESES ? '' : 'another-color'}`}
                         onClick={chooseTheses}
                     >
                         {t('general.university.theses')}
                     </button>
+                    {selectedToClear === SelectedToBeCleared.THESES && (
+                        <>
+                        
+                        <button
+                            type="button"
+                            className="custom-button"
+                            onClick={() => handleConfirmClickTheses()}
+                            disabled={checkedRowsTheses.size === 0}
+                            >
+                            {t('general.management.deleteSelected')}
+                        </button>
+
+                        {showAcceptConfirmationTheses && (
+                        <tr>
+                            <td colSpan={5}>
+                                <ChoiceConfirmation
+                                    isOpen={showAcceptConfirmationTheses}
+                                    onClose={handleConfirmCancelTheses}
+                                    onConfirm={handleConfirmAcceptTheses}
+                                    onCancel={handleConfirmCancelTheses}
+                                    questionText={t('thesis.acceptDeletionBulk')}
+                                />
+                            </td>
+                        </tr>
+                        )}
+
+                        </>
+                    )}
                     <button 
                         className={`custom-button ${selectedToClear === SelectedToBeCleared.STUDENTS ? '' : 'another-color'}`}
                         onClick={chooseStudents}
                     >
                         {t('general.people.students')}
                     </button>
+                    {selectedToClear === SelectedToBeCleared.STUDENTS && (
+                        <>
+                        <button
+                            type="button"
+                            className="custom-button"
+                            onClick={() => handleConfirmClickStudents()}
+                            disabled={checkedRowsStudents.size === 0}
+                        >
+                            {t('general.management.deleteSelected')}
+                        </button>
+
+                        {showAcceptConfirmationStudents && (
+                        <tr>
+                            <td colSpan={5}>
+                                <ChoiceConfirmation
+                                    isOpen={showAcceptConfirmationStudents}
+                                    onClose={handleConfirmCancelStudents}
+                                    onConfirm={handleConfirmAcceptStudents}
+                                    onCancel={handleConfirmCancelStudents}
+                                    questionText={t('student.acceptDeletionBulk')}
+                                />
+                            </td>
+                        </tr>
+                        )}
+
+                        </>
+                    )}
+
                 </div>
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
@@ -631,10 +957,10 @@ const ClearDataByCycle: React.FC = () => {
                                 <div className="d-flex align-items-center">
                                 <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
                                 <select
-                                    value={itemsPerPage}
+                                    value={thesesPerPage}
                                     onChange={(e) => {
-                                    setItemsPerPage(e.target.value);
-                                    setChosenItemsPerPage(e.target.value);
+                                    setThesesPerPage(e.target.value);
+                                    setChosenThesesPerPage(e.target.value);
                                     handlePageChange(1);
                                     }}
                                 >
@@ -646,11 +972,11 @@ const ClearDataByCycle: React.FC = () => {
                                 </select>
                                 </div>
                                 <div style={{ marginLeft: '30px' }}>
-                                {itemsPerPage !== 'All' && (
+                                {thesesPerPage !== 'All' && (
                                     <div className="pagination">
                                     <button
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        disabled={currentPage === 1}
+                                        onClick={() => handlePageChange(currentPageTheses - 1)}
+                                        disabled={currentPageTheses === 1}
                                         className='custom-button'
                                     >
                                         &lt;
@@ -658,26 +984,26 @@ const ClearDataByCycle: React.FC = () => {
 
                                     <input
                                         type="number"
-                                        value={inputValue}
+                                        value={inputValueTheses}
                                         onChange={(e) => {
                                         const newPage = parseInt(e.target.value, 10);
-                                        setInputValue(newPage);
+                                        setInputValueTheses(newPage);
                                         }}
                                         onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            handlePageChange(inputValue);
+                                            handlePageChange(inputValueTheses);
                                         }
                                         }}
                                         onBlur={() => {
-                                        handlePageChange(inputValue);
+                                        handlePageChange(inputValueTheses);
                                         }}
                                         className='text'
                                     />
 
-                                    <span className='text'> z {totalPages}</span>
+                                    <span className='text'> z {totalPagesTheses}</span>
                                     <button
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
+                                        onClick={() => handlePageChange(currentPageTheses + 1)}
+                                        disabled={currentPageTheses === totalPagesTheses}
                                         className='custom-button'
                                     >
                                         &gt;
@@ -701,19 +1027,45 @@ const ClearDataByCycle: React.FC = () => {
                                 <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
                             </div>
                         ) : (
-                            <table className="custom-table">
+                            <table className="custom-table" key={`theses-table-${key}`}>
                                 <thead>
                                     <tr>
+                                        <th style={{ width: '3%', textAlign: 'center' }}>
+                                            <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
+                                            <input
+                                                type='checkbox'
+                                                className='custom-checkbox'
+                                                checked={checkAllCheckboxTheses}
+                                                onChange={checkAllCheckboxesChangeTheses}
+                                            />
+                                        </th>
                                         <th style={{ width: '3%', textAlign: 'center' }}>#</th>
                                         <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                                        <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
-                                        <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                                        <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
+                                        <th style={{ width: '9%', textAlign: 'center' }}>{t('general.management.details')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {currentTheses.map((thesis, index) => (
                                         <tr key={thesis.id}>
-                                            <td className="centered">{indexOfFirstItem + index + 1}</td>
+                                            <td>
+                                                <div style={{ textAlign: 'center' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    className='custom-checkbox'
+                                                    checked={checkedRowsTheses.has(index)}
+                                                    onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        checkCheckboxTheses(index, thesis.id);
+                                                    } else {
+                                                        uncheckCheckboxTheses(index, thesis.id);
+                                                    }
+                                                    }}
+                                                    style={{ transform: 'scale(1.25)' }}
+                                                />
+                                                </div>
+                                            </td>
+                                            <td className="centered">{indexOfFirstTheses + index + 1}</td>
                                             <td>
                                                 {i18n.language === 'pl' ? (
                                                     thesis.namePL
@@ -745,11 +1097,20 @@ const ClearDataByCycle: React.FC = () => {
                                 <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
                             </div>
                         ) : (
-                            <table className="custom-table">
+                            <table className="custom-table" key={`students-table-${key}`}>
                                 <thead>
                                     <tr>
+                                        <th style={{ width: '3%', textAlign: 'center' }}>
+                                            <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
+                                            <input
+                                                type='checkbox'
+                                                className='custom-checkbox'
+                                                checked={checkAllCheckboxStudents}
+                                                onChange={checkAllCheckboxesChangeStudents}
+                                            />
+                                        </th>
                                         <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                                        <th style={{ width: '17%' }}>{t('general.people.index')}</th>
+                                        <th style={{ width: '14%' }}>{t('general.people.index')}</th>
                                         <th style={{ width: '35%' }}>{t('general.people.name')}</th>
                                         <th style={{ width: '35%' }}>{t('general.people.surname')}</th>
                                         <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
@@ -758,7 +1119,24 @@ const ClearDataByCycle: React.FC = () => {
                                 <tbody>
                                     {currentStudents.map((student, index) => (
                                         <tr key={student.mail}>
-                                            <td className="centered">{indexOfFirstItem + index + 1}</td>
+                                            <td>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        className='custom-checkbox'
+                                                        checked={checkedRowsStudents.has(index)}
+                                                        onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            checkCheckboxStudents(index, student.id);
+                                                        } else {
+                                                            uncheckCheckboxStudents(index, student.id);
+                                                        }
+                                                        }}
+                                                        style={{ transform: 'scale(1.25)' }}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="centered">{indexOfFirstTheses + index + 1}</td>
                                             <td>{student.index}</td>
                                             <td>{student.name}</td>
                                             <td>{student.surname}</td>
@@ -788,12 +1166,12 @@ const ClearDataByCycle: React.FC = () => {
                 {/* dolna paginacja */}
                 {selectedToClear !== SelectedToBeCleared.NONE && (
                     <>
-                        {(currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && selectedToClear === SelectedToBeCleared.THESES) ? (
+                        {(currentITEMS_PER_PAGE.length > 1 && thesesPerPage !== 'All' && selectedToClear === SelectedToBeCleared.THESES) ? (
                         <>
                             <div className="pagination">
                                 <button
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    disabled={currentPage === 1}
+                                    onClick={() => handlePageChange(currentPageTheses - 1)}
+                                    disabled={currentPageTheses === 1}
                                     className='custom-button'
                                 >
                                     &lt;
@@ -801,38 +1179,38 @@ const ClearDataByCycle: React.FC = () => {
             
                                 <input
                                     type="number"
-                                    value={inputValue}
+                                    value={inputValueTheses}
                                     onChange={(e) => {
                                         const newPage = parseInt(e.target.value, 10);
-                                        setInputValue(newPage);
+                                        setInputValueTheses(newPage);
                                     }}
                                     onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        handlePageChange(inputValue);
+                                        handlePageChange(inputValueTheses);
                                     }
                                     }}
                                     onBlur={() => {
-                                        handlePageChange(inputValue);
+                                        handlePageChange(inputValueTheses);
                                     }}
                                     className='text'
                                 />
             
-                                <span className='text'> z {totalPages}</span>
+                                <span className='text'> z {totalPagesTheses}</span>
                                 <button
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
+                                    onClick={() => handlePageChange(currentPageTheses + 1)}
+                                    disabled={currentPageTheses === totalPagesTheses}
                                     className='custom-button'
                                 >
                                     &gt;
                                 </button>
                             </div>  
                         </>
-                    ) : (currentITEMS_PER_PAGE.length > 1 && itemsPerPage !== 'All' && selectedToClear === SelectedToBeCleared.STUDENTS) ? (
+                    ) : (currentITEMS_PER_PAGE.length > 1 && thesesPerPage !== 'All' && selectedToClear === SelectedToBeCleared.STUDENTS) ? (
                         <>
                             <div className="pagination">
                                 <button
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    disabled={currentPage === 1}
+                                    onClick={() => handlePageChange(currentPageTheses - 1)}
+                                    disabled={currentPageTheses === 1}
                                     className='custom-button'
                                 >
                                     &lt;
@@ -840,26 +1218,26 @@ const ClearDataByCycle: React.FC = () => {
             
                                 <input
                                     type="number"
-                                    value={inputValue}
+                                    value={inputValueTheses}
                                     onChange={(e) => {
                                         const newPage = parseInt(e.target.value, 10);
-                                        setInputValue(newPage);
+                                        setInputValueTheses(newPage);
                                     }}
                                     onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        handlePageChange(inputValue);
+                                        handlePageChange(inputValueTheses);
                                     }
                                     }}
                                     onBlur={() => {
-                                        handlePageChange(inputValue);
+                                        handlePageChange(inputValueTheses);
                                     }}
                                     className='text'
                                 />
             
-                                <span className='text'> z {totalPages}</span>
+                                <span className='text'> z {totalPagesTheses}</span>
                                 <button
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
+                                    onClick={() => handlePageChange(currentPageTheses + 1)}
+                                    disabled={currentPageTheses === totalPagesTheses}
                                     className='custom-button'
                                 >
                                     &gt;
