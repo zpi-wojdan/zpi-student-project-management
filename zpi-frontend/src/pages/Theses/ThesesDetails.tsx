@@ -18,7 +18,11 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { handleDeletionError } from '../../utils/handleDeleteError';
 import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 
-const ThesesDetails: React.FC = () => {
+type ThesisDetailsProps = {
+  addStudents: boolean;
+}
+
+const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -296,8 +300,7 @@ const ThesesDetails: React.FC = () => {
                 </button>
               ) : null}
 
-
-          {(thesis && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
+          {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
             user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
             user?.roles?.some(role => role.name === 'admin') && thesis?.status.name !== 'Closed')) ?
