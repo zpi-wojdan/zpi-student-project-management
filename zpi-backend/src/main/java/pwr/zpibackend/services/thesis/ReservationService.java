@@ -146,7 +146,7 @@ public class ReservationService {
                     reservationRepository.deleteById(id);
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
-                                if (Objects.equals(thesis.getLeader().getId(), reservation.getStudent().getId())) {
+                                if (thesis.getLeader() != null && Objects.equals(thesis.getLeader().getId(), reservation.getStudent().getId())) {
                                     reservationRepository.findByThesis(thesis)
                                             .stream()
                                             .filter(res -> !Objects.equals(res.getId(), reservation.getId()))
