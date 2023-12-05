@@ -578,7 +578,7 @@ function AddThesisPageAdmin() {
                   key={supervisor.mail} 
                   value={supervisor.mail}
                   >
-                  {supervisor.title.name} {supervisor.surname} {supervisor.name}
+                  {supervisor.title.name} {supervisor.name} {supervisor.surname}
                 </option>
           ))}
         </datalist>

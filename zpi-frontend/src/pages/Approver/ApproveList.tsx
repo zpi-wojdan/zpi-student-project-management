@@ -343,35 +343,24 @@ const ApproveList: React.FC = () => {
 
   //  hurtowa akceptacja/odrzucanie tematów
   const [thesesFormIndexes, setThesesFormIndexes] = useState(new Set<number>());
-  const [checkedRows, setCheckedRows] = useState(new Set());
   const [checkAllCheckbox, setCheckAllCheckbox] = useState(false);
 
   const [confirmClicked, setConfirmClicked] = useState(false);
   const [rejectClicked, setRejectClicked] = useState(false);
   const [showAcceptConfirmation, setShowAcceptConfirmation] = useState(false);
 
-  const checkCheckbox = (rowId: number, thesisId: number) => {
+  const checkCheckbox = (thesisId: number) => {
     setThesesFormIndexes((prev) => {
       const newSet = new Set(prev);
       newSet.add(thesisId);
       return newSet;
     });
-    setCheckedRows((prev) => {
-      const newSet = new Set(prev);
-      newSet.add(rowId);
-      return newSet;
-    });
   }
 
-  const uncheckCheckbox = (rowId: number, thesisId: number) => {
+  const uncheckCheckbox = (thesisId: number) => {
       setThesesFormIndexes((prev) => {
         const newSet = new Set(prev);
         newSet.delete(thesisId);
-        return newSet;
-      });
-      setCheckedRows((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(rowId);
         return newSet;
       });
   }
@@ -379,18 +368,14 @@ const ApproveList: React.FC = () => {
   const checkAllCheckboxesChange = () => {
     setCheckAllCheckbox(!checkAllCheckbox);
     if (checkAllCheckbox){
-      setCheckedRows(new Set());
       setThesesFormIndexes(new Set());
     }
     else{
       let thesisIds = new Set<number>();
-      let rowIds = new Set<number>();
-      currentTheses.map((thesis, index) => {
+      currentTheses.map((thesis, _) => {
         thesisIds.add(thesis.id)
-        rowIds.add(index)
       });
       setThesesFormIndexes(thesisIds);
-      setCheckedRows(rowIds);
     }
   }
 
@@ -407,7 +392,6 @@ const ApproveList: React.FC = () => {
         .then(() => {
           setKey(k => k+1);
           setThesesFormIndexes(new Set());
-          setCheckedRows(new Set());
           toast.success(t("thesis.acceptSuccesfulBulk"));
         })
         .catch((error) => {
@@ -612,7 +596,7 @@ const ApproveList: React.FC = () => {
               type="button"
               className="custom-button"
               onClick={() => handleConfirmClick()}
-              disabled={checkedRows.size === 0}
+              disabled={thesesFormIndexes.size === 0}
             >
               {t('general.management.acceptSelected')}
             </button>
@@ -731,12 +715,12 @@ const ApproveList: React.FC = () => {
                       <input
                         type="checkbox"
                         className='custom-checkbox'
-                        checked={checkedRows.has(index)}
+                        checked={thesesFormIndexes.has(thesis.id)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            checkCheckbox(index, thesis.id);
+                            checkCheckbox(thesis.id);
                           } else {
-                            uncheckCheckbox(index, thesis.id);
+                            uncheckCheckbox(thesis.id);
                           }
                         }}
                         style={{ transform: 'scale(1.25)' }}
