@@ -63,7 +63,7 @@ function AddThesisPageSupervisor() {
     const user = JSON.parse(Cookies.get("user") || "{}")
 
     const statNamesSubmitted = ['Pending approval', 'Approved', 'Assigned'];
-    api.get(`http://localhost:8080/thesis/employee/${user.id}/statuses?statName=${statNamesSubmitted.join(',')}`)
+    api.get(api_access + `thesis/employee/${user.id}/statuses?statName=${statNamesSubmitted.join(',')}`)
       .then((response) => {
         setSubmittedTheses(response.data.length)
       })

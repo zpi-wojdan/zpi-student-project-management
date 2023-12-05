@@ -17,6 +17,7 @@ import useAuth from "../../../auth/useAuth";
 import { toast } from "react-toastify";
 import ChoiceConfirmation from "../../../components/ChoiceConfirmation";
 import { Alert } from "react-bootstrap";
+import api_access from "../../../utils/api_access";
 
 
 const ClearDataByCycle: React.FC = () => {
@@ -142,7 +143,7 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     useEffect(() => {
         //  theses:
-        api.get(`http://localhost:8080/thesis`)
+        api.get(api_access + 'thesis')
             .then((response) => {
                 const thesisResponse = response.data.map((thesisDb: Thesis) => {
                     const thesis: ThesisFront = {
@@ -177,7 +178,7 @@ const ClearDataByCycle: React.FC = () => {
             });
 
             //  students:
-            api.get(`http://localhost:8080/student`)
+            api.get(api_access + 'student')
             .then((response) => {
                 const studentResponse = response.data.map((studentDb: Student) => {
                     const stud: Student = {
@@ -209,7 +210,7 @@ const ClearDataByCycle: React.FC = () => {
     useEffect(() => {
 
         //  pracownicy:
-        api.get('http://localhost:8080/employee')
+        api.get(api_access + 'employee')
         .then((response) => {
             const supervisors = response.data
                 .filter((employee: Employee) => employee.roles.some((role: Role) => role.name === 'supervisor'))
@@ -225,7 +226,7 @@ const ClearDataByCycle: React.FC = () => {
         });
 
         //  cykle nauczania:
-        api.get('http://localhost:8080/studycycle')
+        api.get(api_access + 'studycycle')
             .then((response) => {
                 const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => {
                 return a.name.localeCompare(b.name);
@@ -242,7 +243,7 @@ const ClearDataByCycle: React.FC = () => {
             });
 
         //  wydziały:
-        api.get('http://localhost:8080/faculty')
+        api.get(api_access + 'faculty')
             .then((response) => {
               const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
                 return a.name.localeCompare(b.name);
@@ -259,7 +260,7 @@ const ClearDataByCycle: React.FC = () => {
             });
 
         //  kierunki:
-        api.get('http://localhost:8080/studyfield')
+        api.get(api_access + 'studyfield')
             .then((response) => {
                 const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
                     return a.name.localeCompare(b.name);
@@ -276,7 +277,7 @@ const ClearDataByCycle: React.FC = () => {
             });
 
         //  specjalizacje
-        api.get('http://localhost:8080/specialization')
+        api.get(api_access + 'specialization')
             .then((response) => {
                 const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
                     return a.name.localeCompare(b.name);
@@ -677,7 +678,7 @@ const ClearDataByCycle: React.FC = () => {
       const handleConfirmAcceptTheses = () => {
         const isValid = validateTheses();
         if (isValid){
-          api.put(`http://localhost:8080/thesis/bulk`, Array.from(thesesFormIndexes))
+          api.put(api_access + 'thesis/bulk', Array.from(thesesFormIndexes))
             .then(() => {
               setKey(k => k+1);
               setThesesFormIndexes(new Set());
@@ -764,7 +765,7 @@ const ClearDataByCycle: React.FC = () => {
       const handleConfirmAcceptStudents = () => {
         const [isValid, cycleId] = validateStudents();
         if (isValid){
-          api.put(`http://localhost:8080/student/bulk/cycle/${cycleId}`, Array.from(studentsFormIndexes))
+          api.put(api_access + 'student/bulk/cycle/${cycleId}', Array.from(studentsFormIndexes))
             .then(() => {
               setKey(k => k+1);
               setStudentsFormIndexes(new Set());
