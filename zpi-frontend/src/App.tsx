@@ -88,7 +88,12 @@ export default function App(props: IAppProps) {
                   <Route path='public-theses' element={<ThesesTable />} />
                   <Route path='public-theses/:id' element={<ThesesDetails addStudents={true}/>} />
                 </Route>
-
+                
+                <Route element={<RequireAuth allowedRoles={['approver']} />}>
+                  <Route path='manage' element={<ApproveList />} />
+                  <Route path='manage/:id' element={<ApproveDetails />} />
+                </Route>
+                
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:id' element={<StudentDetails />} />
