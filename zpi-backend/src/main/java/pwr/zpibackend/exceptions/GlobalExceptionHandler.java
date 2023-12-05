@@ -67,5 +67,12 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = getErrorDetails(e, request);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(LimitOfThesesReachedException.class)
+    public ResponseEntity<ErrorDetails> handleLimitOfThesesReachedException(LimitOfThesesReachedException e,
+                                                                             WebRequest request) {
+        ErrorDetails errorDetails = getErrorDetails(e, request);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
 }
 

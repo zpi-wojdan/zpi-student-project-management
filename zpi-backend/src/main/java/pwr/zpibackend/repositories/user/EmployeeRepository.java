@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Long>{
     List<Employee> findAllByMailStartingWith(String prefix);
     Optional<Employee> findByMail(String mail);
-
     boolean existsByMail(String mail);
+    List<Employee> findAllByTitleId(Long titleId);
 }
 

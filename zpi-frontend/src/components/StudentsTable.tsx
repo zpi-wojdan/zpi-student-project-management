@@ -60,7 +60,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
   const handleAcceptReservationSupervisor = () => {
     thesis.reservations.forEach((res) => {
       res.confirmedBySupervisor = true;
-      api.put(`http://localhost:8080/reservation/${res.id}`, res)
+      api.put(api_access +`reservation/${res.id}`, res)
         .then((response) => {
           if (response.status === 200) {
             toast.success(t('reservation.deleteSuccessful'));
@@ -79,7 +79,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
 
   function handleConfirmDeleteSupervisor(): void {
     thesis.reservations.forEach((res) => {
-      api.delete(`http://localhost:8080/reservation/${res.id}`)
+      api.delete(api_access +`reservation/${res.id}`)
         .then((response) => {
           if (response.status === 200) {
             toast.success(t('reservation.reservationDeleted'));
@@ -140,6 +140,9 @@ function StudentTable({ students, thesis }: StudentTableProps) {
         }
         setShowButtonDelete(newShowButtonDelete)
 
+      } else if (user.roles && user.roles.some(role => role.name === "admin")) {
+        const newShowButtonsDelete = students.map((s) => true);
+        setShowButtonDelete(newShowButtonsDelete);
       } else if (user.roles && user.roles.some(role => role.name === "supervisor") && user.mail === thesis.supervisor.mail) {
         const newShowButtonsSupervisor = thesis.reservations.every((res) => res.readyForApproval && !res.confirmedBySupervisor);
         setShowButtonsSupervisor(newShowButtonsSupervisor);

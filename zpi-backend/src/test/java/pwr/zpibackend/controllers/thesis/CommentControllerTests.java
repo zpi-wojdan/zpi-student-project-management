@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WebMvcTest(CommentController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class CommentControllerTests {
-    private static final String BASE_URL = "/thesis/comment";
+    private static final String BASE_URL = "/api/thesis/comment";
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean

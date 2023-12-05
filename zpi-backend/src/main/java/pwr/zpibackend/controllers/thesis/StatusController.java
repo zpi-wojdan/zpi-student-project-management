@@ -36,13 +36,13 @@ public class StatusController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Status> addStatus(StatusDTO status) {
+    public ResponseEntity<Status> addStatus(@RequestBody StatusDTO status) {
         return ResponseEntity.ok(statusService.addStatus(status));
     }
 
     @PutMapping("/{statusId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Status> updateStatus(@PathVariable Long statusId, StatusDTO updatedStatus) {
+    public ResponseEntity<Status> updateStatus(@PathVariable Long statusId, @RequestBody StatusDTO updatedStatus) {
         return ResponseEntity.ok(statusService.updateStatus(statusId, updatedStatus));
     }
 

@@ -9,10 +9,7 @@ import { Department } from '../../../models/university/Department';
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import api_access from '../../../utils/api_access';
-
-export type Title = {
-  name: string;
-}
+import {Title} from "../../../models/user/Title";
 
 const EmployeeForm: React.FC = () => {
   // @ts-ignore
@@ -23,7 +20,8 @@ const EmployeeForm: React.FC = () => {
     mail: '',
     name: '',
     surname: '',
-    title: { name: '' },
+    title: { name: '', numTheses: 2 },
+    numTheses: 2,
     roles: [],
     departmentCode: '',
   });
@@ -48,7 +46,8 @@ const EmployeeForm: React.FC = () => {
         mail: employee.mail,
         name: employee.name,
         surname: employee.surname,
-        title: { name: employee.title.name },
+        title: { name: employee.title.name, numTheses: employee.title.numTheses },
+        numTheses: employee.numTheses,
         roles: employee.roles.map((role: Role) => ({ name: role.name })),
         departmentCode: employee.department.code,
       });
@@ -129,9 +128,15 @@ const EmployeeForm: React.FC = () => {
       isValid = false;
     }
 
-    if (!formData.title) {
+    if (!formData.title || !formData.title.name || formData.title.name === '') {
       newErrors.title = errorRequireText;
       newErrorsKeys.title = "general.management.fieldIsRequired"
+      isValid = false;
+    }
+
+    if (formData.numTheses < 0 || formData.numTheses > 10) {
+      newErrors.numTheses = t('general.thesesLimitError');
+      newErrorsKeys.numTheses = "general.thesesLimitError"
       isValid = false;
     }
 
@@ -268,7 +273,29 @@ const EmployeeForm: React.FC = () => {
             id="title"
             name="title"
             value={formData.title.name}
-            onChange={(e) => setFormData({ ...formData, title: { name: e.target.value } })}
+            onChange={(e) => {
+              const selectedTitleName = e.target.value;
+              const selectedTitle = availableTitles.find(title => title.name === selectedTitleName);
+              if (selectedTitle) {
+                setFormData({
+                  ...formData,
+                  title: {
+                    name: selectedTitleName,
+                    numTheses: selectedTitle.numTheses,
+                  },
+                  numTheses: selectedTitle.numTheses,
+                });
+              }
+              else {
+                setFormData({
+                  ...formData,
+                  title: {
+                    name: '',
+                    numTheses: 2,
+                  },
+                });
+              }
+            }}
             className="form-control"
           >
             <option value="">{t('general.management.choose')}</option>
@@ -327,6 +354,22 @@ const EmployeeForm: React.FC = () => {
             ))}
           </select>
           {errors.department && <div className="text-danger">{errors.department}</div>}
+        </div>
+        <div className="mb-3">
+          <label className="bold" htmlFor="numTheses">
+            {t('general.thesesLimit')}:
+          </label>
+          <input
+              type="number"
+              className="form-control"
+              id="numTheses"
+              name="numTheses"
+              value={formData.numTheses}
+              onChange={(e) => setFormData({ ...formData, numTheses: parseInt(e.target.value) })}
+              min={0}
+              max={10}
+          />
+          {errors.numTheses && <div className="text-danger">{errors.numTheses}</div>}
         </div>
         <div className="mb-3">
           <label className="bold">{t('general.people.roles')}:</label>

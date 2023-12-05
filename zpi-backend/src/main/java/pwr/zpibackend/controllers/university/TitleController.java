@@ -22,21 +22,21 @@ public class TitleController {
         return ResponseEntity.ok(titleService.getAllTitles());
     }
 
-    @GetMapping("/name")
+    @GetMapping("/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Title> getTitleByName(String name) {
+    public ResponseEntity<Title> getTitleByName(@PathVariable String name) {
         return ResponseEntity.ok(titleService.getTitleByName(name));
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Title> addTitle(TitleDTO title) {
+    public ResponseEntity<Title> addTitle(@RequestBody TitleDTO title) {
         return ResponseEntity.ok(titleService.addTitle(title));
     }
 
     @PutMapping("/{titleId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Title> updateTitle(@PathVariable Long titleId, TitleDTO updatedTitle) {
+    public ResponseEntity<Title> updateTitle(@PathVariable Long titleId, @RequestBody TitleDTO updatedTitle) {
         return ResponseEntity.ok(titleService.updateTitle(titleId, updatedTitle));
     }
 

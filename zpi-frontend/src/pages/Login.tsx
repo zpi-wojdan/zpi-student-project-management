@@ -41,7 +41,7 @@ const LoginPage = () => {
 
         // @ts-ignore
         google.accounts.id.initialize({
-            client_id: "333365127566-llqb3rl4kcvvcnurr7cih7s126iu0e5v.apps.googleusercontent.com",
+            client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
             callback: handleGoogleCallbackResponse
         })
 

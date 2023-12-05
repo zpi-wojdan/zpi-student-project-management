@@ -18,7 +18,6 @@ import StudentList from './pages/Admin/Student/List';
 import StudentDetails from './pages/Admin/Student/Details';
 import StudentForm from './pages/Admin/Student/Form';
 import FacultyList from './pages/Admin/Faculty/List';
-import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FacultyForm from './pages/Admin/Faculty/Form';
@@ -45,9 +44,12 @@ import DeadlineList from "./pages/Admin/Deadline/List";
 import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
 import ThesesSupervisor from './pages/Theses/ThesesSupervisor';
+import ThesisStudent from './pages/Theses/ThesisStudent';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
 import LoadingSpinner from "./components/LoadingSpinner";
+import TitleList from './pages/Admin/Title/List';
+import TitleForm from "./pages/Admin/Title/Form";
 
 
 export interface IAppProps {
@@ -70,16 +72,20 @@ export default function App(props: IAppProps) {
                   <Route path='single-reservation' element={<SingleReservationPage />} />
                 </Route>
 
+                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                  <Route path='myThesis' element={<ThesisStudent/>} />
+                </Route>
+
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='my' element={<ThesesSupervisor />} />
-                  <Route path='my/:id' element={<ThesesDetails />} />
+                  <Route path='my/:id' element={<ThesesDetails  addStudents={false}/>} />
                   <Route path='my/add' element={<AddThesisPageSupervisor />} />
                   <Route path='my/edit/:id' element={<AddThesisPageSupervisor />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
                   <Route path='public-theses' element={<ThesesTable />} />
-                  <Route path='public-theses/:id' element={<ThesesDetails />} />
+                  <Route path='public-theses/:id' element={<ThesesDetails addStudents={true}/>} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['approver']} />}>
@@ -121,6 +127,9 @@ export default function App(props: IAppProps) {
                 <Route path='deadlines' element={<DeadlineList />} />
                 <Route path='deadlines/add' element={<DeadlineForm />} />
                 <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
+                <Route path='titles' element={<TitleList />} />
+                <Route path='titles/add' element={<TitleForm />} />
+                <Route path='titles/edit/:id' element={<TitleForm />} />
                 <Route path="/students/file" element={<UploadStudentFilePage />} />
                 <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
