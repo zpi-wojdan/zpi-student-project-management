@@ -8,6 +8,7 @@
       "all": "Wszystkie",
       "choose": "Wybierz",
       "delete": "Usuń",
+      "deleteSelected": "Usuń zaznaczone",
       "details": "Szczegóły",
       "edit": "Edytuj",
       "errorOfLoading": "Błąd wczytywania danych",
@@ -81,6 +82,10 @@
       "studyPrograms": "Programy studiów",
       "thesis": "Temat",
       "theses": "Tematy"
+    },
+    "clearData": {
+      "clearSystem": "Czyszczenie systemu",
+      "choice": "Wybierz \"Tematy\" lub \"Studenci\""
     },
     "title": "Tytuł",
     "titles": "Tytuły",
@@ -157,7 +162,11 @@
     "cycleProgramRequired": "Wybierz cykl i program dla wszystkich wpisów.",
     "duplicatedPrograms": "Lista programów posiada duplikaty.",
     "import": "Importuj studentów",
-    "deleteErrorWithReference": "Student nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!"
+    "deleteErrorWithReference": "Student nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
+    "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczonych studentów? ({{idCount}})",
+    "deleteSuccesfulBulk": "Zaznaczeni studenci zostali usunięci",
+    "deleteErrorBulk": "Zaznaczeni studenci nie zostali usunięci",
+    "filterCycles": "Zanim przejdziesz do usuwania studentów, zastosuj filtry według cykli nauczania."
   },
   "faculty": {
     "updateSuccessful": "Wydział został zaktualizowany",
@@ -230,9 +239,9 @@
     "deleteError": "Temat nie może zostać usunięty!",
     "deleteConfirmation": "Czy na pewno chcesz usunąć ten temat?",
     "acceptConfirmation": "Czy na pewno chcesz zaakceptować ten temat?",
-    "acceptConfirmationBulk": "Czy na pewno chcesz zaakceptować wybrane tematy?",
+    "acceptConfirmationBulk": "Czy na pewno chcesz zaakceptować zaznaczone tematy?",
     "rejectConfirmation": "Czy na pewno chcesz odrzucić ten temat?",
-    "rejectConfirmationBulk": "Czy na pewno chcesz odrzucić wybrane tematy?",
+    "rejectConfirmationBulk": "Czy na pewno chcesz odrzucić zaznaczone tematy?",
     "sendRejection": "Jeśli chcesz odrzucić ten temat, musisz napisać wyjaśnienie w znajdującej się poniżej sekcji komentarzy",
     "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
     "errorOfLoadingSupervisorData": "Błąd wczytywania danych prowadzącego!",
@@ -269,12 +278,16 @@
     "errorStudents": "Student z indeksem {{index}} ma juź przydzielony temat!",
     "addStudentsWarning": "Studenci nie zostaną zapisani, jeśli temat zostanie zapisany do wersji roboczych!",
     "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne.",
-    "addStudentsError": "Wszystkie indeksy studentów muszą być wypełnione albo żaden nie może być wpisany!"
+    "addStudentsError": "Wszystkie indeksy studentów muszą być wypełnione albo żaden nie może być wpisany!",
+    
+    "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczone tematy? ({{idCount}})",
+    "deleteSuccesfulBulk": "Zaznaczone tematy zostały usunięte",
+    "deleteErrorBulk": "Zaznaczone tematy nie zostały usunięte"
   },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",
-    "tooBigFileError": "Zbyt duży rozmiar pliku {fileName} - jego rozmiar: {fileSize} MB",
+    "tooBigFileError": "Zbyt duży rozmiar pliku {{fileName}} - jego rozmiar: {{fileSize}} MB",
     "filesNotSentError": "Nie udało się przesłać plików",
     "attachStudent": "Załącz pliki z danymi studentów",
     "attachEmployee": "Załącz pliki z danymi pracowników",

@@ -12,8 +12,9 @@ import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
+import pwr.zpibackend.models.thesis.*;
 import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
@@ -334,5 +335,51 @@ public class ThesisService {
 
         return thesisRepository.saveAllAndFlush(thesesForUpdate);
     }
+    @Transactional
+    public List<Thesis> deleteThesesByStudyCycle(Long cycId) {
+        List<Thesis> thesesInCycle = thesisRepository.findAllByStudyCycle_Id(cycId);
+        List<Thesis> closedTheses = thesesInCycle.stream()
+                .filter(thesis -> "Closed".equals(thesis.getStatus().getName()))
+                .toList();
+
+        closedTheses.forEach(thesis -> {
+            thesis.getPrograms().size();
+            thesis.setSupervisor(null);
+            thesis.setLeader(null);
+        });
+
+        reservationRepository.deleteAll(closedTheses.stream()
+                .flatMap(thesis -> thesis.getReservations().stream())
+                .collect(Collectors.toList()));
+        commentRepository.deleteAll(closedTheses.stream()
+                .flatMap(thesis -> thesis.getComments().stream())
+                .collect(Collectors.toList()));
+        thesisRepository.deleteAll(closedTheses);
+        return closedTheses;
+    }
+
+    @Transactional
+    public List<Thesis> deleteThesesInBulk(List<Long> thesesIds) {
+        List<Thesis> theses = thesisRepository.findAllById(thesesIds);
+
+        //  programy nie fetchują się leniwie, więc musiałem to zrobić ręcznie
+        //  a nie chciałem robić FetchType.EAGER w temacie jeśli nie ma konieczności
+        //  czyszczę pracowników i studentów, żeby nie usuwali się kaskadowo
+        theses.forEach(thesis -> {
+            thesis.getPrograms().size();
+            thesis.setSupervisor(null);
+            thesis.setLeader(null);
+        });
+
+        reservationRepository.deleteAll(theses.stream()
+                .flatMap(thesis -> thesis.getReservations().stream())
+                .collect(Collectors.toList()));
+        commentRepository.deleteAll(theses.stream()
+                .flatMap(thesis -> thesis.getComments().stream())
+                .collect(Collectors.toList()));
+        thesisRepository.deleteAll(theses);
+        return theses;
+    }
+
 
 }

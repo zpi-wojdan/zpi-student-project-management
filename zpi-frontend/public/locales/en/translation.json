@@ -9,6 +9,7 @@
       "choose": "Choose",
       "confirm": "Confirm",
       "delete": "Delete",
+      "deleteSelected": "Delete selected",
       "details": "Details",
       "edit": "Edit",
       "errorOfLoading": "Error of loading data",
@@ -82,6 +83,10 @@
       "studyPrograms": "Study programs",
       "thesis": "Thesis",
       "theses": "Theses"
+    },
+    "clearData": {
+      "clearSystem": "Clear system",
+      "choice": "Choose either \"Theses\" or \"Students\""
     },
     "title": "Title",
     "titles": "Titles",
@@ -158,7 +163,11 @@
     "cycleProgramRequired": "Choose study cycle and study program for all entries.",
     "duplicatedPrograms": "List of programs contains duplicates!",
     "import": "Import students",
-    "deleteErrorWithReference": "Student cannot be deleted because it is still referenced by {{referencedTable}}!"
+    "deleteErrorWithReference": "Student cannot be deleted because it is still referenced by {{referencedTable}}!",
+    "acceptDeletionBulk": "Are you sure you want to delete the selected students? ({{idCount}})",
+    "deleteSuccesfulBulk": "Selected students have been deleted",
+    "deleteErrorBulk": "Selected students have not been deleted",
+    "filterCycles": "Before you proceed to delete students, please apply filters by study cycles"
   },
   "faculty": {
     "updateSuccessful": "Faculty has been updated",
@@ -268,7 +277,10 @@
     "errorStudents": "Student with index {{index}} already has a thesis!",
     "addStudentsWarning": "Students will not be saved if the thesis is save as a draft!",
     "addStudentsMessage": "Adding students to the thesis is optional.",
-    "addStudentsError": "All student indexes need to be filled in or all have to be empty!"
+    "addStudentsError": "All student indexes need to be filled in or all have to be empty!",
+    "acceptDeletionBulk": "Are you sure you want to delete the selected theses? ({{idCount}})",
+    "deleteSuccesfulBulk": "Selected theses have been deleted",
+    "deleteErrorBulk": "Selected theses have not been deleted"
   },
   "status": {
     "draft": "Draft",
@@ -284,7 +296,7 @@
   "uploadFiles": {
     "fileName": "Source file name",
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",
-    "tooBigFileError": "Too big size of the file {fileName} - its size: {fileSize} MB",
+    "tooBigFileError": "Too big size of the file {{fileName}} - its size: {{fileSize}} MB",
     "filesNotSentError": "Sending files failed",
     "attachStudent": "Attach files with students' data",
     "attachEmployee": "Attach files with employees' data",

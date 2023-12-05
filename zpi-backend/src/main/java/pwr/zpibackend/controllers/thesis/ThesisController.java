@@ -108,4 +108,17 @@ public class ThesisController {
         String realName = statName.replaceAll("_", " ");
         return new ResponseEntity<>(thesisService.updateThesesStatusInBulk(realName, thesesIds), HttpStatus.OK);
     }
+
+    @DeleteMapping("/bulk/cycle/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Thesis>> deleteThesisByStudyCycle(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.deleteThesesByStudyCycle(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/bulk")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Thesis>> deleteThesesInBulk(@RequestBody List<Long> thesesIds) {
+        return new ResponseEntity<>(thesisService.deleteThesesInBulk(thesesIds), HttpStatus.OK);
+    }
+
 }

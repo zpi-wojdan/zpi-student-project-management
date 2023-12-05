@@ -8,7 +8,7 @@ import ThesesDetails from './pages/Theses/ThesesDetails';
 import Navigation from './layout/Navigation';
 import SingleReservationPage from './pages/reservation/SingleReservation';
 import {AuthProvider} from "./auth/AuthProvider";
-import AddThesisPageAdmin from './pages/Theses/AddThesisAdmin';
+import AddThesisPageAdmin from './pages/Admin/Thesis/AddThesisAdmin';
 import Unauthorized from './pages/Unauthorized';
 import UploadStudentFilePage from './pages/UploadingFiles/UploadStudentsFile';
 import UplaodEmployeeFilePage from './pages/UploadingFiles/UploadEmployeeFile';
@@ -50,6 +50,7 @@ import ApproveList from './pages/Approver/ApproveList';
 import LoadingSpinner from "./components/LoadingSpinner";
 import TitleList from './pages/Admin/Title/List';
 import TitleForm from "./pages/Admin/Title/Form";
+import ClearDataByCycle from './pages/Admin/BulkDeletion/ClearDataByCycle';
 
 
 export interface IAppProps {
@@ -87,12 +88,12 @@ export default function App(props: IAppProps) {
                   <Route path='public-theses' element={<ThesesTable />} />
                   <Route path='public-theses/:id' element={<ThesesDetails addStudents={true}/>} />
                 </Route>
-
+                
                 <Route element={<RequireAuth allowedRoles={['approver']} />}>
                   <Route path='manage' element={<ApproveList />} />
                   <Route path='manage/:id' element={<ApproveDetails />} />
                 </Route>
-
+                
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
                 <Route path='students' element={<StudentList />} />
                 <Route path='students/:id' element={<StudentDetails />} />
@@ -134,6 +135,7 @@ export default function App(props: IAppProps) {
                 <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/admin-reservation" element={<ReservationPage admin={true}/>} />
+                <Route path="/clear" element={<ClearDataByCycle />} />
               </Route>
               <Route path="*" element={<Missing />} />
         </Routes>

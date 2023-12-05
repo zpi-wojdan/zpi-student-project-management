@@ -58,9 +58,9 @@ const ApproveList: React.FC = () => {
           };
           return thesis;
         });
-        setTheses(thesis_response);
-        setFilteredTheses(thesis_response);
-        setAfterSearchTheses(thesis_response);
+        setTheses(thesisResponse);
+        setFilteredTheses(thesisResponse);
+        setAfterSearchTheses(thesisResponse);
         setLoaded(true);
       })
       .catch((error) => {

@@ -348,7 +348,7 @@ const StudentList: React.FC = () => {
           </button>
         </div>
       </div>
-      <div >
+      <div>
         <button className="custom-button" onClick={() => { navigate('/students/add') }}>
           {t('student.add')}
         </button>

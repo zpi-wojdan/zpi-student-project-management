@@ -33,7 +33,8 @@ const Navigation = ({ children }: NavigationProps) => {
         '/departments',
         '/theses',
         '/deadlines',
-        '/titles'
+        '/titles',
+        '/clear'
     ];
 
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
@@ -226,6 +227,9 @@ const Navigation = ({ children }: NavigationProps) => {
                                                                 </Dropdown.Item>
                                                                 <Dropdown.Item as={Link} to="/titles" className={isActive('/titles') ? "active" : ""}>
                                                                     {t('general.titles')}
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item as={Link} to="/clear" className={isActive('/clear') ? "active" : ""}>
+                                                                    {t('general.clearData.clearSystem')}
                                                                 </Dropdown.Item>
                                                             </Dropdown.Menu>
                                                         </Dropdown>
