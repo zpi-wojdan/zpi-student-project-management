@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ReservationController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class ReservationControllerTests {
-    private static final String BASE_URL = "/reservation";
+    private static final String BASE_URL = "/api/reservation";
     @Autowired
     private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -173,7 +173,7 @@ public class ReservationControllerTests {
 
         Mockito.when(reservationService.updateReservation(any(Reservation.class), eq(1L))).thenReturn(newReservation);
 
-        mockMvc.perform(put("/reservation/1")
+        mockMvc.perform(put(BASE_URL + "/{id}", 1L)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(newReservation)))
                 .andExpect(status().isOk())
@@ -186,7 +186,8 @@ public class ReservationControllerTests {
     void testDeleteReservation() throws Exception {
         Mockito.when(reservationService.deleteReservation(1L)).thenReturn(new Reservation());
 
-        mockMvc.perform(delete("/reservation/1"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", 1L)
+                        .contentType("application/json"))
                 .andExpect(status().isOk());
 
         verify(reservationService).deleteReservation(1L);

@@ -32,7 +32,7 @@ public class Comment {
     private LocalDateTime creationTime;
 
     @JoinColumn(name="thesis_id", referencedColumnName = "id", nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JsonIgnore
     private Thesis thesis;
 }

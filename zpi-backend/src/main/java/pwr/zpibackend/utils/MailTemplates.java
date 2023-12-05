@@ -14,7 +14,7 @@ public enum MailTemplates {
     RESERVATION_ADMIN("reservationByAdmin", "Nowa rezerwacja", "New reservation"),
     RESERVATION_SUPERVISOR("reservationBySupervisor", "Nowa rezerwacja", "New reservation"),
     RESERVATION_SENT_TO_SUPERVISOR("reservationSentToSupervisor", "Grupa zapisana na temat pracy dyplomowej", "Group assigned to thesis"),
-    RESERVATION_CANCELED("reservationCanceled", "Rezerwacja anulowana", "Reservation canceled");
+    RESERVATION_CANCELED("reservationCancelled", "Rezerwacja anulowana", "Reservation canceled");
 
     private final String templateName;
     private final Map<String, String> subjectByLanguage;

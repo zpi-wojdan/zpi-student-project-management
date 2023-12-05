@@ -26,12 +26,6 @@ public class TitleService {
         return titleRepository.findAll();
     }
 
-    public Title getTitle(Long titleId) {
-        return titleRepository.findById(titleId).orElseThrow(
-                () -> new NotFoundException("title with id " + titleId + " does not exist")
-        );
-    }
-
     public Title addTitle(TitleDTO title) {
         if (titleRepository.existsByName(title.getName())) {
             throw new AlreadyExistsException("title with name " + title.getName() + " already exists");

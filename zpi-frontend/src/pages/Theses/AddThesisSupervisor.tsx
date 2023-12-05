@@ -13,6 +13,7 @@ import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
 import SupervisorReservationPage from '../reservation/SupervisorReservation';
 import api_access from '../../utils/api_access';
+import { Alert } from 'react-bootstrap';
 
 
 function AddThesisPageSupervisor() {
@@ -56,6 +57,24 @@ function AddThesisPageSupervisor() {
   const [programSuggestions, setProgramSuggestions] = useState<Program[]>([]);
 
   const [numPeople, setNumPeople] = useState<number>(formData.numPeople);
+  const [submittedTheses, setSubmittedTheses] = useState<number>(0);
+
+  useEffect(() => {
+    const user = JSON.parse(Cookies.get("user") || "{}")
+
+    const statNamesSubmitted = ['Pending approval', 'Approved', 'Assigned'];
+    api.get(api_access + `thesis/employee/${user.id}/statuses?statName=${statNamesSubmitted.join(',')}`)
+      .then((response) => {
+        setSubmittedTheses(response.data.length)
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+      });
+  }, []);
 
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -91,30 +110,40 @@ function AddThesisPageSupervisor() {
       });
   }, []);
 
-  useEffect(() => {
-    api.get(api_access + 'studycycle')
-      .then((response) => {
-        setStudyCycles(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
+
 
   useEffect(() => {
     api.get(api_access + 'program')
-      .then((response) => {
-        setPrograms(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
+    .then((response) => {
+      
+      const programsResponse: Program[] = response.data;
+      setPrograms(programsResponse);
+
+      let studyCycleIds: number[] = [];
+      api.get(api_access + 'studycycle')
+        .then((response) => {
+          const cyclesResponse: StudyCycle[] = response.data;
+          setStudyCycles(cyclesResponse);
+          studyCycleIds = cyclesResponse.map(c => c.id);
+          const updatedProgramSuggestions = programsResponse
+                    .filter((p) => p.studyCycles
+                    .map(c => studyCycleIds.includes(c.id)));
+          setProgramSuggestions(updatedProgramSuggestions);
+        })
+        .catch((error) => {
+          if (error.response.status === 401 || error.response.status ===403){
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+        });
+
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -231,6 +260,13 @@ function AddThesisPageSupervisor() {
         newErrorsKeys.status = "general.management.fieldIsRequired";
         isValid = false;
       }
+
+      if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
+        console.log('zleeeee')
+        newErrors.studentIndexes = errorRequireText
+        newErrorsKeys.studentIndexes = "thesis.addStudentsError";
+        isValid = false;
+      }
     }
     else {
       if (!statusIndex || statusIndex === -1) {
@@ -299,7 +335,7 @@ function AddThesisPageSupervisor() {
               const index = (error.response.data.message as string).split(' ')[3];
               toast.error(t(`thesis.errorStudents`, {
                 index: index
-            }));
+              }));
             } else {
               toast.error(t("thesis.updateError"));
             }
@@ -312,14 +348,6 @@ function AddThesisPageSupervisor() {
             toast.success(t("thesis.addSuccessful"));
           })
           .catch((error) => {
-            if (error.response && error.response.status === 409) {
-              const newErrors: Record<string, string> = {};
-              newErrors.index = t("thesis.addError")
-              setErrors(newErrors);
-              const newErrorsKeys: Record<string, string> = {};
-              newErrorsKeys.index = "thesis.addError"
-              setErrorsKeys(newErrorsKeys);
-            } else {
               console.error(error);
               if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
@@ -329,11 +357,10 @@ function AddThesisPageSupervisor() {
                 const index = (error.response.data.message as string).split(' ')[3];
                 toast.error(t(`thesis.errorStudents`, {
                   index: index
-              }));
+                }));
               } else {
-                toast.error(t("thesis.updateError"));
+                toast.error(t("thesis.addError"));
               }
-            }
           })
       }
     }
@@ -406,14 +433,25 @@ function AddThesisPageSupervisor() {
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
             &larr; {t('general.management.goBack')}
           </button>
+          {submittedTheses < JSON.parse(Cookies.get("user") || "{}").numTheses &&
           <button id="save-button" type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
             {thesis ? t('general.management.save') : t('general.management.add')}
-          </button>
+          </button>}
           <button id="save-draft-button" type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
             {thesis ? t('general.management.save') : t('general.management.addAsDraft')}
           </button>
         </div>
-
+        <div>
+          {submittedTheses >= JSON.parse(Cookies.get("user") || "{}").numTheses ? (
+            <Alert variant="warning">
+              {t('supervisorTheses.thesesLimitExceeded')}
+            </Alert>
+          ) : (
+            <Alert variant="info">
+              {t('supervisorTheses.remainingThesesToSubmit')}{JSON.parse(Cookies.get("user") || "{}").numTheses - submittedTheses}
+            </Alert>
+          )}
+        </div>
         <div className="mb-3">
           <label className="bold" htmlFor="namePL">
             {t('general.title')} (PL):
@@ -552,7 +590,7 @@ function AddThesisPageSupervisor() {
                   <select
                     id={`programId${index}`}
                     name={`programId${index}`}
-                    value={formData.programIds[index]}
+                    value={programId}
                     onChange={(e) => {
                       const selectedProgramId = parseInt(e.target.value, 10);
                       handleProgramChange(index, selectedProgramId);
@@ -596,7 +634,8 @@ function AddThesisPageSupervisor() {
           </ul>
         </div>
         <p className='text-danger m-0'>{t("thesis.addStudentsWarning")}</p>
-        {!thesis ? (
+        {errors.studentIndexes && (<div className="text-danger">{t("thesis.addStudentsError")}</div>)}
+        {(!thesis || (thesis.status.name === 'Draft' || thesis.status.name === 'Rejected')) && (
           <div key={numPeople}>
             <SupervisorReservationPage
               numPeople={numPeople}
@@ -604,18 +643,7 @@ function AddThesisPageSupervisor() {
               setStudentIndexes={setStudentIndexes}
             />
           </div>
-        ) : (
-          thesis.status.name === 'Draft' || thesis.status.name === 'Rejected' && (
-            <div key={numPeople}>
-              <SupervisorReservationPage
-                numPeople={numPeople}
-                studentIndexes={formData.studentIndexes}
-                setStudentIndexes={setStudentIndexes}
-              />
-            </div>
-          )
         )}
-        
       </form>
     </div>
   )

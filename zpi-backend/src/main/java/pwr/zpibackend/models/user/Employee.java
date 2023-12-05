@@ -51,6 +51,6 @@ public class Employee {
 
     @OneToMany(mappedBy = "supervisor", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Thesis> supervisedTheses;
+    private List<Thesis> supervisedTheses = new ArrayList<>();
 
 }

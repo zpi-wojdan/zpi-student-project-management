@@ -38,6 +38,12 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.getThesis(id), HttpStatus.OK);
     }
 
+    @GetMapping("student/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT')")
+    public ResponseEntity<Thesis> getThesisByStudentId(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.getThesisByStudentId(id), HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
     public ResponseEntity<Thesis> addThesis(@RequestBody ThesisDTO thesis) throws NotFoundException {
@@ -94,4 +100,25 @@ public class ThesisController {
         }
         return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusNameList(empId, fixedNames), HttpStatus.OK);
     }
+
+
+    @PutMapping("/bulk/{statName}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_APPROVER')")
+    public ResponseEntity<List<Thesis>> updateThesesStatusInBulk(@PathVariable String statName, @RequestBody List<Long> thesesIds) {
+        String realName = statName.replaceAll("_", " ");
+        return new ResponseEntity<>(thesisService.updateThesesStatusInBulk(realName, thesesIds), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/bulk/cycle/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Thesis>> deleteThesisByStudyCycle(@PathVariable Long id) {
+        return new ResponseEntity<>(thesisService.deleteThesesByStudyCycle(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/bulk")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Thesis>> deleteThesesInBulk(@RequestBody List<Long> thesesIds) {
+        return new ResponseEntity<>(thesisService.deleteThesesInBulk(thesesIds), HttpStatus.OK);
+    }
+
 }

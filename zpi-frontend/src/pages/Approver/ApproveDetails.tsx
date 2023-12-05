@@ -13,6 +13,7 @@ import { Status } from '../../models/thesis/Status';
 import { Employee } from '../../models/user/Employee';
 import Cookies from 'js-cookie';
 import LoadingSpinner from "../../components/LoadingSpinner";
+import api_access from "../../utils/api_access";
 
 const ApproveDetails: React.FC = () => {
   // @ts-ignore
@@ -60,7 +61,7 @@ const ApproveDetails: React.FC = () => {
   const [rejectClicked, setRejectClicked] = useState(false);
 
   useEffect(() => {
-    const response = api.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(api_access +`thesis/${id}`)
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const t: Thesis = {
@@ -139,7 +140,7 @@ const ApproveDetails: React.FC = () => {
   }, [i18n.language]);
 
   useEffect(() => {
-    api.get('http://localhost:8080/status/Rejected')
+    api.get(api_access +'status/Rejected')
       .then((response) => {
         setStatuses(statuses => [...statuses, response.data]);
       })
@@ -151,7 +152,7 @@ const ApproveDetails: React.FC = () => {
         }
       });
 
-    api.get('http://localhost:8080/status/Approved')
+    api.get(api_access +'status/Approved')
       .then((response) => {
         setStatuses(statuses => [...statuses, response.data]);
       })
@@ -166,7 +167,7 @@ const ApproveDetails: React.FC = () => {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   useEffect(() => {
-    api.get('http://localhost:8080/program')
+    api.get(api_access +'program')
       .then((response) => {
         setPrograms(response.data);
       })
@@ -281,10 +282,11 @@ const ApproveDetails: React.FC = () => {
     })
   };
 
+  //  TODO: Approved vs Assigned
   const handleConfirmAccept = () => {
     const [isValid, thesisDTO] = validateThesis();
     if (isValid) {
-      api.put(`http://localhost:8080/thesis/${id}`, thesisDTO)
+      api.put(api_access +`thesis/${id}`, thesisDTO)
         .then(() => {
           toast.success(t("thesis.acceptSuccesful"));
           if (thesisDTO) {
@@ -327,11 +329,11 @@ const ApproveDetails: React.FC = () => {
 
       const [commentValid, commentDTO] = validateComment();
       if (commentValid) {
-        api.post(`http://localhost:8080/thesis/comment`, commentDTO)
+        api.post(api_access +`thesis/comment`, commentDTO)
           .then(() => {
             toast.success(t("comment.addSuccessful"));
 
-            api.put(`http://localhost:8080/thesis/${id}`, thesisDTO)
+            api.put(api_access +`thesis/${id}`, thesisDTO)
               .then(() => {
                 setKey(k => k + 1);
                 setCommentsKey(k => k + 1);

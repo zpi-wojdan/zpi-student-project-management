@@ -110,6 +110,7 @@ const EmployeeDetails: React.FC = () => {
               <p><span className="bold">{t('general.people.surname')}:</span> <span>{employee.surname}</span></p>
               <p><span className="bold">{t('general.people.mail')}:</span> <span>{employee.mail}</span></p>
               <p><span className="bold">{t('general.university.department')}:</span> <span>{employee.department.name}</span></p>
+              <p><span className="bold">{t('general.thesesLimit')}:</span> <span>{employee.numTheses}</span></p>
               <p className="bold">{t('general.people.roles')}:</p>
               <ul>
                 {employee.roles.map((role) => (

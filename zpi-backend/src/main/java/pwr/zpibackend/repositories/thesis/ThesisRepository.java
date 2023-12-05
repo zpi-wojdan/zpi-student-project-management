@@ -6,6 +6,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import pwr.zpibackend.models.thesis.Thesis;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RepositoryRestResource
@@ -20,5 +21,8 @@ public interface ThesisRepository extends JpaRepository<Thesis, Long>{
     List<Thesis> findAllBySupervisor_IdAndStatus_NameIn(Long empId, List<String> statNames, Sort sort);
 
     List<Thesis> findAllByStatusNameIn(List<String> statusNames, Sort sort);
+    List<Thesis> findAllByLeader_Id(Long leaderId);
     List<Thesis> findAllByOrderByStudyCycleNameDescIdDesc();
+    Optional<Thesis> findByReservations_Id(Long id);
+    List<Thesis> findAllByStudyCycle_Id(Long cycId);
 }

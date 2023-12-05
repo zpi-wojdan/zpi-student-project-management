@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     @Column(name = "is_confirmed_by_leader")
     private boolean isConfirmedByLeader;
     @Column(name = "is_confirmed_by_supervisor")

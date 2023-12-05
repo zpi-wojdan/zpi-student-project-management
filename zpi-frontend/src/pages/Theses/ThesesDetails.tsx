@@ -18,7 +18,11 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { handleDeletionError } from '../../utils/handleDeleteError';
 import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 
-const ThesesDetails: React.FC = () => {
+type ThesisDetailsProps = {
+  addStudents: boolean;
+}
+
+const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -62,21 +66,6 @@ const ThesesDetails: React.FC = () => {
 
   }, [id]);
 
-  const [programs, setPrograms] = useState<Program[]>([]);
-  useEffect(() => {
-    api.get(api_access + 'program')
-      .then((response) => {
-        setPrograms(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
-
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
   const toggleProgramExpansion = (programId: number) => {
@@ -94,7 +83,7 @@ const ThesesDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/thesis/${id}`)
+    api.delete(api_access +`thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
         navigate("/theses");
@@ -237,7 +226,7 @@ const ThesesDetails: React.FC = () => {
     else {
       u = user;
     }
-    return u?.roles.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
+    return u?.roles?.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
   }
   const gotCommentSectionRightsBySupervisor = () => {
     let u: (Student & Employee) | undefined;
@@ -289,17 +278,17 @@ const ThesesDetails: React.FC = () => {
             {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
               (user?.mail === thesis?.supervisor.mail ||
                 thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
-              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
+              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent)) ?
               (
                 <button className="custom-button" onClick={downloadDeclaration}>
                   {t('thesis.downloadDeclaration')}
                 </button>
               ) : null}
 
-          {(thesis && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
+          {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
             user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
-            user?.roles?.some(role => role.name === 'admin' && thesis?.status.name !== 'Closed'))) ?
+            user?.roles?.some(role => role.name === 'admin') && thesis?.status.name !== 'Closed')) ?
             (
               <button type="button" className="custom-button" onClick={() => {
                 if (user?.role?.name === 'student') {

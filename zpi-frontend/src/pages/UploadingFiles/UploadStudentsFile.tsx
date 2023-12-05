@@ -8,6 +8,7 @@ import { ImportedStudent, InvalidStudentData } from '../../models/ImportedData';
 import {useTranslation} from "react-i18next";
 import api from '../../utils/api';
 import api_access from '../../utils/api_access';
+import { toast } from 'react-toastify';
 
 function UploadStudentFilePage() {
   // @ts-ignore
@@ -16,15 +17,10 @@ function UploadStudentFilePage() {
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [duplicateFilesError, setDuplicateFilesError] = useState<string | null>(null);
-  const [duplicateErrorMessageVisible, setDuplicateErrorMessageVisible] = useState(false);
-  const [uploadErrorMessageVisible, setUploadErrorMessageVisible] = useState(false);
-
+  
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidStudentData | null>(null);
-
-  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
   const [sentData, setSentData] = useState(false);
+  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
   const [invalidIndicesOpen, setInvalidIndicesOpen] = useState(false);
@@ -34,7 +30,6 @@ function UploadStudentFilePage() {
   const [invalidCyclesOpen, setInvalidCyclesOpen] = useState(false);
   const [invalidStatusesOpen, setInvalidStatusesOpen] = useState(false);
   const [invalidDataOpen, setInvalidDataOpen] = useState(false);
-  const [recordsSavedOpen, setRecordsSavedOpen] = useState(false);
 
   const invalidDataList = [
     {
@@ -87,26 +82,13 @@ function UploadStudentFilePage() {
     },
   ]
 
-  setTimeout(() => {
-    setDuplicateErrorMessageVisible(false);
-  }, 20000);
-
-  setTimeout(() => {
-    setUploadErrorMessageVisible(false);
-  }, 20000);
-
-  setTimeout(() => {
-    setRecordsSavedOpen(false);
-  }, 20000);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setDuplicateFilesError(null);
     const newFiles = acceptedFiles.filter(
       (file) => !selectedFiles.some((existingFile) => (existingFile.name === file.name))
     );
     if (newFiles.length != acceptedFiles.length){
-      setDuplicateFilesError(t('uploadFiles.duplicatedFileError'));
-      setDuplicateErrorMessageVisible(true);
+      toast.error(t('uploadFiles.duplicatedFileError'));
     }
     setSelectedFiles([...selectedFiles, ...newFiles]);
     setButtonDisabled(false);
@@ -124,17 +106,14 @@ function UploadStudentFilePage() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleUpload = () => {
-    setUploadError(null);
     setRecordsSaved(0);
     setInvalidJsonData(null);
 
     selectedFiles.forEach((file) => {
       var size = +((file.size / (1024*1024)).toFixed(2))
       if (size > 5){
-        const errorMessage = t('uploadFiles.tooBigFileError', {fileName: file.name, size: size});
-        console.log(errorMessage);
-        setUploadError(errorMessage);
-        setUploadErrorMessageVisible(true);
+        const errorMessage = t('uploadFiles.tooBigFileError', {fileName: file.name, fileSize: size});
+        toast.error(errorMessage);
         return;
       }
       const formData = new FormData();
@@ -213,13 +192,12 @@ function UploadStudentFilePage() {
           }));
           
           setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
-        
-          setRecordsSavedOpen(true);
           setSentData(true);
+
+          toast.success(t('uploadFiles.recordsSaved') + recordsSaved)
         })
         .catch((error) => {
-          setUploadError(t('uploadFiles.filesNotSentError'));
-          setUploadErrorMessageVisible(true);
+          toast.error(t('uploadFiles.filesNotSentError'));
           setSentData(false);
           console.error('Nie udało się przesłać plików', error);
           if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
@@ -256,24 +234,6 @@ function UploadStudentFilePage() {
               &larr; {t('general.management.goBack')}
             </button>
         </div>
-
-        {duplicateFilesError && duplicateErrorMessageVisible && (
-            <div className="alert alert-danger mt-3 mb-3" role="alert">
-              {duplicateFilesError}
-            </div>
-        )}
-
-        {uploadError && uploadErrorMessageVisible && (
-          <div className="alert alert-danger mt-3 mb-3" role="alert">
-            {uploadError}
-          </div>
-        )}
-
-        {recordsSavedOpen && (
-          <div className="alert alert-success mt-3 mb-3" role="alert">
-            {t('uploadFiles.recordsSaved')} {recordsSaved}
-          </div>
-        )}
 
         <div
           className="container d-flex justify-content-center mt-4 mb-4"

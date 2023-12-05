@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class EmployeeControllerTests {
 
-    private static final String BASE_URL = "/employee";
+    private static final String BASE_URL = "/api/employee";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -131,20 +131,6 @@ public class EmployeeControllerTests {
                 .andExpect(status().isNotFound());
 
         verify(employeeService).getEmployee(id);
-    }
-
-    @Test
-    public void testGetEmployeesByPrefix() throws Exception {
-        String prefix = "12";
-        Mockito.when(employeeService.getEmployeesByPrefix(prefix)).thenReturn(employees);
-
-        String returnedJson = objectMapper.writeValueAsString(employees);
-
-        mockMvc.perform(get(BASE_URL + "/match/{prefix}", prefix).contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(returnedJson));
-
-        verify(employeeService).getEmployeesByPrefix(prefix);
     }
 
     @Test

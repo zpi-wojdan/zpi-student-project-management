@@ -22,7 +22,6 @@ import pwr.zpibackend.services.user.StudentService;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -31,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(StudentController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class StudentControllerTests {
-    private static final String BASE_URL = "/student";
+    private static final String BASE_URL = "/api/student";
     @MockBean
     private GoogleAuthService googleAuthService;
     @Autowired
@@ -113,6 +112,32 @@ class StudentControllerTests {
     }
 
     @Test
+    void getStudentByIndex() throws Exception {
+        String index = "123456";
+
+        Mockito.when(studentService.getStudent(index + "@student.pwr.edu.pl")).thenReturn(student);
+
+        mockMvc.perform(get(BASE_URL + "/index/{index}", index).contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.mail").value(student.getMail()));
+
+        verify(studentService).getStudent(index + "@student.pwr.edu.pl");
+    }
+
+    @Test
+    void getStudentByIndexNotFound() throws Exception {
+        String nonExistingIndex = "000000";
+
+        Mockito.when(studentService.getStudent(nonExistingIndex + "@student.pwr.edu.pl"))
+                .thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get(BASE_URL + "/index/{index}", nonExistingIndex).contentType("application/json"))
+                .andExpect(status().isNotFound());
+
+        verify(studentService).getStudent(nonExistingIndex + "@student.pwr.edu.pl");
+    }
+
+    @Test
     void addStudent() throws Exception {
         String requestBody = objectMapper.writeValueAsString(studentDTO);
 
@@ -172,6 +197,23 @@ class StudentControllerTests {
                 .andExpect(status().isNotFound());
 
         verify(studentService).updateStudent(nonExistingId, studentDTO);
+    }
+
+    @Test
+    void updateStudentAlreadyExists() throws Exception {
+        Long id = 1L;
+        studentDTO.setIndex("456789");
+
+        Mockito.when(studentService.updateStudent(id, studentDTO)).thenThrow(AlreadyExistsException.class);
+
+        String requestBody = objectMapper.writeValueAsString(studentDTO);
+
+        mockMvc.perform(put(BASE_URL + "/{id}", id)
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isConflict());
+
+        verify(studentService).updateStudent(id, studentDTO);
     }
 
     @Test

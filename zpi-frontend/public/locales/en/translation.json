@@ -9,6 +9,7 @@
       "choose": "Choose",
       "confirm": "Confirm",
       "delete": "Delete",
+      "deleteSelected": "Delete selected",
       "details": "Details",
       "edit": "Edit",
       "errorOfLoading": "Error of loading data",
@@ -20,14 +21,18 @@
       "nA": "N/A",
       "no": "No",
       "reject": "Reject",
+      "rejectSelected": "Reject selected",
       "reserve": "Reserve",
       "save": "Save",
+      "select": "Select",
+      "selectAll": "Select all",
       "view": "View",
       "wrongData": "Wrong data",
       "wrongFormat": "Wrong format",
       "yes": "Yes",
       "annul": "Annul",
       "accept": "Accept",
+      "acceptSelected": "Accept selected",
       "search": "Search",
       "noSearchData": "No search results",
       "noData": "No data",
@@ -80,7 +85,14 @@
       "thesis": "Thesis",
       "theses": "Theses"
     },
-    "title": "Title"
+    "clearData": {
+      "clearSystem": "Clear system",
+      "choice": "Choose either \"Theses\" or \"Students\""
+    },
+    "title": "Title",
+    "titles": "Titles",
+    "thesesLimit": "Theses limit",
+    "thesesLimitError": "Theses limit must be a number between 0 and 10."
   },
   "navigation": {
     "logout": "Log out",
@@ -88,6 +100,7 @@
     "home": "Home",
     "manage": "Manage",
     "myTheses": "My theses",
+    "myThesis": "My thesis",
     "imageAlt": "Symbol of the Wrocław University of Science and Technology",
     "reports": "Reports",
     "confirm": "To be approved"
@@ -151,7 +164,11 @@
     "cycleProgramRequired": "Choose study cycle and study program for all entries.",
     "duplicatedPrograms": "List of programs contains duplicates!",
     "import": "Import students",
-    "deleteErrorWithReference": "Student cannot be deleted because it is still referenced by {{referencedTable}}!"
+    "deleteErrorWithReference": "Student cannot be deleted because it is still referenced by {{referencedTable}}!",
+    "acceptDeletionBulk": "Are you sure you want to delete the selected students? ({{idCount}})",
+    "deleteSuccesfulBulk": "Selected students have been deleted",
+    "deleteErrorBulk": "Selected students have not been deleted",
+    "filterCycles": "Before you proceed to delete students, please apply filters by study cycles"
   },
   "faculty": {
     "updateSuccessful": "Faculty has been updated",
@@ -216,7 +233,8 @@
     "addPerson": "Add person",
     "deleteSuccessful": "Reservation has ben deleted",
     "deleteError": "Reservation cannot be deleted",
-    "deleteConfirmation": "Are you sure you want to delete this reservation?"
+    "deleteConfirmation": "Are you sure you want to delete this reservation?",
+    "studentAlreadyReserved": "Student with index {{index}} already has a reservation!"
   },
   "thesis": {
     "supervisorNotExists": "Supervisor does not exist!",
@@ -225,7 +243,9 @@
     "deleteError": "Thesis cannot be deleted!",
     "deleteConfirmation": "Are you sure you want to delete this thesis?",
     "acceptConfirmation": "Are you sure you want to accept this thesis?",
+    "acceptConfirmationBulk": "Are you sure you want to accept the selected theses?",
     "rejectConfirmation": "Are you sure you want to reject this thesis?",
+    "rejectConfirmationBulk": "Are you sure you want to reject the selected theses?",
     "sendRejection": "If you want to reject this thesis, you have to write an explanation in the comment section below.",
     "peopleLimit": "People limit",
     "occupiedSeats": "Occupied seats",
@@ -251,11 +271,17 @@
     "rejectionError": "Thesis has not been rejected",
     "acceptSuccesful": "Thesis has been accepted",
     "acceptError": "Thesis has not been accepted",
+    "acceptSuccesfulBulk": "Selected theses have been accepted",
+    "acceptErrorBulk": "Selected theses have not been accepted",
     "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!",
     "drafts": "Drafts",
     "errorStudents": "Student with index {{index}} already has a thesis!",
     "addStudentsWarning": "Students will not be saved if the thesis is save as a draft!",
-    "addStudentsMessage": "Adding students to the thesis is optional."
+    "addStudentsMessage": "Adding students to the thesis is optional.",
+    "addStudentsError": "All student indexes need to be filled in or all have to be empty!",
+    "acceptDeletionBulk": "Are you sure you want to delete the selected theses? ({{idCount}})",
+    "deleteSuccesfulBulk": "Selected theses have been deleted",
+    "deleteErrorBulk": "Selected theses have not been deleted"
   },
   "status": {
     "draft": "Draft",
@@ -271,7 +297,7 @@
   "uploadFiles": {
     "fileName": "Source file name",
     "duplicatedFileError": "Uploading duplicates of existing files is not allowed",
-    "tooBigFileError": "Too big size of the file {fileName} - its size: {fileSize} MB",
+    "tooBigFileError": "Too big size of the file {{fileName}} - its size: {{fileSize}} MB",
     "filesNotSentError": "Sending files failed",
     "attachStudent": "Attach files with students' data",
     "attachEmployee": "Attach files with employees' data",
@@ -342,7 +368,7 @@
     "activityExists": "Given activity already exists!",
     "dateInPast": "Deadline cannot be in the past!"
   },
-  "home":{
+  "home": {
     "welcome": "Welcome to ZPI Helper website!",
     "schedule": "Schedule",
     "noSchedule": "Unfortunately the newest schedule is not available yet"
@@ -370,5 +396,35 @@
     "student": "student",
     "thesis": "thesis",
     "reservation": "reservation"
+  },
+  "supervisorTheses": {
+    "noDrafts": "You don't have any drafts",
+    "noTheses": "You have no theses submitted",
+    "thesesLimit": "Your limit for submitted theses is: ",
+    "thesesLimitdescription": "The limit includes theses with the statuses \"Pending Approval\", \"Approved\" and \"Assigned\" ",
+    "thesesLimitExceeded": "Your limit for submitted theses has been reached!",
+    "remainingThesesToSubmit": "Number of theses remaining to be submitted: ",
+    "supervisorLimitExceeded": "The given supersisor's theses limit has been reached!"
+  },
+  "studentThesis": {
+    "noReservation": "You are not assigned to any thesis yet",
+    "pendingApproval": "Thesis is waiting for the committee's approval",
+    "beforeSupervisorAccept": "Reservation is waiting for supervisor's approval",
+    "afterSupervisorAccept": "Reservation has been accepted by supervisor",
+    "beforeLeaderAccept": "Reservation is waiting for leader's approval",
+    "afterLeaderAccept": "Reservation has been accepted by leader",
+    "leaderAccept": "New reservation is waiting for your approval"
+  },
+  "title": {
+    "deleteSuccessful": "Title has been deleted",
+    "deleteError": "Title cannot be deleted because it is still referenced by employee table!",
+    "deleteConfirmation": "Are you sure you want to delete this title?",
+    "add": "Add title",
+    "save": "Save title",
+    "addSuccessful": "Title has been added",
+    "addError": "Title has not been added",
+    "updateSuccessful": "Title has been updated",
+    "updateError": "Title has not been updated",
+    "titleExists": "Given title already exists!"
   }
 }

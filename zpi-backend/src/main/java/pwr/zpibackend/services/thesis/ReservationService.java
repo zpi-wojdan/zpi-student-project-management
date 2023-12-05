@@ -18,6 +18,7 @@ import pwr.zpibackend.dto.thesis.ReservationDTO;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
+import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.user.StudentRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
 import pwr.zpibackend.services.mailing.MailService;
@@ -38,14 +39,16 @@ public class ReservationService {
     private final ThesisRepository thesisRepository;
     private final StudentRepository studentRepository;
     private final MailService mailService;
+    private final StatusRepository statusRepository;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Reservation addReservation(ReservationDTO reservation) {
-        if (reservation.getThesisId() == null || reservation.getStudent() == null || reservation.getReservationDate() == null) {
+        if (reservation.getThesisId() == null || reservation.getStudent() == null
+                || reservation.getReservationDate() == null) {
             throw new IllegalArgumentException("Thesis, student and reservation date must be provided.");
         }
         if (reservationRepository.findByStudent_Mail(reservation.getStudent().getMail()) != null) {
-            throw new AlreadyExistsException("Reservation for this student already exists.");
+            throw new AlreadyExistsException(reservation.getStudent().getIndex());
         }
 
         Reservation newReservation = new Reservation();
@@ -68,6 +71,9 @@ public class ReservationService {
             if (authorities.stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                 if (thesis.getOccupied() >= thesis.getNumPeople())
                     throw new ThesisOccupancyFullException();
+                if (thesis.getStatus() != statusRepository.findByName("Approved").orElse(null)) {
+                    throw new IllegalArgumentException("Thesis is not available.");
+                }
             }
 
             if (thesis.getOccupied() == 0) {
@@ -81,20 +87,18 @@ public class ReservationService {
             newReservation.setThesis(thesis);
 
             if (newReservation.isConfirmedByLeader() && !newReservation.isConfirmedByStudent()) {
-                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_LEADER,
+                mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_LEADER,
                         student, null, thesis);
             } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
-                mailService.sendHtmlMailMessage(student.getMail(), "thesis", MailTemplates.RESERVATION_STUDENT,
+                mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_STUDENT,
                         student, null, thesis);
             } else {
-                mailService.sendHtmlMailMessage(student.getMail(), "thesis",
+                mailService.sendHtmlMailMessage(student.getMail(),
                         MailTemplates.RESERVATION_ADMIN, student, null, thesis);
             }
         } else {
             throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
         }
-
-
 
         reservationRepository.saveAndFlush(newReservation);
         return newReservation;
@@ -120,7 +124,7 @@ public class ReservationService {
                 .map(reservation -> {
                     if (!reservation.isReadyForApproval() && newReservation.isReadyForApproval()) {
                         mailService.sendHtmlMailMessage(reservation.getThesis().getSupervisor().getMail(),
-                                "thesis", MailTemplates.RESERVATION_SENT_TO_SUPERVISOR,
+                                MailTemplates.RESERVATION_SENT_TO_SUPERVISOR,
                                 reservation.getStudent(), reservation.getThesis().getSupervisor(),
                                 reservation.getThesis());
                     }
@@ -142,7 +146,7 @@ public class ReservationService {
                     reservationRepository.deleteById(id);
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
-                                if (Objects.equals(thesis.getLeader().getId(), reservation.getStudent().getId())) {
+                                if (thesis.getLeader() != null && Objects.equals(thesis.getLeader().getId(), reservation.getStudent().getId())) {
                                     reservationRepository.findByThesis(thesis)
                                             .stream()
                                             .filter(res -> !Objects.equals(res.getId(), reservation.getId()))
@@ -156,8 +160,16 @@ public class ReservationService {
                                 thesis.setOccupied(Math.max(thesis.getOccupied() - 1, 0));
                                 if (thesis.getOccupied() == 0) {
                                     thesis.setLeader(null);
+                                    if (thesis.getStatus() == statusRepository.findByName("Assigned").orElse(null)) {
+                                        thesis.setStatus(statusRepository.findByName("Approved").orElse(null));
+                                    }
                                 }
                                 thesisRepository.save(thesis);
+
+                                mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
+                                        MailTemplates.RESERVATION_CANCELED,
+                                        reservation.getStudent(), null,
+                                        reservation.getThesis());
                             });
                     return reservation;
                 })
@@ -165,17 +177,18 @@ public class ReservationService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    @Scheduled(cron = "0 0 3 * * ?")            // every day at 3:00 AM
+    @Scheduled(cron = "0 0 3 * * ?") // every day at 3:00 AM
     public void removeExpiredReservations() {
         LocalDateTime threshold = now().minusDays(1).minusHours(3); // 1 day and 3 hours ago
         reservationRepository.findAll().stream()
+                .filter(reservation -> !reservation.isConfirmedBySupervisor())
                 .filter(reservation -> !reservation.isConfirmedByLeader() || !reservation.isConfirmedByStudent())
                 .filter(reservation -> reservation.getReservationDate().isBefore(threshold))
                 .forEach(reservation -> {
                     reservationRepository.delete(reservation);
 
                     mailService.sendHtmlMailMessage(reservation.getStudent().getMail(),
-                            "thesis", MailTemplates.RESERVATION_CANCELED,
+                            MailTemplates.RESERVATION_CANCELED,
                             reservation.getStudent(), null,
                             reservation.getThesis());
 
@@ -187,6 +200,20 @@ public class ReservationService {
                                 }
                                 thesisRepository.save(thesis);
                             });
+                });
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Scheduled(cron = "0 0 2 * * ?") // every day at 2:00 AM
+    public void acceptReservationsMadeBySupervisor() {
+        LocalDateTime threshold = now().minusDays(7).minusHours(2); // 7 day and 2 hours ago
+        reservationRepository.findAll().stream()
+                .filter(reservation -> reservation.isConfirmedBySupervisor())
+                .filter(reservation -> !reservation.isConfirmedByStudent())
+                .filter(reservation -> reservation.getReservationDate().isBefore(threshold))
+                .forEach(reservation -> {
+                    reservation.setConfirmedByStudent(true);
+                    reservationRepository.save(reservation);
                 });
     }
 }
