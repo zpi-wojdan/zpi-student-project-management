@@ -1,5 +1,6 @@
 package pwr.zpibackend.services.thesis;
 
+import org.aspectj.weaver.ast.Not;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -8,6 +9,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
+import pwr.zpibackend.exceptions.LimitOfThesesReachedException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
@@ -482,5 +484,71 @@ public class ThesisServiceTests {
         when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statName, sort)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName), Collections.emptyList());
+    }
+
+    @Test
+    public void testAddThesisNotFoundException() {
+        ThesisDTO thesisDTO = new ThesisDTO();
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setNumTheses(2);
+
+        when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(employee));
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(eq(employee.getId()),
+                anyList(), any(Sort.class))).thenReturn(Arrays.asList(
+                new Thesis(), new Thesis()));
+
+        thesisDTO.setSupervisorId(1L);
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> thesisService.addThesis(thesisDTO));
+
+    }
+
+    @Test
+    public void testUpdateThesisNotFoundException() {
+        Long thesisId = 1L;
+        ThesisDTO thesisDTO = mock(ThesisDTO.class);
+
+        when(thesisRepository.existsById(thesisId)).thenReturn(false);
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> thesisService.updateThesis(thesisId, thesisDTO));
+
+        assertEquals("Thesis with id 1 does not exist", exception.getMessage());
+    }
+
+    @Test
+    public void testGetThesisByStudentId() {
+        Long studentId = 1L;
+
+        Reservation reservation = new Reservation();
+        reservation.setId(1L);
+        when(reservationRepository.findByStudentId(studentId)).thenReturn(reservation);
+
+        Thesis thesis = new Thesis();
+        thesis.setId(2L);
+        when(thesisRepository.findByReservations_Id(reservation.getId())).thenReturn(Optional.of(thesis));
+
+        Thesis result = thesisService.getThesisByStudentId(studentId);
+
+        assertEquals(thesis, result);
+
+        verify(reservationRepository, times(1)).findByStudentId(studentId);
+        verify(thesisRepository, times(1)).findByReservations_Id(reservation.getId());
+    }
+
+    @Test
+    public void testGetThesisByStudentIdReservationNotFound() {
+        Long studentId = 1L;
+
+        when(reservationRepository.findByStudentId(studentId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> thesisService.getThesisByStudentId(studentId));
+
+        verify(reservationRepository, times(1)).findByStudentId(studentId);
+        verify(thesisRepository, never()).findByReservations_Id(anyLong());
     }
 }
