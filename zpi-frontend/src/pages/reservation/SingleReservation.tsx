@@ -10,6 +10,7 @@ import { Thesis } from '../../models/thesis/Thesis';
 import { useTranslation } from "react-i18next";
 import api from "../../utils/api";
 import { use } from 'i18next';
+import api_access from '../../utils/api_access';
 
 type SingleReservationProps = {
 }
@@ -42,7 +43,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
         };
         console.log(JSON.stringify(responseBody));
 
-        const response = await api.post("http://localhost:8080/reservation", JSON.stringify(responseBody), {
+        const response = await api.post(api_access + "reservation", JSON.stringify(responseBody), {
             headers: {
                 'Content-Type': 'application/json'
             }

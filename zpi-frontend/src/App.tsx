@@ -18,7 +18,6 @@ import StudentList from './pages/Admin/Student/List';
 import StudentDetails from './pages/Admin/Student/Details';
 import StudentForm from './pages/Admin/Student/Form';
 import FacultyList from './pages/Admin/Faculty/List';
-import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FacultyForm from './pages/Admin/Faculty/Form';
@@ -37,15 +36,20 @@ import DepartmentForm from './pages/Admin/Department/Form';
 import DepartmentList from './pages/Admin/Department/List';
 import StudyFieldForm from './pages/Admin/Field/Form';
 import StudyFieldList from './pages/Admin/Field/List';
-import {Suspense} from "react";
+import React, {Suspense} from "react";
 import ThesisList from './pages/Admin/Thesis/List';
 import ThesisDetails from './pages/Admin/Thesis/Details';
 import Reports from "./pages/Admin/Reports";
 import DeadlineList from "./pages/Admin/Deadline/List";
 import DeadlineForm from "./pages/Admin/Deadline/Form";
 import AddThesisPageSupervisor from './pages/Theses/AddThesisSupervisor';
+import ThesesSupervisor from './pages/Theses/ThesesSupervisor';
+import ThesisStudent from './pages/Theses/ThesisStudent';
 import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
+import LoadingSpinner from "./components/LoadingSpinner";
+import TitleList from './pages/Admin/Title/List';
+import TitleForm from "./pages/Admin/Title/Form";
 import ClearDataByCycle from './pages/Admin/BulkDeletion/ClearDataByCycle';
 
 
@@ -55,7 +59,7 @@ export interface IAppProps {
 export default function App(props: IAppProps) {
 
   return (
-      <Suspense fallback="loading..">
+      <Suspense fallback={<LoadingSpinner height="90vh" />}>
         <AuthProvider>
           <BrowserRouter>
             <Navigation>
@@ -69,21 +73,20 @@ export default function App(props: IAppProps) {
                   <Route path='single-reservation' element={<SingleReservationPage />} />
                 </Route>
 
+                <Route element={<RequireAuth allowedRoles={['student']} />}>
+                  <Route path='myThesis' element={<ThesisStudent/>} />
+                </Route>
+
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
-                  <Route path='supervisor-reservation' element={<SupervisorReservationPage />} />
-                  <Route path='my' element={<ReservationPage admin={false}/>} />
-                  <Route path='sup-theses/add' element={<AddThesisPageSupervisor />} />
-                  <Route path='sup-theses/edit/:id' element={<AddThesisPageSupervisor />} />
+                  <Route path='my' element={<ThesesSupervisor />} />
+                  <Route path='my/:id' element={<ThesesDetails  addStudents={false}/>} />
+                  <Route path='my/add' element={<AddThesisPageSupervisor />} />
+                  <Route path='my/edit/:id' element={<AddThesisPageSupervisor />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
                   <Route path='public-theses' element={<ThesesTable />} />
-                  <Route path='public-theses/:id' element={<ThesesDetails />} />
-                </Route>
-
-                <Route element={<RequireAuth allowedRoles={['approver']} />}>
-                  <Route path='manage' element={<ApproveList />} />
-                  <Route path='manage/:id' element={<ApproveDetails />} />
+                  <Route path='public-theses/:id' element={<ThesesDetails addStudents={true}/>} />
                 </Route>
 
               <Route element={<RequireAuth allowedRoles={['admin']} />}>
@@ -120,6 +123,9 @@ export default function App(props: IAppProps) {
                 <Route path='deadlines' element={<DeadlineList />} />
                 <Route path='deadlines/add' element={<DeadlineForm />} />
                 <Route path='deadlines/edit/:id' element={<DeadlineForm />} />
+                <Route path='titles' element={<TitleList />} />
+                <Route path='titles/add' element={<TitleForm />} />
+                <Route path='titles/edit/:id' element={<TitleForm />} />
                 <Route path="/students/file" element={<UploadStudentFilePage />} />
                 <Route path="/employees/file" element={<UplaodEmployeeFilePage />} />
                 <Route path="/reports" element={<Reports />} />

@@ -7,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import api from '../../../utils/api';
 import handleSignOut from '../../../auth/Logout';
 import useAuth from "../../../auth/useAuth";
+import api_access from '../../../utils/api_access';
 import { handleDeletionError } from '../../../utils/handleDeleteError';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const EmployeeDetails: React.FC = () => {
   // @ts-ignore
@@ -25,7 +27,7 @@ const EmployeeDetails: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get(`http://localhost:8080/employee/${id}`)
+    api.get(api_access + `employee/${id}`)
       .then((response) => {
         console.log(response.data)
         setEmployee(response.data);
@@ -48,7 +50,7 @@ const EmployeeDetails: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/employee/${employee?.id}`)
+    api.delete(api_access + `employee/${employee?.id}`)
       .then(() => {
         toast.success(t("employee.deleteSuccessful"));
         navigate("/employees");
@@ -99,9 +101,7 @@ const EmployeeDetails: React.FC = () => {
       </div>
       <div>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+          <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {employee ? (
             <div>
@@ -110,6 +110,7 @@ const EmployeeDetails: React.FC = () => {
               <p><span className="bold">{t('general.people.surname')}:</span> <span>{employee.surname}</span></p>
               <p><span className="bold">{t('general.people.mail')}:</span> <span>{employee.mail}</span></p>
               <p><span className="bold">{t('general.university.department')}:</span> <span>{employee.department.name}</span></p>
+              <p><span className="bold">{t('general.thesesLimit')}:</span> <span>{employee.numTheses}</span></p>
               <p className="bold">{t('general.people.roles')}:</p>
               <ul>
                 {employee.roles.map((role) => (

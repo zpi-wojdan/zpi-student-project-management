@@ -12,9 +12,17 @@ import handleSignOut from "../../auth/Logout";
 import { useTranslation } from "react-i18next";
 import { Reservation } from "../../models/thesis/Reservation";
 import { toast } from "react-toastify";
+import api_access from '../../utils/api_access';
 import { Comment } from '../../models/thesis/Comment';
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { handleDeletionError } from '../../utils/handleDeleteError';
+import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 
-const ThesesDetails: React.FC = () => {
+type ThesisDetailsProps = {
+  addStudents: boolean;
+}
+
+const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -25,7 +33,7 @@ const ThesesDetails: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const response = api.get(`http://localhost:8080/thesis/${id}`)
+    const response = api.get(api_access + `thesis/${id}`)
       .then((response) => {
         const thesisDb = response.data as Thesis;
         const thesis: ThesisFront = {
@@ -58,21 +66,6 @@ const ThesesDetails: React.FC = () => {
 
   }, [id]);
 
-  const [programs, setPrograms] = useState<Program[]>([]);
-  useEffect(() => {
-    api.get('http://localhost:8080/program')
-      .then((response) => {
-        setPrograms(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
-
   const [expandedPrograms, setExpandedPrograms] = useState<number[]>([]);
 
   const toggleProgramExpansion = (programId: number) => {
@@ -81,6 +74,34 @@ const ThesesDetails: React.FC = () => {
     } else {
       setExpandedPrograms([...expandedPrograms, programId]);
     }
+  };
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
+  const handleDeleteClick = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    api.delete(api_access +`thesis/${id}`)
+      .then(() => {
+        toast.success(t('thesis.deleteSuccessful'));
+        navigate("/theses");
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+        handleDeletionError(error, t, 'thesis');
+
+      });
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
   };
 
   const [user, setUser] = useState<Student & Employee>();
@@ -93,7 +114,8 @@ const ThesesDetails: React.FC = () => {
   useEffect(() => {
     const byRoles = gotCommentSectionRightsByRoles();
     const bySupervisor = gotCommentSectionRightsBySupervisor();
-    setCommentSectionRights(byRoles || bySupervisor);
+    const isDraft = thesis?.status.name == "Draft";
+    setCommentSectionRights(!isDraft && (byRoles || bySupervisor));
   }, [user, thesis])
 
   const handleReadyForApproval = async () => {
@@ -102,7 +124,7 @@ const ThesesDetails: React.FC = () => {
         try {
           reservation.readyForApproval = true;
           reservation.sentForApprovalDate = new Date();
-          const response = await api.put('http://localhost:8080/reservation/' + reservation.id,
+          const response = await api.put(api_access + 'reservation/' + reservation.id,
             JSON.stringify(reservation)
           );
 
@@ -119,7 +141,7 @@ const ThesesDetails: React.FC = () => {
   };
 
   const downloadDeclaration = () => {
-    let url = 'http://localhost:8080/report/pdf/thesis-declaration/' + thesis?.id;
+    let url = api_access + 'report/pdf/thesis-declaration/' + thesis?.id;
 
     let toastId: any = null;
     toastId = toast.info(t('thesis.generating'), { autoClose: false });
@@ -204,7 +226,7 @@ const ThesesDetails: React.FC = () => {
     else {
       u = user;
     }
-    return u?.roles.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
+    return u?.roles?.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
   }
   const gotCommentSectionRightsBySupervisor = () => {
     let u: (Student & Employee) | undefined;
@@ -223,29 +245,52 @@ const ThesesDetails: React.FC = () => {
 
   return (
     <div className='page-margin'>
-      <div className='row d-flex justify-content-between'>
-        <button type="button" className="col-sm-2 custom-button another-color m-3" onClick={() => navigate(-1)}>
-          &larr; {t('general.management.goBack')}
-        </button>
+      <div className='d-flex justify-content-between align-items-center mb-3'>
+        <div className='d-flex justify-content-begin align-items-center'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+            &larr; {t('general.management.goBack')}
+          </button>
+          {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
+            <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
+              {t('thesis.edit')}
+            </button>
+            <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
+              <i className="bi bi-trash"></i>
+            </button>
+            {showDeleteConfirmation && (
+              <tr>
+                <td colSpan={5}>
+                  <ChoiceConfirmation
+                    isOpen={showDeleteConfirmation}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                    questionText={t('thesis.deleteConfirmation')}
+                  />
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
+          ) : (<></>)}
+        </div>
         {loaded ? (<React.Fragment>
-          {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
-            (user?.mail === thesis?.supervisor.mail ||
-              thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
-            thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor)) ?
-            (
-              <button className="col-sm-2 custom-button m-3" onClick={downloadDeclaration}>
-                {t('thesis.downloadDeclaration')}
-              </button>
-            ) : null}
+          <div className='d-flex justify-content-end align-items-center'>
+            {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
+              (user?.mail === thesis?.supervisor.mail ||
+                thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
+              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent)) ?
+              (
+                <button className="custom-button" onClick={downloadDeclaration}>
+                  {t('thesis.downloadDeclaration')}
+                </button>
+              ) : null}
 
-          {(thesis && thesis?.occupied < thesis?.numPeople && (
+          {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
-            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation)) ||
-            user?.roles?.some(role => role.name === 'supervisor') &&
-            user?.mail === thesis?.supervisor.mail) ||
-            user?.roles?.some(role => role.name === 'admin')) ?
+            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
+            user?.roles?.some(role => role.name === 'admin') && thesis?.status.name !== 'Closed')) ?
             (
-              <button type="button" className="col-sm-2 custom-button m-3" onClick={() => {
+              <button type="button" className="custom-button" onClick={() => {
                 if (user?.role?.name === 'student') {
                   if (thesis?.reservations.length === 0) {
                     navigate('/reservation', { state: { thesis: thesis } })
@@ -253,37 +298,27 @@ const ThesesDetails: React.FC = () => {
                     navigate('/single-reservation', { state: { thesis: thesis } })
                   }
                 } else {
-                  if (user?.mail === thesis?.supervisor.mail) {
-                    navigate('/supervisor-reservation', { state: { thesis: thesis } })
-                  } else {
-                    navigate('/admin-reservation', { state: { thesis: thesis } })
-                  }
+                  navigate('/admin-reservation', { state: { thesis: thesis } })
                 }
               }
               }>
                 {user?.role?.name === 'student' ? (
                   <span>{t('general.management.reserve')}</span>
                 ) : (
-                  user?.mail === thesis?.supervisor.mail ?
-                    (
-                      <span>{t('thesis.enrollStudents')}</span>
-                    ) : (
-                      user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
-                    )
+                  user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
                 )}
               </button>
             ) : (
               <span></span>
             )
           }
+          </div>
         </React.Fragment>
         ) : (<></>)}
       </div>
       <div>
         {!loaded ? (
-          <div className='info-no-data'>
-            <p>{t('general.management.load')}</p>
-          </div>
+          <LoadingSpinner height="50vh" />
         ) : (<React.Fragment>
           {thesis ? (
             <div>

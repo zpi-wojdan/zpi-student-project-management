@@ -1,6 +1,5 @@
 package pwr.zpibackend.controllers.thesis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class ThesisControllerTests {
 
-    private static final String BASE_URL = "/thesis";
+    private static final String BASE_URL = "/api/thesis";
 
     @Autowired private ObjectMapper objectMapper;
     @MockBean
@@ -139,9 +138,10 @@ class ThesisControllerTests {
         verify(thesisService).getThesis(thesisId);
     }
 
-    public static String asJsonString(final Object obj) {
+    public String asJsonString(final Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            objectMapper.findAndRegisterModules();
+            return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -198,7 +198,7 @@ class ThesisControllerTests {
 
         doReturn(thesisToAdd).when(thesisService).addThesis(any(ThesisDTO.class));
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                        .post("/thesis")
+                        .post(BASE_URL)
                         .content(asJsonString(thesisToAdd))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -242,7 +242,7 @@ class ThesisControllerTests {
         verify(thesisService).addThesis(any(ThesisDTO.class));
     }
 
-    @Test // TODO: fix this test - 400 instead of 200 OK
+    @Test
     public void testUpdateThesisSuccess() throws Exception {
         Employee supervisor = new Employee();
         Student leader = new Student();
@@ -250,6 +250,7 @@ class ThesisControllerTests {
         ThesisDTO thesisDTO = createTestThesisDTO(0L);
         thesisDTO.setDescriptionEN("UPDATED DESCRIPTION");
         thesisDTO.setNamePL("UPDATED NAME");
+
         existingThesis.setId(1L);
         existingThesis.setNamePL("UPDATED NAME");
         existingThesis.setDescriptionEN("UPDATED DESCRIPTION");
@@ -257,21 +258,20 @@ class ThesisControllerTests {
         Thesis updatedThesis = createTestThesis(supervisor, leader);
         updatedThesis.setId(1L);
 
-        doReturn(updatedThesis).when(thesisService).updateThesis(1L, thesisDTO);
+        when(thesisService.updateThesis(1L, thesisDTO)).thenReturn(updatedThesis);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                        .put("/thesis/1")
-                        .content(asJsonString(thesisDTO))
+        String requestBody = objectMapper.writeValueAsString(thesisDTO);
+        String responseBody = objectMapper.writeValueAsString(updatedThesis);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/{id}", 1L)
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(content().json(responseBody));
 
-        MockHttpServletResponse response = result.getResponse();
-        String jsonResponse = response.getContentAsString();
-        Thesis updatedResponse = new ObjectMapper().readValue(jsonResponse, Thesis.class);
-
-        assertTestData(updatedResponse, supervisor, leader);
+        assertTestData(updatedThesis, supervisor, leader);
     }
 
 
@@ -286,7 +286,7 @@ class ThesisControllerTests {
         doThrow(NotFoundException.class).when(thesisService).updateThesis(1L, thesisDTO);
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .put("/thesis/1")
+                    .put(BASE_URL + "/{id}", 1L)
                     .content(asJsonString(thesisDTO))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
@@ -298,7 +298,7 @@ class ThesisControllerTests {
     @Test
     public void testDeleteThesisSuccess() throws Exception {
         Mockito.when(thesisService.deleteThesis(1L)).thenReturn(new Thesis());
-        mockMvc.perform(delete("/thesis/1"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", 1L))
                 .andExpect(status().isOk());
         verify(thesisService).deleteThesis(1L);
     }
@@ -306,7 +306,7 @@ class ThesisControllerTests {
     @Test
     public void testDeleteThesisFailure() throws Exception {
         Mockito.when(thesisService.deleteThesis(3L)).thenThrow(new NotFoundException());
-        mockMvc.perform(delete("/thesis/3"))
+        mockMvc.perform(delete(BASE_URL + "/{id}", 3L))
                 .andExpect(status().isNotFound());
         verify(thesisService).deleteThesis(3L);
     }
@@ -420,6 +420,40 @@ class ThesisControllerTests {
                 .andExpect(status().isNotFound());
 
         verify(thesisService).getAllThesesForEmployeeByStatusNameList(empId, statName);
+    }
+
+    @Test
+    public void testUpdateThesesStatusInBulk() throws Exception {
+        String statName = "Pending approval";
+        List<Long> thesesIds = Arrays.asList(1L, 2L);
+
+        Mockito.when(thesisService.updateThesesStatusInBulk(statName, thesesIds)).thenReturn(theses);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/thesis/bulk/{statName}", statName)
+                .content(asJsonString(thesesIds))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(thesisService).updateThesesStatusInBulk(statName, thesesIds);
+    }
+
+    @Test
+    public void testUpdateThesesStatusInBulkNotFound() throws Exception{
+        String statName = "xd";
+        List<Long> thesesIds = Arrays.asList(1L, 2L);
+
+        Mockito.when(thesisService.updateThesesStatusInBulk(statName, thesesIds)).thenThrow(new NotFoundException());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/thesis/bulk/{statName}", statName)
+                .content(asJsonString(thesesIds))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verify(thesisService).updateThesesStatusInBulk(statName, thesesIds);
     }
 
 }

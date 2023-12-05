@@ -33,6 +33,7 @@ const Navigation = ({ children }: NavigationProps) => {
         '/departments',
         '/theses',
         '/deadlines',
+        '/titles',
         '/clear'
     ];
 
@@ -224,6 +225,9 @@ const Navigation = ({ children }: NavigationProps) => {
                                                                 <Dropdown.Item as={Link} to="/deadlines" className={isActive('/deadlines') ? "active" : ""}>
                                                                     {t('general.university.deadlines')}
                                                                 </Dropdown.Item>
+                                                                <Dropdown.Item as={Link} to="/titles" className={isActive('/titles') ? "active" : ""}>
+                                                                    {t('general.titles')}
+                                                                </Dropdown.Item>
                                                                 <Dropdown.Item as={Link} to="/clear" className={isActive('/clear') ? "active" : ""}>
                                                                     {t('general.clearData.clearSystem')}
                                                                 </Dropdown.Item>
@@ -241,9 +245,17 @@ const Navigation = ({ children }: NavigationProps) => {
                                             ) : null}
                                             {user?.roles?.some((role: Role) => role.name === 'supervisor') ? (
                                                 <li className="nav-item">
-                                                    <NavLink className={({ isActive }) => isActive ?
+                                                    <NavLink className={isActive('/my') ?
                                                         "nav-link active px-2" : "nav-link px-2"} to="/my">
                                                         {t('navigation.myTheses')}
+                                                    </NavLink>
+                                                </li>
+                                            ) : null}
+                                            {user?.role?.name === 'student' ? (
+                                                <li className="nav-item">
+                                                    <NavLink className={isActive('/myThesis') ?
+                                                        "nav-link active px-2" : "nav-link px-2"} to="/myThesis">
+                                                        {t('navigation.myThesis')}
                                                     </NavLink>
                                                 </li>
                                             ) : null}

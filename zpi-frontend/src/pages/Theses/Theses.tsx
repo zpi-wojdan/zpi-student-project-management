@@ -14,6 +14,8 @@ import { Specialization } from '../../models/university/Specialization';
 import { StudyCycle } from '../../models/university/StudyCycle';
 import { StudyField } from '../../models/university/StudyField';
 import { Employee } from '../../models/user/Employee';
+import api_access from '../../utils/api_access';
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 
 const ThesesTable: React.FC = () => {
@@ -27,7 +29,7 @@ const ThesesTable: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis/public')
+    api.get(api_access + 'thesis/public')
       .then((response) => {
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
@@ -87,7 +89,7 @@ const ThesesTable: React.FC = () => {
   const [submittedSpecializationAbbr, setSubmittedSpecializationAbbr] = useState<string>("");
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get(api_access + 'employee')
       .then((response) => {
         const supervisors = response.data
           .filter((employee: Employee) => employee.roles.some((role: Role) => role.name === 'supervisor'))
@@ -104,7 +106,7 @@ const ThesesTable: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => {
           return a.name.localeCompare(b.name);
@@ -121,7 +123,7 @@ const ThesesTable: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
           return a.name.localeCompare(b.name);
@@ -138,7 +140,7 @@ const ThesesTable: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access + 'studyfield')
       .then((response) => {
         const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.name.localeCompare(b.name);
@@ -155,7 +157,7 @@ const ThesesTable: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
+    api.get(api_access + 'specialization')
       .then((response) => {
         const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
           return a.name.localeCompare(b.name);
@@ -249,7 +251,13 @@ const ThesesTable: React.FC = () => {
       const facultyFilter = selectedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = selectedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
+      const vacanciesFilter = (thesis: ThesisFront) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= selectedMinVacancies && vacancies <= selectedMaxVacancies;
+      };
       const cycleFilter = selectedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleName : () => true;
       const supervisorFilter = selectedSupervisors.length ? (thesis: ThesisFront) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
 
@@ -283,7 +291,13 @@ const ThesesTable: React.FC = () => {
       const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
       const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: ThesisFront) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
+      const vacanciesFilter = (thesis: ThesisFront) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= savedMinVacancies && vacancies <= savedMaxVacancies;
+      };
       const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
       const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
 
@@ -538,9 +552,7 @@ const ThesesTable: React.FC = () => {
         </div>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+        <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {theses.length === 0 ? (
           <div className='info-no-data'>

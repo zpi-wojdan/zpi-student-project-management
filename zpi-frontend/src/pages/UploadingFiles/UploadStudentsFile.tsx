@@ -7,6 +7,7 @@ import { ImportedStudent, InvalidStudentData } from '../../models/ImportedData';
 
 import {useTranslation} from "react-i18next";
 import api from '../../utils/api';
+import api_access from '../../utils/api_access';
 import { toast } from 'react-toastify';
 
 function UploadStudentFilePage() {
@@ -118,7 +119,7 @@ function UploadStudentFilePage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      api.post('http://localhost:8080/file/student', formData)
+      api.post(api_access + 'file/student', formData)
         .then((response) => {
           console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);

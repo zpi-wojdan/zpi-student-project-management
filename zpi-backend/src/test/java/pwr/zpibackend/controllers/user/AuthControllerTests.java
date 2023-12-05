@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class AuthControllerTests {
 
-    private static final String BASE_URL = "/user";
+    private static final String BASE_URL = "/api/user";
     @MockBean
     private GoogleAuthService googleAuthService;
     @Autowired
