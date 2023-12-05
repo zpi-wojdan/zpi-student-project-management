@@ -118,7 +118,7 @@ function ReservationPage({ admin }: ReservationProps) {
             .catch(error => {
                 newStudents[index] = {} as Student;
                 newErrors[index] = true;
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -158,7 +158,7 @@ function ReservationPage({ admin }: ReservationProps) {
                         console.error(`Failed to submit reservation ${reservation}`);
                         console.error(error)
                         allReservationsSuccessful = false;
-                        if (error.response.status === 401 || error.response.status === 403) {
+                        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
                             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                             handleSignOut(navigate);
                         }

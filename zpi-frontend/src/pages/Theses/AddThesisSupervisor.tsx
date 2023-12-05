@@ -84,7 +84,7 @@ function AddThesisPageSupervisor() {
         setStatuses(allowedStatuses);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -97,7 +97,7 @@ function AddThesisPageSupervisor() {
         setStudyCycles(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -110,7 +110,7 @@ function AddThesisPageSupervisor() {
         setPrograms(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -291,7 +291,7 @@ function AddThesisPageSupervisor() {
           })
           .catch((error) => {
             console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
@@ -321,7 +321,7 @@ function AddThesisPageSupervisor() {
               setErrorsKeys(newErrorsKeys);
             } else {
               console.error(error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }

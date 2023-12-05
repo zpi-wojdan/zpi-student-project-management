@@ -93,7 +93,7 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
             .catch(error => {
                 newStudents[index] = {} as Student;
                 newErrors[index] = true;
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }

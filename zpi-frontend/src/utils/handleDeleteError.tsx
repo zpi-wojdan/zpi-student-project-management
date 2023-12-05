@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 export const handleDeletionError = (error: any, t: TFunction<"translation", undefined>, deletedFrom: string) => {
 
-    if (error.response.status === 405 && error.response.data.message) {
+    if (error.response && error.response.status === 405 && error.response.data.message) {
         const errorMessage = error.response.data.message;
 
         if (errorMessage.includes('foreign key constraint')) {

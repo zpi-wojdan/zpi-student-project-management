@@ -48,7 +48,7 @@ const SupervisorMy: React.FC = () => {
       })
       .catch((error) => {
         console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -82,7 +82,7 @@ const SupervisorMy: React.FC = () => {
       })
       .catch((error) => {
         console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }

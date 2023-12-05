@@ -17,7 +17,7 @@ api.interceptors.response.use(
       return response;
     },
     function (error) {
-      if (error.code === 'ERR_NETWORK' && globalRouter.navigate) {
+      if (!error.response && error.code === 'ERR_NETWORK' && globalRouter.navigate) {
         globalRouter.navigate("/error");
       }
       return Promise.reject(error);
