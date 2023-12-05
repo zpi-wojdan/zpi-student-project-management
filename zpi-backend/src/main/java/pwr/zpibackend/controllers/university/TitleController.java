@@ -22,9 +22,9 @@ public class TitleController {
         return ResponseEntity.ok(titleService.getAllTitles());
     }
 
-    @GetMapping("/name")
+    @GetMapping("/{name}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Title> getTitleByName(String name) {
+    public ResponseEntity<Title> getTitleByName(@PathVariable String name) {
         return ResponseEntity.ok(titleService.getTitleByName(name));
     }
 

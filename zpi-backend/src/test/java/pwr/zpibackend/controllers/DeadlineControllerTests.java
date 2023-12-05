@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class DeadlineControllerTests {
 
-    private static final String BASE_URL = "/deadline";
+    private static final String BASE_URL = "/api/deadline";
 
     @Autowired
     private ObjectMapper objectMapper;

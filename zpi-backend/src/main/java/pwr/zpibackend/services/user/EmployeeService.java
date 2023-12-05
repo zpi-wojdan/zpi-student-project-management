@@ -46,10 +46,6 @@ public class EmployeeService {
         );
     }
 
-    public List<Employee> getEmployeesByPrefix(String prefix) {
-        return employeeRepository.findAllByMailStartingWith(prefix);
-    }
-
     public boolean exists(String mail) {
         return employeeRepository.existsByMail(mail);
     }

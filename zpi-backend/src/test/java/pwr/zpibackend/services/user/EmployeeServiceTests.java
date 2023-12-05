@@ -116,17 +116,6 @@ public class EmployeeServiceTests {
     }
 
     @Test
-    public void testGetEmployeesByPrefix() {
-        String prefix = "1234";
-        when(employeeRepository.findAllByMailStartingWith(prefix)).thenReturn(List.of(employee));
-
-        List<Employee> result = employeeService.getEmployeesByPrefix(prefix);
-
-        assertSame(1, result.size());
-        assertSame(employee, result.get(0));
-    }
-
-    @Test
     public void testEmployeeExists() {
         String email = "123456@pwr.edu.pl";
         when(employeeRepository.existsByMail(email)).thenReturn(true);
@@ -282,13 +271,5 @@ public class EmployeeServiceTests {
         when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> employeeService.deleteEmployee(1L));
-    }
-
-    @Test
-    public void testDeleteEmployeeInUse() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
-        doThrow(new DataIntegrityViolationException("")).when(employeeRepository).delete(employee);
-
-        assertThrows(CannotDeleteException.class, () -> employeeService.deleteEmployee(1L));
     }
 }

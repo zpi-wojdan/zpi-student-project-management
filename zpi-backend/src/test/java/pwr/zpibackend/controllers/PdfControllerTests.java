@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PdfController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class PdfControllerTests {
-    private static final String BASE_URL = "/report";
+    private static final String BASE_URL = "/api/report";
 
     @Autowired
     private ObjectMapper objectMapper;
