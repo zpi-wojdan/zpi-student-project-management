@@ -58,7 +58,7 @@ const ThesisStudent: React.FC = () => {
         if (error.response.status === 404) {
           setLoaded(true);
         }
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -134,7 +134,7 @@ const ThesisStudent: React.FC = () => {
           toast.dismiss(toastId);
         }, 2000);
 
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
