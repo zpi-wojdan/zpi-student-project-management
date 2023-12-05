@@ -58,9 +58,9 @@ const ApproveList: React.FC = () => {
           };
           return thesis;
         });
-        setTheses(thesisResponse);
-        setFilteredTheses(thesisResponse);
-        setAfterSearchTheses(thesisResponse);
+        setTheses(thesis_response);
+        setFilteredTheses(thesis_response);
+        setAfterSearchTheses(thesis_response);
         setLoaded(true);
       })
       .catch((error) => {
@@ -390,7 +390,7 @@ const ApproveList: React.FC = () => {
   const handleConfirmAccept = () => {
     const [isValid, statName] = validateTheses();
     if (isValid){
-      api.put(`http://localhost:8080/thesis/bulk/${statName}`, Array.from(thesesFormIndexes))
+      api.put(api_access +  `thesis/bulk/${statName}`, Array.from(thesesFormIndexes))
         .then(() => {
           setKey(k => k+1);
           setThesesFormIndexes(new Set());
