@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
-
+import globalRouter from "../globalRouter";
 
 const api = axios.create();
 
@@ -14,13 +13,12 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-    (response: AxiosResponse) => {
+    function (response) {
       return response;
     },
-    (error: AxiosError) => {
-      if (error.code === 'ERR_NETWORK') {
-        console.error('Błąd sieciowy:', error.message, error.response);
-        //useNavigate()('/error');
+    function (error) {
+      if (error.code === 'ERR_NETWORK' && globalRouter.navigate) {
+        globalRouter.navigate("/error");
       }
       return Promise.reject(error);
     }

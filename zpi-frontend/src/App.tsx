@@ -18,7 +18,6 @@ import StudentList from './pages/Admin/Student/List';
 import StudentDetails from './pages/Admin/Student/Details';
 import StudentForm from './pages/Admin/Student/Form';
 import FacultyList from './pages/Admin/Faculty/List';
-import SupervisorReservationPage from './pages/reservation/SupervisorReservation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FacultyForm from './pages/Admin/Faculty/Form';
@@ -49,7 +48,6 @@ import ApproveDetails from './pages/Approver/ApproveDetails';
 import ApproveList from './pages/Approver/ApproveList';
 import LoadingSpinner from "./components/LoadingSpinner";
 import ServerError from './pages/ServerError';
-
 
 export interface IAppProps {
 }
