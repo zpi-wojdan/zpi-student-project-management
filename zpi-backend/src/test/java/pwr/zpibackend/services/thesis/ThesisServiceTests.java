@@ -12,6 +12,7 @@ import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.LimitOfThesesReachedException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Reservation;
+import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
@@ -19,6 +20,7 @@ import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
+import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
@@ -487,6 +489,64 @@ public class ThesisServiceTests {
     }
 
     @Test
+    public void testUpdateThesesStatusInBulkApproved(){
+        String statName = "Approved";
+        List<Long> thesesIds = List.of(6L);
+        Status newStatus = new Status(2L, statName);
+
+        List<Thesis> updatedTheses = new ArrayList<>();
+        updatedTheses.add(theses.get(0));
+        for (Thesis up : updatedTheses){
+            up.setStatus(newStatus);
+        }
+
+        when(statusRepository.findByName(statName)).thenReturn(Optional.of(newStatus));
+        when(thesisRepository.findById(thesesIds.get(0))).thenReturn(Optional.of(theses.get(0)));
+        when(thesisRepository.saveAllAndFlush(anyList())).thenReturn(updatedTheses);
+
+        List<Thesis> result = thesisService.updateThesesStatusInBulk(statName, thesesIds);
+        assertEquals(updatedTheses, result);
+    }
+
+    @Test
+    public void testUpdateThesesStatusInBulkRejected() {
+        String statName = "Rejected";
+        List<Long> thesesIds = List.of(6L);
+        Status newStatus = new Status(3L, statName);
+
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(new Reservation());
+
+        Thesis thesisWithReservations = new Thesis();
+        thesisWithReservations.setId(6L);
+        thesisWithReservations.setReservations(reservations);
+        thesisWithReservations.setStatus(newStatus);
+
+        List<Thesis> updatedTheses = new ArrayList<>();
+        updatedTheses.add(thesisWithReservations);
+        for (Thesis up : updatedTheses){
+            up.setStatus(newStatus);
+        }
+
+        when(statusRepository.findByName(statName)).thenReturn(Optional.of(newStatus));
+        when(thesisRepository.findById(thesesIds.get(0))).thenReturn(Optional.of(thesisWithReservations));
+        when(thesisRepository.saveAllAndFlush(anyList())).thenReturn(updatedTheses);
+        doNothing().when(reservationRepository).deleteAll(anyList());
+
+        List<Thesis> result = thesisService.updateThesesStatusInBulk(statName, thesesIds);
+
+        assertEquals(updatedTheses, result);
+    }
+
+
+    @Test
+    public void testUpdateThesesStatusInBulkNotFound(){
+        String statName = "foo";
+        List<Long> thesesIds = mock(List.class);
+
+        when(statusRepository.findByName(statName)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> thesisService.updateThesesStatusInBulk(statName, thesesIds));
+    }    @Test
     public void testAddThesisNotFoundException() {
         ThesisDTO thesisDTO = new ThesisDTO();
         Employee employee = new Employee();

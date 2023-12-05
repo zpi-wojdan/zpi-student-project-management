@@ -13,12 +13,14 @@ import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.repositories.thesis.*;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
@@ -220,6 +222,7 @@ public class ThesisService {
 
                 }
                 reservationRepository.deleteAll(updated.getReservations());
+                updated.getReservations().clear();
                 updated.setOccupied(0);
             } else if (status.getName().equals("Approved") && updated.getOccupied() > 0) {
                 boolean allConfirmed = true;
@@ -291,6 +294,45 @@ public class ThesisService {
 
     public List<Thesis> getAllThesesForEmployeeByStatusNameList(Long empId, List<String> statNames) {
         return thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statNames, sort);
+    }
+
+    @Transactional
+    public List<Thesis> updateThesesStatusInBulk(String statName, List<Long> thesesIds) {
+        Status status = statusRepository.findByName(statName).orElseThrow(NotFoundException::new);
+        List<Thesis> thesesForUpdate = new ArrayList<>();
+
+        for (Long id : thesesIds) {
+            Optional<Thesis> thesisOptional = thesisRepository.findById(id);
+            if (thesisOptional.isPresent()) {
+                Thesis thesis = thesisOptional.get();
+
+                if (status.getName().equals("Rejected")){
+                    reservationRepository.deleteAll(new ArrayList<>(thesis.getReservations()));
+                    thesis.getReservations().clear();
+                    thesis.setOccupied(0);
+                }
+                else if (status.getName().equals("Approved") && thesis.getOccupied() > 0){
+                    boolean allConfirmed = true;
+                    for (Reservation reservation : thesis.getReservations()) {
+                        if (!reservation.isConfirmedByStudent() || !reservation.isConfirmedBySupervisor()) {
+                            allConfirmed = false;
+                            break;
+                        }
+                    }
+                    if (allConfirmed) {
+                        status = statusRepository.findByName("Assigned").orElseThrow(NotFoundException::new);
+                    }
+                }
+
+                thesis.setStatus(status);
+                thesesForUpdate.add(thesis);
+            }
+            else {
+                throw new NotFoundException("Thesis with id " + id + " does not exist");
+            }
+        }
+
+        return thesisRepository.saveAllAndFlush(thesesForUpdate);
     }
 
 }

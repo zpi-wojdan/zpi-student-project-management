@@ -110,30 +110,40 @@ function AddThesisPageSupervisor() {
       });
   }, []);
 
-  useEffect(() => {
-    api.get(api_access + 'studycycle')
-      .then((response) => {
-        setStudyCycles(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
+
 
   useEffect(() => {
     api.get(api_access + 'program')
-      .then((response) => {
-        setPrograms(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
+    .then((response) => {
+      
+      const programsResponse: Program[] = response.data;
+      setPrograms(programsResponse);
+
+      let studyCycleIds: number[] = [];
+      api.get(api_access + 'studycycle')
+        .then((response) => {
+          const cyclesResponse: StudyCycle[] = response.data;
+          setStudyCycles(cyclesResponse);
+          studyCycleIds = cyclesResponse.map(c => c.id);
+          const updatedProgramSuggestions = programsResponse
+                    .filter((p) => p.studyCycles
+                    .map(c => studyCycleIds.includes(c.id)));
+          setProgramSuggestions(updatedProgramSuggestions);
+        })
+        .catch((error) => {
+          if (error.response.status === 401 || error.response.status ===403){
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+        });
+
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -580,7 +590,7 @@ function AddThesisPageSupervisor() {
                   <select
                     id={`programId${index}`}
                     name={`programId${index}`}
-                    value={formData.programIds[index]}
+                    value={programId}
                     onChange={(e) => {
                       const selectedProgramId = parseInt(e.target.value, 10);
                       handleProgramChange(index, selectedProgramId);

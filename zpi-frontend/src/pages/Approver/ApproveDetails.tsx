@@ -282,6 +282,7 @@ const ApproveDetails: React.FC = () => {
     })
   };
 
+  //  TODO: Approved vs Assigned
   const handleConfirmAccept = () => {
     const [isValid, thesisDTO] = validateThesis();
     if (isValid) {

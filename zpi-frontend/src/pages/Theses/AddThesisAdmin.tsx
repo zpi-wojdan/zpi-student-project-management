@@ -93,29 +93,37 @@ function AddThesisPageAdmin() {
   }, []);
 
   useEffect(() => {
-    api.get(api_access + 'studycycle')
-      .then((response) => {
-        setStudyCycles(response.data.sort((a: StudyCycle, b: StudyCycle) => b.name.localeCompare(a.name)));
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
-  }, []);
-
-  useEffect(() => {
     api.get(api_access + 'program')
-      .then((response) => {
-        setPrograms(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
+    .then((response) => {
+
+      const programsResponse: Program[] = response.data;
+      setPrograms(programsResponse);
+
+      let studyCycleIds: number[] = [];
+      api.get(api_access + 'studycycle')
+        .then((response) => {
+          const cyclesResponse: StudyCycle[] = response.data;
+          setStudyCycles(cyclesResponse);
+          studyCycleIds = cyclesResponse.map(c => c.id);
+          const updatedProgramSuggestions = programsResponse
+                    .filter((p) => p.studyCycles
+                    .map(c => studyCycleIds.includes(c.id)));
+          setProgramSuggestions(updatedProgramSuggestions);
+        })
+        .catch((error) => {
+          if (error.response.status === 401 || error.response.status ===403){
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+        });
+
+    })
+    .catch((error) => {
+      if (error.response.status === 401 || error.response.status ===403){
+        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+        handleSignOut(navigate);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -159,18 +167,6 @@ function AddThesisPageAdmin() {
       setThesisId(thesis.id);
     }
   }, [thesis]);
-
-  // useEffect(() => {
-  //   const index = thesis.studyCycle?.id;
-  //     if (index !== null){
-  //       const updatedProgramSuggestions = programs
-  //                 .filter((p) => p.studyCycles
-  //                 .map((c)=> c.id === thesis.studyCycle?.id));
-  //       console.log('suggestions: ' + updatedProgramSuggestions.map(p => p.name));
-  //       setProgramSuggestions(updatedProgramSuggestions);
-  //       setSuggestionsKey(k => k+1);
-  //     }
-  // }, [thesis]);
 
   const validateForm = (): [boolean, ThesisDTO | null] => {
     const newErrors: Record<string, string> = {};
@@ -579,32 +575,40 @@ return (
 
 
       <div className='mb-3'>
-        <label className='bold' htmlFor='supervisor'>
-          {t('general.people.supervisor')}:
-        </label>
-        <div className="dropdown">
-          <input
-            type="text"
-            id="supervisor"
-            name="supervisor"
-            value={mailAbbrev}
-            onChange={handleMailSearchChange}
-            list="supervisorList"
-            className="form-control"
-          />
-          <datalist id="supervisorList">
-            {employeeSuggestions.map((supervisor) => (
-              <option
-                key={supervisor.mail}
-                value={supervisor.mail}
-              >
-                {supervisor.title.name} {supervisor.surname} {supervisor.name}
-              </option>
-            ))}
-          </datalist>
-        </div>
-        {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+      <label className='bold' htmlFor='supervisor'>
+        {t('general.people.supervisor')}:
+      </label>
+      <div className="dropdown">
+        <input
+          type="text"
+          id="supervisor"
+          name="supervisor"
+          value={mailAbbrev}
+          onChange={handleMailSearchChange}
+          list="supervisorList"
+          className="form-control"
+        />
+        <datalist id="supervisorList">
+          {employeeSuggestions
+              .sort((a, b) => {
+                const surnameComparison = a.surname.localeCompare(b.surname);
+                if (surnameComparison !== 0) {
+                  return surnameComparison;
+                }
+                return a.name.localeCompare(b.name);  //  nazwisko to samo -> po imieniu
+              })
+              .map((supervisor) => (
+                <option 
+                  key={supervisor.mail} 
+                  value={supervisor.mail}
+                  >
+                  {supervisor.title.name} {supervisor.name} {supervisor.surname}
+                </option>
+          ))}
+        </datalist>
       </div>
+      {errors.supervisor && <div className="text-danger">{errors.supervisor}</div>}
+    </div>
 
 
       <div className='mb-3'>
@@ -631,8 +635,8 @@ return (
         {errors.studyCycle && <div className="text-danger">{errors.studyCycle}</div>}
       </div>
 
-      <div className="mb-3">{/*key={suggestionsKey} */}
-        <label className="bold">{t('general.university.studyPrograms')}:</label>
+     <div className="mb-3">
+        <label className="bold">{t('general.university.studyPrograms')}:</label>  
 
         <ul>
 
@@ -643,7 +647,7 @@ return (
                 <select
                   id={`programId${index}`}
                   name={`programId${index}`}
-                  value={formData.programIds[index]}
+                  value={programId} 
                   onChange={(e) => {
                     const selectedProgramId = parseInt(e.target.value, 10);
                     handleProgramChange(index, selectedProgramId);
@@ -651,12 +655,6 @@ return (
                   className='form-control'
                   disabled={formData.studyCycleId === -1}
                 >
-                  {/* <option value={-1}>
-                  {programSuggestions ? programs[formData.programIds[programId]]?.name : t('general.management.choose')}
-                    {programSuggestions ? programs[1]?.name : t('general.management.choose')}
-                    {thesis.program ? thesis.program.name : t('general.management.choose')}
-                  </option> */}
-
                   <option value={-1}>{t('general.management.choose')}</option>
                   {programSuggestions
                     .filter((p) =>

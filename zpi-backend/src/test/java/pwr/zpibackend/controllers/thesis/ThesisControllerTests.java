@@ -138,9 +138,10 @@ class ThesisControllerTests {
         verify(thesisService).getThesis(thesisId);
     }
 
-    public static String asJsonString(final Object obj) {
+    public String asJsonString(final Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            objectMapper.findAndRegisterModules();
+            return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -419,6 +420,40 @@ class ThesisControllerTests {
                 .andExpect(status().isNotFound());
 
         verify(thesisService).getAllThesesForEmployeeByStatusNameList(empId, statName);
+    }
+
+    @Test
+    public void testUpdateThesesStatusInBulk() throws Exception {
+        String statName = "Pending approval";
+        List<Long> thesesIds = Arrays.asList(1L, 2L);
+
+        Mockito.when(thesisService.updateThesesStatusInBulk(statName, thesesIds)).thenReturn(theses);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/thesis/bulk/{statName}", statName)
+                .content(asJsonString(thesesIds))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(thesisService).updateThesesStatusInBulk(statName, thesesIds);
+    }
+
+    @Test
+    public void testUpdateThesesStatusInBulkNotFound() throws Exception{
+        String statName = "xd";
+        List<Long> thesesIds = Arrays.asList(1L, 2L);
+
+        Mockito.when(thesisService.updateThesesStatusInBulk(statName, thesesIds)).thenThrow(new NotFoundException());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/thesis/bulk/{statName}", statName)
+                .content(asJsonString(thesesIds))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verify(thesisService).updateThesesStatusInBulk(statName, thesesIds);
     }
 
 }

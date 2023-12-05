@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ThesisFront, Thesis } from '../../models/thesis/Thesis';
+import { ThesisFront, Thesis, ThesisDTO } from '../../models/thesis/Thesis';
 import api from '../../utils/api';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
@@ -14,6 +14,11 @@ import { Specialization } from '../../models/university/Specialization';
 import { StudyCycle } from '../../models/university/StudyCycle';
 import { StudyField } from '../../models/university/StudyField';
 import { Employee } from '../../models/user/Employee';
+import ChoiceConfirmation from '../../components/ChoiceConfirmation';
+import { Status } from '../../models/thesis/Status';
+import { stat } from 'fs';
+import { toast } from 'react-toastify';
+
 import LoadingSpinner from "../../components/LoadingSpinner";
 import api_access from "../../utils/api_access";
 
@@ -28,10 +33,11 @@ const ApproveList: React.FC = () => {
   const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
   const [loaded, setLoaded] = useState<boolean>(false);
 
+  const [key, setKey] = useState(0);
+
   useEffect(() => {
     api.get(api_access +`thesis/status/Pending_approval`)
       .then((response) => {
-        console.log(response);
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
             id: thesisDb.id,
@@ -64,7 +70,7 @@ const ApproveList: React.FC = () => {
           handleSignOut(navigate);
         }
       });
-  }, []);
+  }, [key]);
 
   // Filtrowanie
   const [filteredTheses, setFilteredTheses] = useState<ThesisFront[]>(theses);
@@ -336,6 +342,105 @@ const ApproveList: React.FC = () => {
     }
   };
 
+
+  //  hurtowa akceptacja/odrzucanie tematów
+  const [thesesFormIndexes, setThesesFormIndexes] = useState(new Set<number>());
+  const [checkAllCheckbox, setCheckAllCheckbox] = useState(false);
+
+  const [confirmClicked, setConfirmClicked] = useState(false);
+  const [rejectClicked, setRejectClicked] = useState(false);
+  const [showAcceptConfirmation, setShowAcceptConfirmation] = useState(false);
+
+  const checkCheckbox = (thesisId: number) => {
+    setThesesFormIndexes((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(thesisId);
+      return newSet;
+    });
+  }
+
+  const uncheckCheckbox = (thesisId: number) => {
+      setThesesFormIndexes((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(thesisId);
+        return newSet;
+      });
+  }
+
+  const checkAllCheckboxesChange = () => {
+    setCheckAllCheckbox(!checkAllCheckbox);
+    if (checkAllCheckbox){
+      setThesesFormIndexes(new Set());
+    }
+    else{
+      let thesisIds = new Set<number>();
+      currentTheses.map((thesis, _) => {
+        thesisIds.add(thesis.id)
+      });
+      setThesesFormIndexes(thesisIds);
+    }
+  }
+
+  const handleConfirmClick = () => {
+    setShowAcceptConfirmation(true);
+    setConfirmClicked(true);
+    setRejectClicked(false);
+  };
+
+  const handleConfirmAccept = () => {
+    const [isValid, statName] = validateTheses();
+    if (isValid){
+      api.put(`http://localhost:8080/thesis/bulk/${statName}`, Array.from(thesesFormIndexes))
+        .then(() => {
+          setKey(k => k+1);
+          setThesesFormIndexes(new Set());
+          toast.success(t("thesis.acceptSuccesfulBulk"));
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          if (error.response.status === 401 || error.response.status === 403) {
+            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+            handleSignOut(navigate);
+          }
+          toast.error(t("thesis.acceptErrorBulk"));
+        });
+    }
+    else{
+      toast.error(t("thesis.acceptErrorBulk")); 
+    }
+    setShowAcceptConfirmation(false);
+  }
+
+  const handleConfirmCancel = () => {
+    setShowAcceptConfirmation(false);
+  }
+
+  const validateTheses = () => {
+    let name: string;
+    if (confirmClicked && !rejectClicked) {
+      name = "Approved";
+    }
+    else if (!confirmClicked && rejectClicked) {
+      name = "Rejected";
+    }
+    else {
+      name = "";
+    }
+    
+    let allIdsArePresent = true;
+    const indexes = theses.map(t => t.id);
+    for (var index of Array.from(thesesFormIndexes.values())) {
+      if (!indexes.includes(index)){
+        allIdsArePresent = false;
+        break;
+      }
+    }
+
+    const isValid = (name !== "") && (allIdsArePresent !== false);
+    return [isValid, name];
+  }
+
+
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
@@ -486,6 +591,31 @@ const ApproveList: React.FC = () => {
             <p>{t('general.management.noData')}</p>
           </div>
         ) : (<React.Fragment>
+          <div className='d-flex justify-content-begin  align-items-center'>
+            <button
+              type="button"
+              className="custom-button"
+              onClick={() => handleConfirmClick()}
+              disabled={thesesFormIndexes.size === 0}
+            >
+              {t('general.management.acceptSelected')}
+            </button>
+
+            {showAcceptConfirmation && (
+              <tr>
+                <td colSpan={5}>
+                  <ChoiceConfirmation
+                    isOpen={showAcceptConfirmation}
+                    onClose={handleConfirmCancel}
+                    onConfirm={handleConfirmAccept}
+                    onCancel={handleConfirmCancel}
+                    questionText={t('thesis.acceptConfirmationBulk')}
+                  />
+                </td>
+              </tr>
+            )}
+
+          </div>
           <div className='d-flex justify-content-between  align-items-center'>
             <SearchBar
               searchTerm={searchTerm}
@@ -559,18 +689,44 @@ const ApproveList: React.FC = () => {
               <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
             </div>
           ) : (
-            <table className="custom-table">
+            <table className="custom-table" key={key}>
               <thead>
                 <tr>
+                  <th style={{ width: '3%', textAlign: 'center' }}>
+                    <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
+                    <input
+                      type='checkbox'
+                      className='custom-checkbox'
+                      checked={checkAllCheckbox}
+                      onChange={checkAllCheckboxesChange}
+                    />
+                    </th>
                   <th style={{ width: '3%', textAlign: 'center' }}>#</th>
                   <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                  <th style={{ width: '17%' }}>{t('general.people.supervisor')}</th>
-                  <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                  <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
+                  <th style={{ width: '9%', textAlign: 'center' }}>{t('general.management.details')}</th>
                 </tr>
               </thead>
               <tbody>
                 {currentTheses.map((thesis, index) => (
                   <tr key={thesis.id}>
+                    <td>
+                    <div style={{ textAlign: 'center' }}>
+                      <input
+                        type="checkbox"
+                        className='custom-checkbox'
+                        checked={thesesFormIndexes.has(thesis.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            checkCheckbox(thesis.id);
+                          } else {
+                            uncheckCheckbox(thesis.id);
+                          }
+                        }}
+                        style={{ transform: 'scale(1.25)' }}
+                      />
+                    </div>
+                    </td>
                     <td className="centered">{indexOfFirstItem + index + 1}</td>
                     <td>
                       {i18n.language === 'pl' ? (
