@@ -83,7 +83,7 @@
       "theses": "Tematy"
     },
     "clearData": {
-      "clearSystem": "Czyść system",
+      "clearSystem": "Czyszczenie systemu",
       "choice": "Wybierz \"Tematy\" lub \"Studenci\""
     },
     "title": "Tytuł"
@@ -158,9 +158,10 @@
     "duplicatedPrograms": "Lista programów posiada duplikaty.",
     "import": "Importuj studentów",
     "deleteErrorWithReference": "Student nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
-    "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczonych studentów?",
+    "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczonych studentów? ({{idCount}})",
     "deleteSuccesfulBulk": "Zaznaczeni studenci zostali usunięci",
-    "deleteErrorBulk": "Zaznaczeni studenci nie zostali usunięci"
+    "deleteErrorBulk": "Zaznaczeni studenci nie zostali usunięci",
+    "filterCycles": "Zanim przejdziesz do usuwania studentów, zastosuj filtry według cykli nauczania."
   },
   "faculty": {
     "updateSuccessful": "Wydział został zaktualizowany",
@@ -267,7 +268,7 @@
     "acceptSuccesfulBulk": "Zaznaczone tematy zostały zaakceptowane",
     "acceptErrorBulk": "Zaznaczone tematy nie zostały zaakceptowane",
     "deleteErrorWithReference": "Temat nie może zostać usunięty, ponieważ ma nadal powiązania z tabelą '{{referencedTable}}'!",
-    "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczone tematy?",
+    "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczone tematy? ({{idCount}})",
     "deleteSuccesfulBulk": "Zaznaczone tematy zostały usunięte",
     "deleteErrorBulk": "Zaznaczone tematy nie zostały usunięte"
   },

@@ -16,6 +16,7 @@ import SearchBar from "../../../components/SearchBar";
 import useAuth from "../../../auth/useAuth";
 import { toast } from "react-toastify";
 import ChoiceConfirmation from "../../../components/ChoiceConfirmation";
+import { Alert } from "react-bootstrap";
 
 
 const ClearDataByCycle: React.FC = () => {
@@ -36,7 +37,7 @@ const ClearDataByCycle: React.FC = () => {
     const [theses, setTheses] = useState<ThesisFront[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
 
-    const [selectedToClear, setSelectedToClear] = useState<SelectedToBeCleared>(SelectedToBeCleared.NONE);
+    const [selectedToClear, setSelectedToClear] = useState<SelectedToBeCleared>(SelectedToBeCleared.THESES);
     const [key, setKey] = useState(0);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -406,7 +407,13 @@ const ClearDataByCycle: React.FC = () => {
     }
 
     const allowFilteringTheses = () => {
-        if (selectedToClear === SelectedToBeCleared.THESES){
+        if (selectedToClear === SelectedToBeCleared.THESES && (
+            selectedFacultyAbbrTheses ||
+            submittedFieldAbbrTheses ||
+            submittedSpecializationAbbrTheses ||
+            submittedCycleNameTheses ||
+            submittedSupervisorsTheses.length > 0
+        )){
             return true
         }
         return false
@@ -523,7 +530,12 @@ const ClearDataByCycle: React.FC = () => {
       }
 
       const allowFilteringStudents = () => {
-        if (selectedToClear === SelectedToBeCleared.STUDENTS){
+        if (selectedToClear === SelectedToBeCleared.STUDENTS && (
+            submittedCycleNameStudents ||
+            submittedFacultyAbbrStudents ||
+            submittedFieldAbbrStudents ||
+            submittedSpecializationAbbrStudents
+        )){
             return true
         }
         return false
@@ -650,7 +662,7 @@ const ClearDataByCycle: React.FC = () => {
         }
         else{
           let thesisIds = new Set<number>();
-          currentTheses.map((thesis, _) => {
+          afterSearchTheses.map((thesis, _) => {
             thesisIds.add(thesis.id)
           });
           setThesesFormIndexes(thesisIds);
@@ -708,6 +720,11 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //  checkboxy - studenci
 
+    //  czyść zaznaczone checkboxy na zmianie cyklu
+    useEffect(() => {
+        setStudentsFormIndexes(new Set<number>());
+    }, [submittedCycleNameStudents]);
+
     const checkCheckboxStudents = (studentId: number) => {
         setStudentsFormIndexes((prev) => {
           const newSet = new Set(prev);
@@ -731,7 +748,7 @@ const ClearDataByCycle: React.FC = () => {
         }
         else{
           let studentIds = new Set<number>();
-          currentStudents.map((stud, _) => {
+          afterSearchStudents.map((stud, _) => {
             studentIds.add(stud.id)
           })
           setStudentsFormIndexes(studentIds);
@@ -840,7 +857,7 @@ const ClearDataByCycle: React.FC = () => {
         <div className='page-margin'>
 
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-            {/* sidebar */}
+            {/* sidebar - tematy */}
             
             {selectedToClear === SelectedToBeCleared.THESES ? (
                 <>
@@ -987,6 +1004,8 @@ const ClearDataByCycle: React.FC = () => {
             </div>
                 
                 </>
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            // sidebar - studenci
             ) : selectedToClear === SelectedToBeCleared.STUDENTS ? (
                 <>
                 
@@ -1132,69 +1151,78 @@ const ClearDataByCycle: React.FC = () => {
                     >
                         {t('general.university.theses')}
                     </button>
-                    {selectedToClear === SelectedToBeCleared.THESES && (
-                        <>
-                        
-                        <button
-                            type="button"
-                            className="custom-button"
-                            onClick={() => handleConfirmClickTheses()}
-                            disabled={thesesFormIndexes.size === 0}
-                            >
-                            {t('general.management.deleteSelected')}
-                        </button>
-
-                        {showDeleteConfirmationTheses && (
-                        <tr>
-                            <td colSpan={5}>
-                                <ChoiceConfirmation
-                                    isOpen={showDeleteConfirmationTheses}
-                                    onClose={handleConfirmCancelTheses}
-                                    onConfirm={handleConfirmAcceptTheses}
-                                    onCancel={handleConfirmCancelTheses}
-                                    questionText={t('thesis.acceptDeletionBulk')}
-                                />
-                            </td>
-                        </tr>
-                        )}
-
-                        </>
-                    )}
+                    
                     <button 
                         className={`custom-button ${selectedToClear === SelectedToBeCleared.STUDENTS ? '' : 'another-color'}`}
                         onClick={chooseStudents}
                     >
                         {t('general.people.students')}
                     </button>
+                </div>
+                <div className="d-flex justify-content-begin align-items-center mt-3">
+                {selectedToClear === SelectedToBeCleared.THESES && (
+                        <>
+                            <button
+                                type="button"
+                                className={`custom-button ${thesesFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                onClick={() => handleConfirmClickTheses()}
+                                disabled={thesesFormIndexes.size === 0}
+                                >
+                                {t('general.management.deleteSelected')}
+                            </button>
+
+                            {showDeleteConfirmationTheses && (
+                            <tr>
+                                <td colSpan={5}>
+                                    <ChoiceConfirmation
+                                        isOpen={showDeleteConfirmationTheses}
+                                        onClose={handleConfirmCancelTheses}
+                                        onConfirm={handleConfirmAcceptTheses}
+                                        onCancel={handleConfirmCancelTheses}
+                                        questionText={t('thesis.acceptDeletionBulk', { idCount: thesesFormIndexes.size })}
+                                    />
+                                </td>
+                            </tr>
+                            )}
+                        </>
+                    )}
                     {selectedToClear === SelectedToBeCleared.STUDENTS && (
                         <>
-                        <button
-                            type="button"
-                            className="custom-button"
-                            onClick={() => handleConfirmClickStudents()}
-                            disabled={studentsFormIndexes.size === 0}
-                        >
-                            {t('general.management.deleteSelected')}
-                        </button>
 
-                        {showAcceptConfirmationStudents && (
-                        <tr>
-                            <td colSpan={5}>
-                                <ChoiceConfirmation
-                                    isOpen={showAcceptConfirmationStudents}
-                                    onClose={handleConfirmCancelStudents}
-                                    onConfirm={handleConfirmAcceptStudents}
-                                    onCancel={handleConfirmCancelStudents}
-                                    questionText={t('student.acceptDeletionBulk')}
-                                />
-                            </td>
-                        </tr>
-                        )}
+                            {submittedCycleNameStudents === "" ? (
+                                <Alert variant="warning" className="m-0">
+                                    {t('student.filterCycles')}
+                                </Alert>
+                            ) : (
+                                <>      
+                                <button
+                                    type="button"
+                                    className={`custom-button ${studentsFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                    onClick={() => handleConfirmClickStudents()}
+                                    disabled={studentsFormIndexes.size === 0}
+                                >
+                                    {t('general.management.deleteSelected')}
+                                </button>
+
+                                {showAcceptConfirmationStudents && (
+                                <tr>
+                                    <td colSpan={5}>
+                                        <ChoiceConfirmation
+                                            isOpen={showAcceptConfirmationStudents}
+                                            onClose={handleConfirmCancelStudents}
+                                            onConfirm={handleConfirmAcceptStudents}
+                                            onCancel={handleConfirmCancelStudents}
+                                            questionText={t('student.acceptDeletionBulk', { idCount: studentsFormIndexes.size })}
+                                        />
+                                    </td>
+                                </tr>
+                                )}
+                                </>
+                            )}
 
                         </>
                     )}
-
-                </div>
+                    </div>
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
@@ -1431,6 +1459,7 @@ const ClearDataByCycle: React.FC = () => {
                                                 className='custom-checkbox'
                                                 checked={checkAllCheckboxStudents}
                                                 onChange={checkAllCheckboxesChangeStudents}
+                                                disabled={submittedCycleNameStudents === ""}
                                             />
                                         </th>
                                         <th style={{ width: '3%', textAlign: 'center' }}>#</th>
@@ -1456,6 +1485,7 @@ const ClearDataByCycle: React.FC = () => {
                                                             uncheckCheckboxStudents(student.id);
                                                         }
                                                         }}
+                                                        disabled={submittedCycleNameStudents === ""}
                                                         style={{ transform: 'scale(1.25)' }}
                                                     />
                                                 </div>

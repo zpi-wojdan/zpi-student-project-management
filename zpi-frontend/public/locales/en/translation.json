@@ -159,9 +159,10 @@
     "duplicatedPrograms": "List of programs contains duplicates!",
     "import": "Import students",
     "deleteErrorWithReference": "Student cannot be deleted because it is still referenced by {{referencedTable}}!",
-    "acceptDeletionBulk": "Are you sure you want to delete the selected students?",
+    "acceptDeletionBulk": "Are you sure you want to delete the selected students? ({{idCount}})",
     "deleteSuccesfulBulk": "Selected students have been deleted",
-    "deleteErrorBulk": "Selected students have not been deleted"
+    "deleteErrorBulk": "Selected students have not been deleted",
+    "filterCycles": "Before you proceed to delete students, please apply filters by study cycles"
   },
   "faculty": {
     "updateSuccessful": "Faculty has been updated",
@@ -266,7 +267,7 @@
     "acceptSuccesfulBulk": "Selected theses have been accepted",
     "acceptErrorBulk": "Selected theses have not been accepted",
     "deleteErrorWithReference": "Thesis cannot be deleted because it is still referenced by {{referencedTable}}!",
-    "acceptDeletionBulk": "Are you sure you want to delete the selected theses?",
+    "acceptDeletionBulk": "Are you sure you want to delete the selected theses? ({{idCount}})",
     "deleteSuccesfulBulk": "Selected theses have been deleted",
     "deleteErrorBulk": "Selected theses have not been deleted"
   },
