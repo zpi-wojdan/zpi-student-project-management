@@ -19,6 +19,8 @@ import { Status } from '../../models/thesis/Status';
 import { stat } from 'fs';
 import { toast } from 'react-toastify';
 
+import LoadingSpinner from "../../components/LoadingSpinner";
+import api_access from "../../utils/api_access";
 
 
 const ApproveList: React.FC = () => {
@@ -34,7 +36,7 @@ const ApproveList: React.FC = () => {
   const [key, setKey] = useState(0);
 
   useEffect(() => {
-    api.get(`http://localhost:8080/thesis/status/Pending_approval`)
+    api.get(api_access +`thesis/status/Pending_approval`)
       .then((response) => {
         const thesis_response = response.data.map((thesisDb: Thesis) => {
           const thesis: ThesisFront = {
@@ -90,7 +92,7 @@ const ApproveList: React.FC = () => {
   const [submittedSpecializationAbbr, setSubmittedSpecializationAbbr] = useState<string>("");
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get(api_access +'employee')
       .then((response) => {
         const supervisors = response.data
           .filter((employee: Employee) => employee.roles.some((role: Role) => role.name === 'supervisor'))
@@ -107,7 +109,7 @@ const ApproveList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access +'studycycle')
       .then((response) => {
         const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => {
           return a.name.localeCompare(b.name);
@@ -124,7 +126,7 @@ const ApproveList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access +'faculty')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
           return a.name.localeCompare(b.name);
@@ -141,7 +143,7 @@ const ApproveList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access +'studyfield')
       .then((response) => {
         const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.name.localeCompare(b.name);
@@ -158,7 +160,7 @@ const ApproveList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
+    api.get(api_access +'specialization')
       .then((response) => {
         const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
           return a.name.localeCompare(b.name);
@@ -582,9 +584,7 @@ const ApproveList: React.FC = () => {
         </div>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {theses.length === 0 ? (
           <div className='info-no-data'>

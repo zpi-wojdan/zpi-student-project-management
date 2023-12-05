@@ -10,6 +10,7 @@ export type Employee = {
   roles: Role[];
   department: Department;
   title: Title;
+  numTheses: number;
 }
 
 export type EmployeeDTO = {
@@ -19,4 +20,5 @@ export type EmployeeDTO = {
   roles: RoleDTO[];
   departmentCode: string;
   title: TitleDTO;
+  numTheses: number;
 }

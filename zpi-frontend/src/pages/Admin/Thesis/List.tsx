@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Thesis } from '../../../models/thesis/Thesis';
+import {Thesis, ThesisFront} from '../../../models/thesis/Thesis';
 import api from '../../../utils/api';
 import handleSignOut from "../../../auth/Logout";
 import useAuth from "../../../auth/useAuth";
@@ -13,6 +13,8 @@ import { Specialization } from '../../../models/university/Specialization';
 import { StudyCycle } from '../../../models/university/StudyCycle';
 import { StudyField } from '../../../models/university/StudyField';
 import { Employee } from '../../../models/user/Employee';
+import api_access from '../../../utils/api_access';
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 
 const ThesisList: React.FC = () => {
@@ -26,7 +28,7 @@ const ThesisList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/thesis/public')
+    api.get(api_access + 'thesis/public')
       .then((response) => {
         setTheses(response.data);
         setFilteredTheses(response.data);
@@ -76,7 +78,7 @@ const ThesisList: React.FC = () => {
   const [submittedStatusName, setSubmittedStatusName] = useState<string>("");
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get(api_access + 'employee')
       .then((response) => {
         const supervisors = response.data
           .filter((employee: Employee) => employee.roles.some((role) => role.name === 'supervisor'))
@@ -93,7 +95,7 @@ const ThesisList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studycycle')
+    api.get(api_access + 'studycycle')
       .then((response) => {
         const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => {
           return a.name.localeCompare(b.name);
@@ -110,7 +112,7 @@ const ThesisList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/faculty')
+    api.get(api_access + 'faculty')
       .then((response) => {
         const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
           return a.name.localeCompare(b.name);
@@ -127,7 +129,7 @@ const ThesisList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/studyfield')
+    api.get(api_access + 'studyfield')
       .then((response) => {
         const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
           return a.name.localeCompare(b.name);
@@ -144,7 +146,7 @@ const ThesisList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/specialization')
+    api.get(api_access + 'specialization')
       .then((response) => {
         const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
           return a.name.localeCompare(b.name);
@@ -244,7 +246,13 @@ const ThesisList: React.FC = () => {
       const facultyFilter = selectedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbr) : () => true;
       const fieldFilter = selectedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = selectedSpecializationAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: Thesis) => thesis.numPeople - thesis.occupied >= selectedMinVacancies && thesis.numPeople - thesis.occupied <= selectedMaxVacancies;
+      const vacanciesFilter = (thesis: Thesis) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= selectedMinVacancies && vacancies <= selectedMaxVacancies;
+      };
       const cycleFilter = selectedCycleName ? (thesis: Thesis) => thesis.studyCycle?.name === selectedCycleName : () => true;
       const supervisorFilter = selectedSupervisors.length ? (thesis: Thesis) => selectedSupervisors.includes(thesis.supervisor.id) : () => true;
       const statusFilter = selectedStatusName ? (thesis: Thesis) => thesis.status.name === selectedStatusName : () => true;
@@ -282,7 +290,13 @@ const ThesisList: React.FC = () => {
       const facultyFilter = savedFacultyAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
       const fieldFilter = savedFieldAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbr) : () => true;
       const specializationFilter = savedSpecializationAbbr ? (thesis: Thesis) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
-      const vacanciesFilter = (thesis: Thesis) => thesis.numPeople - thesis.occupied >= savedMinVacancies && thesis.numPeople - thesis.occupied <= savedMaxVacancies;
+      const vacanciesFilter = (thesis: Thesis) => {
+        let vacancies = thesis.numPeople - thesis.occupied;
+        if (thesis.occupied > thesis.numPeople) {
+          vacancies = 0;
+        }
+        return vacancies >= savedMinVacancies && vacancies <= savedMaxVacancies;
+      };
       const cycleFilter = savedCycleName ? (thesis: Thesis) => thesis.studyCycle?.name === savedCycleName : () => true;
       const supervisorFilter = savedsupervisors.length ? (thesis: Thesis) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
       const statusFilter = savedStatusName ? (thesis: Thesis) => thesis.status.name === savedStatusName : () => true;
@@ -577,9 +591,7 @@ const ThesisList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {theses.length === 0 ? (
           <div className='info-no-data'>

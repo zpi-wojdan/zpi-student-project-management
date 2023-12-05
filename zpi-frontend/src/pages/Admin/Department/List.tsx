@@ -9,6 +9,9 @@ import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { handleDeletionError } from '../../../utils/handleDeleteError';
 import SearchBar from '../../../components/SearchBar';
+import api_access from '../../../utils/api_access';
+
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const DepartmentList: React.FC = () => {
   // @ts-ignore
@@ -22,7 +25,7 @@ const DepartmentList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/departments')
+    api.get(api_access + 'departments')
       .then((response) => {
         const sortedDepartments = response.data.sort((a: Department, b: Department) => {
           return a.code.localeCompare(b.code);
@@ -105,7 +108,7 @@ const DepartmentList: React.FC = () => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(`http://localhost:8080/departments/${departmentToDelete}`)
+    api.delete(api_access + `departments/${departmentToDelete}`)
       .then(() => {
         toast.success(t('department.deleteSuccessful'));
         setRefreshList(!refreshList);
@@ -133,9 +136,7 @@ const DepartmentList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+        <LoadingSpinner height="50vh" />
       ) : (<React.Fragment>
         {departments.length === 0 ? (
           <div className='info-no-data'>

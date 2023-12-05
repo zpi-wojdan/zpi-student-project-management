@@ -1,4 +1,4 @@
-package pwr.zpibackend.services;
+package pwr.zpibackend.services.reports;
 
 import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.BeforeEach;

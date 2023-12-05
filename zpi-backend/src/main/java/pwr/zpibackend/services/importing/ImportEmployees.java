@@ -265,6 +265,7 @@ public class ImportEmployees{
                 //  since they are empty, but necessary fields do exist
                 //  in the database already
                 employee.setTitle(existingTitle.get());
+                employee.setNumTheses(existingTitle.get().getNumTheses());
                 employee.getRoles().add(existingRole.get());
                 employee.setDepartment(existingDepartment.get());
 

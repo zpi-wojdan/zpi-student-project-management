@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class RoleControllerTests {
 
-    private static final String BASE_URL = "/role";
+    private static final String BASE_URL = "/api/role";
 
     @Autowired
     private ObjectMapper objectMapper;

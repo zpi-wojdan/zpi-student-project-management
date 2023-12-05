@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class EmployeeControllerTests {
 
-    private static final String BASE_URL = "/employee";
+    private static final String BASE_URL = "/api/employee";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -64,7 +64,7 @@ public class EmployeeControllerTests {
         employee.setName("John");
         employee.setSurname("Doe");
         employee.setDepartment(null);
-        employee.setTitle(new Title("mgr inż."));
+        employee.setTitle(new Title("mgr inż.", 1));
 
         Role role = new Role("admin");
         List<Role> roles = new ArrayList<>();
@@ -77,7 +77,7 @@ public class EmployeeControllerTests {
         employee2.setName("Jane");
         employee2.setSurname("Doe");
         employee2.setDepartment(null);
-        employee2.setTitle(new Title("mgr inż."));
+        employee2.setTitle(new Title("mgr inż.", 1));
         employee2.setRoles(roles);
 
         employeeDTO = new EmployeeDTO();
@@ -85,7 +85,7 @@ public class EmployeeControllerTests {
         employeeDTO.setName("John");
         employeeDTO.setSurname("Doe");
         employeeDTO.setDepartmentCode(null);
-        employeeDTO.setTitle(new TitleDTO("mgr inż."));
+        employeeDTO.setTitle(new TitleDTO("mgr inż.", 1));
         List<RoleDTO> roleDTOS = new ArrayList<>();
         roleDTOS.add(new RoleDTO("admin"));
         employeeDTO.setRoles(roleDTOS);
@@ -131,20 +131,6 @@ public class EmployeeControllerTests {
                 .andExpect(status().isNotFound());
 
         verify(employeeService).getEmployee(id);
-    }
-
-    @Test
-    public void testGetEmployeesByPrefix() throws Exception {
-        String prefix = "12";
-        Mockito.when(employeeService.getEmployeesByPrefix(prefix)).thenReturn(employees);
-
-        String returnedJson = objectMapper.writeValueAsString(employees);
-
-        mockMvc.perform(get(BASE_URL + "/match/{prefix}", prefix).contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(returnedJson));
-
-        verify(employeeService).getEmployeesByPrefix(prefix);
     }
 
     @Test

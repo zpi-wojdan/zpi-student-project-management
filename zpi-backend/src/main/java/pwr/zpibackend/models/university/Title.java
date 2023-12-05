@@ -19,16 +19,20 @@ public class Title {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
+    @Column(name ="num_theses", nullable = false)
+    private Integer numTheses;
     @JoinColumn(name = "title")
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
     List<Employee> employees;
 
-    public Title(Long id, String name) {
+    public Title(Long id, String name, Integer numTheses) {
         this.id = id;
         this.name = name;
+        this.numTheses = numTheses;
     }
-    public Title(String name) {
+    public Title(String name, Integer numTheses) {
         this.name = name;
+        this.numTheses = numTheses;
     }
 }

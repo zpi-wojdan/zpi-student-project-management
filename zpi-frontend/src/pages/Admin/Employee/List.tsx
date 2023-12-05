@@ -6,9 +6,10 @@ import useAuth from "../../../auth/useAuth";
 import { useTranslation } from "react-i18next";
 import api from "../../../utils/api";
 import { Department } from '../../../models/university/Department'
-import { Role } from '../../../models/user/Role';
-import { Title } from './Form';
 import SearchBar from '../../../components/SearchBar';
+import api_access from '../../../utils/api_access';
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import {Title} from "../../../models/user/Title";
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
@@ -21,7 +22,7 @@ const EmployeeList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get('http://localhost:8080/employee')
+    api.get(api_access + 'employee')
       .then((response) => {
         const sortedEmployees = response.data.sort((a: Employee, b: Employee) => {
           return a.mail.localeCompare(b.mail);
@@ -58,7 +59,7 @@ const EmployeeList: React.FC = () => {
   const [submittedTitleName, setSubmittedTitleName] = useState<string>("");
 
   useEffect(() => {
-    api.get('http://localhost:8080/departments')
+    api.get(api_access + 'departments')
       .then((response) => {
         const sortedDepartments = response.data.sort((a: Department, b: Department) => {
           return a.name.localeCompare(b.name);
@@ -75,7 +76,7 @@ const EmployeeList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('http://localhost:8080/title')
+    api.get(api_access + 'title')
       .then((response) => {
         const sortedTitles = response.data.sort((a: Title, b: Title) => {
           return a.name.localeCompare(b.name);
@@ -334,9 +335,7 @@ const EmployeeList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-        <div className='info-no-data'>
-          <p>{t('general.management.load')}</p>
-        </div>
+          <LoadingSpinner height="50vh" />
       ) :
         (<React.Fragment>
 

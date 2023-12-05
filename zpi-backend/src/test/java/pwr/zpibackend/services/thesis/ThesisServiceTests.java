@@ -1,26 +1,34 @@
 package pwr.zpibackend.services.thesis;
 
+import org.aspectj.weaver.ast.Not;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
+import pwr.zpibackend.exceptions.LimitOfThesesReachedException;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
+import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.repositories.thesis.CommentRepository;
+import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.ReservationRepository;
 import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.repositories.university.ProgramRepository;
 import pwr.zpibackend.repositories.university.StudyCycleRepository;
 import pwr.zpibackend.repositories.user.EmployeeRepository;
 import pwr.zpibackend.repositories.thesis.ThesisRepository;
+import pwr.zpibackend.repositories.user.StudentRepository;
+import pwr.zpibackend.services.mailing.MailService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +56,11 @@ public class ThesisServiceTests {
     @Mock
     private StudyCycleRepository studyCycleRepository;
     @Mock
+    private StudentRepository studentRepository;
+    @Mock
     private ReservationRepository reservationRepository;
+    @Mock
+    private MailService mailService;
 
     @InjectMocks
     private ThesisService thesisService;
@@ -78,6 +90,7 @@ public class ThesisServiceTests {
         thesis.setNumPeople(4);
         Employee emp = new Employee();
         emp.setId(1L);
+        emp.setNumTheses(2);
         thesis.setSupervisor(emp);
         thesis.setPrograms(List.of(new Program()));
         thesis.setStudyCycle(new StudyCycle());
@@ -198,10 +211,24 @@ public class ThesisServiceTests {
     @Test
     public void testAddThesis() throws NotFoundException {
         ThesisDTO thesisDTO = new ThesisDTO();
-        Employee employee = mock(Employee.class);
         Program program = mock(Program.class);
-        Status status = mock(Status.class);
         StudyCycle studyCycle = mock(StudyCycle.class);
+
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setNumTheses(2);
+
+        Student student = new Student();
+        student.setIndex("123456");
+        student.setMail("123456@mail.com");
+
+        Reservation reservation = new Reservation();
+        reservation.setStudent(student);
+        reservation.setThesis(thesis);
+        reservation.setConfirmedByLeader(false);
+        reservation.setConfirmedBySupervisor(true);
+        reservation.setConfirmedByStudent(false);
+        reservation.setReadyForApproval(true);
 
 
         when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(employee));
@@ -211,8 +238,16 @@ public class ThesisServiceTests {
             return savedThesis;
         });
         when(programRepository.findById(any(Long.class))).thenReturn(Optional.of(program));
-        when(statusRepository.findById(any(Long.class))).thenReturn(Optional.of(status));
         when(studyCycleRepository.findById(any(Long.class))).thenReturn(Optional.of(studyCycle));
+        when(statusRepository.findByName("Draft")).thenReturn(Optional.of(statuses.get(0)));
+        when(statusRepository.findByName("Rejected")).thenReturn(Optional.of(statuses.get(2)));
+        when(statusRepository.findByName("Closed")).thenReturn(Optional.of(statuses.get(5)));
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(employee.getId(),
+                List.of("Pending approval", "Approved", "Assigned"), sort)).thenReturn(Collections.emptyList());
+        when(statusRepository.findById(any(Long.class))).thenReturn(Optional.of(statuses.get(1)));
+        when(studentRepository.findByIndex(student.getIndex())).thenReturn(Optional.of(student));
+        when(reservationRepository.findByStudent_Mail(student.getMail())).thenReturn(null);
+        when(reservationRepository.saveAndFlush(any(Reservation.class))).thenReturn(reservation);
 
         thesis.setId(1L);
         thesis.setNamePL("Thesis 1 PL");
@@ -220,9 +255,10 @@ public class ThesisServiceTests {
         thesis.setDescriptionPL("Description 1");
         thesis.setDescriptionEN("Description 1");
         thesis.setNumPeople(4);
+        thesis.setOccupied(4);
         thesis.setSupervisor(employee);
         thesis.setPrograms(List.of(program));
-        thesis.setStatus(status);
+        thesis.setStatus(statuses.get(1));
         thesis.setStudyCycle(studyCycle);
 
         thesisDTO.setNamePL("Thesis 1 PL");
@@ -232,49 +268,67 @@ public class ThesisServiceTests {
         thesisDTO.setNumPeople(4);
         thesisDTO.setProgramIds(List.of(1L));
         thesisDTO.setStudyCycleId(Optional.of(1L));
-        thesisDTO.setStatusId(1L);
+        thesisDTO.setStatusId(2L);
         thesisDTO.setSupervisorId(1L);
+        thesisDTO.setStudentIndexes(List.of("123456"));
 
         Thesis result = thesisService.addThesis(thesisDTO);
 
-        verify(thesisRepository).saveAndFlush(any(Thesis.class));
+        verify(thesisRepository, times(2)).saveAndFlush(any(Thesis.class));
+        assertEquals(thesis, result);
 
+        ArgumentCaptor<Reservation> reservationCaptor = ArgumentCaptor.forClass(Reservation.class);
+        verify(reservationRepository).saveAndFlush(reservationCaptor.capture());
+        Reservation savedReservation = reservationCaptor.getValue();
+
+        assertEquals(student, savedReservation.getStudent());
+        assertEquals(thesis, savedReservation.getThesis());
+        assertFalse(savedReservation.isConfirmedByLeader());
+        assertTrue(savedReservation.isConfirmedBySupervisor());
+        assertFalse(savedReservation.isConfirmedByStudent());
+        assertTrue(savedReservation.isReadyForApproval());
         assertEquals(thesis, result);
     }
 
-
-
     @Test
-    public void testUpdateThesis() throws NotFoundException {
+    public void testUpdateThesis() {
         Long thesisId = 1L;
         ThesisDTO thesisDTO = new ThesisDTO();
-        Employee employee = mock(Employee.class);
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setNumTheses(2);
+
         Program program = mock(Program.class);
-        Status status = mock(Status.class);
         StudyCycle studyCycle = mock(StudyCycle.class);
 
         when(thesisRepository.existsById(thesisId)).thenReturn(true);
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
-        when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(employee));
+        when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.of(employee));
         when(thesisRepository.saveAndFlush(any(Thesis.class))).thenAnswer(invocation -> {
             Thesis savedThesis = invocation.getArgument(0);
             savedThesis.setId(1L);
             return savedThesis;
         });
         when(programRepository.findById(any(Long.class))).thenReturn(Optional.of(program));
-        when(statusRepository.findById(any(Long.class))).thenReturn(Optional.of(status));
         when(studyCycleRepository.findById(any(Long.class))).thenReturn(Optional.of(studyCycle));
+        when(statusRepository.findByName("Draft")).thenReturn(Optional.of(statuses.get(0)));
+        when(statusRepository.findByName("Rejected")).thenReturn(Optional.of(statuses.get(2)));
+        when(statusRepository.findByName("Closed")).thenReturn(Optional.of(statuses.get(5)));
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(employee.getId(),
+                List.of("Pending approval", "Approved", "Assigned"), sort)).thenReturn(Collections.emptyList());
+        when(statusRepository.findById(any(Long.class))).thenReturn(Optional.of(statuses.get(1)));
 
-        thesis.setId(1L);
-        thesis.setNamePL("Thesis 1 PL");
-        thesis.setNameEN("Thesis 1 EN");
-        thesis.setDescriptionPL("Description 1");
-        thesis.setDescriptionEN("Description 1");
-        thesis.setNumPeople(4);
-        thesis.setSupervisor(employee);
-        thesis.setPrograms(List.of(program));
-        thesis.setStatus(status);
-        thesis.setStudyCycle(studyCycle);
+        Thesis updatedThesis = new Thesis();
+        updatedThesis.setId(1L);
+        updatedThesis.setNamePL("Thesis 1 PL");
+        updatedThesis.setNameEN("Thesis 1 EN");
+        updatedThesis.setDescriptionPL("Description 1");
+        updatedThesis.setDescriptionEN("Description 1");
+        updatedThesis.setNumPeople(4);
+        updatedThesis.setSupervisor(employee);
+        updatedThesis.setPrograms(List.of(program));
+        updatedThesis.setStatus(statuses.get(1));
+        updatedThesis.setStudyCycle(studyCycle);
 
         thesisDTO.setNamePL("Thesis 1 PL");
         thesisDTO.setNameEN("Thesis 1 EN");
@@ -283,11 +337,11 @@ public class ThesisServiceTests {
         thesisDTO.setNumPeople(4);
         thesisDTO.setProgramIds(List.of(1L));
         thesisDTO.setStudyCycleId(Optional.of(1L));
-        thesisDTO.setStatusId(1L);
+        thesisDTO.setStatusId(2L);
         thesisDTO.setSupervisorId(1L);
 
         Thesis result = thesisService.updateThesis(thesisId, thesisDTO);
-        assertEquals(thesis, result);
+        assertEquals(updatedThesis, result);
     }
 
     @Test
@@ -302,14 +356,33 @@ public class ThesisServiceTests {
     @Test
     public void testDeleteThesis() throws NotFoundException {
         Long thesisId = 1L;
-        Thesis thesisToDelete = new Thesis();
-        when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesisToDelete));
-        when(commentRepository.existsById(anyLong())).thenReturn(true);
-        doNothing().when(commentRepository).deleteById(anyLong());
-        doNothing().when(thesisRepository).deleteById(thesisId);
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setSupervisedTheses(new ArrayList<>());
+        employee.getSupervisedTheses().add(thesis);
+
+        thesis.setSupervisor(employee);
+
+        Thesis deletedThesis = new Thesis();
+        deletedThesis.setId(thesis.getId());
+        deletedThesis.setNamePL(thesis.getNamePL());
+        deletedThesis.setNameEN(thesis.getNameEN());
+        deletedThesis.setDescriptionPL(thesis.getDescriptionPL());
+        deletedThesis.setDescriptionEN(thesis.getDescriptionEN());
+        deletedThesis.setNumPeople(thesis.getNumPeople());
+        deletedThesis.setOccupied(thesis.getOccupied());
+        deletedThesis.setSupervisor(null);
+        deletedThesis.setPrograms(null);
+        deletedThesis.setStatus(null);
+        deletedThesis.setStudyCycle(null);
+        deletedThesis.setLeader(null);
+
+        when(thesisRepository.findById(thesisId)).thenReturn(Optional.of(thesis));
 
         Thesis result = thesisService.deleteThesis(thesisId);
-        assertEquals(thesisToDelete, result);
+
+        assertEquals(deletedThesis, result);
+        assertEquals(0, employee.getSupervisedTheses().size());
     }
 
     @Test
@@ -400,7 +473,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusNameList(){
         Long empId = 1L;
         List<String> statName = Arrays.asList("Draft", "Rejected");
-        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName, sort)).thenReturn(theses);
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statName, sort)).thenReturn(theses);
 
         List<Thesis> result = thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName);
         assertEquals(theses, result);
@@ -410,7 +483,7 @@ public class ThesisServiceTests {
     public void testGetAllThesesForEmployeeByStatusNameListNotFound(){
         Long empId = 5L;
         List<String> statName = Arrays.asList("Draft", "Rejected");
-        when(thesisRepository.findAllBySupervisor_IdAndAndStatus_NameIn(empId, statName, sort)).thenReturn(Collections.emptyList());
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(empId, statName, sort)).thenReturn(Collections.emptyList());
 
         assertEquals(thesisService.getAllThesesForEmployeeByStatusNameList(empId, statName), Collections.emptyList());
     }
@@ -473,6 +546,69 @@ public class ThesisServiceTests {
 
         when(statusRepository.findByName(statName)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> thesisService.updateThesesStatusInBulk(statName, thesesIds));
+    }    @Test
+    public void testAddThesisNotFoundException() {
+        ThesisDTO thesisDTO = new ThesisDTO();
+        Employee employee = new Employee();
+        employee.setId(1L);
+        employee.setNumTheses(2);
+
+        when(employeeRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(employee));
+        when(thesisRepository.findAllBySupervisor_IdAndStatus_NameIn(eq(employee.getId()),
+                anyList(), any(Sort.class))).thenReturn(Arrays.asList(
+                new Thesis(), new Thesis()));
+
+        thesisDTO.setSupervisorId(1L);
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> thesisService.addThesis(thesisDTO));
+
     }
 
+    @Test
+    public void testUpdateThesisNotFoundException() {
+        Long thesisId = 1L;
+        ThesisDTO thesisDTO = mock(ThesisDTO.class);
+
+        when(thesisRepository.existsById(thesisId)).thenReturn(false);
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> thesisService.updateThesis(thesisId, thesisDTO));
+
+        assertEquals("Thesis with id 1 does not exist", exception.getMessage());
+    }
+
+    @Test
+    public void testGetThesisByStudentId() {
+        Long studentId = 1L;
+
+        Reservation reservation = new Reservation();
+        reservation.setId(1L);
+        when(reservationRepository.findByStudentId(studentId)).thenReturn(reservation);
+
+        Thesis thesis = new Thesis();
+        thesis.setId(2L);
+        when(thesisRepository.findByReservations_Id(reservation.getId())).thenReturn(Optional.of(thesis));
+
+        Thesis result = thesisService.getThesisByStudentId(studentId);
+
+        assertEquals(thesis, result);
+
+        verify(reservationRepository, times(1)).findByStudentId(studentId);
+        verify(thesisRepository, times(1)).findByReservations_Id(reservation.getId());
+    }
+
+    @Test
+    public void testGetThesisByStudentIdReservationNotFound() {
+        Long studentId = 1L;
+
+        when(reservationRepository.findByStudentId(studentId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> thesisService.getThesisByStudentId(studentId));
+
+        verify(reservationRepository, times(1)).findByStudentId(studentId);
+        verify(thesisRepository, never()).findByReservations_Id(anyLong());
+    }
 }
