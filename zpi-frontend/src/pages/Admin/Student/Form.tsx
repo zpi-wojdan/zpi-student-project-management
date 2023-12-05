@@ -236,7 +236,7 @@ const StudentForm: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className='page-margin'>
       <form onSubmit={handleSubmit} className="form">
         <div className='d-flex justify-content-begin align-items-center mb-3'>
           <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>

@@ -265,14 +265,18 @@ function UplaodEmployeeFilePage() {
           flexDirection: 'column'
         }}>
 
+        <div className='d-flex justify-content-begin align-items-center'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+            &larr; {t('general.management.goBack')}
+          </button>
+          <button onClick={handleUpload} disabled={buttonDisabled} className="custom-button">
+              {t('uploadFiles.sendFiles')}
+          </button>
+        </div>
         <div>
-          <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex justify-content-center align-items-center mb-4 mt-4">
             <h2>{t('uploadFiles.attachEmployee')}</h2>
-            <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-              &larr; {t('general.management.goBack')}
-            </button>
           </div>
-
         <div
         className="container d-flex justify-content-center mt-4 mb-4"
         >
@@ -318,10 +322,6 @@ function UplaodEmployeeFilePage() {
           )}
           </div>
         </div>
-
-          <button onClick={handleUpload} disabled={buttonDisabled} className="custom-button">
-              {t('uploadFiles.sendFiles')}
-          </button>
         </div>
 
       {sentData && (

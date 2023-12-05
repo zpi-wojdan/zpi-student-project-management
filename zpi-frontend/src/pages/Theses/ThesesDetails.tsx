@@ -247,44 +247,9 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between align-items-center mb-3'>
         <div className='d-flex justify-content-begin align-items-center'>
-          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+          <button type="button" className="custom-button another-color" onClick={() => navigate('/public-theses')}>
             &larr; {t('general.management.goBack')}
           </button>
-          {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
-            <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
-              {t('thesis.edit')}
-            </button>
-            <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
-              <i className="bi bi-trash"></i>
-            </button>
-            {showDeleteConfirmation && (
-              <tr>
-                <td colSpan={5}>
-                  <ChoiceConfirmation
-                    isOpen={showDeleteConfirmation}
-                    onClose={handleCancelDelete}
-                    onConfirm={handleConfirmDelete}
-                    onCancel={handleCancelDelete}
-                    questionText={t('thesis.deleteConfirmation')}
-                  />
-                </td>
-              </tr>
-            )}
-          </React.Fragment>
-          ) : (<></>)}
-        </div>
-        {loaded ? (<React.Fragment>
-          <div className='d-flex justify-content-end align-items-center'>
-            {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
-              (user?.mail === thesis?.supervisor.mail ||
-                thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
-              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent)) ?
-              (
-                <button className="custom-button" onClick={downloadDeclaration}>
-                  {t('thesis.downloadDeclaration')}
-                </button>
-              ) : null}
-
           {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
             user?.role?.name === 'student' &&
             user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
@@ -312,9 +277,42 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
               <span></span>
             )
           }
-          </div>
-        </React.Fragment>
-        ) : (<></>)}
+          {loaded ? (<React.Fragment>
+            {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
+              (user?.mail === thesis?.supervisor.mail ||
+                thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
+              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent)) ?
+              (
+                <button className="custom-button" onClick={downloadDeclaration}>
+                  {t('thesis.downloadDeclaration')}
+                </button>
+              ) : null}
+          </React.Fragment>
+          ) : (<></>)}
+          
+          {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
+            <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
+              {t('thesis.edit')}
+            </button>
+            <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
+              <i className="bi bi-trash"></i>
+            </button>
+            {showDeleteConfirmation && (
+              <tr>
+                <td colSpan={5}>
+                  <ChoiceConfirmation
+                    isOpen={showDeleteConfirmation}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                    questionText={t('thesis.deleteConfirmation')}
+                  />
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
+          ) : (<></>)}
+        </div>
       </div>
       <div>
         {!loaded ? (
