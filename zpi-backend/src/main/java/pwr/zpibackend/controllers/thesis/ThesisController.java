@@ -95,10 +95,16 @@ public class ThesisController {
         return new ResponseEntity<>(thesisService.getAllThesesForEmployeeByStatusNameList(empId, fixedNames), HttpStatus.OK);
     }
 
-    @DeleteMapping("/cycle/{id}")
+    @DeleteMapping("/bulk/cycle/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Thesis>> deleteThesisByStudyCycle(@PathVariable Long id) {
-        return new ResponseEntity<>(thesisService.deleteThesisByStudyCycle(id), HttpStatus.OK);
+        return new ResponseEntity<>(thesisService.deleteThesesByStudyCycle(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/bulk")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Thesis>> deleteThesesInBulk(@RequestBody List<Long> thesesIds) {
+        return new ResponseEntity<>(thesisService.deleteThesesInBulk(thesesIds), HttpStatus.OK);
     }
 
 }

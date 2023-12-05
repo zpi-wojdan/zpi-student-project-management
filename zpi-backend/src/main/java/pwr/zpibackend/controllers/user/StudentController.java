@@ -56,10 +56,13 @@ public class StudentController {
     }
 
 
-    @DeleteMapping("/cycle/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<Student>> deleteStudentByStudyCycleId(@PathVariable Long id) {
-        return new ResponseEntity<>(studentService.deleteStudentByStudyCycleId(id), HttpStatus.OK);
+    @PutMapping("/bulk/cycle/{cycleId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Student>> deleteStudents(@PathVariable Long cycleId, @RequestBody List<Long> studentIds) {
+        System.out.println("cycleId: " + cycleId);
+        System.out.println("studentIds:\n");
+        studentIds.forEach(System.out::println);
+        return new ResponseEntity<>(studentService.deleteStudentsInBulk(cycleId, studentIds), HttpStatus.OK);
     }
 
 }

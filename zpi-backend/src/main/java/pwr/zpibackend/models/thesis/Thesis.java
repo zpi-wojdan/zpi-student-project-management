@@ -58,7 +58,6 @@ public class Thesis {
     private Status status;
     @Column(nullable = false)
     private Integer occupied = 0;
-//    @JoinColumn(name = "thesis_id")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "thesis", orphanRemoval = true)
     private List<Reservation> reservations;
     @CreationTimestamp

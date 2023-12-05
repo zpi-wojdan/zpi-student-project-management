@@ -142,15 +142,20 @@ public class StudentService {
         return newSpcSet;
     }
 
-    public List<Student> deleteStudentByStudyCycleId(Long cycleId) {
-        List<Student> studentsToDelete = studentRepository.findByStudentProgramCycles_Cycle_Id(cycleId);
+    public List<Student> deleteStudentsInBulk(Long cycleId, List<Long> studentsIds) {
+        List<Student> studentsByCycle = studentRepository.findByStudentProgramCycles_Cycle_Id(cycleId);
+        List<Student> studentsToDelete = studentsByCycle.stream()
+                .filter(student -> studentsIds.contains(student.getId()))
+                .toList();
         List<Student> deletedStudents = new ArrayList<>();
+
+        studentsToDelete.forEach(stud -> System.out.println(stud.getId()));
 
         for (Student stud : studentsToDelete) {
             Set<StudentProgramCycle> studentProgramCycles = stud.getStudentProgramCycles();
             List<StudentProgramCycle> spcsToDeleteLater = new ArrayList<>();
 
-            //  przygotowanie do wywalenia studentaProgramCycles
+            //  przygotowanie do wywalenia studentProgramCycles
             for (StudentProgramCycle spc : studentProgramCycles) {
                 if (spc.getCycle().getId().equals(cycleId)) {
                     spcsToDeleteLater.add(spc);
@@ -159,7 +164,6 @@ public class StudentService {
 
             //  usuwam w ten sposób, bo jak było w pętli to: ConcurrentModificationException
             spcsToDeleteLater.forEach(studentProgramCycles::remove);
-            spcsToDeleteLater.forEach(spc -> System.out.println("SPC ID - " + spc.getId()));
             studentProgramCycleRepository.deleteAll(spcsToDeleteLater);
             studentProgramCycleRepository.flush();
 
@@ -194,6 +198,5 @@ public class StudentService {
 
         return deletedStudents;
     }
-
 
 }
