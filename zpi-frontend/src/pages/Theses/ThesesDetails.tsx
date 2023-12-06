@@ -20,9 +20,10 @@ import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 
 type ThesisDetailsProps = {
   addStudents: boolean;
+  goBackPath: string;
 }
 
-const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
+const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -244,7 +245,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between align-items-center mb-3'>
         <div className='d-flex justify-content-begin align-items-center'>
-          <button type="button" className="custom-button another-color" onClick={() => navigate('/public-theses')}>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(goBackPath)}>
             &larr; {t('general.management.goBack')}
           </button>
           {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
