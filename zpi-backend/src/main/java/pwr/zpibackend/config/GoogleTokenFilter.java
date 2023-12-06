@@ -12,8 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Role;
 import pwr.zpibackend.models.user.Student;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

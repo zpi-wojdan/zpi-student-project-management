@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.StudyFieldDTO;
 import pwr.zpibackend.models.university.StudyField;
-import pwr.zpibackend.services.university.StudyFieldService;
+import pwr.zpibackend.services.university.IStudyFieldService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/studyfield")
 public class StudyFieldController {
 
-    private final StudyFieldService studyFieldService;
+    private final IStudyFieldService studyFieldService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

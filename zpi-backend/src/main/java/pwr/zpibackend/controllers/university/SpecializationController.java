@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.SpecializationDTO;
 import pwr.zpibackend.models.university.Specialization;
-import pwr.zpibackend.services.university.SpecializationService;
+import pwr.zpibackend.services.university.ISpecializationService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/specialization")
 public class SpecializationController {
 
-    private final SpecializationService specializationService;
+    private final ISpecializationService specializationService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

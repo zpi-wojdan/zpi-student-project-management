@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.thesis.CommentDTO;
 import pwr.zpibackend.models.thesis.Comment;
-import pwr.zpibackend.services.thesis.CommentService;
+import pwr.zpibackend.services.thesis.ICommentService;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/thesis/comment")
 public class CommentController {
 
-    private final CommentService commentService;
+    private final ICommentService commentService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_APPROVER')")

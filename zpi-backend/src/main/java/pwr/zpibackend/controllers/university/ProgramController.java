@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.ProgramDTO;
 import pwr.zpibackend.models.university.Program;
-import pwr.zpibackend.services.university.ProgramService;
+import pwr.zpibackend.services.university.IProgramService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/program")
 public class ProgramController {
 
-    private final ProgramService programService;
+    private final IProgramService programService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.TitleDTO;
 import pwr.zpibackend.models.university.Title;
-import pwr.zpibackend.services.university.TitleService;
+import pwr.zpibackend.services.university.ITitleService;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/title")
 public class TitleController {
-    private final TitleService titleService;
+    private final ITitleService titleService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

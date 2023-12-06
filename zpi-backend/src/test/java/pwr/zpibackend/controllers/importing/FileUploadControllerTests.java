@@ -12,11 +12,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.controllers.FileUploadController;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
-import pwr.zpibackend.services.importing.FileUploadService;
-import pwr.zpibackend.services.importing.ImportEmployees;
-import pwr.zpibackend.services.importing.ImportStudents;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
+import pwr.zpibackend.services.impl.importing.FileUploadService;
+import pwr.zpibackend.services.impl.importing.ImportEmployees;
+import pwr.zpibackend.services.impl.importing.ImportStudents;
 
 import java.io.IOException;
 import java.util.Random;

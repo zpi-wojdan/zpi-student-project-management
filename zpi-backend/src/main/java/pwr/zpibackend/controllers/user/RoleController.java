@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.models.user.Role;
 import pwr.zpibackend.dto.user.RoleDTO;
-import pwr.zpibackend.services.user.RoleService;
+import pwr.zpibackend.services.user.IRoleService;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController {
 
-    private final RoleService roleService;
+    private final IRoleService roleService;
 
     @Operation(summary = "Get all roles", description = "Returns all roles from database")
     @GetMapping

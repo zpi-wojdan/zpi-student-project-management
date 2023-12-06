@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.FacultyDTO;
 import pwr.zpibackend.models.university.Faculty;
-import pwr.zpibackend.services.university.FacultyService;
+import pwr.zpibackend.services.university.IFacultyService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/faculty")
 public class FacultyController {
 
-    private final FacultyService facultyService;
+    private final IFacultyService facultyService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

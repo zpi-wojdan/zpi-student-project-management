@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.dto.university.DepartmentDTO;
-import pwr.zpibackend.services.university.DepartmentService;
+import pwr.zpibackend.services.university.IDepartmentService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/departments")
 public class DepartmentController {
 
-    private final DepartmentService departmentService;
+    private final IDepartmentService departmentService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

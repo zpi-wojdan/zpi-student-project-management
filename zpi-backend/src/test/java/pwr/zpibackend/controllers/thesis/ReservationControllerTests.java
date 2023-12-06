@@ -10,15 +10,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pwr.zpibackend.config.GoogleAuthService;
-import pwr.zpibackend.controllers.thesis.ReservationController;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.dto.thesis.ReservationDTO;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.thesis.ReservationService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.thesis.ReservationService;
 import pwr.zpibackend.exceptions.NotFoundException;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import java.time.LocalDateTime;
 import java.util.List;

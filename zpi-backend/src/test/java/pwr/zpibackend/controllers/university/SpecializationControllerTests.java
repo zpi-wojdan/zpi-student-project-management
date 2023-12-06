@@ -15,9 +15,9 @@ import pwr.zpibackend.dto.university.SpecializationDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.models.university.Specialization;
 import pwr.zpibackend.models.university.StudyField;
-import pwr.zpibackend.services.university.SpecializationService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.university.SpecializationService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 import pwr.zpibackend.exceptions.NotFoundException;
 
 import java.util.ArrayList;

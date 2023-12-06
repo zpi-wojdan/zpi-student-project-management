@@ -14,9 +14,9 @@ import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.dto.university.ProgramDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.models.university.*;
-import pwr.zpibackend.services.university.ProgramService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.university.ProgramService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 import pwr.zpibackend.exceptions.NotFoundException;
 
 import java.util.ArrayList;

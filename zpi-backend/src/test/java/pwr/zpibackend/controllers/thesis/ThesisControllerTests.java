@@ -24,9 +24,9 @@ import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudyCycle;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
-import pwr.zpibackend.services.thesis.ThesisService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
+import pwr.zpibackend.services.impl.thesis.ThesisService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
