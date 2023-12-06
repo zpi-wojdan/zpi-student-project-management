@@ -336,7 +336,7 @@ function AddThesisPageAdmin() {
             toast.success(t("thesis.updateSuccessful"));
           })
           .catch((error) => {
-            console.error(error);
+            ;
             if (error.response.status === 401 || error.response.status === 403) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
@@ -360,7 +360,7 @@ function AddThesisPageAdmin() {
               newErrorsKeys.index = "thesis.addError"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
+              ;
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);

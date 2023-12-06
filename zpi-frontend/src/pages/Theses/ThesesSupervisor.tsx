@@ -51,7 +51,7 @@ const SupervisorMy: React.FC = () => {
         setLoadedTheses(true);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -84,7 +84,7 @@ const SupervisorMy: React.FC = () => {
         setLoadedDrafts(true);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -97,7 +97,7 @@ const SupervisorMy: React.FC = () => {
           setSubmittedTheses(response.data.length)
         })
         .catch((error) => {
-          console.error(error);
+          ;
           if (error.response.status === 401 || error.response.status === 403) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);

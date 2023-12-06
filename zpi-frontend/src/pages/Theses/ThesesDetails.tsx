@@ -57,7 +57,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -89,7 +89,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
         navigate("/theses");
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -130,11 +130,9 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
 
           if (response.status === 200) {
             toast.success(t('thesis.readyForApproval'));
-            console.log('All users reservations sent for approval successfully');
           }
         } catch (error) {
           toast.error(t('thesis.readyForApprovalError'));
-          console.error(`Failed to update reservations for reservation: ${reservation}`, error);
         }
       }
     }
@@ -171,7 +169,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
       })
 
       .catch((error) => {
-        console.error(error);
+        ;
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 2000);
@@ -238,7 +236,6 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
       u = user;
     }
     const isSupervisor = u?.id === thesis?.supervisor.id;
-    console.log('is supervisor: ' + isSupervisor);
     return u?.id === thesis?.supervisor.id;
   }
 

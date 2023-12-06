@@ -101,7 +101,6 @@ function ReservationPage({ admin }: ReservationProps) {
         }
 
         if (!isReservationValid(index, reservation)) {
-            console.error(`Invalid reservation number: ${reservation}`);
             newStudents[index] = {} as Student;
             setStudents(newStudents);
             newErrors[index] = true;
@@ -141,7 +140,6 @@ function ReservationPage({ admin }: ReservationProps) {
                     confirmedByStudent: admin,
                     confirmedBySupervisor: admin,
                 };
-                console.log(JSON.stringify(responseBody));
 
                 const response = await api.post(api_access + "reservation", JSON.stringify(responseBody), {
                     headers: {
@@ -149,14 +147,7 @@ function ReservationPage({ admin }: ReservationProps) {
                     }
 
                 })
-                    .then(response => {
-                        if (response.status === 201) {
-                            console.log(`Reservation ${reservation} created successfully`);
-                        }
-                    })
                     .catch(error => {
-                        console.error(`Failed to submit reservation ${reservation}`);
-                        console.error(error)
                         allReservationsSuccessful = false;
                         if (error.response.status === 401 || error.response.status === 403) {
                             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
@@ -180,7 +171,6 @@ function ReservationPage({ admin }: ReservationProps) {
             for (const reservation of reservations) {
                 handleReservationBlur(reservations.indexOf(reservation));
             }
-            console.error("Invalid reservation numbers");
         }
     };
 

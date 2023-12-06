@@ -64,7 +64,7 @@ const ApproveList: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -100,7 +100,7 @@ const ApproveList: React.FC = () => {
         setAvailableSupervisor(supervisors);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -117,7 +117,7 @@ const ApproveList: React.FC = () => {
         setAvailableCycles(sortedCycles);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -134,7 +134,7 @@ const ApproveList: React.FC = () => {
         setAvailableFaculties(sortedFaculties);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -151,7 +151,7 @@ const ApproveList: React.FC = () => {
         setAvailableFields(sortedStudyFields);
       })
       .catch((error) => {
-        console.error(error)
+        
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -168,7 +168,7 @@ const ApproveList: React.FC = () => {
         setAvailableSpecializations(sortedSpecializations);
       })
       .catch((error) => {
-        console.error(error)
+        
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -397,7 +397,6 @@ const ApproveList: React.FC = () => {
           toast.success(t("thesis.acceptSuccesfulBulk"));
         })
         .catch((error) => {
-          console.log("Error", error);
           if (error.response.status === 401 || error.response.status === 403) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
