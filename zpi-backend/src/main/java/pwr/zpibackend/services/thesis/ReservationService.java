@@ -2,7 +2,6 @@ package pwr.zpibackend.services.thesis;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

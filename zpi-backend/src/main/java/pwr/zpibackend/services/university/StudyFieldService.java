@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import pwr.zpibackend.dto.university.StudyFieldDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
-import pwr.zpibackend.models.university.Faculty;
 import pwr.zpibackend.models.university.StudyField;
 import pwr.zpibackend.repositories.university.FacultyRepository;
 import pwr.zpibackend.repositories.university.StudyFieldRepository;

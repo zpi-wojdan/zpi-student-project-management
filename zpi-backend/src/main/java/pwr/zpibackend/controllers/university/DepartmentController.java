@@ -1,12 +1,9 @@
 package pwr.zpibackend.controllers.university;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pwr.zpibackend.exceptions.AlreadyExistsException;
-import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Department;
 import pwr.zpibackend.dto.university.DepartmentDTO;
 import pwr.zpibackend.services.university.DepartmentService;

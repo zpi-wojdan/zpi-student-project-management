@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.dto.thesis.ReservationDTO;
 import pwr.zpibackend.services.thesis.ReservationService;

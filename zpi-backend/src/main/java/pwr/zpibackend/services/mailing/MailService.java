@@ -65,10 +65,14 @@ public class MailService {
 
             Locale locale = Locale.forLanguageTag(language);
             Context context = new Context(locale);
-            context.setVariables(Map.of(
-                    "name", name,
-                    "thesis", language.equals("pl") ? thesis.getNamePL() : thesis.getNameEN(),
-                    "url", getLinkReservation(thesis.getId())));
+            
+            // thesis cannot be null 
+            if (thesis != null) {
+                context.setVariables(Map.of(
+                        "name", name,
+                        "thesis", language.equals("pl") ? thesis.getNamePL() : thesis.getNameEN(),
+                        "url", getLinkReservation(thesis.getId())));
+            }
             String html = templateEngine.process(template.getTemplateName(), context);
 
             // utworzenie wiadomości mailowej z załącznikiem w formie obrazu (logo pwr)
@@ -84,7 +88,7 @@ public class MailService {
             helper.setText(html, true);
 
             // wysłanie wiadomości
-//             javaMailSender.send(message);
+            // javaMailSender.send(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

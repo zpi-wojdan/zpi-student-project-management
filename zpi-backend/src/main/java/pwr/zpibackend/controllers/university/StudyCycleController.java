@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.StudyCycleDTO;
-import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.StudyCycle;
 import pwr.zpibackend.services.university.StudyCycleService;
 
