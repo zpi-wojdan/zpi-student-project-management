@@ -1,12 +1,22 @@
 import React from 'react';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import {Button, Card, Container} from "react-bootstrap";
 import {useTranslation} from "react-i18next";
 
 const ServerError = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { i18n, t } = useTranslation();
-    const comeBack = () => navigate(-1);
+    const comeBack = () => {
+        let historyIndex = -1;
+        while (window.history.length > Math.abs(historyIndex)) {
+            window.history.go(historyIndex);
+            if (location.pathname !== '/error') {
+                break;
+            }
+            historyIndex--;
+        }
+    }
 
     return (
         <Container className="mt-5">
