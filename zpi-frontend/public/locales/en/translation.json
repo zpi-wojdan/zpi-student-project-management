@@ -227,7 +227,8 @@
       "reservationError": "Reservation failed!",
       "reservationSuccessful": "Reservation completed successfully!",
       "studentAlreadyReserved": "Student with index {{index}} already has a reservation!",
-      "wrongIndex": "Index is wrong or does not exist!"
+      "wrongIndex": "Index is wrong or does not exist!",
+      "wrongProgramCycle": "Student needs to be enrolled on the same program that the thesis is assigned to!"
   },
   "specialization": {
       "add": "Add specialization",

@@ -25,6 +25,7 @@ import pwr.zpibackend.services.thesis.IReservationService;
 import pwr.zpibackend.utils.MailTemplates;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -51,57 +52,53 @@ public class ReservationService implements IReservationService {
             throw new AlreadyExistsException(reservation.getStudent().getIndex());
         }
 
-        Reservation newReservation = new Reservation();
-        newReservation.setConfirmedByLeader(reservation.isConfirmedByLeader());
-        newReservation.setConfirmedBySupervisor(reservation.isConfirmedBySupervisor());
-        newReservation.setConfirmedByStudent(reservation.isConfirmedByStudent());
-        newReservation.setReadyForApproval(reservation.isReadyForApproval());
-        newReservation.setReservationDate(reservation.getReservationDate());
-        newReservation.setSentForApprovalDate(reservation.getSentForApprovalDate());
         Student student = studentRepository.findById(reservation.getStudent().getId()).get();
-        newReservation.setStudent(student);
+        Reservation newReservation = createReservationFromDTO(reservation, student);
 
         Optional<Thesis> thesisOptional = thesisRepository.findById(reservation.getThesisId());
         if (thesisOptional.isPresent()) {
             Thesis thesis = thesisOptional.get();
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            updateThesisWhenReservationIsCreated(thesis, newReservation, student);
 
-            if (authorities.stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                if (thesis.getOccupied() >= thesis.getNumPeople())
-                    throw new ThesisOccupancyFullException();
-                if (thesis.getStatus() != statusRepository.findByName("Approved").orElse(null)) {
-                    throw new IllegalArgumentException("Thesis is not available.");
-                }
-            }
-
-            if (thesis.getOccupied() == 0) {
-                thesis.setLeader(student);
-                newReservation.setConfirmedByStudent(true);
-            }
-            List<Reservation> reservations = thesis.getReservations();
-            reservations.add(newReservation);
-            thesis.setReservations(reservations);
-            thesis.setOccupied(thesis.getOccupied() + 1);
-            newReservation.setThesis(thesis);
-
-            if (newReservation.isConfirmedByLeader() && !newReservation.isConfirmedByStudent()) {
-                mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_LEADER,
-                        student, null, thesis);
-            } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
-                mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_STUDENT,
-                        student, null, thesis);
-            } else {
-                mailService.sendHtmlMailMessage(student.getMail(),
-                        MailTemplates.RESERVATION_ADMIN, student, null, thesis);
-            }
+            sendMailDuringReservationCreation(thesis, newReservation, student);
         } else {
             throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
         }
 
         reservationRepository.saveAndFlush(newReservation);
         return newReservation;
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<Reservation> addListReservation(List<ReservationDTO> reservations) {
+        List<Reservation> newReservations = new ArrayList<>();
+        for (ReservationDTO reservation : reservations) {
+            if (reservation.getThesisId() == null || reservation.getStudent() == null
+                    || reservation.getReservationDate() == null) {
+                throw new IllegalArgumentException("Thesis, student and reservation date must be provided.");
+            }
+            if (reservationRepository.findByStudent_Mail(reservation.getStudent().getMail()) != null) {
+                throw new AlreadyExistsException(reservation.getStudent().getIndex());
+            }
+
+            Student student = studentRepository.findById(reservation.getStudent().getId()).get();
+            Reservation newReservation = createReservationFromDTO(reservation, student);
+
+            Optional<Thesis> thesisOptional = thesisRepository.findById(reservation.getThesisId());
+            if (thesisOptional.isPresent()) {
+                Thesis thesis = thesisOptional.get();
+
+                updateThesisWhenReservationIsCreated(thesis, newReservation, student);
+
+                sendMailDuringReservationCreation(thesis, newReservation, student);
+            } else {
+                throw new NotFoundException("Thesis with id " + reservation.getThesisId() + " does not exist.");
+            }
+            newReservations.add(newReservation);
+        }
+        reservationRepository.saveAllAndFlush(newReservations);
+        return newReservations;
     }
 
     public List<Reservation> getAllReservations() {
@@ -146,7 +143,8 @@ public class ReservationService implements IReservationService {
                     reservationRepository.deleteById(id);
                     thesisRepository.findById(reservation.getThesis().getId())
                             .ifPresent(thesis -> {
-                                if (thesis.getLeader() != null && Objects.equals(thesis.getLeader().getId(), reservation.getStudent().getId())) {
+                                if (thesis.getLeader() != null && Objects.equals(thesis.getLeader().getId(),
+                                        reservation.getStudent().getId())) {
                                     reservationRepository.findByThesis(thesis)
                                             .stream()
                                             .filter(res -> !Objects.equals(res.getId(), reservation.getId()))
@@ -215,5 +213,53 @@ public class ReservationService implements IReservationService {
                     reservation.setConfirmedByStudent(true);
                     reservationRepository.save(reservation);
                 });
+    }
+
+    private Reservation createReservationFromDTO(ReservationDTO reservation, Student student) {
+        Reservation newReservation = new Reservation();
+        newReservation.setConfirmedByLeader(reservation.isConfirmedByLeader());
+        newReservation.setConfirmedBySupervisor(reservation.isConfirmedBySupervisor());
+        newReservation.setConfirmedByStudent(reservation.isConfirmedByStudent());
+        newReservation.setReadyForApproval(reservation.isReadyForApproval());
+        newReservation.setReservationDate(reservation.getReservationDate());
+        newReservation.setSentForApprovalDate(reservation.getSentForApprovalDate());
+        newReservation.setStudent(student);
+        return newReservation;
+    }
+
+    private void updateThesisWhenReservationIsCreated(Thesis thesis, Reservation newReservation, Student student) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        if (authorities.stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            if (thesis.getOccupied() >= thesis.getNumPeople())
+                throw new ThesisOccupancyFullException();
+            if (thesis.getStatus() != statusRepository.findByName("Approved").orElse(null)) {
+                throw new IllegalArgumentException("Thesis is not available.");
+            }
+        }
+
+        if (thesis.getOccupied() == 0) {
+            thesis.setLeader(student);
+            newReservation.setConfirmedByStudent(true);
+        }
+        List<Reservation> reservations = thesis.getReservations();
+        reservations.add(newReservation);
+        thesis.setReservations(reservations);
+        thesis.setOccupied(thesis.getOccupied() + 1);
+        newReservation.setThesis(thesis);
+    }
+
+    private void sendMailDuringReservationCreation(Thesis thesis, Reservation newReservation, Student student) {
+        if (newReservation.isConfirmedByLeader() && !newReservation.isConfirmedByStudent()) {
+            mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_LEADER,
+                    student, null, thesis);
+        } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
+            mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_STUDENT,
+                    student, null, thesis);
+        } else {
+            mailService.sendHtmlMailMessage(student.getMail(),
+                    MailTemplates.RESERVATION_ADMIN, student, null, thesis);
+        }
     }
 }

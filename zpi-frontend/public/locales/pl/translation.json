@@ -226,7 +226,8 @@
       "reservationError": "Rezerwacja nie powiodła się!",
       "reservationSuccessful": "Rezerwacja zakończona pomyślnie!",
       "studentAlreadyReserved": "Student o indeksie {{index}} posiada już rezerwację na inny temat!",
-      "wrongIndex": "Indeks jest niepoprawny lub nie istnieje w systemie!"
+      "wrongIndex": "Indeks jest niepoprawny lub nie istnieje w systemie!",
+      "wrongProgramCycle": "Student musi być zapisany na ten sam program, do którego przypisany jest temat!"
   },
   "specialization": {
       "add": "Dodaj specjalność",
