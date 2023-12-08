@@ -64,7 +64,6 @@ const ApproveList: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -100,7 +99,6 @@ const ApproveList: React.FC = () => {
         setAvailableSupervisor(supervisors);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -117,7 +115,6 @@ const ApproveList: React.FC = () => {
         setAvailableCycles(sortedCycles);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -134,7 +131,6 @@ const ApproveList: React.FC = () => {
         setAvailableFaculties(sortedFaculties);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -151,7 +147,6 @@ const ApproveList: React.FC = () => {
         setAvailableFields(sortedStudyFields);
       })
       .catch((error) => {
-        console.error(error)
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -168,7 +163,6 @@ const ApproveList: React.FC = () => {
         setAvailableSpecializations(sortedSpecializations);
       })
       .catch((error) => {
-        console.error(error)
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -397,7 +391,6 @@ const ApproveList: React.FC = () => {
           toast.success(t("thesis.acceptSuccesfulBulk"));
         })
         .catch((error) => {
-          console.log("Error", error);
           if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
@@ -440,11 +433,22 @@ const ApproveList: React.FC = () => {
     return [isValid, name];
   }
 
+  const filtered = () => {
+    if (selectedFacultyAbbr ||
+      submittedFieldAbbr ||
+      submittedSpecializationAbbr ||
+      submittedCycleName ||
+      submittedSupervisors.length > 0){
+        return true;
+      }
+    return false;
+  }
+
 
   return (
     <div className='page-margin'>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <button className={`bold custom-button sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
+        <button className={`bold custom-button ${filtered() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebar()}>
           {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
         </button>
         <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>

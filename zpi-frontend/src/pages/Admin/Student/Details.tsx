@@ -29,7 +29,6 @@ const StudentDetails: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -61,7 +60,6 @@ const StudentDetails: React.FC = () => {
         navigate("/students");
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);

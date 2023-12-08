@@ -30,7 +30,6 @@ const ThesisDetails: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -43,10 +42,8 @@ const ThesisDetails: React.FC = () => {
     api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
-        console.log(programs);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -77,7 +74,6 @@ const ThesisDetails: React.FC = () => {
         navigate("/theses");
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);

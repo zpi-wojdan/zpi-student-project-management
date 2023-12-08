@@ -33,7 +33,6 @@ const ProgramList: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -113,7 +112,6 @@ const ProgramList: React.FC = () => {
         setRefreshList(!refreshList);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);

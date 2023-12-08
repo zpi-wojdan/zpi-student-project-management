@@ -84,7 +84,6 @@ const ApproveDetails: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -145,7 +144,6 @@ const ApproveDetails: React.FC = () => {
         setStatuses(statuses => [...statuses, response.data]);
       })
       .catch((error) => {
-        console.error('Rejected error:', error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -157,7 +155,6 @@ const ApproveDetails: React.FC = () => {
         setStatuses(statuses => [...statuses, response.data]);
       })
       .catch((error) => {
-        console.error('Approved error:', error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -172,7 +169,6 @@ const ApproveDetails: React.FC = () => {
         setPrograms(response.data);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -295,7 +291,6 @@ const ApproveDetails: React.FC = () => {
           navigate('/manage');
         })
         .catch((error) => {
-          console.error(error);
           if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
@@ -344,7 +339,6 @@ const ApproveDetails: React.FC = () => {
                 setShowRejectConfirmation(false);
               })
               .catch((error) => {
-                console.error(error);
                 if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                   setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                   handleSignOut(navigate);
@@ -354,7 +348,6 @@ const ApproveDetails: React.FC = () => {
 
           })
           .catch((error) => {
-            console.error(error);
             if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);

@@ -43,7 +43,6 @@ const Navigation = ({ children }: NavigationProps) => {
     const isManagementActive = allowedPaths.some(path => location.pathname.startsWith(path));
     const isActive = (path: string) => location.pathname.startsWith(path);
     const onChangeLang = (lang: string) => {
-        console.log(lang);
         if (lang !== i18n.language) {
             i18n.changeLanguage(lang);
             Cookies.set('lang', lang);

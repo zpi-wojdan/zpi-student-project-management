@@ -7,7 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.university.DeadlineDTO;
 import pwr.zpibackend.models.university.Deadline;
-import pwr.zpibackend.services.university.DeadlineService;
+import pwr.zpibackend.services.impl.university.DeadlineService;
+import pwr.zpibackend.services.university.IDeadlineService;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @RequestMapping("/deadline")
 public class DeadlineController {
 
-    private final DeadlineService deadlineService;
+    private final IDeadlineService deadlineService;
 
     @GetMapping
     public ResponseEntity<List<Deadline>> getAllDeadlines() {

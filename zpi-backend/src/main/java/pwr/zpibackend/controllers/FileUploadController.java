@@ -8,18 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pwr.zpibackend.services.importing.FileUploadService;
 
 import java.io.IOException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pwr.zpibackend.services.importing.IFileUploadService;
 
 @RestController
 @RequestMapping("/file")
 @AllArgsConstructor
 public class FileUploadController {
 
-    private final FileUploadService service;
+    private final IFileUploadService service;
 
     @PostMapping("/student")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

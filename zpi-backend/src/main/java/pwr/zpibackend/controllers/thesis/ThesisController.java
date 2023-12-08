@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.services.thesis.ThesisService;
+import pwr.zpibackend.services.thesis.IThesisService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/thesis")
 public class ThesisController {
 
-    private final ThesisService thesisService;
+    private final IThesisService thesisService;
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")

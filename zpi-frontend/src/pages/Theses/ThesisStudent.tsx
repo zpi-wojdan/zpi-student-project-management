@@ -54,7 +54,7 @@ const ThesisStudent: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 404) {
           setLoaded(true);
         }
@@ -85,14 +85,11 @@ const ThesisStudent: React.FC = () => {
           const response = await api.put(api_access + 'reservation/' + reservation.id,
             JSON.stringify(reservation)
           );
-
           if (response.status === 200) {
             toast.success(t('thesis.readyForApproval'));
-            console.log('All users reservations sent for approval successfully');
           }
         } catch (error) {
           toast.error(t('thesis.readyForApprovalError'));
-          console.error(`Failed to update reservations for reservation: ${reservation}`, error);
         }
       }
     }
@@ -129,7 +126,7 @@ const ThesisStudent: React.FC = () => {
       })
 
       .catch((error) => {
-        console.error(error);
+        ;
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 2000);

@@ -68,7 +68,6 @@ function AddThesisPageSupervisor() {
         setSubmittedTheses(response.data.length)
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -262,7 +261,6 @@ function AddThesisPageSupervisor() {
       }
 
       if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
-        console.log('zleeeee')
         newErrors.studentIndexes = errorRequireText
         newErrorsKeys.studentIndexes = "thesis.addStudentsError";
         isValid = false;
@@ -326,7 +324,6 @@ function AddThesisPageSupervisor() {
             toast.success(t("thesis.updateSuccessful"));
           })
           .catch((error) => {
-            console.error(error);
             if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
@@ -348,7 +345,6 @@ function AddThesisPageSupervisor() {
             toast.success(t("thesis.addSuccessful"));
           })
           .catch((error) => {
-              console.error(error);
               if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);

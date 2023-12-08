@@ -121,7 +121,6 @@ function UploadStudentFilePage() {
 
       api.post(api_access + 'file/student', formData)
         .then((response) => {
-          console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
           const recordsSavedCount = invalidData.saved_records;
 
@@ -152,8 +151,6 @@ function UploadStudentFilePage() {
               ?.map((student: ImportedStudent) =>
                ({ ...student, source_file_name: file.name })),
           };
-
-          console.log(invalidData);
           
           setInvalidJsonData((prevInvalidData) => ({
             ...prevInvalidData,
@@ -199,7 +196,6 @@ function UploadStudentFilePage() {
         .catch((error) => {
           toast.error(t('uploadFiles.filesNotSentError'));
           setSentData(false);
-          console.error('Nie udało się przesłać plików', error);
           if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
@@ -227,12 +223,17 @@ function UploadStudentFilePage() {
           flexDirection: 'column'
         }}>
 
+        <div className='d-flex justify-content-begin align-items-center'>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
+            &larr; {t('general.management.goBack')}
+          </button>
+          <button onClick={handleUpload} disabled={buttonDisabled} className="custom-button">
+              {t('uploadFiles.sendFiles')}
+          </button>
+        </div>
         <div>
-          <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className="d-flex justify-content-center align-items-center mb-4 mt-4">
             <h2>{t('uploadFiles.attachStudent')}</h2>
-            <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
-              &larr; {t('general.management.goBack')}
-            </button>
         </div>
 
         <div
@@ -280,10 +281,6 @@ function UploadStudentFilePage() {
           )}
           </div>
         </div>
-
-          <button onClick={handleUpload} disabled={buttonDisabled} className="custom-button">
-              {t('uploadFiles.sendFiles')}
-          </button>
         </div>
 
     {sentData && (

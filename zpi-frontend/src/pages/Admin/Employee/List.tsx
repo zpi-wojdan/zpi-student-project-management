@@ -9,7 +9,7 @@ import { Department } from '../../../models/university/Department'
 import SearchBar from '../../../components/SearchBar';
 import api_access from '../../../utils/api_access';
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import {Title} from "../../../models/user/Title";
+import { Title } from "../../../models/user/Title";
 
 const EmployeeList: React.FC = () => {
   // @ts-ignore
@@ -33,7 +33,6 @@ const EmployeeList: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -67,7 +66,6 @@ const EmployeeList: React.FC = () => {
         setAvailableDepartments(sortedDepartments);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -84,7 +82,6 @@ const EmployeeList: React.FC = () => {
         setAvailableTitles(response.data);
       })
       .catch((error) => {
-        console.error(error)
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -335,7 +332,7 @@ const EmployeeList: React.FC = () => {
         </button>
       </div>
       {!loaded ? (
-          <LoadingSpinner height="50vh" />
+        <LoadingSpinner height="50vh" />
       ) :
         (<React.Fragment>
 

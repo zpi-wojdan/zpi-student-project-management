@@ -36,7 +36,6 @@ const DeadlineList: React.FC = () => {
                 setLoaded(true);
             })
             .catch((error) => {
-                console.error(error);
                 if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
@@ -84,7 +83,6 @@ const DeadlineList: React.FC = () => {
                 setRefreshList(!refreshList);
             })
             .catch((error) => {
-                console.error(error);
                 if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);

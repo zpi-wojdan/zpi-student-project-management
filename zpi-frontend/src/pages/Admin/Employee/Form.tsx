@@ -74,7 +74,6 @@ const EmployeeForm: React.FC = () => {
               newErrorsKeys.mail = "general.management.mailExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
               if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
@@ -98,7 +97,6 @@ const EmployeeForm: React.FC = () => {
               newErrorsKeys.mail = "general.management.mailExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
               if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
@@ -184,7 +182,6 @@ const EmployeeForm: React.FC = () => {
         setAvailableDepartments(response.data);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -199,7 +196,6 @@ const EmployeeForm: React.FC = () => {
         setAvailableRoles(filteredRoles);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -213,7 +209,6 @@ const EmployeeForm: React.FC = () => {
         setAvailableTitles(response.data);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);

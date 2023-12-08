@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.user.StudentDTO;
 import pwr.zpibackend.models.user.Student;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.user.IStudentService;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/student")
 public class StudentController {
 
-    private final StudentService studentService;
+    private final IStudentService studentService;
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
