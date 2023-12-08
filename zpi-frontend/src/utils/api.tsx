@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
-
+import globalRouter from "../globalRouter";
 
 const api = axios.create();
 
@@ -11,5 +11,17 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+
+api.interceptors.response.use(
+    function (response) {
+      return response;
+    },
+    function (error) {
+      if (!error.response && error.code === 'ERR_NETWORK' && globalRouter.navigate) {
+        globalRouter.navigate("/error");
+      }
+      return Promise.reject(error);
+    }
+  );
 
 export default api;

@@ -104,6 +104,7 @@
           "no": "No",
           "noData": "No data",
           "noSearchData": "No search results",
+          "refresh": "Refresh",
           "reject": "Reject",
           "rejectSelected": "Reject selected",
           "reserve": "Reserve",
@@ -190,6 +191,10 @@
       "myTheses": "My theses",
       "myThesis": "My thesis",
       "reports": "Reports"
+  },
+  "networkErrorPage": {
+      "title": "Server error",
+      "description": "Server is not responding, please try again later."
   },
   "program": {
       "add": "Add study program",

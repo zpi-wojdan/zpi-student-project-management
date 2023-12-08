@@ -103,6 +103,7 @@
           "no": "Nie",
           "noData": "Brak danych",
           "noSearchData": "Brak wyników wyszukiwania",
+          "refresh": "Odśwież",
           "reject": "Odrzuć",
           "rejectSelected": "Odrzuć wybrane",
           "reserve": "Zarezerwuj",
@@ -189,6 +190,10 @@
       "myTheses": "Moje tematy",
       "myThesis": "Mój temat",
       "reports": "Raporty"
+  },
+  "networkErrorPage": {
+      "title": "Błąd serwera",
+      "description": "Serwer nie odpowiada, spróbuj ponownie później."
   },
   "program": {
       "add": "Dodaj program studiów",

@@ -60,7 +60,7 @@ const DeadlineForm: React.FC = () => {
             if (error.response && error.response.status === 409) {
               toast.error(t("deadline.activityExists"));
             } else {
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -77,7 +77,7 @@ const DeadlineForm: React.FC = () => {
             if (error.response && error.response.status === 409) {
               toast.error(t("deadline.activityExists"));
             } else {
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }

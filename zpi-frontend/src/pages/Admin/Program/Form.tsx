@@ -73,8 +73,7 @@ const ProgramForm: React.FC = () => {
               newErrorsKeys.index = "program.nameExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              ;
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -97,8 +96,7 @@ const ProgramForm: React.FC = () => {
               newErrorsKeys.index = "program.nameExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              ;
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -163,8 +161,7 @@ const ProgramForm: React.FC = () => {
         setAvailableFaculties(response.data);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -177,8 +174,7 @@ const ProgramForm: React.FC = () => {
         setAvailableFields(response.data);
       })
       .catch((error) => {
-        
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -191,8 +187,7 @@ const ProgramForm: React.FC = () => {
         setAvailableSpecializations(response.data);
       })
       .catch((error) => {
-        
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -205,8 +200,7 @@ const ProgramForm: React.FC = () => {
         setAvailableStudyCycles(response.data);
       })
       .catch((error) => {
-        
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }

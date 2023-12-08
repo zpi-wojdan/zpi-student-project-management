@@ -131,7 +131,7 @@ function ReservationPage({ admin }: ReservationProps) {
             .catch(error => {
                 newStudents[index] = {} as Student;
                 newErrors[index] = true;
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -169,11 +169,11 @@ function ReservationPage({ admin }: ReservationProps) {
                     }
                 })
                 .catch(error => {
-                    if (error.response.status === 401 || error.response.status === 403) {
+                    if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
                     }
-                    else if (error.response.status === 409) {
+                    else if (error.response && error.response.status === 409) {
                         toast.error(t('reservation.studentAlreadyReserved', {
                             index: error.response.data.message,
                         }));

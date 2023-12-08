@@ -75,11 +75,11 @@ const Reports = () => {
                     setTimeout(() => {
                         toast.dismiss(toastId);
                     }, 2000);
-                    if (error.response.status === 401 || error.response.status === 403) {
+                    if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
                     }
-                    else if (error.response.status === 404) {
+                    else if (error.response && error.response.status === 404) {
                         if (formData.reportType === 'thesisGroups')
                             toast.error(t('reports.generateThesisGroupsError'));
                         else
@@ -130,7 +130,7 @@ const Reports = () => {
                 setAvailableFaculties(response.data);
             })
             .catch((error) => {
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -143,7 +143,7 @@ const Reports = () => {
                 setAvailableFields(response.data);
             })
             .catch((error) => {
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }

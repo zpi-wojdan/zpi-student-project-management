@@ -64,8 +64,7 @@ const ApproveList: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -100,8 +99,7 @@ const ApproveList: React.FC = () => {
         setAvailableSupervisor(supervisors);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -117,8 +115,7 @@ const ApproveList: React.FC = () => {
         setAvailableCycles(sortedCycles);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -134,8 +131,7 @@ const ApproveList: React.FC = () => {
         setAvailableFaculties(sortedFaculties);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -151,8 +147,7 @@ const ApproveList: React.FC = () => {
         setAvailableFields(sortedStudyFields);
       })
       .catch((error) => {
-        
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -168,8 +163,7 @@ const ApproveList: React.FC = () => {
         setAvailableSpecializations(sortedSpecializations);
       })
       .catch((error) => {
-        
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -397,7 +391,7 @@ const ApproveList: React.FC = () => {
           toast.success(t("thesis.acceptSuccesfulBulk"));
         })
         .catch((error) => {
-          if (error.response.status === 401 || error.response.status === 403) {
+          if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
           }

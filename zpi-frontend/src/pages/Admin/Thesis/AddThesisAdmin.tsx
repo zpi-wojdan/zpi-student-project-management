@@ -83,7 +83,7 @@ function AddThesisPageAdmin() {
         setStatuses(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status ===403){
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -96,7 +96,7 @@ function AddThesisPageAdmin() {
       setStudyCycles(response.data);
     })
     .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
+      if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
         handleSignOut(navigate);
       }
@@ -109,7 +109,7 @@ function AddThesisPageAdmin() {
       setPrograms(response.data);
     })
     .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
+      if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
         handleSignOut(navigate);
       }
@@ -122,7 +122,7 @@ function AddThesisPageAdmin() {
       setEmployees(response.data);
     })
     .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
+      if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
         handleSignOut(navigate);
       }
@@ -336,8 +336,7 @@ function AddThesisPageAdmin() {
             toast.success(t("thesis.updateSuccessful"));
           })
           .catch((error) => {
-            ;
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
@@ -360,8 +359,7 @@ function AddThesisPageAdmin() {
               newErrorsKeys.index = "thesis.addError"
               setErrorsKeys(newErrorsKeys);
             } else {
-              ;
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }

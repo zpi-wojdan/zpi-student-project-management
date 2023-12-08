@@ -68,8 +68,7 @@ const SpecializationForm: React.FC = () => {
               newErrorsKeys.abbreviation = 'general.management.abbreviationExists'
               setErrorsKeys(newErrorsKeys);
             } else {
-              ;
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -91,8 +90,7 @@ const SpecializationForm: React.FC = () => {
               newErrorsKeys.abbreviation = 'general.management.abbreviationExists'
               setErrorsKeys(newErrorsKeys);
             } else {
-              ;
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -155,8 +153,7 @@ const SpecializationForm: React.FC = () => {
         setAvailableFaculties(response.data);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -169,8 +166,7 @@ const SpecializationForm: React.FC = () => {
         setAvailableFields(response.data);
       })
       .catch((error) => {
-        
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }

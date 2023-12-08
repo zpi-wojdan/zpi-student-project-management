@@ -6,6 +6,7 @@ import handleSignOut from "../auth/Logout";
 import { Dropdown, Nav } from 'react-bootstrap';
 import { Role } from "../models/user/Role";
 import { useTranslation } from "react-i18next";
+import globalRouter from '../globalRouter';
 
 type NavigationProps = {} & {
     children?: ReactNode
@@ -21,6 +22,8 @@ const Navigation = ({ children }: NavigationProps) => {
     const navigate = useNavigate();
     const signOut = () => handleSignOut(navigate);
     const isLoginPage = location.pathname === '/login';
+
+    globalRouter.navigate = navigate;
 
     const allowedPaths = [
         '/students',

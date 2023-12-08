@@ -58,8 +58,7 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
         setLoaded(true);
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -90,8 +89,7 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
         navigate("/theses");
       })
       .catch((error) => {
-        ;
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -175,11 +173,11 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
           toast.dismiss(toastId);
         }, 2000);
 
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        else if (error.response.status === 404) {
+        else if (error.response && error.response.status === 404) {
           toast.error(t('thesis.downloadNoDataError'));
         }
         else

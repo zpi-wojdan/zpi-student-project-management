@@ -59,7 +59,7 @@ const StudyCycleForm: React.FC = () => {
             toast.success(t("study_cycle.updateSuccessful"));
           })
           .catch((error) => {
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
@@ -72,7 +72,7 @@ const StudyCycleForm: React.FC = () => {
             toast.success(t("study_cycle.addSuccessful"));
           })
           .catch((error) => {
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
