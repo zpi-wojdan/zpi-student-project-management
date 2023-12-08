@@ -328,7 +328,7 @@ function AddThesisPageSupervisor() {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+            if (error.response && error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
               const index = (error.response.data.message as string).split(' ')[3];
               toast.error(t(`thesis.errorStudents`, {
                 index: index
@@ -349,7 +349,7 @@ function AddThesisPageSupervisor() {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+              if (error.response && error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
                 const index = (error.response.data.message as string).split(' ')[3];
                 toast.error(t(`thesis.errorStudents`, {
                   index: index

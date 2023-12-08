@@ -55,7 +55,7 @@ const ThesisStudent: React.FC = () => {
       })
       .catch((error) => {
         ;
-        if (error.response.status === 404) {
+        if (error.response && error.response.status === 404) {
           setLoaded(true);
         }
         if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
@@ -135,7 +135,7 @@ const ThesisStudent: React.FC = () => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        else if (error.response.status === 404) {
+        else if (error.response && error.response.status === 404) {
           toast.error(t('thesis.downloadNoDataError'));
         }
         else

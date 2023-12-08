@@ -79,7 +79,7 @@ const Reports = () => {
                         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                         handleSignOut(navigate);
                     }
-                    else if (error.response.status === 404) {
+                    else if (error.response && error.response.status === 404) {
                         if (formData.reportType === 'thesisGroups')
                             toast.error(t('reports.generateThesisGroupsError'));
                         else

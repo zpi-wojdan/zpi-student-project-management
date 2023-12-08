@@ -177,7 +177,7 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        else if (error.response.status === 404) {
+        else if (error.response && error.response.status === 404) {
           toast.error(t('thesis.downloadNoDataError'));
         }
         else
