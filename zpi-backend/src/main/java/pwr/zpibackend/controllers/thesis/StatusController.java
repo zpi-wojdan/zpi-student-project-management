@@ -6,7 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.thesis.StatusDTO;
 import pwr.zpibackend.models.thesis.Status;
-import pwr.zpibackend.services.thesis.StatusService;
+import pwr.zpibackend.services.impl.thesis.StatusService;
+import pwr.zpibackend.services.thesis.IStatusService;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/status")
 public class StatusController {
-    private final StatusService statusService;
+    private final IStatusService statusService;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")

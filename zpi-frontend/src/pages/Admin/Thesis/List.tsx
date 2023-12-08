@@ -36,7 +36,7 @@ const ThesisList: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -86,7 +86,7 @@ const ThesisList: React.FC = () => {
         setAvailableSupervisor(supervisors);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -103,7 +103,7 @@ const ThesisList: React.FC = () => {
         setAvailableCycles(sortedCycles);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -120,7 +120,7 @@ const ThesisList: React.FC = () => {
         setAvailableFaculties(sortedFaculties);
       })
       .catch((error) => {
-        console.error(error);
+        ;
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -137,7 +137,7 @@ const ThesisList: React.FC = () => {
         setAvailableFields(sortedStudyFields);
       })
       .catch((error) => {
-        console.error(error)
+        
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -154,7 +154,7 @@ const ThesisList: React.FC = () => {
         setAvailableSpecializations(sortedSpecializations);
       })
       .catch((error) => {
-        console.error(error)
+        
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);

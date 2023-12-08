@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
-import pwr.zpibackend.services.reports.PdfService;
+import pwr.zpibackend.services.reports.IPdfService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.Map;
 @RequestMapping("/report")
 public class PdfController {
 
-    private final PdfService pdfService;
+    private final IPdfService pdfService;
 
     @GetMapping("pdf/students-without-thesis")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

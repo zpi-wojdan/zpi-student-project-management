@@ -13,9 +13,9 @@ import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
 import pwr.zpibackend.dto.reports.ThesisGroupDTO;
-import pwr.zpibackend.services.reports.PdfService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.reports.PdfService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import javax.servlet.http.HttpServletResponse;
 

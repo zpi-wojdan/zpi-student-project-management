@@ -55,7 +55,6 @@ const DepartmentForm: React.FC = () => {
         setFaculties(response.data);
       })
       .catch((error) => {
-        console.error(error);
         if (error.response.status === 401 || error.response.status === 403) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
@@ -82,7 +81,6 @@ const DepartmentForm: React.FC = () => {
               newErrorsKeys.code = "general.management.abbreviationExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
@@ -105,7 +103,6 @@ const DepartmentForm: React.FC = () => {
               newErrorsKeys.code = "general.management.abbreviationExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);

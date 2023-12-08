@@ -140,7 +140,6 @@ function UplaodEmployeeFilePage() {
 
       api.post(api_access + 'file/employee', formData)
         .then((response) => {
-          console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
           const recordsSavedCount = invalidData.saved_records;
 
@@ -237,7 +236,6 @@ function UplaodEmployeeFilePage() {
         .catch((error) => {
           toast.error(t('uploadFiles.filesNotSentError'));
           setSentData(false);
-          console.error('Nie udało się przesłać plików', error);
           if (error.response.status === 401 || error.response.status === 403) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);

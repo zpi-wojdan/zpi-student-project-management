@@ -15,9 +15,9 @@ import pwr.zpibackend.dto.thesis.StatusDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Status;
-import pwr.zpibackend.services.thesis.StatusService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.thesis.StatusService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import java.util.ArrayList;
 import java.util.List;

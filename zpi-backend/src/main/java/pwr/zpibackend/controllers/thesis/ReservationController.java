@@ -5,10 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pwr.zpibackend.exceptions.ThesisOccupancyFullException;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.dto.thesis.ReservationDTO;
-import pwr.zpibackend.services.thesis.ReservationService;
+import pwr.zpibackend.services.thesis.IReservationService;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ReservationController {
 
-    private final ReservationService reservationService;
+    private final IReservationService reservationService;
 
     @GetMapping("")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
