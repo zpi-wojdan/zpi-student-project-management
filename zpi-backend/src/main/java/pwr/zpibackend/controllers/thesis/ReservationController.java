@@ -37,6 +37,12 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.addReservation(reservation), HttpStatus.CREATED);
     }
 
+    @PostMapping("/list")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
+    public ResponseEntity<List<Reservation>> addListReservation(@RequestBody List<ReservationDTO> reservations) {
+        return new ResponseEntity<>(reservationService.addListReservation(reservations), HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
     public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation, @PathVariable Long id) {
