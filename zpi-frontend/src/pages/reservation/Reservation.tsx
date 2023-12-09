@@ -271,7 +271,7 @@ function ReservationPage({ admin }: ReservationProps) {
                                 <td>
                                     <button
                                         type="button"
-                                        className="custom-button another-color form-control"
+                                        className="custom-button form-control"
                                         onClick={addReservationInput}
                                     >
                                         {t('reservation.addPerson')}
