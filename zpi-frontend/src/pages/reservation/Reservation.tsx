@@ -142,6 +142,7 @@ function ReservationPage({ admin }: ReservationProps) {
     };
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        reservations.forEach((reservation, index) => handleReservationBlur(index));
         e.preventDefault();
         if (reservations.every((reservation, index) => isReservationValid(index, reservation))) {
 

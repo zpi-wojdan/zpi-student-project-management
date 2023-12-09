@@ -260,7 +260,7 @@ public class ReservationService implements IReservationService {
         } else {
             if (!(newReservation.getStudent().equals(thesis.getLeader()))) {
                 mailService.sendHtmlMailMessage(student.getMail(),
-                        MailTemplates.RESERVATION_CANCELED, student, null, thesis);
+                        MailTemplates.RESERVATION_ADMIN, student, null, thesis);
             }
         }
     }
