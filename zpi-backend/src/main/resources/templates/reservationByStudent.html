@@ -21,23 +21,20 @@
                   style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
             <td class="content-wrap"
                 style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 20px;">
-              <img src="cid:image" alt="PWR Logo"
-                   style="width: 300px; display: block; margin-bottom: 35px;">
+                <img src="https://dona.pwr.edu.pl/szukaj/img/logo_PWr_kolor_poziom_bez_tla.png"
+                alt="PWR Logo" style="width: 300px; display: block; margin-bottom: 35px;">
               <table style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" width="100%">
                 <tbody>
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td class="content-block"
                       style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;"
-                      th:text="#{greeting}">
-                     <strong
-                          style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"
-                          th:text="${name}"></strong>,
+                      th:text="#{greeting(${name})}">
                   </td>
                 </tr>
                 <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                   <td class="content-block"
                       style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                    <p th:text="#{reservationByStudent}">: <strong th:text="${thesis}"></strong>.</p>
+                    <p th:text="#{reservationByStudent(${thesis})}"></p>
                     <p th:text="#{reservationConfirmation}"></p>
                     <p th:text="#{reservationButtonAnnotation}"></p>
                   </td>

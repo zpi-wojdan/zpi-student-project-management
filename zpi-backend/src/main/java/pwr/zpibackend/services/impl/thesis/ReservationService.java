@@ -258,8 +258,10 @@ public class ReservationService implements IReservationService {
             mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_STUDENT,
                     student, null, thesis);
         } else {
-            mailService.sendHtmlMailMessage(student.getMail(),
-                    MailTemplates.RESERVATION_ADMIN, student, null, thesis);
+            if (!(newReservation.getStudent().equals(thesis.getLeader()))) {
+                mailService.sendHtmlMailMessage(student.getMail(),
+                        MailTemplates.RESERVATION_CANCELED, student, null, thesis);
+            }
         }
     }
 }
