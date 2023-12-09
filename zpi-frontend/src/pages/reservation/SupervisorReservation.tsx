@@ -22,7 +22,7 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
 
-    const [reservations, setReservations] = useState<string[]>(Array(numPeople).fill(""));
+    const [reservations, setReservations] = useState<string[]>(Array(numPeople || 1).fill(""));
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
