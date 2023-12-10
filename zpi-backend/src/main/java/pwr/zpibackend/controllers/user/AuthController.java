@@ -15,9 +15,10 @@ public class AuthController {
 
     private final IAuthService authService;
 
-    @Operation(summary = "Get logged user details", description = "Returns logged user details based on email")
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/{email}/details")
+    @Operation(summary = "Get logged in user details",
+            description = "Returns logged user details based on email. <br>Requires authenticated user.")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> getUserDetails(@PathVariable String email) {
         return ResponseEntity.ok(authService.getUserDetails(email));
     }
