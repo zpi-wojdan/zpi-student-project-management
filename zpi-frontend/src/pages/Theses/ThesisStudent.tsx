@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import StudentTable from '../../components/StudentsTable';
 import { ThesisFront, Thesis } from '../../models/thesis/Thesis';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
-import { Employee } from '../../models/user/Employee';
 import { Student } from '../../models/user/Student';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
@@ -196,7 +195,7 @@ const ThesisStudent: React.FC = () => {
                 <p>{thesis.nameEN}</p>
               )}
               <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' ? (
+              {i18n.language === 'pl' || !thesis.descriptionEN ? (
                 <p>{thesis.descriptionPL}</p>
               ) : (
                 <p>{thesis.descriptionEN}</p>

@@ -26,10 +26,10 @@ public class ReservationDTO {
     @Schema(description = "Flag indicating whether the reservation is ready for approval.", example = "true")
     private boolean isReadyForApproval;
 
-    @Schema(description = "Date of the reservation.", example = "2024-01-01 12:00:00")
+    @Schema(description = "Date of the reservation.")
     private LocalDateTime reservationDate;
 
-    @Schema(description = "Date when the reservation was sent for approval.", example = "2024-01-01 12:00:00")
+    @Schema(description = "Date when the reservation was sent for approval.")
     private LocalDateTime sentForApprovalDate;
 
     @Schema(description = "Student who made the reservation.")

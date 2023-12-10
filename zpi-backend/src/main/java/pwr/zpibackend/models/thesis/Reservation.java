@@ -43,12 +43,12 @@ public class Reservation {
 
     @Column(name = "reservation_date", nullable = false)
     @NotNull(message = "Reservation date cannot be null")
-    @Schema(description = "Date of the reservation.", example = "2024-01-01 12:00:00")
+    @Schema(description = "Date of the reservation.")
     private LocalDateTime reservationDate;
 
     @Column(name = "sent_for_approval_date")
     @NotNull(message = "Reservation date cannot be null")
-    @Schema(description = "Date when the reservation was sent for approval.", example = "2024-01-01 12:00:00")
+    @Schema(description = "Date when the reservation was sent for approval.")
     private LocalDateTime sentForApprovalDate;
 
     @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
