@@ -22,10 +22,11 @@ import api_access from "../../../utils/api_access";
 
 const ClearDataByCycle: React.FC = () => {
 
-    enum SelectedToBeCleared {
+    enum ClearingMode {
         NONE = 0,
-        THESES = 1,
+        DELETE_THESES = 1,
         STUDENTS = 2,
+        ARCHIVE_THESES = 3
     }
 
     //  podstawa
@@ -36,9 +37,10 @@ const ClearDataByCycle: React.FC = () => {
     const navigate = useNavigate();
 
     const [theses, setTheses] = useState<ThesisFront[]>([]);
+    const [closedTheses, setClosedTheses] = useState<ThesisFront[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
 
-    const [selectedToClear, setSelectedToClear] = useState<SelectedToBeCleared>(SelectedToBeCleared.THESES);
+    const [selectedToClear, setSelectedToClear] = useState<ClearingMode>(ClearingMode.STUDENTS);
     const [key, setKey] = useState(0);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -46,24 +48,43 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    //  tematów:
-    const [filteredTheses, setFilteredTheses] = useState<ThesisFront[]>(theses);
+    //  usuwanych tematów:
+    const [filteredThesesDeleting, setFilteredThesesDeleting] = useState<ThesisFront[]>(theses);
 
-    const [availableSupervisorsTheses, setAvailableSupervisorTheses] = useState<Employee[]>([]);
-    const [selectedSupervisorsTheses, setSelectedSupervisorsTheses] = useState<number[]>([]);
-    const [submittedSupervisorsTheses, setSubmittedSupervisorsTheses] = useState<number[]>([]);
-    const [availableCyclesTheses, setAvailableCyclesTheses] = useState<StudyCycle[]>([]);
-    const [selectedCycleNameTheses, setSelectedCycleNameTheses] = useState<string>("");
-    const [submittedCycleNameTheses, setSubmittedCycleNameTheses] = useState<string>("");
-    const [availableFacultiesTheses, setAvailableFacultiesTheses] = useState<Faculty[]>([]);
-    const [selectedFacultyAbbrTheses, setSelectedFacultyAbbrTheses] = useState<string>("");
-    const [submittedFacultyAbbrTheses, setSubmittedFacultyAbbrTheses] = useState<string>("");
-    const [availableFieldsTheses, setAvailableFieldsTheses] = useState<StudyField[]>([]);
-    const [selectedFieldAbbrTheses, setSelectedFieldAbbrTheses] = useState<string>("");
-    const [submittedFieldAbbrTheses, setSubmittedFieldAbbrTheses] = useState<string>("");
-    const [availableSpecializationsTheses, setAvailableSpecializationsTheses] = useState<Specialization[]>([]);
-    const [selectedSpecializationAbbrTheses, setSelectedSpecializationAbbrTheses] = useState<string>("");
-    const [submittedSpecializationAbbrTheses, setSubmittedSpecializationAbbrTheses] = useState<string>("");
+    const [availableSupervisorsThesesDeleting, setAvailableSupervisorThesesDeleting] = useState<Employee[]>([]);
+    const [selectedSupervisorsThesesDeleting, setSelectedSupervisorsThesesDeleting] = useState<number[]>([]);
+    const [submittedSupervisorsThesesDeleting, setSubmittedSupervisorsThesesDeleting] = useState<number[]>([]);
+    const [availableCyclesThesesDeleting, setAvailableCyclesThesesDeleting] = useState<StudyCycle[]>([]);
+    const [selectedCycleNameThesesDeleting, setSelectedCycleNameThesesDeleting] = useState<string>("");
+    const [submittedCycleNameThesesDeleting, setSubmittedCycleNameThesesDeleting] = useState<string>("");
+    const [availableFacultiesThesesDeleting, setAvailableFacultiesThesesDeleting] = useState<Faculty[]>([]);
+    const [selectedFacultyAbbrThesesDeleting, setSelectedFacultyAbbrThesesDeleting] = useState<string>("");
+    const [submittedFacultyAbbrThesesDeleting, setSubmittedFacultyAbbrThesesDeleting] = useState<string>("");
+    const [availableFieldsThesesDeleting, setAvailableFieldsThesesDeleting] = useState<StudyField[]>([]);
+    const [selectedFieldAbbrThesesDeleting, setSelectedFieldAbbrThesesDeleting] = useState<string>("");
+    const [submittedFieldAbbrThesesDeleting, setSubmittedFieldAbbrThesesDeleting] = useState<string>("");
+    const [availableSpecializationsThesesDeleting, setAvailableSpecializationsThesesDeleting] = useState<Specialization[]>([]);
+    const [selectedSpecializationAbbrThesesDeleting, setSelectedSpecializationAbbrThesesDeleting] = useState<string>("");
+    const [submittedSpecializationAbbrThesesDeleting, setSubmittedSpecializationAbbrThesesDeleting] = useState<string>("");
+
+    //  archiwizowanie tematów
+    const [filteredThesesArchive, setFilteredThesesArchive] = useState<ThesisFront[]>(theses);
+
+    const [availableSupervisorsThesesArchive, setAvailableSupervisorThesesArchive] = useState<Employee[]>([]);
+    const [selectedSupervisorsThesesArchive, setSelectedSupervisorsThesesArchive] = useState<number[]>([]);
+    const [submittedSupervisorsThesesArchive, setSubmittedSupervisorsThesesArchive] = useState<number[]>([]);
+    const [availableCyclesThesesArchive, setAvailableCyclesThesesArchive] = useState<StudyCycle[]>([]);
+    const [selectedCycleNameThesesArchive, setSelectedCycleNameThesesArchive] = useState<string>("");
+    const [submittedCycleNameThesesArchive, setSubmittedCycleNameThesesArchive] = useState<string>("");
+    const [availableFacultiesThesesArchive, setAvailableFacultiesThesesArchive] = useState<Faculty[]>([]);
+    const [selectedFacultyAbbrThesesArchive, setSelectedFacultyAbbrThesesArchive] = useState<string>("");
+    const [submittedFacultyAbbrThesesArchive, setSubmittedFacultyAbbrThesesArchive] = useState<string>("");
+    const [availableFieldsThesesArchive, setAvailableFieldsThesesArchive] = useState<StudyField[]>([]);
+    const [selectedFieldAbbrThesesArchive, setSelectedFieldAbbrThesesArchive] = useState<string>("");
+    const [submittedFieldAbbrThesesArchive, setSubmittedFieldAbbrThesesArchive] = useState<string>("");
+    const [availableSpecializationsThesesArchive, setAvailableSpecializationsThesesArchive] = useState<Specialization[]>([]);
+    const [selectedSpecializationAbbrThesesArchive, setSelectedSpecializationAbbrThesesArchive] = useState<string>("");
+    const [submittedSpecializationAbbrThesesArchive, setSubmittedSpecializationAbbrThesesArchive] = useState<string>("");
 
     //  studentów:
     const [filteredStudents, setFilteredStudents] = useState<Student[]>(students);
@@ -84,8 +105,11 @@ const ClearDataByCycle: React.FC = () => {
 
     //  wyszukiwanie:
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    const [searchTermTheses, setSearchTermTheses] = useState<string>('');
-    const [afterSearchTheses, setAfterSearchTheses] = useState<ThesisFront[]>(theses);
+    const [searchTermThesesDeleting, setSearchTermThesesDeleting] = useState<string>('');
+    const [afterSearchThesesDeleting, setAfterSearchThesesDeleting] = useState<ThesisFront[]>(theses);
+
+    const [searchTermThesesArchive, setSearchTermThesesArchive] = useState<string>('');
+    const [afterSearchThesesArchive, setAfterSearchThesesArchive] = useState<ThesisFront[]>(theses);
 
     const [searchTermStudents, setSearchTermStudents] = useState<string>('');
     const [afterSearchStudents, setAfterSearchStudents] = useState<Student[]>(students);
@@ -96,39 +120,59 @@ const ClearDataByCycle: React.FC = () => {
     //  ogólna
     const ITEMS_PER_PAGE = ['10', '25', '50', 'All'];
     const [currentITEMS_PER_PAGE, setCurrentITEMS_PER_PAGE] = useState(ITEMS_PER_PAGE);
-    const [thesesLoaded, setThesesLoaded] = useState<boolean>(false);
+    const [thesesDeletingLoaded, setThesesDeletingLoaded] = useState<boolean>(false);
+    const [thesesArchiveLoaded, setThesesArchiveLoaded] = useState<boolean>(false);
     const [studentsLoaded, setStudentsLoaded] = useState<boolean>(false);
 
-    //  tematy
-    const [currentPageTheses, setCurrentPageTheses] = useState(1);
-    const [inputValueTheses, setInputValueTheses] = useState(currentPageTheses);
-    const [thesesPerPage, setThesesPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
-    const [chosenThesesPerPage, setChosenThesesPerPage] = useState(thesesPerPage);
-    const indexOfLastTheses = thesesPerPage === 'All' ? afterSearchTheses.length : currentPageTheses * parseInt(thesesPerPage, 10);
-    const indexOfFirstTheses = thesesPerPage === 'All' ? 0 : indexOfLastTheses - parseInt(thesesPerPage, 10);
-    const totalPagesTheses = thesesPerPage === 'All' ? 1 : Math.ceil(afterSearchTheses.length / parseInt(thesesPerPage, 10));
+    //  usuwanie tematów
+    const [currentPageThesesDeleting, setCurrentPageThesesDeleting] = useState(1);
+    const [inputValueThesesDeleting, setInputValueThesesDeleting] = useState(currentPageThesesDeleting);
+    const [thesesDeletingPerPage, setThesesDeletingPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
+    const [chosenThesesDeletingPerPage, setChosenThesesDeletingPerPage] = useState(thesesDeletingPerPage);
+    const indexOfLastThesesDeleting = thesesDeletingPerPage === 'All' ? afterSearchThesesDeleting.length : currentPageThesesDeleting * parseInt(thesesDeletingPerPage, 10);
+    const indexOfFirstThesesDeleting = thesesDeletingPerPage === 'All' ? 0 : indexOfLastThesesDeleting - parseInt(thesesDeletingPerPage, 10);
+    const totalPagesThesesDeleting = thesesDeletingPerPage === 'All' ? 1 : Math.ceil(afterSearchThesesDeleting.length / parseInt(thesesDeletingPerPage, 10));
     
+    //  archiwizacja tematów
+    const [currentPageThesesArchive, setCurrentPageThesesArchive] = useState(1);
+    const [inputValueThesesArchive, setInputValueThesesArchive] = useState(currentPageThesesArchive);
+    const [thesesArchivePerPage, setThesesArchivePerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
+    const [chosenThesesArchivePerPage, setChosenThesesArchivePerPage] = useState(thesesArchivePerPage);
+    const indexOfLastThesesArchive = thesesArchivePerPage === 'All' ? afterSearchThesesArchive.length : currentPageThesesArchive * parseInt(thesesArchivePerPage, 10);
+    const indexOfFirstThesesArchive = thesesArchivePerPage === 'All' ? 0 : indexOfLastThesesArchive - parseInt(thesesArchivePerPage, 10);
+    const totalPagesThesesArchive = thesesArchivePerPage === 'All' ? 1 : Math.ceil(afterSearchThesesArchive.length / parseInt(thesesArchivePerPage, 10));
+
     //  studenci
     const [currentPageStudents, setCurrentPageStudents] = useState(1);
     const [inputValueStudents, setInputValueStudents] = useState(currentPageStudents);
     const [studentsPerPage, setStudentsPerPage] = useState((currentITEMS_PER_PAGE.length > 1) ? currentITEMS_PER_PAGE[1] : currentITEMS_PER_PAGE[0]);
     const [chosenStudentsPerPage, setChosenStudentsPerPage] = useState(studentsPerPage);
-    const indexOfLastStudents = studentsPerPage === 'All' ? afterSearchTheses.length : currentPageStudents * parseInt(studentsPerPage, 10);
+    const indexOfLastStudents = studentsPerPage === 'All' ? afterSearchStudents.length : currentPageStudents * parseInt(studentsPerPage, 10);
     const indexOfFirstStudents = studentsPerPage === 'All' ? 0 : indexOfLastStudents - parseInt(studentsPerPage, 10);
     const totalPagesStudents = studentsPerPage === 'All' ? 1 : Math.ceil(afterSearchStudents.length / parseInt(studentsPerPage, 10));
 
     const currentStudents = afterSearchStudents.slice(indexOfFirstStudents, indexOfLastStudents);
-    const currentTheses = afterSearchTheses.slice(indexOfFirstTheses, indexOfLastTheses);
+    const currentThesesDeleting = afterSearchThesesDeleting.slice(indexOfFirstThesesDeleting, indexOfLastThesesDeleting);
+    const currentThesesArchive = afterSearchThesesArchive.slice(indexOfFirstThesesArchive, indexOfLastThesesArchive);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    //  checkboxy - theses
-    const [thesesFormIndexes, setThesesFormIndexes] = useState(new Set<number>());
-    const [checkAllCheckboxTheses, setCheckAllCheckboxTheses] = useState(false);
+    //  checkboxy - usuwanie tematów
+    const [thesesDeletingFormIndexes, setThesesDeletingFormIndexes] = useState(new Set<number>());
+    const [checkAllCheckboxThesesDeleting, setCheckAllCheckboxThesesDeleting] = useState(false);
 
-    const [confirmClickedTheses, setConfirmClickedTheses] = useState(false);
-    const [showDeleteConfirmationTheses, setShowDeleteConfirmationTheses] = useState(false);
+    const [confirmClickedThesesDeleting, setConfirmClickedThesesDeleting] = useState(false);
+    const [showDeleteConfirmationThesesDeleting, setShowDeleteConfirmationThesesDeleting] = useState(false);
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //  checkboxy - archiwizacja tematów
+    const [thesesArchiveFormIndexes, setThesesArchiveFormIndexes] = useState(new Set<number>());
+    const [checkAllCheckboxThesesArchive, setCheckAllCheckboxThesesArchive] = useState(false);
+    
+    const [confirmClickedThesesArchive, setConfirmClickedThesesArchive] = useState(false);
+    const [showDeleteConfirmationThesesArchive, setShowDeleteConfirmationThesesArchive] = useState(false);
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     //  checkboxy - students
@@ -145,7 +189,7 @@ const ClearDataByCycle: React.FC = () => {
         //  theses:
         api.get(api_access + 'thesis')
             .then((response) => {
-                const thesisResponse = response.data.map((thesisDb: Thesis) => {
+                const thesesResponse: ThesisFront[] = response.data.map((thesisDb: Thesis) => {
                     const thesis: ThesisFront = {
                         id: thesisDb.id,
                         namePL: thesisDb.namePL,
@@ -165,10 +209,19 @@ const ClearDataByCycle: React.FC = () => {
                     };
                     return thesis;
                 });
-                setTheses(thesisResponse);
-                setFilteredTheses(thesisResponse);
-                setAfterSearchTheses(thesisResponse);
-                setThesesLoaded(true);
+                const closed = thesesResponse.filter(t => t.status.name === 'Closed');
+                const notClosed = thesesResponse.filter(t => t.status.name !== 'Closed');
+
+                setTheses(notClosed);
+                setClosedTheses(closed);
+                
+                setFilteredThesesDeleting(closed);
+                setAfterSearchThesesDeleting(closed);
+                setThesesDeletingLoaded(true);
+                
+                setFilteredThesesArchive(notClosed);
+                setAfterSearchThesesArchive(notClosed);
+                setThesesArchiveLoaded(true);
             })
             .catch((error) => {
                 if (error.response.status === 401 || error.response.status === 403) {
@@ -215,7 +268,8 @@ const ClearDataByCycle: React.FC = () => {
             const supervisors = response.data
                 .filter((employee: Employee) => employee.roles.some((role: Role) => role.name === 'supervisor'))
                 .sort((a: Employee, b: Employee) => a.surname.localeCompare(b.surname));
-            setAvailableSupervisorTheses(supervisors);
+            setAvailableSupervisorThesesDeleting(supervisors);
+            setAvailableSupervisorThesesArchive(supervisors);
         })
         .catch((error) => {
             console.error(error);
@@ -231,7 +285,8 @@ const ClearDataByCycle: React.FC = () => {
                 const sortedCycles = response.data.sort((a: StudyCycle, b: StudyCycle) => {
                 return a.name.localeCompare(b.name);
             });
-            setAvailableCyclesTheses(sortedCycles);
+            setAvailableCyclesThesesDeleting(sortedCycles);
+            setAvailableCyclesThesesArchive(sortedCycles);
             setAvailableCyclesStudents(sortedCycles);
             })
             .catch((error) => {
@@ -248,7 +303,8 @@ const ClearDataByCycle: React.FC = () => {
               const sortedFaculties = response.data.sort((a: Faculty, b: Faculty) => {
                 return a.name.localeCompare(b.name);
               });
-              setAvailableFacultiesTheses(sortedFaculties);
+              setAvailableFacultiesThesesDeleting(sortedFaculties);
+              setAvailableFacultiesThesesArchive(sortedFaculties);
               setAvailableFacultiesStudents(sortedFaculties);
             })
             .catch((error) => {
@@ -265,7 +321,8 @@ const ClearDataByCycle: React.FC = () => {
                 const sortedStudyFields = response.data.sort((a: StudyField, b: StudyField) => {
                     return a.name.localeCompare(b.name);
                 });
-                setAvailableFieldsTheses(sortedStudyFields);
+                setAvailableFieldsThesesDeleting(sortedStudyFields);
+                setAvailableFieldsThesesArchive(sortedStudyFields);
                 setAvailableFieldsStudents(sortedStudyFields);
             })
             .catch((error) => {
@@ -282,7 +339,8 @@ const ClearDataByCycle: React.FC = () => {
                 const sortedSpecializations = response.data.sort((a: Specialization, b: Specialization) => {
                     return a.name.localeCompare(b.name);
                 });
-                setAvailableSpecializationsTheses(sortedSpecializations);
+                setAvailableSpecializationsThesesDeleting(sortedSpecializations);
+                setAvailableSpecializationsThesesArchive(sortedSpecializations);
                 setAvailableSpecializationsStudents(sortedSpecializations);
             })
             .catch((error) => {
@@ -297,76 +355,202 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //  filtrowanie tematów:
+    //  filtrowanie usuwania tematów:
     useEffect(() => {
-        if (thesesLoaded && selectedToClear === SelectedToBeCleared.THESES)
-          handleFiltrationTheses(false);
-    }, [thesesLoaded, selectedToClear]);
+        if (thesesDeletingLoaded && selectedToClear === ClearingMode.DELETE_THESES)
+          handleFiltrationThesesDeleting(false);
+    }, [thesesDeletingLoaded, selectedToClear]);
 
-    const handleSubmitFiltersTheses = (toogle: boolean) => {
+    const handleSubmitFiltersThesesDeleting = (toogle: boolean) => {
 
-        setSubmittedFacultyAbbrTheses(selectedFacultyAbbrTheses)
-        setSubmittedFieldAbbrTheses(selectedFieldAbbrTheses)
-        setSubmittedSpecializationAbbrTheses(selectedSpecializationAbbrTheses)
-        setSubmittedCycleNameTheses(selectedCycleNameTheses)
-        setSubmittedSupervisorsTheses(selectedSupervisorsTheses)
-        localStorage.setItem('approverFilterFaculty', selectedFacultyAbbrTheses);
-        localStorage.setItem('approverFilterField', selectedFieldAbbrTheses);
-        localStorage.setItem('approverFilterSpecialization', selectedSpecializationAbbrTheses);
-        localStorage.setItem('approverFilterCycle', selectedCycleNameTheses);
-        localStorage.setItem('approverFilterSupervisors', JSON.stringify(selectedSupervisorsTheses));
+        setSubmittedFacultyAbbrThesesDeleting(selectedFacultyAbbrThesesDeleting)
+        setSubmittedFieldAbbrThesesDeleting(selectedFieldAbbrThesesDeleting)
+        setSubmittedSpecializationAbbrThesesDeleting(selectedSpecializationAbbrThesesDeleting)
+        setSubmittedCycleNameThesesDeleting(selectedCycleNameThesesDeleting)
+        setSubmittedSupervisorsThesesDeleting(selectedSupervisorsThesesDeleting)
+        localStorage.setItem('thesesDeletingFilterFaculty', selectedFacultyAbbrThesesDeleting);
+        localStorage.setItem('thesesDeletingFilterField', selectedFieldAbbrThesesDeleting);
+        localStorage.setItem('thesesDeletingFilterSpecialization', selectedSpecializationAbbrThesesDeleting);
+        localStorage.setItem('thesesDeletingFilterCycle', selectedCycleNameThesesDeleting);
+        localStorage.setItem('thesesDeletingFilterSupervisors', JSON.stringify(selectedSupervisorsThesesDeleting));
 
         if (toogle){
-            handleToggleSidebarTheses()
+            handleToggleSidebarThesesDeleting()
         }
     };
 
-    const handleToggleSidebarTheses = () => {
+    const handleToggleSidebarThesesDeleting = () => {
 
-        if (!sidebarOpen && selectedToClear === SelectedToBeCleared.THESES) {
-            setSelectedFacultyAbbrTheses(submittedFacultyAbbrTheses)
-            setSelectedFieldAbbrTheses(submittedFieldAbbrTheses)
-            setSelectedSpecializationAbbrTheses(submittedSpecializationAbbrTheses)
-            setSelectedCycleNameTheses(submittedCycleNameTheses)
-            setSelectedSupervisorsTheses(submittedSupervisorsTheses)
+        if (!sidebarOpen && selectedToClear === ClearingMode.DELETE_THESES) {
+            setSelectedFacultyAbbrThesesDeleting(submittedFacultyAbbrThesesDeleting)
+            setSelectedFieldAbbrThesesDeleting(submittedFieldAbbrThesesDeleting)
+            setSelectedSpecializationAbbrThesesDeleting(submittedSpecializationAbbrThesesDeleting)
+            setSelectedCycleNameThesesDeleting(submittedCycleNameThesesDeleting)
+            setSelectedSupervisorsThesesDeleting(submittedSupervisorsThesesDeleting)
         }
-        if (selectedToClear === SelectedToBeCleared.THESES){
+        if (selectedToClear === ClearingMode.DELETE_THESES){
             setSidebarOpen(!sidebarOpen);
         }
     };
 
-    const handleDeleteFiltersTheses = () => {
-        setSelectedCycleNameTheses("");
-        setSelectedFacultyAbbrTheses("");
-        setSelectedFieldAbbrTheses("");
-        setSelectedSpecializationAbbrTheses("");
-        setSelectedSupervisorsTheses([]);
+    const handleDeleteFiltersThesesDeleting = () => {
+        setSelectedCycleNameThesesDeleting("");
+        setSelectedFacultyAbbrThesesDeleting("");
+        setSelectedFieldAbbrThesesDeleting("");
+        setSelectedSpecializationAbbrThesesDeleting("");
+        setSelectedSupervisorsThesesDeleting([]);
     
-        localStorage.removeItem('approverFilterFaculty');
-        localStorage.removeItem('approverFilterField');
-        localStorage.removeItem('approverFilterSpecialization');
-        localStorage.removeItem('approverFilterCycle');
-        localStorage.removeItem('approverFilterSupervisors');
+        localStorage.removeItem('thesesDeletingFilterFaculty');
+        localStorage.removeItem('thesesDeletingFilterField');
+        localStorage.removeItem('thesesDeletingFilterSpecialization');
+        localStorage.removeItem('thesesDeletingFilterCycle');
+        localStorage.removeItem('thesesDeletingFilterSupervisors');
     
-        setSubmittedCycleNameTheses("");
-        setSubmittedFacultyAbbrTheses("");
-        setSubmittedFieldAbbrTheses("");
-        setSubmittedSpecializationAbbrTheses("");
-        setSubmittedSupervisorsTheses([]);
+        setSubmittedCycleNameThesesDeleting("");
+        setSubmittedFacultyAbbrThesesDeleting("");
+        setSubmittedFieldAbbrThesesDeleting("");
+        setSubmittedSpecializationAbbrThesesDeleting("");
+        setSubmittedSupervisorsThesesDeleting([]);
     
-        setFilteredTheses(theses);
+        setFilteredThesesDeleting(closedTheses);
     };
 
-    const handleFiltrationTheses = (toggle: boolean) => {
+    const handleFiltrationThesesDeleting = (toggle: boolean) => {
 
         if (toggle) {
-          handleSubmitFiltersTheses(true)
+          handleSubmitFiltersThesesDeleting(true)
     
-          const facultyFilter = selectedFacultyAbbrTheses ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbrTheses) : () => true;
-          const fieldFilter = selectedFieldAbbrTheses ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbrTheses : p.specialization.studyField.abbreviation === selectedFieldAbbrTheses) : () => true;
-          const specializationFilter = selectedSpecializationAbbrTheses ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbrTheses : false) : () => true;
-          const cycleFilter = selectedCycleNameTheses ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleNameTheses : () => true;
-          const supervisorFilter = selectedSupervisorsTheses.length ? (thesis: ThesisFront) => selectedSupervisorsTheses.includes(thesis.supervisor.id) : () => true;
+          const facultyFilter = selectedFacultyAbbrThesesDeleting ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbrThesesDeleting) : () => true;
+          const fieldFilter = selectedFieldAbbrThesesDeleting ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbrThesesDeleting : p.specialization.studyField.abbreviation === selectedFieldAbbrThesesDeleting) : () => true;
+          const specializationFilter = selectedSpecializationAbbrThesesDeleting ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbrThesesDeleting : false) : () => true;
+          const cycleFilter = selectedCycleNameThesesDeleting ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleNameThesesDeleting : () => true;
+          const supervisorFilter = selectedSupervisorsThesesDeleting.length ? (thesis: ThesisFront) => selectedSupervisorsThesesDeleting.includes(thesis.supervisor.id) : () => true;
+    
+          const newFilteredTheses = closedTheses.filter(thesis =>
+            facultyFilter(thesis) &&
+            fieldFilter(thesis) &&
+            specializationFilter(thesis) &&
+            cycleFilter(thesis) &&
+            supervisorFilter(thesis)
+          );
+          setFilteredThesesDeleting(newFilteredTheses);
+        }
+        else {
+          const savedFacultyAbbr = localStorage.getItem('thesesDeletingFilterFaculty') || '';
+          const savedFieldAbbr = localStorage.getItem('thesesDeletingFilterField') || '';
+          const savedSpecializationAbbr = localStorage.getItem('thesesDeletingFilterSpecialization') || '';
+          const savedCycleName = localStorage.getItem('thesesDeletingFilterCycle') || '';
+          const savedsupervisors = JSON.parse(localStorage.getItem('thesesDeletingFilterSupervisors') || '[]');
+    
+          setSubmittedFacultyAbbrThesesDeleting(savedFacultyAbbr)
+          setSubmittedFieldAbbrThesesDeleting(savedFieldAbbr)
+          setSubmittedSpecializationAbbrThesesDeleting(savedSpecializationAbbr)
+          setSubmittedCycleNameThesesDeleting(savedCycleName)
+          setSubmittedSupervisorsThesesDeleting(savedsupervisors)
+    
+          const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
+          const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbrThesesDeleting) : () => true;
+          const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
+          const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
+          const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
+    
+          const newFilteredTheses = closedTheses.filter(thesis =>
+            facultyFilter(thesis) &&
+            fieldFilter(thesis) &&
+            specializationFilter(thesis) &&
+            cycleFilter(thesis) &&
+            supervisorFilter(thesis)
+          );
+          setFilteredThesesDeleting(newFilteredTheses);
+        }
+    }
+
+    const allowFilteringThesesDeleting = () => {
+        if (selectedToClear === ClearingMode.DELETE_THESES && (
+            selectedFacultyAbbrThesesDeleting ||
+            submittedFieldAbbrThesesDeleting ||
+            submittedSpecializationAbbrThesesDeleting ||
+            submittedCycleNameThesesDeleting ||
+            submittedSupervisorsThesesDeleting.length > 0
+        )){
+            return true
+        }
+        return false
+    }
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //  filtrowanie archiwizowania tematów:
+    useEffect(() => {
+        if (thesesArchiveLoaded && selectedToClear === ClearingMode.ARCHIVE_THESES)
+          handleFiltrationThesesArchive(false);
+    }, [thesesArchiveLoaded, selectedToClear]);
+
+    const handleSubmitFiltersThesesArchive = (toogle: boolean) => {
+
+        setSubmittedFacultyAbbrThesesArchive(selectedFacultyAbbrThesesArchive)
+        setSubmittedFieldAbbrThesesArchive(selectedFieldAbbrThesesArchive)
+        setSubmittedSpecializationAbbrThesesArchive(selectedSpecializationAbbrThesesArchive)
+        setSubmittedCycleNameThesesArchive(selectedCycleNameThesesArchive)
+        setSubmittedSupervisorsThesesArchive(selectedSupervisorsThesesArchive)
+        localStorage.setItem('thesesArchiveFilterFaculty', selectedFacultyAbbrThesesArchive);
+        localStorage.setItem('thesesArchiveFilterField', selectedFieldAbbrThesesArchive);
+        localStorage.setItem('thesesArchiveFilterSpecialization', selectedSpecializationAbbrThesesArchive);
+        localStorage.setItem('thesesArchiveFilterCycle', selectedCycleNameThesesArchive);
+        localStorage.setItem('thesesArchiveFilterSupervisors', JSON.stringify(selectedSupervisorsThesesArchive));
+
+        if (toogle){
+            handleToggleSidebarThesesArchive()
+        }
+    };
+
+    const handleToggleSidebarThesesArchive = () => {
+        console.log(selectedToClear);
+
+        if (!sidebarOpen && selectedToClear === ClearingMode.ARCHIVE_THESES) {
+            setSelectedFacultyAbbrThesesArchive(submittedFacultyAbbrThesesArchive)
+            setSelectedFieldAbbrThesesArchive(submittedFieldAbbrThesesArchive)
+            setSelectedSpecializationAbbrThesesArchive(submittedSpecializationAbbrThesesArchive)
+            setSelectedCycleNameThesesArchive(submittedCycleNameThesesArchive)
+            setSelectedSupervisorsThesesArchive(submittedSupervisorsThesesArchive)
+        }
+        if (selectedToClear === ClearingMode.ARCHIVE_THESES){
+            setSidebarOpen(!sidebarOpen);
+        }
+    };
+
+    const handleDeleteFiltersThesesArchive = () => {
+        setSelectedCycleNameThesesArchive("");
+        setSelectedFacultyAbbrThesesArchive("");
+        setSelectedFieldAbbrThesesArchive("");
+        setSelectedSpecializationAbbrThesesArchive("");
+        setSelectedSupervisorsThesesArchive([]);
+    
+        localStorage.removeItem('thesesArchiveFilterFaculty');
+        localStorage.removeItem('thesesArchiveFilterField');
+        localStorage.removeItem('thesesArchiveFilterSpecialization');
+        localStorage.removeItem('thesesArchiveFilterCycle');
+        localStorage.removeItem('thesesArchiveFilterSupervisors');
+    
+        setSubmittedCycleNameThesesArchive("");
+        setSubmittedFacultyAbbrThesesArchive("");
+        setSubmittedFieldAbbrThesesArchive("");
+        setSubmittedSpecializationAbbrThesesArchive("");
+        setSubmittedSupervisorsThesesArchive([]);
+    
+        setFilteredThesesArchive(theses);
+    };
+
+    const handleFiltrationThesesArchive = (toggle: boolean) => {
+
+        if (toggle) {
+          handleSubmitFiltersThesesArchive(true)
+    
+          const facultyFilter = selectedFacultyAbbrThesesArchive ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === selectedFacultyAbbrThesesArchive) : () => true;
+          const fieldFilter = selectedFieldAbbrThesesArchive ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === selectedFieldAbbrThesesArchive : p.specialization.studyField.abbreviation === selectedFieldAbbrThesesArchive) : () => true;
+          const specializationFilter = selectedSpecializationAbbrThesesArchive ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbrThesesArchive : false) : () => true;
+          const cycleFilter = selectedCycleNameThesesArchive ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleNameThesesArchive : () => true;
+          const supervisorFilter = selectedSupervisorsThesesArchive.length ? (thesis: ThesisFront) => selectedSupervisorsThesesArchive.includes(thesis.supervisor.id) : () => true;
     
           const newFilteredTheses = theses.filter(thesis =>
             facultyFilter(thesis) &&
@@ -375,23 +559,23 @@ const ClearDataByCycle: React.FC = () => {
             cycleFilter(thesis) &&
             supervisorFilter(thesis)
           );
-          setFilteredTheses(newFilteredTheses);
+          setFilteredThesesArchive(newFilteredTheses);
         }
         else {
-          const savedFacultyAbbr = localStorage.getItem('approverFilterFaculty') || '';
-          const savedFieldAbbr = localStorage.getItem('approverFilterField') || '';
-          const savedSpecializationAbbr = localStorage.getItem('approverFilterSpecialization') || '';
-          const savedCycleName = localStorage.getItem('approverFilterCycle') || '';
-          const savedsupervisors = JSON.parse(localStorage.getItem('approverFilterSupervisors') || '[]');
+          const savedFacultyAbbr = localStorage.getItem('thesesArchiveFilterFaculty') || '';
+          const savedFieldAbbr = localStorage.getItem('thesesArchiveFilterField') || '';
+          const savedSpecializationAbbr = localStorage.getItem('thesesArchiveFilterSpecialization') || '';
+          const savedCycleName = localStorage.getItem('thesesArchiveFilterCycle') || '';
+          const savedsupervisors = JSON.parse(localStorage.getItem('thesesArchiveFilterSupervisors') || '[]');
     
-          setSubmittedFacultyAbbrTheses(savedFacultyAbbr)
-          setSubmittedFieldAbbrTheses(savedFieldAbbr)
-          setSubmittedSpecializationAbbrTheses(savedSpecializationAbbr)
-          setSubmittedCycleNameTheses(savedCycleName)
-          setSubmittedSupervisorsTheses(savedsupervisors)
+          setSubmittedFacultyAbbrThesesArchive(savedFacultyAbbr)
+          setSubmittedFieldAbbrThesesArchive(savedFieldAbbr)
+          setSubmittedSpecializationAbbrThesesArchive(savedSpecializationAbbr)
+          setSubmittedCycleNameThesesArchive(savedCycleName)
+          setSubmittedSupervisorsThesesArchive(savedsupervisors)
     
           const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
-          const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbrTheses) : () => true;
+          const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbrThesesArchive) : () => true;
           const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
           const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
           const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
@@ -403,17 +587,17 @@ const ClearDataByCycle: React.FC = () => {
             cycleFilter(thesis) &&
             supervisorFilter(thesis)
           );
-          setFilteredTheses(newFilteredTheses);
+          setFilteredThesesArchive(newFilteredTheses);
         }
     }
 
-    const allowFilteringTheses = () => {
-        if (selectedToClear === SelectedToBeCleared.THESES && (
-            selectedFacultyAbbrTheses ||
-            submittedFieldAbbrTheses ||
-            submittedSpecializationAbbrTheses ||
-            submittedCycleNameTheses ||
-            submittedSupervisorsTheses.length > 0
+    const allowFilteringThesesArchive = () => {
+        if (selectedToClear === ClearingMode.ARCHIVE_THESES && (
+            selectedFacultyAbbrThesesArchive ||
+            submittedFieldAbbrThesesArchive ||
+            submittedSpecializationAbbrThesesArchive ||
+            submittedCycleNameThesesArchive ||
+            submittedSupervisorsThesesArchive.length > 0
         )){
             return true
         }
@@ -425,7 +609,7 @@ const ClearDataByCycle: React.FC = () => {
     //  filtrowanie studentów:
 
     useEffect(() => {
-        if (studentsLoaded && selectedToClear === SelectedToBeCleared.STUDENTS)
+        if (studentsLoaded && selectedToClear === ClearingMode.STUDENTS)
           handleFiltrationStudents(false);
     }, [studentsLoaded, selectedToClear]);
 
@@ -531,7 +715,7 @@ const ClearDataByCycle: React.FC = () => {
       }
 
       const allowFilteringStudents = () => {
-        if (selectedToClear === SelectedToBeCleared.STUDENTS && (
+        if (selectedToClear === ClearingMode.STUDENTS && (
             submittedCycleNameStudents ||
             submittedFacultyAbbrStudents ||
             submittedFieldAbbrStudents ||
@@ -546,16 +730,17 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //  wyszukiwanie:
 
+    //  usuwanie tematów
     useEffect(() => {
-        const searchText = searchTermTheses.toLowerCase();
-        const filteredList = filteredTheses.filter((thesis) => {
+        const searchText = searchTermThesesDeleting.toLowerCase();
+        const filteredList = filteredThesesDeleting.filter((thesis) => {
           return (
             thesis.namePL.toLowerCase().includes(searchText) ||
             thesis.nameEN.toLowerCase().includes(searchText) ||
             (thesis.supervisor.title.name + ' ' + thesis.supervisor.name + ' ' + thesis.supervisor.surname).toLowerCase().includes(searchText)
           );
         });
-        setAfterSearchTheses(() => filteredList);
+        setAfterSearchThesesDeleting(() => filteredList);
     
         // Aktualizacja ustawień paginacji
         const filteredItemsPerPage = ITEMS_PER_PAGE.filter((itemPerPage) => {
@@ -568,11 +753,40 @@ const ClearDataByCycle: React.FC = () => {
         });
         setCurrentITEMS_PER_PAGE(() => filteredItemsPerPage);
     
-        handlePageChangeTheses(1);
-        setThesesPerPage((filteredItemsPerPage.includes(chosenThesesPerPage)) ? chosenThesesPerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
+        handlePageChangeThesesDeleting(1);
+        setThesesDeletingPerPage((filteredItemsPerPage.includes(chosenThesesDeletingPerPage)) ? chosenThesesDeletingPerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
     
-      }, [searchTermTheses, filteredTheses]);
+      }, [searchTermThesesDeleting, filteredThesesDeleting]);
 
+      //    archiwizowanie tematów:
+      useEffect(() => {
+        const searchText = searchTermThesesArchive.toLowerCase();
+        const filteredList = filteredThesesArchive.filter((thesis) => {
+          return (
+            thesis.namePL.toLowerCase().includes(searchText) ||
+            thesis.nameEN.toLowerCase().includes(searchText) ||
+            (thesis.supervisor.title.name + ' ' + thesis.supervisor.name + ' ' + thesis.supervisor.surname).toLowerCase().includes(searchText)
+          );
+        });
+        setAfterSearchThesesArchive(() => filteredList);
+    
+        // Aktualizacja ustawień paginacji
+        const filteredItemsPerPage = ITEMS_PER_PAGE.filter((itemPerPage) => {
+          if (itemPerPage === 'All') {
+            return true;
+          } else {
+            const perPageValue = parseInt(itemPerPage, 10);
+            return perPageValue < filteredList.length;
+          }
+        });
+        setCurrentITEMS_PER_PAGE(() => filteredItemsPerPage);
+    
+        handlePageChangeThesesArchive(1);
+        setThesesArchivePerPage((filteredItemsPerPage.includes(chosenThesesArchivePerPage)) ? chosenThesesArchivePerPage : ((filteredItemsPerPage.length > 1) ? filteredItemsPerPage[1] : filteredItemsPerPage[0]));
+    
+      }, [searchTermThesesArchive, filteredThesesArchive]);
+
+      //    usuwanie studentów
       useEffect(() => {
         const searchText = searchTermStudents.toLowerCase();
         const filteredList = filteredStudents.filter((stud) => {
@@ -603,23 +817,44 @@ const ClearDataByCycle: React.FC = () => {
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //  paginacja:
-    const handlePageChangeTheses = (newPage: number) => {
+
+    //  usuwanie tematów
+    const handlePageChangeThesesDeleting = (newPage: number) => {
         if (!newPage || newPage < 1) {
-          setCurrentPageTheses(1);
-          setInputValueTheses(1);
+          setCurrentPageThesesDeleting(1);
+          setInputValueThesesDeleting(1);
         }
         else {
-          if (newPage > totalPagesTheses) {
-            setCurrentPageTheses(totalPagesTheses);
-            setInputValueTheses(totalPagesTheses);
+          if (newPage > totalPagesThesesDeleting) {
+            setCurrentPageThesesDeleting(totalPagesThesesDeleting);
+            setInputValueThesesDeleting(totalPagesThesesDeleting);
           }
           else {
-            setCurrentPageTheses(newPage);
-            setInputValueTheses(newPage);
+            setCurrentPageThesesDeleting(newPage);
+            setInputValueThesesDeleting(newPage);
           }
         }
       };
 
+    //  archiwizacja tematów
+    const handlePageChangeThesesArchive = (newPage: number) => {
+        if (!newPage || newPage < 1) {
+          setCurrentPageThesesArchive(1);
+          setInputValueThesesArchive(1);
+        }
+        else {
+          if (newPage > totalPagesThesesArchive) {
+            setCurrentPageThesesArchive(totalPagesThesesArchive);
+            setInputValueThesesArchive(totalPagesThesesArchive);
+          }
+          else {
+            setCurrentPageThesesArchive(newPage);
+            setInputValueThesesArchive(newPage);
+          }
+        }
+      };
+
+    //  usuwanie studentów
     const handlePageChangeStudents = (newPage: number) => {
         if (!newPage || newPage < 1) {
           setCurrentPageStudents(1);
@@ -639,49 +874,49 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //  checkboxy - tematy
-    const checkCheckboxTheses = (thesisId: number) => {
-        setThesesFormIndexes((prev) => {
+    //  checkboxy - usuwanie tematów
+    const checkCheckboxThesesDeleting = (thesisId: number) => {
+        setThesesDeletingFormIndexes((prev) => {
           const newSet = new Set(prev);
           newSet.add(thesisId);
           return newSet;
         });
       }
     
-      const uncheckCheckboxTheses = (thesisId: number) => {
-        setThesesFormIndexes((prev) => {
+      const uncheckCheckboxThesesDeleting = (thesisId: number) => {
+        setThesesDeletingFormIndexes((prev) => {
             const newSet = new Set(prev);
             newSet.delete(thesisId);
             return newSet;
           });
       }
     
-      const checkAllCheckboxesChangeTheses = () => {
-        setCheckAllCheckboxTheses(!checkAllCheckboxTheses);
-        if (checkAllCheckboxTheses){
-          setThesesFormIndexes(new Set());
+      const checkAllCheckboxesChangeThesesDeleting = () => {
+        setCheckAllCheckboxThesesDeleting(!checkAllCheckboxThesesDeleting);
+        if (checkAllCheckboxThesesDeleting){
+          setThesesDeletingFormIndexes(new Set());
         }
         else{
           let thesisIds = new Set<number>();
-          afterSearchTheses.map((thesis, _) => {
+          afterSearchThesesDeleting.map((thesis, _) => {
             thesisIds.add(thesis.id)
           });
-          setThesesFormIndexes(thesisIds);
+          setThesesDeletingFormIndexes(thesisIds);
         }
       }
     
-      const handleConfirmClickTheses = () => {
-        setShowDeleteConfirmationTheses(true);
-        setConfirmClickedTheses(true);
+      const handleConfirmClickThesesDeleting = () => {
+        setShowDeleteConfirmationThesesDeleting(true);
+        setConfirmClickedThesesDeleting(true);
       };
     
-      const handleConfirmAcceptTheses = () => {
-        const isValid = validateTheses();
+      const handleConfirmAcceptThesesDeleting = () => {
+        const isValid = validateThesesDeleting();
         if (isValid){
-          api.put(api_access + 'thesis/bulk', Array.from(thesesFormIndexes))
+          api.put(api_access + 'thesis/bulk', Array.from(thesesDeletingFormIndexes))
             .then(() => {
               setKey(k => k+1);
-              setThesesFormIndexes(new Set());
+              setThesesDeletingFormIndexes(new Set());
               toast.success(t("thesis.deleteSuccesfulBulk"));
             })
             .catch((error) => {
@@ -696,23 +931,101 @@ const ClearDataByCycle: React.FC = () => {
         else{
           toast.error(t("thesis.deleteErrorBulk")); 
         }
-        setShowDeleteConfirmationTheses(false);
+        setShowDeleteConfirmationThesesDeleting(false);
       }
     
-      const handleConfirmCancelTheses = () => {
-        setShowDeleteConfirmationTheses(false);
+      const handleConfirmCancelThesesDeleting = () => {
+        setShowDeleteConfirmationThesesDeleting(false);
       }
     
-      const validateTheses = () => {
+      const validateThesesDeleting = () => {
         let allIdsArePresent = true;
-        const indexes = theses.map(t => t.id);
-        for (var index of Array.from(thesesFormIndexes.values())) {
+        const indexes = closedTheses.map(t => t.id);
+        for (var index of Array.from(thesesDeletingFormIndexes.values())) {
           if (!indexes.includes(index)){
             allIdsArePresent = false;
             break;
           }
         }
+        return allIdsArePresent !== false;
+      }
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //  checkboxy - usuwanie tematów
+    const checkCheckboxThesesArchive = (thesisId: number) => {
+        setThesesArchiveFormIndexes((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(thesisId);
+          return newSet;
+        });
+      }
     
+      const uncheckCheckboxThesesArchive = (thesisId: number) => {
+        setThesesArchiveFormIndexes((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(thesisId);
+            return newSet;
+          });
+      }
+    
+      const checkAllCheckboxesChangeThesesArchive = () => {
+        setCheckAllCheckboxThesesArchive(!checkAllCheckboxThesesArchive);
+        if (checkAllCheckboxThesesArchive){
+          setThesesArchiveFormIndexes(new Set());
+        }
+        else{
+          let thesisIds = new Set<number>();
+          afterSearchThesesArchive.map((thesis, _) => {
+            thesisIds.add(thesis.id)
+          });
+          setThesesArchiveFormIndexes(thesisIds);
+        }
+      }
+    
+      const handleConfirmClickThesesArchive = () => {
+        setShowDeleteConfirmationThesesArchive(true);
+        setConfirmClickedThesesArchive(true);
+      };
+    
+      const handleConfirmAcceptThesesArchive = () => {
+        const isValid = validateThesesArchive();
+        if (isValid){
+          api.put(api_access + 'thesis/bulk', Array.from(thesesArchiveFormIndexes))
+            .then(() => {
+              setKey(k => k+1);
+              setThesesArchiveFormIndexes(new Set());
+              toast.success(t("thesis.archiveSuccesfulBulk"));
+            })
+            .catch((error) => {
+              console.log("Error", error);
+              if (error.response.status === 401 || error.response.status === 403) {
+                setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                handleSignOut(navigate);
+              }
+              toast.error(t("thesis.archiveErrorBulk"));
+            });
+        }
+        else{
+          toast.error(t("thesis.archiveErrorBulk")); 
+        }
+        setShowDeleteConfirmationThesesArchive(false);
+      }
+    
+      const handleConfirmCancelThesesArchive = () => {
+        setShowDeleteConfirmationThesesArchive(false);
+      }
+    
+      const validateThesesArchive = () => {
+        let allIdsArePresent = true;
+        const indexes = theses.map(t => t.id);
+        for (var index of Array.from(thesesArchiveFormIndexes.values())) {
+          if (!indexes.includes(index)){
+            allIdsArePresent = false;
+            break;
+          }
+        }
         return allIdsArePresent !== false;
       }
 
@@ -810,10 +1123,15 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     const resetCheckboxesToDefault = () => {
-        setThesesFormIndexes(new Set<number>());
-        setCheckAllCheckboxTheses(false);
-        setConfirmClickedTheses(false);
-        setShowDeleteConfirmationTheses(false)
+        setThesesDeletingFormIndexes(new Set<number>());
+        setCheckAllCheckboxThesesDeleting(false);
+        setConfirmClickedThesesDeleting(false);
+        setShowDeleteConfirmationThesesDeleting(false);
+
+        setThesesArchiveFormIndexes(new Set<number>());
+        setCheckAllCheckboxThesesArchive(false);
+        setConfirmClickedThesesArchive(false);
+        setShowDeleteConfirmationThesesArchive(false);
 
         setStudentsFormIndexes(new Set<number>());
         setCheckAllCheckboxStudents(false);
@@ -821,50 +1139,83 @@ const ClearDataByCycle: React.FC = () => {
         setShowAcceptConfirmationStudents(false)
     }
 
-    const chooseTheses = () => {
-        if (selectedToClear !== SelectedToBeCleared.THESES){
+    const chooseThesesDeleting = () => {
+        if (selectedToClear !== ClearingMode.DELETE_THESES){
             setSearchTermStudents('');
-            setSearchTermTheses('');
+            setSearchTermThesesDeleting('');
+            setSearchTermThesesArchive('');
 
             resetCheckboxesToDefault();          
 
             handleDeleteFiltersStudents();
-            handleDeleteFiltersTheses();
+            handleDeleteFiltersThesesDeleting();
+            handleDeleteFiltersThesesArchive();
             
-            setSelectedToClear(SelectedToBeCleared.THESES);
+            setSelectedToClear(ClearingMode.DELETE_THESES);
         }
         else{
-            setSelectedToClear(SelectedToBeCleared.NONE);
+            setSelectedToClear(ClearingMode.NONE);
         }
     }
-    const chooseStudents = () => {
-        if (selectedToClear !== SelectedToBeCleared.STUDENTS){
+
+    const chooseThesesArchive = () => {
+        if (selectedToClear !== ClearingMode.ARCHIVE_THESES){
             setSearchTermStudents('');
-            setSearchTermTheses('');
+            setSearchTermThesesDeleting('');
+            setSearchTermThesesArchive('');
 
             resetCheckboxesToDefault();          
 
             handleDeleteFiltersStudents();
-            handleDeleteFiltersTheses();
-
-            setSelectedToClear(SelectedToBeCleared.STUDENTS);
+            handleDeleteFiltersThesesDeleting();
+            handleDeleteFiltersThesesArchive();
+            
+            setSelectedToClear(ClearingMode.ARCHIVE_THESES);
         }
         else{
-            setSelectedToClear(SelectedToBeCleared.NONE);
+            setSelectedToClear(ClearingMode.NONE);
         }
     }
+
+    const chooseStudents = () => {
+        if (selectedToClear !== ClearingMode.STUDENTS){
+            setSearchTermStudents('');
+            setSearchTermThesesDeleting('');
+            setSearchTermThesesArchive('');
+
+            resetCheckboxesToDefault();          
+
+            handleDeleteFiltersStudents();
+            handleDeleteFiltersThesesDeleting();
+            handleDeleteFiltersThesesArchive();
+
+            setSelectedToClear(ClearingMode.STUDENTS);
+        }
+        else{
+            setSelectedToClear(ClearingMode.NONE);
+        }
+    }
+
+    const statusLabels: { [key: string]: string } = {
+        "Draft": t('status.draft'),
+        "Pending approval": t('status.pending'),
+        "Rejected": t('status.rejected'),
+        "Approved": t('status.approved'),
+        "Assigned": t('status.assigned'),
+        "Closed": t('status.closed')
+      }
 
     return (
         <div className='page-margin'>
 
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-            {/* sidebar - tematy */}
+            {/* sidebar - usuwanie tematów */}
             
-            {selectedToClear === SelectedToBeCleared.THESES ? (
+            {selectedToClear === ClearingMode.DELETE_THESES ? (
                 <>
                 
                 <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <button className={`bold custom-button ${allowFilteringTheses() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebarTheses()}>
+                <button className={`bold custom-button ${allowFilteringThesesDeleting() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebarThesesDeleting()}>
                     {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
                 </button>
                 <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
@@ -873,18 +1224,18 @@ const ClearDataByCycle: React.FC = () => {
                     {t('general.people.supervisor')}:
                 </label>
                 <div className="supervisor-checkbox-list">
-                    {availableSupervisorsTheses.map((supervisor) => (
+                    {availableSupervisorsThesesDeleting.map((supervisor) => (
                     <div key={supervisor.id} className="checkbox-item mb-2">
                         <input
                         type="checkbox"
                         id={`supervisor-${supervisor.id}`}
                         value={supervisor.id}
-                        checked={selectedSupervisorsTheses.includes(supervisor.id)}
+                        checked={selectedSupervisorsThesesDeleting.includes(supervisor.id)}
                         onChange={() => {
-                            const updatedSupervisors = selectedSupervisorsTheses.includes(supervisor.id)
-                            ? selectedSupervisorsTheses.filter((id) => id !== supervisor.id)
-                            : [...selectedSupervisorsTheses, supervisor.id];
-                            setSelectedSupervisorsTheses(updatedSupervisors);
+                            const updatedSupervisors = selectedSupervisorsThesesDeleting.includes(supervisor.id)
+                            ? selectedSupervisorsThesesDeleting.filter((id) => id !== supervisor.id)
+                            : [...selectedSupervisorsThesesDeleting, supervisor.id];
+                            setSelectedSupervisorsThesesDeleting(updatedSupervisors);
                         }}
                         className="custom-checkbox"
                         />
@@ -903,14 +1254,14 @@ const ClearDataByCycle: React.FC = () => {
                     <select
                         id="cycle"
                         name="cycle"
-                        value={selectedCycleNameTheses}
+                        value={selectedCycleNameThesesDeleting}
                         onChange={(e) => {
-                        setSelectedCycleNameTheses(e.target.value);
+                        setSelectedCycleNameThesesDeleting(e.target.value);
                         }}
                         className="form-control"
                     >
                         <option value="">{t('general.management.choose')}</option>
-                        {availableCyclesTheses.map((cycle) => (
+                        {availableCyclesThesesDeleting.map((cycle) => (
                         <option key={cycle.id} value={cycle.name}>
                             {cycle.name}
                         </option>
@@ -925,16 +1276,16 @@ const ClearDataByCycle: React.FC = () => {
                 <select
                     id="faculty"
                     name="faculty"
-                    value={selectedFacultyAbbrTheses}
+                    value={selectedFacultyAbbrThesesDeleting}
                     onChange={(e) => {
-                    setSelectedFacultyAbbrTheses(e.target.value);
-                    setSelectedFieldAbbrTheses("")
-                    setSelectedSpecializationAbbrTheses("")
+                    setSelectedFacultyAbbrThesesDeleting(e.target.value);
+                    setSelectedFieldAbbrThesesDeleting("")
+                    setSelectedSpecializationAbbrThesesDeleting("")
                     }}
                     className="form-control"
                 >
                     <option value="">{t('general.management.choose')}</option>
-                    {availableFacultiesTheses.map((faculty) => (
+                    {availableFacultiesThesesDeleting.map((faculty) => (
                     <option key={faculty.abbreviation} value={faculty.abbreviation}>
                         {faculty.name}
                     </option>
@@ -948,18 +1299,18 @@ const ClearDataByCycle: React.FC = () => {
                 <select
                     id="studyField"
                     name="studyField"
-                    value={selectedFieldAbbrTheses}
+                    value={selectedFieldAbbrThesesDeleting}
                     onChange={(e) => {
-                    setSelectedFieldAbbrTheses(e.target.value);
-                    setSelectedSpecializationAbbrTheses("")
+                    setSelectedFieldAbbrThesesDeleting(e.target.value);
+                    setSelectedSpecializationAbbrThesesDeleting("")
                     }}
                     className="form-control"
-                    disabled={selectedFacultyAbbrTheses === ""}
+                    disabled={selectedFacultyAbbrThesesDeleting === ""}
                 >
                     <option value={""}>{t('general.management.choose')}</option>
-                    {selectedFacultyAbbrTheses !== "" &&
-                    availableFieldsTheses
-                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrTheses)
+                    {selectedFacultyAbbrThesesDeleting !== "" &&
+                    availableFieldsThesesDeleting
+                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrThesesDeleting)
                         .map((field, fIndex) => (
                         <option key={fIndex} value={field.abbreviation}>
                             {field.name}
@@ -974,17 +1325,17 @@ const ClearDataByCycle: React.FC = () => {
                 <select
                     id="specialization"
                     name="specialization"
-                    value={selectedSpecializationAbbrTheses}
+                    value={selectedSpecializationAbbrThesesDeleting}
                     onChange={(e) => {
-                    setSelectedSpecializationAbbrTheses(e.target.value);
+                    setSelectedSpecializationAbbrThesesDeleting(e.target.value);
                     }}
                     className="form-control"
-                    disabled={selectedFieldAbbrTheses === ""}
+                    disabled={selectedFieldAbbrThesesDeleting === ""}
                 >
                     <option value={""}>{t('general.management.choose')}</option>
-                    {selectedFieldAbbrTheses !== "" &&
-                    availableSpecializationsTheses
-                        .filter((s) => s.studyField.abbreviation === selectedFieldAbbrTheses)
+                    {selectedFieldAbbrThesesDeleting !== "" &&
+                    availableSpecializationsThesesDeleting
+                        .filter((s) => s.studyField.abbreviation === selectedFieldAbbrThesesDeleting)
                         .map((specialization, sIndex) => (
                         <option key={sIndex} value={specialization.abbreviation}>
                             {specialization.name}
@@ -995,10 +1346,10 @@ const ClearDataByCycle: React.FC = () => {
                 <hr className="my-4" />
                 <div className="d-flex justify-content-center my-4">
                 <button className="custom-button another-color"
-                    onClick={() => { handleDeleteFiltersTheses() }}>
+                    onClick={() => { handleDeleteFiltersThesesDeleting() }}>
                     {t('general.management.filterClear')}
                 </button>
-                <button className="custom-button" onClick={() => handleFiltrationTheses(true)}>
+                <button className="custom-button" onClick={() => handleFiltrationThesesDeleting(true)}>
                     {t('general.management.filter')}
                 </button>
                 </div>
@@ -1007,7 +1358,7 @@ const ClearDataByCycle: React.FC = () => {
                 </>
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
             // sidebar - studenci
-            ) : selectedToClear === SelectedToBeCleared.STUDENTS ? (
+            ) : selectedToClear === ClearingMode.STUDENTS ? (
                 <>
                 
                 <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
@@ -1128,13 +1479,158 @@ const ClearDataByCycle: React.FC = () => {
                 </div>
                 
                 </>
-            ) : null}
+            ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? ( 
+                <>
+                
+                    <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                    <button className={`bold custom-button ${allowFilteringThesesArchive() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebarThesesArchive()}>
+                        {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
+                    </button>
+                    <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
+                    <div className="mb-4">
+                    <label className="bold" htmlFor="supervisors">
+                        {t('general.people.supervisor')}:
+                    </label>
+                    <div className="supervisor-checkbox-list">
+                        {availableSupervisorsThesesArchive.map((supervisor) => (
+                        <div key={supervisor.id} className="checkbox-item mb-2">
+                            <input
+                            type="checkbox"
+                            id={`supervisor-${supervisor.id}`}
+                            value={supervisor.id}
+                            checked={selectedSupervisorsThesesArchive.includes(supervisor.id)}
+                            onChange={() => {
+                                const updatedSupervisors = selectedSupervisorsThesesArchive.includes(supervisor.id)
+                                ? selectedSupervisorsThesesArchive.filter((id) => id !== supervisor.id)
+                                : [...selectedSupervisorsThesesArchive, supervisor.id];
+                                setSelectedSupervisorsThesesArchive(updatedSupervisors);
+                            }}
+                            className="custom-checkbox"
+                            />
+                            <label style={{ marginLeft: '5px' }} htmlFor={`supervisor-${supervisor.id}`}>
+                            {`${supervisor.title.name} ${supervisor.name} ${supervisor.surname}`}
+                            </label>
+                        </div>
+                        ))}
+                    </div>
+                    </div>
+                    <hr className="my-4" />
+                    <div className="mb-4">
+                        <label className="bold" htmlFor="cycle">
+                            {t('general.university.studyCycle')}:
+                        </label>
+                        <select
+                            id="cycle"
+                            name="cycle"
+                            value={selectedCycleNameThesesArchive}
+                            onChange={(e) => {
+                                setSelectedCycleNameThesesArchive(e.target.value);
+                            }}
+                            className="form-control"
+                        >
+                            <option value="">{t('general.management.choose')}</option>
+                            {availableCyclesThesesArchive.map((cycle) => (
+                            <option key={cycle.id} value={cycle.name}>
+                                {cycle.name}
+                            </option>
+                            ))}
+                        </select>
+                    </div>
+                    <hr className="my-4" />
+                    <div className="mb-4">
+                    <label className="bold" htmlFor="faculty">
+                        {t('general.university.faculty')}:
+                    </label>
+                    <select
+                        id="faculty"
+                        name="faculty"
+                        value={selectedFacultyAbbrThesesArchive}
+                        onChange={(e) => {
+                            setSelectedFacultyAbbrThesesArchive(e.target.value);
+                            setSelectedFieldAbbrThesesArchive("")
+                            setSelectedSpecializationAbbrThesesArchive("")
+                        }}
+                        className="form-control"
+                    >
+                        <option value="">{t('general.management.choose')}</option>
+                        {availableFacultiesThesesArchive.map((faculty) => (
+                        <option key={faculty.abbreviation} value={faculty.abbreviation}>
+                            {faculty.name}
+                        </option>
+                        ))}
+                    </select>
+                    </div>
+                    <div className="mb-4">
+                    <label className="bold" htmlFor="studyField">
+                        {t('general.university.field')}:
+                    </label>
+                    <select
+                        id="studyField"
+                        name="studyField"
+                        value={selectedFieldAbbrThesesArchive}
+                        onChange={(e) => {
+                            setSelectedFieldAbbrThesesArchive(e.target.value);
+                            setSelectedSpecializationAbbrThesesArchive("");
+                        }}
+                        className="form-control"
+                        disabled={selectedFacultyAbbrThesesArchive === ""}
+                    >
+                        <option value={""}>{t('general.management.choose')}</option>
+                        {selectedFacultyAbbrThesesArchive !== "" &&
+                        availableFieldsThesesArchive
+                            .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrThesesArchive)
+                            .map((field, fIndex) => (
+                            <option key={fIndex} value={field.abbreviation}>
+                                {field.name}
+                            </option>
+                            ))}
+                    </select>
+                    </div>
+                    <div className="mb-4">
+                    <label className="bold" htmlFor="specialization">
+                        {t('general.university.specialization')}:
+                    </label>
+                    <select
+                        id="specialization"
+                        name="specialization"
+                        value={selectedSpecializationAbbrThesesArchive}
+                        onChange={(e) => {
+                        setSelectedSpecializationAbbrThesesArchive(e.target.value);
+                        }}
+                        className="form-control"
+                        disabled={selectedFieldAbbrThesesArchive === ""}
+                    >
+                        <option value={""}>{t('general.management.choose')}</option>
+                        {selectedFieldAbbrThesesArchive !== "" &&
+                        availableSpecializationsThesesArchive
+                            .filter((s) => s.studyField.abbreviation === selectedFieldAbbrThesesArchive)
+                            .map((specialization, sIndex) => (
+                            <option key={sIndex} value={specialization.abbreviation}>
+                                {specialization.name}
+                            </option>
+                            ))}
+                    </select>
+                    </div>
+                    <hr className="my-4" />
+                    <div className="d-flex justify-content-center my-4">
+                    <button className="custom-button another-color"
+                        onClick={() => { handleDeleteFiltersThesesArchive() }}>
+                        {t('general.management.filterClear')}
+                    </button>
+                    <button className="custom-button" onClick={() => handleFiltrationThesesArchive(true)}>
+                        {t('general.management.filter')}
+                    </button>
+                    </div>
+                </div>
+                
+                </>
+             ) : null}
 
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
             
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
             {/* wspólne */}
-            {(!thesesLoaded || !studentsLoaded) ? (
+            {(!thesesDeletingLoaded || !studentsLoaded || !thesesArchiveLoaded) ? (
                 <div className='info-no-data'>
                     <p>{t('general.management.load')}</p>
                 </div>
@@ -1147,93 +1643,127 @@ const ClearDataByCycle: React.FC = () => {
                     
                 <div className="d-flex justify-content-begin align-items-center">
                     <button 
-                        className={`custom-button ${selectedToClear === SelectedToBeCleared.THESES ? '' : 'another-color'}`}
-                        onClick={chooseTheses}
-                    >
-                        {t('general.university.theses')}
-                    </button>
-                    
-                    <button 
-                        className={`custom-button ${selectedToClear === SelectedToBeCleared.STUDENTS ? '' : 'another-color'}`}
+                        className={`custom-button ${selectedToClear === ClearingMode.STUDENTS ? '' : 'another-color'}`}
                         onClick={chooseStudents}
                     >
-                        {t('general.people.students')}
+                        {t('general.clearData.clearStudents')}
+                    </button>
+
+                    <button 
+                        className={`custom-button ${selectedToClear === ClearingMode.ARCHIVE_THESES ? '' : 'another-color'}`}
+                        onClick={chooseThesesArchive}
+                    >
+                        {t('general.clearData.archiveTheses')}
+                    </button>
+
+                    <button 
+                        className={`custom-button ${selectedToClear === ClearingMode.DELETE_THESES ? '' : 'another-color'}`}
+                        onClick={chooseThesesDeleting}
+                    >
+                        {t('general.clearData.clearTheses')}
                     </button>
                 </div>
                 <div className="d-flex justify-content-begin align-items-center mt-3">
-                {selectedToClear === SelectedToBeCleared.THESES && (
+
+                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+
+                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                {/* Przyciski usuwające i ich potwierdzanie */}
+                {selectedToClear === ClearingMode.DELETE_THESES ? (
                         <>
                             <button
                                 type="button"
-                                className={`custom-button ${thesesFormIndexes.size === 0 ? 'another-color' : ''}`}
-                                onClick={() => handleConfirmClickTheses()}
-                                disabled={thesesFormIndexes.size === 0}
+                                className={`custom-button ${thesesDeletingFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                onClick={() => handleConfirmClickThesesDeleting()}
+                                disabled={thesesDeletingFormIndexes.size === 0}
                                 >
                                 {t('general.management.deleteSelected')}
                             </button>
 
-                            {showDeleteConfirmationTheses && (
+                            {showDeleteConfirmationThesesDeleting && (
                             <tr>
                                 <td colSpan={5}>
                                     <ChoiceConfirmation
-                                        isOpen={showDeleteConfirmationTheses}
-                                        onClose={handleConfirmCancelTheses}
-                                        onConfirm={handleConfirmAcceptTheses}
-                                        onCancel={handleConfirmCancelTheses}
-                                        questionText={t('thesis.acceptDeletionBulk', { idCount: thesesFormIndexes.size })}
+                                        isOpen={showDeleteConfirmationThesesDeleting}
+                                        onClose={handleConfirmCancelThesesDeleting}
+                                        onConfirm={handleConfirmAcceptThesesDeleting}
+                                        onCancel={handleConfirmCancelThesesDeleting}
+                                        questionText={t('thesis.acceptDeletionBulk', { idCount: thesesDeletingFormIndexes.size })}
                                     />
                                 </td>
                             </tr>
                             )}
                         </>
-                    )}
-                    {selectedToClear === SelectedToBeCleared.STUDENTS && (
-                        <>
-
-                            {submittedCycleNameStudents === "" ? (
-                                <Alert variant="warning" className="m-0">
-                                    {t('student.filterCycles')}
-                                </Alert>
-                            ) : (
-                                <>      
-                                <button
-                                    type="button"
-                                    className={`custom-button ${studentsFormIndexes.size === 0 ? 'another-color' : ''}`}
-                                    onClick={() => handleConfirmClickStudents()}
-                                    disabled={studentsFormIndexes.size === 0}
-                                >
-                                    {t('general.management.deleteSelected')}
-                                </button>
-
-                                {showAcceptConfirmationStudents && (
-                                <tr>
-                                    <td colSpan={5}>
-                                        <ChoiceConfirmation
-                                            isOpen={showAcceptConfirmationStudents}
-                                            onClose={handleConfirmCancelStudents}
-                                            onConfirm={handleConfirmAcceptStudents}
-                                            onCancel={handleConfirmCancelStudents}
-                                            questionText={t('student.acceptDeletionBulk', { idCount: studentsFormIndexes.size })}
-                                        />
-                                    </td>
-                                </tr>
+                    ) : selectedToClear === ClearingMode.STUDENTS ? (
+                            <>
+                                {submittedCycleNameStudents === "" ? (
+                                    <Alert variant="warning" className="m-0">
+                                        {t('student.filterCycles')}
+                                    </Alert>
+                                ) : (
+                                    <>      
+                                    <button
+                                        type="button"
+                                        className={`custom-button ${studentsFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                        onClick={() => handleConfirmClickStudents()}
+                                        disabled={studentsFormIndexes.size === 0}
+                                    >
+                                        {t('general.management.deleteSelected')}
+                                    </button>
+    
+                                    {showAcceptConfirmationStudents && (
+                                    <tr>
+                                        <td colSpan={5}>
+                                            <ChoiceConfirmation
+                                                isOpen={showAcceptConfirmationStudents}
+                                                onClose={handleConfirmCancelStudents}
+                                                onConfirm={handleConfirmAcceptStudents}
+                                                onCancel={handleConfirmCancelStudents}
+                                                questionText={t('student.acceptDeletionBulk', { idCount: studentsFormIndexes.size })}
+                                            />
+                                        </td>
+                                    </tr>
+                                    )}
+                                    </>
                                 )}
-                                </>
-                            )}
+                            </>
+                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                        <>
+                            <button
+                                type="button"
+                                className={`custom-button ${thesesArchiveFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                onClick={() => handleConfirmClickThesesArchive()}
+                                disabled={thesesArchiveFormIndexes.size === 0}
+                                >
+                                {t('general.management.archiveSelected')}
+                            </button>
 
+                            {showDeleteConfirmationThesesArchive && (
+                            <tr>
+                                <td colSpan={5}>
+                                    <ChoiceConfirmation
+                                        isOpen={showDeleteConfirmationThesesArchive}
+                                        onClose={handleConfirmCancelThesesArchive}
+                                        onConfirm={handleConfirmAcceptThesesArchive}
+                                        onCancel={handleConfirmCancelThesesArchive}
+                                        questionText={t('thesis.acceptArchiveBulk', { idCount: thesesArchiveFormIndexes.size })}
+                                    />
+                                </td>
+                            </tr>
+                            )}
                         </>
-                    )}
+                    ) : null}
                     </div>
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 {/* search bar i paginacja górna */}
                 <div className='d-flex justify-content-between align-items-center'>
-                    {selectedToClear === SelectedToBeCleared.THESES ? (
+                    {selectedToClear === ClearingMode.DELETE_THESES ? (
                         <>
                             <SearchBar
-                                searchTerm={searchTermTheses}
-                                setSearchTerm={setSearchTermTheses}
+                                searchTerm={searchTermThesesDeleting}
+                                setSearchTerm={setSearchTermThesesDeleting}
                                 placeholder={t('general.management.search')}
                             />
                             {currentITEMS_PER_PAGE.length > 1 && (
@@ -1241,11 +1771,11 @@ const ClearDataByCycle: React.FC = () => {
                                 <div className="d-flex align-items-center">
                                 <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
                                 <select
-                                    value={thesesPerPage}
+                                    value={thesesDeletingPerPage}
                                     onChange={(e) => {
-                                        setThesesPerPage(e.target.value);
-                                        setChosenThesesPerPage(e.target.value);
-                                        handlePageChangeTheses(1);
+                                        setThesesDeletingPerPage(e.target.value);
+                                        setChosenThesesDeletingPerPage(e.target.value);
+                                        handlePageChangeThesesDeleting(1);
                                     }}
                                 >
                                 {currentITEMS_PER_PAGE.map((value) => (
@@ -1256,11 +1786,11 @@ const ClearDataByCycle: React.FC = () => {
                                 </select>
                                 </div>
                                 <div style={{ marginLeft: '30px' }}>
-                                    {thesesPerPage !== 'All' && (
+                                    {thesesDeletingPerPage !== 'All' && (
                                         <div className="pagination">
                                             <button
-                                                onClick={() => handlePageChangeTheses(currentPageTheses - 1)}
-                                                disabled={currentPageTheses === 1}
+                                                onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting - 1)}
+                                                disabled={currentPageThesesDeleting === 1}
                                                 className='custom-button'
                                             >
                                                 &lt;
@@ -1268,26 +1798,26 @@ const ClearDataByCycle: React.FC = () => {
 
                                             <input
                                                 type="number"
-                                                value={inputValueTheses}
+                                                value={inputValueThesesDeleting}
                                                 onChange={(e) => {
                                                     const newPage = parseInt(e.target.value, 10);
-                                                    setInputValueTheses(newPage);
+                                                    setInputValueThesesDeleting(newPage);
                                                 }}
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') {
-                                                        handlePageChangeTheses(inputValueTheses);
+                                                        handlePageChangeThesesDeleting(inputValueThesesDeleting);
                                                     }
                                                 }}
                                                 onBlur={() => {
-                                                    handlePageChangeTheses(inputValueTheses);
+                                                    handlePageChangeThesesDeleting(inputValueThesesDeleting);
                                                 }}
                                                 className='text'
                                             />
 
-                                            <span className='text'> z {totalPagesTheses}</span>
+                                            <span className='text'> z {totalPagesThesesDeleting}</span>
                                             <button
-                                                onClick={() => handlePageChangeTheses(currentPageTheses + 1)}
-                                                disabled={currentPageTheses === totalPagesTheses}
+                                                onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
+                                                disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
                                                 className='custom-button'
                                             >
                                                 &gt;
@@ -1298,7 +1828,7 @@ const ClearDataByCycle: React.FC = () => {
                             </div>
                             )}
                         </>    
-                    ) : selectedToClear === SelectedToBeCleared.STUDENTS ? (
+                    ) : selectedToClear === ClearingMode.STUDENTS ? (
                         <>
                             <SearchBar
                                 searchTerm={searchTermStudents}
@@ -1367,20 +1897,89 @@ const ClearDataByCycle: React.FC = () => {
                             </div>
                             )}
                         </>    
+                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                        <>
+                            <SearchBar
+                                searchTerm={searchTermThesesArchive}
+                                setSearchTerm={setSearchTermThesesArchive}
+                                placeholder={t('general.management.search')}
+                            />
+                            {currentITEMS_PER_PAGE.length > 1 && (
+                            <div className="d-flex justify-content-between">
+                                <div className="d-flex align-items-center">
+                                <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
+                                <select
+                                    value={thesesArchivePerPage}
+                                    onChange={(e) => {
+                                        setThesesArchivePerPage(e.target.value);
+                                        setChosenThesesArchivePerPage(e.target.value);
+                                        handlePageChangeThesesArchive(1);
+                                    }}
+                                >
+                                {currentITEMS_PER_PAGE.map((value) => (
+                                    <option key={value} value={value}>
+                                        {value}
+                                    </option>
+                                ))}
+                                </select>
+                                </div>
+                                <div style={{ marginLeft: '30px' }}>
+                                    {thesesArchivePerPage !== 'All' && (
+                                        <div className="pagination">
+                                            <button
+                                                onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive - 1)}
+                                                disabled={currentPageThesesArchive === 1}
+                                                className='custom-button'
+                                            >
+                                                &lt;
+                                            </button>
+
+                                            <input
+                                                type="number"
+                                                value={inputValueThesesArchive}
+                                                onChange={(e) => {
+                                                    const newPage = parseInt(e.target.value, 10);
+                                                    setInputValueThesesArchive(newPage);
+                                                }}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        handlePageChangeThesesArchive(inputValueThesesArchive);
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    handlePageChangeThesesArchive(inputValueThesesArchive);
+                                                }}
+                                                className='text'
+                                            />
+
+                                            <span className='text'> z {totalPagesThesesArchive}</span>
+                                            <button
+                                                onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
+                                                disabled={currentPageThesesArchive === totalPagesThesesArchive}
+                                                className='custom-button'
+                                            >
+                                                &gt;
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            )}
+                        </>    
                     ) : null}
                 </div>
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-                {/* theses */}                    
-                {selectedToClear === SelectedToBeCleared.THESES ? (
+                {/* usuwanie tematów */}                    
+                {selectedToClear === ClearingMode.DELETE_THESES ? (
                     <>
-                        {afterSearchTheses.length === 0 ? (
+                        {afterSearchThesesDeleting.length === 0 ? (
                             <div style={{ textAlign: 'center', marginTop: '40px' }}>
                                 <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
                             </div>
                         ) : (
-                            <table className="custom-table" key={`theses-table-${key}`}>
+                            <table className="custom-table" key={`theses-deleting-table-${key}`}>
                                 <thead>
                                     <tr>
                                         <th style={{ width: '3%', textAlign: 'center' }}>
@@ -1388,37 +1987,38 @@ const ClearDataByCycle: React.FC = () => {
                                             <input
                                                 type='checkbox'
                                                 className='custom-checkbox'
-                                                checked={checkAllCheckboxTheses}
-                                                onChange={checkAllCheckboxesChangeTheses}
+                                                checked={checkAllCheckboxThesesDeleting}
+                                                onChange={checkAllCheckboxesChangeThesesDeleting}
                                             />
                                         </th>
                                         <th style={{ width: '3%', textAlign: 'center' }}>#</th>
                                         <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                                        <th style={{ width: '15%' }}>{t('general.people.supervisor')}</th>
-                                        <th style={{ width: '9%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                                        <th style={{ width: '14%' }}>{t('general.people.supervisor')}</th>
+                                        <th style={{ width: '10%' }}>{t('general.university.status')}</th>
+                                        <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentTheses.map((thesis, index) => (
+                                    {currentThesesDeleting.map((thesis, index) => (
                                         <tr key={thesis.id}>
                                             <td>
                                                 <div style={{ textAlign: 'center' }}>
                                                 <input
                                                     type="checkbox"
                                                     className='custom-checkbox'
-                                                    checked={thesesFormIndexes.has(thesis.id)}
+                                                    checked={thesesDeletingFormIndexes.has(thesis.id)}
                                                     onChange={(e) => {
                                                     if (e.target.checked) {
-                                                        checkCheckboxTheses(thesis.id);
+                                                        checkCheckboxThesesDeleting(thesis.id);
                                                     } else {
-                                                        uncheckCheckboxTheses(thesis.id);
+                                                        uncheckCheckboxThesesDeleting(thesis.id);
                                                     }
                                                     }}
                                                     style={{ transform: 'scale(1.25)' }}
                                                 />
                                                 </div>
                                             </td>
-                                            <td className="centered">{indexOfFirstTheses + index + 1}</td>
+                                            <td className="centered">{indexOfFirstThesesDeleting + index + 1}</td>
                                             <td>
                                                 {i18n.language === 'pl' ? (
                                                     thesis.namePL
@@ -1427,6 +2027,7 @@ const ClearDataByCycle: React.FC = () => {
                                                 )}
                                             </td>
                                             <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+                                            <td>{statusLabels[thesis.status.name] || thesis.status.name}</td>
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
@@ -1443,7 +2044,7 @@ const ClearDataByCycle: React.FC = () => {
                     </>
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                     // students
-                ) : selectedToClear === SelectedToBeCleared.STUDENTS ? (
+                ) : selectedToClear === ClearingMode.STUDENTS ? (
                     <>
                         {afterSearchStudents.length === 0 ? (
                             <div style={{ textAlign: 'center', marginTop: '40px' }}>
@@ -1491,7 +2092,7 @@ const ClearDataByCycle: React.FC = () => {
                                                     />
                                                 </div>
                                             </td>
-                                            <td className="centered">{indexOfFirstTheses + index + 1}</td>
+                                            <td className="centered">{indexOfFirstStudents + index + 1}</td>
                                             <td>{student.index}</td>
                                             <td>{student.name}</td>
                                             <td>{student.surname}</td>
@@ -1509,7 +2110,78 @@ const ClearDataByCycle: React.FC = () => {
                             </table>
                         )}
                     </>
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                    // archiwizowanie tematów
+                ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                    <>
+                        {afterSearchThesesArchive.length === 0 ? (
+                            <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                                <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
+                            </div>
+                        ) : (
+                            <table className="custom-table" key={`theses-archive-table-${key}`}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ width: '3%', textAlign: 'center' }}>
+                                            <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
+                                            <input
+                                                type='checkbox'
+                                                className='custom-checkbox'
+                                                checked={checkAllCheckboxThesesArchive}
+                                                onChange={checkAllCheckboxesChangeThesesArchive}
+                                            />
+                                        </th>
+                                        <th style={{ width: '3%', textAlign: 'center' }}>#</th>
+                                        <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
+                                        <th style={{ width: '14%' }}>{t('general.people.supervisor')}</th>
+                                        <th style={{ width: '10%' }}>{t('general.university.status')}</th>
+                                        <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentThesesArchive.map((thesis, index) => (
+                                        <tr key={thesis.id}>
+                                            <td>
+                                                <div style={{ textAlign: 'center' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    className='custom-checkbox'
+                                                    checked={thesesArchiveFormIndexes.has(thesis.id)}
+                                                    onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        checkCheckboxThesesArchive(thesis.id);
+                                                    } else {
+                                                        uncheckCheckboxThesesArchive(thesis.id);
+                                                    }
+                                                    }}
+                                                    style={{ transform: 'scale(1.25)' }}
+                                                />
+                                                </div>
+                                            </td>
+                                            <td className="centered">{indexOfFirstThesesArchive + index + 1}</td>
+                                            <td>
+                                                {i18n.language === 'pl' ? (
+                                                    thesis.namePL
+                                                ) : (
+                                                    thesis.nameEN
+                                                )}
+                                            </td>
+                                            <td>{thesis.supervisor.title.name + " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</td>
+                                            <td>{statusLabels[thesis.status.name] || thesis.status.name}</td>
+                                            <td>
+                                                <button
+                                                    className="custom-button coverall"
+                                                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
+                                                >
+                                                    <i className="bi bi-arrow-right"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </>
                 ) : (
                     <div className='info-no-data'>
                         <p>{t('general.clearData.choice')}</p>
@@ -1519,13 +2191,13 @@ const ClearDataByCycle: React.FC = () => {
 
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 {/* dolna paginacja */}
-                {selectedToClear === SelectedToBeCleared.THESES ? (
+                {selectedToClear === ClearingMode.DELETE_THESES ? (
                     <>
-                        {(currentITEMS_PER_PAGE.length > 1 && thesesPerPage !== 'All') && (
+                        {(currentITEMS_PER_PAGE.length > 1 && thesesDeletingPerPage !== 'All') && (
                             <div className="pagination">
                                 <button
-                                    onClick={() => handlePageChangeTheses(currentPageTheses - 1)}
-                                    disabled={currentPageTheses === 1}
+                                    onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting - 1)}
+                                    disabled={currentPageThesesDeleting === 1}
                                     className='custom-button'
                                 >
                                     &lt;
@@ -1533,26 +2205,26 @@ const ClearDataByCycle: React.FC = () => {
             
                                 <input
                                     type="number"
-                                    value={inputValueTheses}
+                                    value={inputValueThesesDeleting}
                                     onChange={(e) => {
                                         const newPage = parseInt(e.target.value, 10);
-                                        setInputValueTheses(newPage);
+                                        setInputValueThesesDeleting(newPage);
                                     }}
                                     onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        handlePageChangeTheses(inputValueTheses);
+                                        handlePageChangeThesesDeleting(inputValueThesesDeleting);
                                     }
                                     }}
                                     onBlur={() => {
-                                        handlePageChangeTheses(inputValueTheses);
+                                        handlePageChangeThesesDeleting(inputValueThesesDeleting);
                                     }}
                                     className='text'
                                 />
             
-                                <span className='text'> z {totalPagesTheses}</span>
+                                <span className='text'> z {totalPagesThesesDeleting}</span>
                                 <button
-                                    onClick={() => handlePageChangeTheses(currentPageTheses + 1)}
-                                    disabled={currentPageTheses === totalPagesTheses}
+                                    onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
+                                    disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
                                     className='custom-button'
                                 >
                                     &gt;
@@ -1560,7 +2232,7 @@ const ClearDataByCycle: React.FC = () => {
                             </div>
                         )}  
                     </>
-                ) : selectedToClear === SelectedToBeCleared.STUDENTS ? (
+                ) : selectedToClear === ClearingMode.STUDENTS ? (
                     <>
                         {(currentITEMS_PER_PAGE.length > 1 && studentsPerPage !== 'All') && (
                             <div className="pagination">
@@ -1594,6 +2266,47 @@ const ClearDataByCycle: React.FC = () => {
                                 <button
                                     onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
                                     disabled={currentPageStudents === totalPagesStudents}
+                                    className='custom-button'
+                                >
+                                    &gt;
+                                </button>
+                            </div>
+                        )}  
+                    </>
+                ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                    <>
+                        {(currentITEMS_PER_PAGE.length > 1 && thesesArchivePerPage !== 'All') && (
+                            <div className="pagination">
+                                <button
+                                    onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive - 1)}
+                                    disabled={currentPageThesesArchive === 1}
+                                    className='custom-button'
+                                >
+                                    &lt;
+                                </button>
+            
+                                <input
+                                    type="number"
+                                    value={inputValueThesesArchive}
+                                    onChange={(e) => {
+                                        const newPage = parseInt(e.target.value, 10);
+                                        setInputValueThesesArchive(newPage);
+                                    }}
+                                    onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handlePageChangeThesesArchive(inputValueThesesArchive);
+                                    }
+                                    }}
+                                    onBlur={() => {
+                                        handlePageChangeThesesArchive(inputValueThesesArchive);
+                                    }}
+                                    className='text'
+                                />
+            
+                                <span className='text'> z {totalPagesThesesArchive}</span>
+                                <button
+                                    onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
+                                    disabled={currentPageThesesArchive === totalPagesThesesArchive}
                                     className='custom-button'
                                 >
                                     &gt;

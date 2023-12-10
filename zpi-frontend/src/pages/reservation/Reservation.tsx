@@ -35,6 +35,8 @@ function ReservationPage({ admin }: ReservationProps) {
             setUser(userCookies);
             reservations[0] = userCookies.index || "";
             setReservations(reservations);
+            students[0] = userCookies;
+            setStudents(students);
         }
     }, []);
 

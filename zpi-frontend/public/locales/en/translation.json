@@ -4,8 +4,9 @@
       "abbreviationExists": "Given abbreviation already exists!",
       "add": "Add",
       "addNext": "Add next",
-      "addAsDraft": "Save draft",
+      "addAsDraft": "Add draft",
       "all": "All",
+      "archiveSelected": "Archive selected",
       "choose": "Choose",
       "confirm": "Confirm",
       "delete": "Delete",
@@ -24,6 +25,7 @@
       "rejectSelected": "Reject selected",
       "reserve": "Reserve",
       "save": "Save",
+      "saveAsDraft": "Save draft",
       "select": "Select",
       "selectAll": "Select all",
       "view": "View",
@@ -85,8 +87,11 @@
       "theses": "Theses"
     },
     "clearData": {
+      "archiveTheses": "Archive theses",
+      "choice": "Choose either \"Theses\" or \"Students\"",
+      "clearStudents": "Delete students",
       "clearSystem": "Clear system",
-      "choice": "Choose either \"Theses\" or \"Students\""
+      "clearTheses": "Delete theses"
     },
     "title": "Title",
     "titles": "Titles",
@@ -280,7 +285,10 @@
     "addStudentsError": "All student indexes need to be filled in or all have to be empty!",
     "acceptDeletionBulk": "Are you sure you want to delete the selected theses? ({{idCount}})",
     "deleteSuccesfulBulk": "Selected theses have been deleted",
-    "deleteErrorBulk": "Selected theses have not been deleted"
+    "deleteErrorBulk": "Selected theses have not been deleted",
+    "acceptArchiveBulk": "Are you sure you want to archive the selected theses? ({{idCount}})",
+    "archiveSuccesfulBulk": "Selected theses have been archived",
+    "archiveErrorBulk": "Selected theses have not been archived"
   },
   "status": {
     "draft": "Draft",

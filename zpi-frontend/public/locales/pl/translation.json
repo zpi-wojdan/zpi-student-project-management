@@ -4,8 +4,9 @@
       "abbreviationExists": "Podany skrót już istnieje!",
       "add": "Dodaj",
       "addNext": "Dodaj następny",
-      "addAsDraft": "Zapisz wersję roboczą",
+      "addAsDraft": "Dodaj wersję roboczą",
       "all": "Wszystkie",
+      "archiveSelected": "Zarchiwizuj zaznaczone",
       "choose": "Wybierz",
       "delete": "Usuń",
       "deleteSelected": "Usuń zaznaczone",
@@ -23,6 +24,7 @@
       "rejectSelected": "Odrzuć wybrane",
       "reserve": "Zarezerwuj",
       "save": "Zapisz",
+      "saveAsDraft": "Zapisz wersję roboczą",
       "select": "Wybierz",
       "selectAll": "Zaznacz wszystkie",
       "view": "Widok",
@@ -84,8 +86,11 @@
       "theses": "Tematy"
     },
     "clearData": {
+      "archiveTheses": "Archiwizuj tematy",
+      "choice": "Wybierz \"Tematy\" lub \"Studenci\"",
+      "clearStudents": "Usuń studentów",
       "clearSystem": "Czyszczenie systemu",
-      "choice": "Wybierz \"Tematy\" lub \"Studenci\""
+      "clearTheses": "Usuń tematy"
     },
     "title": "Tytuł",
     "titles": "Tytuły",
@@ -282,8 +287,11 @@
     
     "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczone tematy? ({{idCount}})",
     "deleteSuccesfulBulk": "Zaznaczone tematy zostały usunięte",
-    "deleteErrorBulk": "Zaznaczone tematy nie zostały usunięte"
-  },
+    "deleteErrorBulk": "Zaznaczone tematy nie zostały usunięte",
+    "acceptArchiveBulk": "Czy na pewno chcesz zarchiwizować zaznaczone tematy? ({{idCount}})",
+    "archiveSuccesfulBulk": "Zaznaczone tematy zostały zarchiwizowane",
+    "archiveErrorBulk": "Zaznaczone tematy nie zostały zarchiwizowane"
+    },
   "uploadFiles": {
     "fileName": "Nazwa pliku źródłowego",
     "duplicatedFileError": "Ładowanie duplikatów plików nie jest dozwolone",

@@ -228,6 +228,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
     }
     return u?.roles?.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
   }
+
   const gotCommentSectionRightsBySupervisor = () => {
     let u: (Student & Employee) | undefined;
     if (user === null || user === undefined) {
@@ -238,7 +239,6 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
       u = user;
     }
     const isSupervisor = u?.id === thesis?.supervisor.id;
-    console.log('is supervisor: ' + isSupervisor);
     return u?.id === thesis?.supervisor.id;
   }
 
