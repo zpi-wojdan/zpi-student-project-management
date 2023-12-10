@@ -1,5 +1,6 @@
 package pwr.zpibackend.models.university;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,15 +18,22 @@ import java.util.regex.Pattern;
 public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier of the program.", example = "1")
     private Long id;
+
     @Column(nullable = false)
     @NotNull(message = "Program name cannot be null")
+    @Schema(description = "Name of the program.", example = "W04-INAP-CCSA-OSME3")
     private String name;
+
     @JoinColumn(name = "study_field_id")
     @OneToOne(cascade = CascadeType.ALL)
+    @Schema(description = "Study field of the program.")
     private StudyField studyField;
+
     @JoinColumn(name = "specialization_id")
     @OneToOne(cascade = CascadeType.ALL)
+    @Schema(description = "Specialization of the program.")
     private Specialization specialization;
 
     @JoinColumn(name = "study_cycle_id", referencedColumnName = "id")
@@ -34,10 +42,12 @@ public class Program {
             name = "program_cycle",
             joinColumns = @JoinColumn(name = "program_id"),
             inverseJoinColumns = @JoinColumn(name = "cycle_id"))
+    @Schema(description = "Study cycles of the program.")
     private List<StudyCycle> studyCycles;
 
     @JoinColumn(name = "faculty_id")
     @ManyToOne
+    @Schema(description = "Faculty of the program.")
     private Faculty faculty;
 
     public String language() {

@@ -1,6 +1,7 @@
 package pwr.zpibackend.models.university;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,17 @@ import java.util.List;
 public class Title {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier of the title.", example = "1")
     private Long id;
+
     @Column(nullable = false, unique = true)
+    @Schema(description = "Name of the title.", example = "dr")
     private String name;
+
     @Column(name ="num_theses", nullable = false)
+    @Schema(description = "Maximum number of theses that can be supervised by a person with this title.", example = "2")
     private Integer numTheses;
+
     @JoinColumn(name = "title")
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
