@@ -1,5 +1,6 @@
 package pwr.zpibackend.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ public class FileUploadController {
     private final IFileUploadService service;
 
     @PostMapping("/student")
+    @Operation(summary = "Upload student file",
+            description = "Uploads student file to database. <br>Requires ADMIN role.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadStudentFile(@RequestParam("file") MultipartFile file){
         String mess = "";
@@ -46,6 +49,8 @@ public class FileUploadController {
     }
 
     @PostMapping("/employee")
+    @Operation(summary = "Upload employee file",
+            description = "Uploads employee file to database. <br>Requires ADMIN role.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadEmployeeFile(@RequestParam("file") MultipartFile file){
         String mess = "";
