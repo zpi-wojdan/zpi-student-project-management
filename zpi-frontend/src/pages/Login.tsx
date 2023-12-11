@@ -57,7 +57,6 @@ const LoginPage = () => {
     }, [i18n.language, auth]);
 
     function handleGoogleCallbackResponse(response: any) {
-        console.log("Encoded JWT ID token: " + response.credential);
         Cookies.set("google_token", response.credential);
         const decodedUser: any = jwt_decode(response.credential);
 
