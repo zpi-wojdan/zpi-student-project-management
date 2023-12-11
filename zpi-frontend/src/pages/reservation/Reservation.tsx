@@ -123,6 +123,7 @@ function ReservationPage({ admin }: ReservationProps) {
                 if ((response.data as Student).studentProgramCycles.some((spc: any) => thesis.programs.some((p: Program) => p.name === spc.program.name)) &&
                     (response.data as Student).studentProgramCycles.some((spc: any) => thesis.studyCycle?.name === spc.cycle.name)) {
                     newStudents[index] = response.data as Student;
+                    newWrongProgramCycle[index] = false;
                 } else {
                     newStudents[index] = {} as Student;
                     newWrongProgramCycle[index] = true;

@@ -107,7 +107,8 @@ const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
   const [commentSectionRights, setCommentSectionRights] = useState(false);
 
   useEffect(() => {
-    setUser(JSON.parse(Cookies.get("user") || "{}"));
+    const userCookies = JSON.parse(Cookies.get("user") || "{}");
+    setUser(userCookies);
   }, []);
 
   useEffect(() => {
@@ -130,10 +131,10 @@ const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
         }
       })
         .then((response) => {
-
           if (response.status === 200) {
             toast.success(t('thesis.sentForApproval'));
           }
+          window.location.reload();
         })
         .catch((error) => {
           toast.error(t('thesis.sentForApprovalError'));
@@ -245,195 +246,200 @@ const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
 
 
   return (
-    <div className='page-margin'>
-      <div className='d-flex justify-content-between align-items-center mb-3'>
-        <div className='d-flex justify-content-begin align-items-center'>
-          <button type="button" className="custom-button another-color" onClick={() => navigate(goBackPath)}>
-            &larr; {t('general.management.goBack')}
-          </button>
-          {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
-            user?.role?.name === 'student' &&
-            user?.studentProgramCycles.some((programCycle) => thesis?.programs.map(p => p.studyField).some(studyField => studyField.abbreviation === programCycle.program.studyField.abbreviation))) ||
-            user?.roles?.some(role => role.name === 'admin') && thesis?.status.name !== 'Closed')) ?
-            (
-              <button type="button" className="custom-button" onClick={() => {
-                if (user?.role?.name === 'student') {
-                  if (thesis?.reservations.length === 0) {
-                    navigate('/reservation', { state: { thesis: thesis } })
-                  } else {
-                    navigate('/single-reservation', { state: { thesis: thesis } })
-                  }
-                } else {
-                  navigate('/admin-reservation', { state: { thesis: thesis } })
-                }
-              }
-              }>
-                {user?.role?.name === 'student' ? (
-                  <span>{t('general.management.reserve')}</span>
-                ) : (
-                  user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
-                )}
+    <>
+      {user && (
+        <div className='page-margin'>
+          <div className='d-flex justify-content-between align-items-center mb-3'>
+            <div className='d-flex justify-content-begin align-items-center'>
+              <button type="button" className="custom-button another-color" onClick={() => navigate(goBackPath)}>
+                &larr; {t('general.management.goBack')}
               </button>
-            ) : (
-              <span></span>
-            )
-          }
-          {loaded ? (<React.Fragment>
-            {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
-              (user?.mail === thesis?.supervisor.mail ||
-                thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
-              thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent)) ?
-              (
-                <button className="custom-button" onClick={downloadDeclaration}>
-                  {t('thesis.downloadDeclaration')}
-                </button>
-              ) : null}
-          </React.Fragment>
-          ) : (<></>)}
-
-          {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
-            <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
-              {t('thesis.edit')}
-            </button>
-            <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
-              <i className="bi bi-trash"></i>
-            </button>
-            {showDeleteConfirmation && (
-              <tr>
-                <td colSpan={5}>
-                  <ChoiceConfirmation
-                    isOpen={showDeleteConfirmation}
-                    onClose={handleCancelDelete}
-                    onConfirm={handleConfirmDelete}
-                    onCancel={handleCancelDelete}
-                    questionText={t('thesis.deleteConfirmation')}
-                  />
-                </td>
-              </tr>
-            )}
-          </React.Fragment>
-          ) : (<></>)}
-        </div>
-      </div>
-      <div>
-        {!loaded ? (
-          <LoadingSpinner height="50vh" />
-        ) : (<React.Fragment>
-          {thesis ? (
-            <div>
-              <p className="bold">{t('thesis.thesisName')}:</p>
-              {i18n.language === 'pl' ? (
-                <p>{thesis.namePL}</p>
-              ) : (
-                <p>{thesis.nameEN}</p>
-              )}
-              <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' || !thesis.descriptionEN ? (
-                <p>{thesis.descriptionPL}</p>
-              ) : (
-                <p>{thesis.descriptionEN}</p>
-              )}
-              <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title.name +
-                " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
-              <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
-                thesis.studyCycle.name : 'N/A'}</span></p>
-              <p className="bold">{t('general.university.studyPrograms')}:</p>
-              <ul>
-                {thesis.programs.map((program: Program) => (
-                  <li key={program.id}>
-                    {program.name}
-                    <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
-                      {expandedPrograms.includes(program.id) ? '▼' : '▶'}
-                    </button>
-                    {expandedPrograms.includes(program.id) && (
-                      <ul>
-                        <li>
-                          <p><span className="bold">{t('general.university.faculty')} - </span> <span>{program.studyField.faculty.name}</span></p>
-                        </li>
-                        <li>
-                          <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
-                        </li>
-                        <li>
-                          <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.nA')}</span></p>
-                        </li>
-                      </ul>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <div>
-                <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
-                  {thesis.occupied + "/" + thesis.numPeople}</span></p>
-                {thesis.students.length > 0 ? (
-                  <StudentTable students={thesis.students} thesis={thesis} />
-                ) : (
-                  <></>
-                )}
-                {thesis?.leader?.mail === user?.mail &&
-                  thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) &&
-                  thesis?.reservations?.length >= 3 &&
-                  thesis?.reservations.some(r => !r.readyForApproval) &&
-                  (
-                    <button
-                      type="button"
-                      className="col-sm-2 custom-button m-3"
-                      onClick={handleReadyForApproval}
-                    >
-                      {t('thesis.readyForApproval')}
-                    </button>
-                  )}
-
-              </div>
-
-
-              <div className='comment-section'>
-                {commentSectionRights && (
-                  <>
-                    <hr className="my-4" />
-                    {thesis.comments.length !== 0 ? (
-                      <table className="custom-table mt-4">
-                        <thead>
-                          <tr>
-                            <th style={{ width: '65%' }}>{t('comment.content')}</th>
-                            <th style={{ width: '20%' }}>{t('comment.author')}</th>
-                            <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {thesis.comments
-                            .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
-                            .map((c: Comment) => (
-                              <tr key={`${c.id}`}>
-                                <td
-                                  style={{
-                                    wordBreak: 'break-word', overflowY: 'auto',
-                                    display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
-                                  }}>
-                                  {c.content}
-                                </td>
-                                <td>{c.author.mail}</td>
-                                <td className='centered'>{formatCreationTime(c.creationTime)}</td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
+              {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
+                user && user?.role?.name === 'student' &&
+                user?.studentProgramCycles.some((programCycle) => thesis?.programs.map((p) => p.studyField.abbreviation).includes(programCycle.program.studyField.abbreviation))) ||
+                user?.roles?.some(role => role.name === 'admin') && thesis?.status.name !== 'Closed'
+                 )) ?
+                (
+                  <button type="button" className="custom-button" onClick={() => {
+                    if (user?.role?.name === 'student') {
+                      if (thesis?.reservations.length === 0) {
+                        navigate('/reservation', { state: { thesis: thesis } })
+                      } else {
+                        navigate('/single-reservation', { state: { thesis: thesis } })
+                      }
+                    } else {
+                      navigate('/admin-reservation', { state: { thesis: thesis } })
+                    }
+                  }
+                  }>
+                    {user?.role?.name === 'student' ? (
+                      <span>{t('general.management.reserve')}</span>
                     ) : (
-                      <div className='info-no-data'>
-                        <p>{t('comment.empty')}</p>
-                      </div>
+                      user?.roles?.some(role => role.name === 'admin') && <span>{t('thesis.enrollStudents')}</span>
                     )}
-                  </>
+                  </button>
+                ) : (
+                  <span></span>
+                )
+              }
+              {loaded ? (<React.Fragment>
+                {(thesis && thesis.reservations && thesis.reservations.length > 0 &&
+                  (user?.mail === thesis?.supervisor.mail ||
+                    thesis.reservations.some((res: Reservation) => res.student.mail === user?.mail)) &&
+                  thesis.reservations.every((res: Reservation) => res.confirmedBySupervisor && res.confirmedByStudent)) ?
+                  (
+                    <button className="custom-button" onClick={downloadDeclaration}>
+                      {t('thesis.downloadDeclaration')}
+                    </button>
+                  ) : null}
+              </React.Fragment>
+              ) : (<></>)}
+
+              {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
+                <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
+                  {t('thesis.edit')}
+                </button>
+                <button type="button" className="custom-button" onClick={() => handleDeleteClick()}>
+                  <i className="bi bi-trash"></i>
+                </button>
+                {showDeleteConfirmation && (
+                  <tr>
+                    <td colSpan={5}>
+                      <ChoiceConfirmation
+                        isOpen={showDeleteConfirmation}
+                        onClose={handleCancelDelete}
+                        onConfirm={handleConfirmDelete}
+                        onCancel={handleCancelDelete}
+                        questionText={t('thesis.deleteConfirmation')}
+                      />
+                    </td>
+                  </tr>
                 )}
-              </div>
+              </React.Fragment>
+              ) : (<></>)}
             </div>
-          ) : (
-            <div className='info-no-data'>
-              <p>{t('general.management.errorOfLoading')}</p>
-            </div>
-          )}
-        </React.Fragment>)}
-      </div>
-    </div>
+          </div>
+          <div>
+            {!loaded ? (
+              <LoadingSpinner height="50vh" />
+            ) : (<React.Fragment>
+              {thesis ? (
+                <div>
+                  <p className="bold">{t('thesis.thesisName')}:</p>
+                  {i18n.language === 'pl' ? (
+                    <p>{thesis.namePL}</p>
+                  ) : (
+                    <p>{thesis.nameEN}</p>
+                  )}
+                  <p className="bold">{t('general.university.description')}:</p>
+                  {i18n.language === 'pl' || !thesis.descriptionEN ? (
+                    <p>{thesis.descriptionPL}</p>
+                  ) : (
+                    <p>{thesis.descriptionEN}</p>
+                  )}
+                  <p><span className="bold">{t('general.people.supervisor')}:</span> <span>{thesis.supervisor.title.name +
+                    " " + thesis.supervisor.name + " " + thesis.supervisor.surname}</span></p>
+                  <p><span className="bold">{t('general.university.studyCycle')}:</span> <span>{thesis.studyCycle ?
+                    thesis.studyCycle.name : 'N/A'}</span></p>
+                  <p className="bold">{t('general.university.studyPrograms')}:</p>
+                  <ul>
+                    {thesis.programs.map((program: Program) => (
+                      <li key={program.id}>
+                        {program.name}
+                        <button className='custom-toggle-button' onClick={() => toggleProgramExpansion(program.id)}>
+                          {expandedPrograms.includes(program.id) ? '▼' : '▶'}
+                        </button>
+                        {expandedPrograms.includes(program.id) && (
+                          <ul>
+                            <li>
+                              <p><span className="bold">{t('general.university.faculty')} - </span> <span>{program.studyField.faculty.name}</span></p>
+                            </li>
+                            <li>
+                              <p><span className="bold">{t('general.university.field')} - </span> <span>{program.studyField.name}</span></p>
+                            </li>
+                            <li>
+                              <p><span className="bold">{t('general.university.specialization')} - </span> <span>{program.specialization ? program.specialization.name : t('general.management.nA')}</span></p>
+                            </li>
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                  <div>
+                    <p><span className="bold">{t('thesis.enrolled')}:</span> <span>
+                      {thesis.occupied + "/" + thesis.numPeople}</span></p>
+                    {thesis.students.length > 0 ? (
+                      <StudentTable students={thesis.students} thesis={thesis} />
+                    ) : (
+                      <></>
+                    )}
+                    {thesis?.leader?.mail === user?.mail &&
+                      thesis?.reservations?.every(res => res.confirmedByLeader && res.confirmedByStudent) &&
+                      thesis?.reservations?.length >= 3 &&
+                      thesis?.reservations.some(r => !r.readyForApproval) &&
+                      (
+                        <button
+                          type="button"
+                          className="col-sm-2 custom-button m-3"
+                          onClick={handleReadyForApproval}
+                        >
+                          {t('thesis.readyForApproval')}
+                        </button>
+                      )}
+
+                  </div>
+
+
+                  <div className='comment-section'>
+                    {commentSectionRights && (
+                      <>
+                        <hr className="my-4" />
+                        {thesis.comments.length !== 0 ? (
+                          <table className="custom-table mt-4">
+                            <thead>
+                              <tr>
+                                <th style={{ width: '65%' }}>{t('comment.content')}</th>
+                                <th style={{ width: '20%' }}>{t('comment.author')}</th>
+                                <th style={{ width: '10%', textAlign: 'center' }}><i className="bi bi-stopwatch"></i></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {thesis.comments
+                                .sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime())
+                                .map((c: Comment) => (
+                                  <tr key={`${c.id}`}>
+                                    <td
+                                      style={{
+                                        wordBreak: 'break-word', overflowY: 'auto',
+                                        display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical',
+                                      }}>
+                                      {c.content}
+                                    </td>
+                                    <td>{c.author.mail}</td>
+                                    <td className='centered'>{formatCreationTime(c.creationTime)}</td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className='info-no-data'>
+                            <p>{t('comment.empty')}</p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className='info-no-data'>
+                  <p>{t('general.management.errorOfLoading')}</p>
+                </div>
+              )}
+            </React.Fragment>)}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

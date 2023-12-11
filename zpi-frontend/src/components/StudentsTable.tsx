@@ -128,16 +128,18 @@ function StudentTable({ students, thesis }: StudentTableProps) {
     const indexLeader = students.findIndex((stu) => stu.id === thesis.leader?.id)
     if (user) {
       if (user.role && user.role.name === "student") {
+        let newShowButtonDelete;
         if (user.mail === thesis.leader?.mail) {
           let newShowButtons = showButtons.map((s, i) => !thesis.reservations[i].confirmedByLeader);
           newShowButtons[indexLeader] = false || !thesis.reservations[indexLeader].confirmedByStudent;
           setShowButtons(newShowButtons);
+          newShowButtonDelete = [...newShowButtons];
         } else {
           let newShowButtons = showButtons.map((s, i) => user?.index === students[i].index && !thesis.reservations[i].confirmedByStudent);
           setShowButtons(newShowButtons);
+          newShowButtonDelete = [...showButtonDelete];
         }
 
-        const newShowButtonDelete = [...showButtonDelete];
         const thisStudent = students.find((stu) => stu.mail === user.mail);
         if (thisStudent && thesis.reservations.every((res) => !res.readyForApproval)) {
           newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;

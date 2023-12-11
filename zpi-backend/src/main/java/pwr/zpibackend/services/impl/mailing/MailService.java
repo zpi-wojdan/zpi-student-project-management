@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import pwr.zpibackend.models.thesis.Thesis;
-import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.user.Employee;
 import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.services.mailing.IMailService;
