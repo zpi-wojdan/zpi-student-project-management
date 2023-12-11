@@ -932,6 +932,7 @@ const ClearDataByCycle: React.FC = () => {
           toast.error(t("thesis.deleteErrorBulk")); 
         }
         setShowDeleteConfirmationThesesDeleting(false);
+        handleDeleteFiltersThesesDeleting();
       }
     
       const handleConfirmCancelThesesDeleting = () => {
@@ -990,9 +991,9 @@ const ClearDataByCycle: React.FC = () => {
       };
     
       const handleConfirmAcceptThesesArchive = () => {
-        const isValid = validateThesesArchive();
+        const [isValid, statName] = validateThesesArchive();
         if (isValid){
-          api.put(api_access + 'thesis/bulk', Array.from(thesesArchiveFormIndexes))
+          api.put(api_access + `thesis/bulk/${statName}`, Array.from(thesesArchiveFormIndexes))
             .then(() => {
               setKey(k => k+1);
               setThesesArchiveFormIndexes(new Set());
@@ -1010,6 +1011,7 @@ const ClearDataByCycle: React.FC = () => {
         else{
           toast.error(t("thesis.archiveErrorBulk")); 
         }
+        handleDeleteFiltersThesesArchive();
         setShowDeleteConfirmationThesesArchive(false);
       }
     
@@ -1026,7 +1028,7 @@ const ClearDataByCycle: React.FC = () => {
             break;
           }
         }
-        return allIdsArePresent !== false;
+        return [(allIdsArePresent !== false), "Closed"];
       }
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1078,7 +1080,7 @@ const ClearDataByCycle: React.FC = () => {
       const handleConfirmAcceptStudents = () => {
         const [isValid, cycleId] = validateStudents();
         if (isValid){
-          api.put(api_access + 'student/bulk/cycle/${cycleId}', Array.from(studentsFormIndexes))
+          api.put(api_access + `student/bulk/cycle/${cycleId}`, Array.from(studentsFormIndexes))
             .then(() => {
               setKey(k => k+1);
               setStudentsFormIndexes(new Set());
@@ -1096,6 +1098,7 @@ const ClearDataByCycle: React.FC = () => {
         else{
           toast.error(t("student.deleteErrorBulk")); 
         }
+        handleDeleteFiltersStudents();
         setShowAcceptConfirmationStudents(false);
       }
     
@@ -1152,9 +1155,7 @@ const ClearDataByCycle: React.FC = () => {
             handleDeleteFiltersThesesArchive();
             
             setSelectedToClear(ClearingMode.DELETE_THESES);
-        }
-        else{
-            setSelectedToClear(ClearingMode.NONE);
+            setSidebarOpen(false);
         }
     }
 
@@ -1171,9 +1172,7 @@ const ClearDataByCycle: React.FC = () => {
             handleDeleteFiltersThesesArchive();
             
             setSelectedToClear(ClearingMode.ARCHIVE_THESES);
-        }
-        else{
-            setSelectedToClear(ClearingMode.NONE);
+            setSidebarOpen(false);
         }
     }
 
@@ -1190,9 +1189,7 @@ const ClearDataByCycle: React.FC = () => {
             handleDeleteFiltersThesesArchive();
 
             setSelectedToClear(ClearingMode.STUDENTS);
-        }
-        else{
-            setSelectedToClear(ClearingMode.NONE);
+            setSidebarOpen(false);
         }
     }
 
@@ -1814,7 +1811,7 @@ const ClearDataByCycle: React.FC = () => {
                                                 className='text'
                                             />
 
-                                            <span className='text'> z {totalPagesThesesDeleting}</span>
+                                            <span className='text'> {t('general.pagination')} {totalPagesThesesDeleting}</span>
                                             <button
                                                 onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
                                                 disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
@@ -1883,7 +1880,7 @@ const ClearDataByCycle: React.FC = () => {
                                         className='text'
                                     />
 
-                                    <span className='text'> z {totalPagesStudents}</span>
+                                    <span className='text'> {t('general.pagination')} {totalPagesStudents}</span>
                                     <button
                                         onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
                                         disabled={currentPageStudents === totalPagesStudents}
@@ -1952,7 +1949,7 @@ const ClearDataByCycle: React.FC = () => {
                                                 className='text'
                                             />
 
-                                            <span className='text'> z {totalPagesThesesArchive}</span>
+                                            <span className='text'> {t('general.pagination')} {totalPagesThesesArchive}</span>
                                             <button
                                                 onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
                                                 disabled={currentPageThesesArchive === totalPagesThesesArchive}
@@ -2043,7 +2040,7 @@ const ClearDataByCycle: React.FC = () => {
                         )}
                     </>
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-                    // students
+                    // usuwanie studentów
                 ) : selectedToClear === ClearingMode.STUDENTS ? (
                     <>
                         {afterSearchStudents.length === 0 ? (
@@ -2221,7 +2218,7 @@ const ClearDataByCycle: React.FC = () => {
                                     className='text'
                                 />
             
-                                <span className='text'> z {totalPagesThesesDeleting}</span>
+                                <span className='text'> {t('general.pagination')} {totalPagesThesesDeleting}</span>
                                 <button
                                     onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
                                     disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
@@ -2262,7 +2259,7 @@ const ClearDataByCycle: React.FC = () => {
                                     className='text'
                                 />
             
-                                <span className='text'> z {totalPagesStudents}</span>
+                                <span className='text'> {t('general.pagination')} {totalPagesStudents}</span>
                                 <button
                                     onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
                                     disabled={currentPageStudents === totalPagesStudents}
@@ -2303,7 +2300,7 @@ const ClearDataByCycle: React.FC = () => {
                                     className='text'
                                 />
             
-                                <span className='text'> z {totalPagesThesesArchive}</span>
+                                <span className='text'> {t('general.pagination')} {totalPagesThesesArchive}</span>
                                 <button
                                     onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
                                     disabled={currentPageThesesArchive === totalPagesThesesArchive}

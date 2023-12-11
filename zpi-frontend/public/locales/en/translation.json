@@ -46,6 +46,7 @@
       "cancel": "Cancel",
       "send": "Send"
     },
+    "pagination": "of",
     "people": {
       "adminLC": "administrator",
       "approverLC": "approver",
