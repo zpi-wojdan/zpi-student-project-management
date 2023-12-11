@@ -121,7 +121,6 @@ function UploadStudentFilePage() {
 
       api.post(api_access + 'file/student', formData)
         .then((response) => {
-          console.log('Przesłano plik:', response.data.message);
           const invalidData = JSON.parse(response.data.invalidData);
           const recordsSavedCount = invalidData.saved_records;
 
@@ -152,8 +151,6 @@ function UploadStudentFilePage() {
               ?.map((student: ImportedStudent) =>
                ({ ...student, source_file_name: file.name })),
           };
-
-          console.log(invalidData);
           
           setInvalidJsonData((prevInvalidData) => ({
             ...prevInvalidData,
@@ -199,8 +196,7 @@ function UploadStudentFilePage() {
         .catch((error) => {
           toast.error(t('uploadFiles.filesNotSentError'));
           setSentData(false);
-          console.error('Nie udało się przesłać plików', error);
-          if (error.response.status === 401 || error.response.status === 403) {
+          if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
           }

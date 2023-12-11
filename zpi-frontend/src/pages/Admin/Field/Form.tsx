@@ -54,8 +54,7 @@ const StudyFieldForm: React.FC = () => {
         setFaculties(response.data);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -81,8 +80,7 @@ const StudyFieldForm: React.FC = () => {
               newErrorsKeys.abbreviation = "general.management.abbreviationExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -104,8 +102,7 @@ const StudyFieldForm: React.FC = () => {
               newErrorsKeys.abbreviation = "general.management.abbreviationExists"
               setErrorsKeys(newErrorsKeys);
             } else {
-              console.error(error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }

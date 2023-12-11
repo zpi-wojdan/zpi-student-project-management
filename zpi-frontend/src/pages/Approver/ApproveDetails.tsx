@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Thesis, ThesisDTO } from '../../models/thesis/Thesis';
 import { Program } from '../../models/university/Program';
 import api from '../../utils/api';
@@ -87,8 +87,7 @@ const ApproveDetails: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -148,8 +147,7 @@ const ApproveDetails: React.FC = () => {
         setStatuses(statuses => [...statuses, response.data]);
       })
       .catch((error) => {
-        console.error('Rejected error:', error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -160,8 +158,7 @@ const ApproveDetails: React.FC = () => {
         setStatuses(statuses => [...statuses, response.data]);
       })
       .catch((error) => {
-        console.error('Approved error:', error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -175,8 +172,7 @@ const ApproveDetails: React.FC = () => {
         setPrograms(response.data);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -298,8 +294,7 @@ const ApproveDetails: React.FC = () => {
           navigate('/manage');
         })
         .catch((error) => {
-          console.error(error);
-          if (error.response.status === 401 || error.response.status === 403) {
+          if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
           }
@@ -352,8 +347,7 @@ const ApproveDetails: React.FC = () => {
                 setCommentsKey(k => k + 1);
               })
               .catch((error) => {
-                console.error(error);
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                   setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                   handleSignOut(navigate);
                 }
@@ -362,8 +356,7 @@ const ApproveDetails: React.FC = () => {
 
           })
           .catch((error) => {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
@@ -573,7 +566,7 @@ const ApproveDetails: React.FC = () => {
                 <p>{thesis.nameEN}</p>
               )}
               <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' ? (
+              {i18n.language === 'pl' || !thesis.descriptionEN ? (
                 <p>{thesis.descriptionPL}</p>
               ) : (
                 <p>{thesis.descriptionEN}</p>

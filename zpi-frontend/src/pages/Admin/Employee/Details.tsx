@@ -29,13 +29,11 @@ const EmployeeDetails: React.FC = () => {
   useEffect(() => {
     api.get(api_access + `employee/${id}`)
       .then((response) => {
-        console.log(response.data)
         setEmployee(response.data);
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -56,8 +54,7 @@ const EmployeeDetails: React.FC = () => {
         navigate("/employees");
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }

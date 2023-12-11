@@ -68,8 +68,7 @@ function AddThesisPageSupervisor() {
         setSubmittedTheses(response.data.length)
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -103,7 +102,7 @@ function AddThesisPageSupervisor() {
         setStatuses(allowedStatuses);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -131,7 +130,7 @@ function AddThesisPageSupervisor() {
           setProgramSuggestions(updatedProgramSuggestions);
         })
         .catch((error) => {
-          if (error.response.status === 401 || error.response.status ===403){
+          if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
           }
@@ -139,7 +138,7 @@ function AddThesisPageSupervisor() {
 
     })
     .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
+      if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
         handleSignOut(navigate);
       }
@@ -330,12 +329,11 @@ function AddThesisPageSupervisor() {
             toast.success(t("thesis.updateSuccessful"));
           })
           .catch((error) => {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
-            if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+            if (error.response && error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
               const index = (error.response.data.message as string).split(' ')[3];
               toast.error(t(`thesis.errorStudents`, {
                 index: index
@@ -352,12 +350,11 @@ function AddThesisPageSupervisor() {
             toast.success(t("thesis.addSuccessful"));
           })
           .catch((error) => {
-              console.error(error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
-              if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+              if (error.response && error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
                 const index = (error.response.data.message as string).split(' ')[3];
                 toast.error(t(`thesis.errorStudents`, {
                   index: index

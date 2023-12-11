@@ -24,7 +24,6 @@ const TitleList: React.FC = () => {
         api.get(api_access + 'title')
             .then((response) => {
                 setTitles(response.data);
-                console.log(response.data)
                 const filteredItemsPerPage = ITEMS_PER_PAGE.filter(itemPerPage => {
                     if (itemPerPage === 'All') {
                         return true;
@@ -37,8 +36,7 @@ const TitleList: React.FC = () => {
                 setLoaded(true);
             })
             .catch((error) => {
-                console.error(error);
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -85,8 +83,7 @@ const TitleList: React.FC = () => {
                 setRefreshList(!refreshList);
             })
             .catch((error) => {
-                console.error(error);
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }

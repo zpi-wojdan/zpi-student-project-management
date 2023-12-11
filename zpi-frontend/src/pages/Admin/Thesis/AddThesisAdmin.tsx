@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, ChangeEvent } from 'react';
 import useAuth from "../../../auth/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import handleSignOut from "../../../auth/Logout";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import api from "../../../utils/api";
 import { Thesis, ThesisDTO } from '../../../models/thesis/Thesis';
 import { Status } from '../../../models/thesis/Status';
@@ -84,7 +84,7 @@ function AddThesisPageAdmin() {
         setStatuses(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -110,32 +110,23 @@ function AddThesisPageAdmin() {
           setProgramSuggestions(updatedProgramSuggestions);
         })
         .catch((error) => {
-          if (error.response.status === 401 || error.response.status ===403){
+          if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
           }
         });
 
+  useEffect(() => {
+    api.get(api_access + 'employee')
+    .then((response) => {
+      setEmployees(response.data);
     })
     .catch((error) => {
-      if (error.response.status === 401 || error.response.status ===403){
+      if (error.response && error.response.status === 401 || error.response && error.response.status === 403){
         setAuth({ ...auth, reasonOfLogout: 'token_expired' });
         handleSignOut(navigate);
       }
     });
-  }, []);
-
-  useEffect(() => {
-    api.get(api_access + 'employee')
-      .then((response) => {
-        setEmployees(response.data);
-      })
-      .catch((error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
-          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-          handleSignOut(navigate);
-        }
-      });
   }, []);
 
   useEffect(() => {
@@ -183,7 +174,7 @@ function AddThesisPageAdmin() {
     let supervisorIndex: number = formData.supervisorId;
     let pplCount = formData.numPeople;
     let cycleId: number | null;
-    let studentIndexesHelp: string[] = [];    
+    let studentIndexesHelp: string[] = [];
 
     if (formData.studyCycleId && formData.studyCycleId !== -1) {
       cycleId = formData.studyCycleId;
@@ -272,7 +263,6 @@ function AddThesisPageAdmin() {
       }
 
       if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
-        console.log('zleeeee')
         newErrors.studentIndexes = errorRequireText
         newErrorsKeys.studentIndexes = "thesis.addStudentsError";
         isValid = false;
@@ -345,8 +335,7 @@ function AddThesisPageAdmin() {
             toast.success(t("thesis.updateSuccessful"));
           })
           .catch((error) => {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
               setAuth({ ...auth, reasonOfLogout: 'token_expired' });
               handleSignOut(navigate);
             }
@@ -367,27 +356,23 @@ function AddThesisPageAdmin() {
             toast.success(t("thesis.addSuccessful"));
           })
           .catch((error) => {
-             
-              console.error(error);
-              if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && error.response.status === 409 && error.response.data.message.includes('has reached the limit of theses')) {
+              toast.error(t("supervisorTheses.supervisorLimitExceeded"));
+            } else if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
-              }
-              if (error.response.status === 409 && error.response.data.message.includes('has reached the limit of theses')) {
-                toast.error(t("supervisorTheses.supervisorLimitExceeded"));
-              }
-              if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
-                const index = (error.response.data.message as string).split(' ')[3];
-                toast.error(t(`thesis.errorStudents`, {
-                  index: index
-                }));
-              } else {
-                toast.error(t("thesis.addError"));
-              }
+            } else if (error.response.status === 400 && (error.response.data.message as string).startsWith('Student with index')) {
+              const index = (error.response.data.message as string).split(' ')[3];
+              toast.error(t(`thesis.errorStudents`, {
+                index: index
+              }));
+            } else {
+              toast.error(t("thesis.addError"));
+            }
           });
+      }
     }
-  }
-};
+  };
 
 const handleMailSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
   const abbrev = e.target.value;
@@ -602,8 +587,8 @@ return (
                 return a.name.localeCompare(b.name);  //  nazwisko to samo -> po imieniu
               })
               .map((supervisor) => (
-                <option 
-                  key={supervisor.mail} 
+                <option
+                  key={supervisor.mail}
                   value={supervisor.mail}
                   >
                   {supervisor.title.name} {supervisor.name} {supervisor.surname}
@@ -651,7 +636,7 @@ return (
                 <select
                   id={`programId${index}`}
                   name={`programId${index}`}
-                  value={programId} 
+                  value={programId}
                   onChange={(e) => {
                     const selectedProgramId = parseInt(e.target.value, 10);
                     handleProgramChange(index, selectedProgramId);
@@ -728,6 +713,6 @@ return (
     </form>
   </div>
 )
-};
+      };
 
 export default AddThesisPageAdmin;

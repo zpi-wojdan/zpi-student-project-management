@@ -5,9 +5,9 @@ import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.dto.university.StudyCycleDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.models.university.StudyCycle;
-import pwr.zpibackend.services.university.StudyCycleService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.university.StudyCycleService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

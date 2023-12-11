@@ -60,7 +60,6 @@ const LoginPage = () => {
         console.log("Encoded JWT ID token: " + response.credential);
         Cookies.set("google_token", response.credential);
         const decodedUser: any = jwt_decode(response.credential);
-        console.log(decodedUser);
 
         api.get(api_access + `user/${decodedUser.email}/details`)
             .then((res) => {
@@ -70,7 +69,6 @@ const LoginPage = () => {
                 navigate(from, { replace: true });
             })
             .catch((error) => {
-                console.error(error);
                 Cookies.remove('google_token');
                 setErrorMessage(error.response.data.message)
                 setAlertMessage(t('login.loginError'))

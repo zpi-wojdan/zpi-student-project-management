@@ -41,7 +41,7 @@ function SingleReservationPage({ }: SingleReservationProps) {
             reservationDate: new Date(),
             confirmedByStudent: true,
         };
-        console.log(JSON.stringify(responseBody));
+
 
         const response = await api.post(api_access + "reservation", JSON.stringify(responseBody), {
             headers: {
@@ -51,15 +51,12 @@ function SingleReservationPage({ }: SingleReservationProps) {
         })
             .then(response => {
                 if (response.status === 201) {
-                    console.log(`Reservation ${reservation} created successfully`);
                     toast.success(t('reservation.reservationSuccessful'));
                     navigate("/public-theses/" + thesis.id)
                 }
             })
             .catch(error => {
-                console.error(`Failed to submit reservation ${reservation}`);
-                console.error(error)
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }

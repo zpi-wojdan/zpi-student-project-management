@@ -1,6 +1,7 @@
 package pwr.zpibackend.models.thesis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,11 @@ public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "Unique identifier of the status.", example = "1")
     private long id;
 
     @Column(nullable = false)
+    @Schema(description = "Name of the status.", example = "Draft")
     private String name;
 
     @OneToMany(mappedBy = "status")

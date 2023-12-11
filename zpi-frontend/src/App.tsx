@@ -51,7 +51,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import TitleList from './pages/Admin/Title/List';
 import TitleForm from "./pages/Admin/Title/Form";
 import ClearDataByCycle from './pages/Admin/BulkDeletion/ClearDataByCycle';
-
+import ServerError from './pages/ServerError';
 
 export interface IAppProps {
 }
@@ -67,6 +67,7 @@ export default function App(props: IAppProps) {
                 <Route path='/' element={<HomePage />} />
                 <Route path='login' element={<LoginPage />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route path="/error" element={<ServerError />} />
 
                 <Route element={<RequireAuth allowedRoles={['student', 'admin']} />}>
                   <Route path='reservation' element={<ReservationPage admin={false}/>} />
@@ -79,14 +80,14 @@ export default function App(props: IAppProps) {
 
                 <Route element={<RequireAuth allowedRoles={['supervisor']} />}>
                   <Route path='my' element={<ThesesSupervisor />} />
-                  <Route path='my/:id' element={<ThesesDetails  addStudents={false}/>} />
+                  <Route path='my/:id' element={<ThesesDetails  addStudents={false} goBackPath='/my'/>} />
                   <Route path='my/add' element={<AddThesisPageSupervisor />} />
                   <Route path='my/edit/:id' element={<AddThesisPageSupervisor />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={['student', 'supervisor', 'approver', 'admin']} />}>
                   <Route path='public-theses' element={<ThesesTable />} />
-                  <Route path='public-theses/:id' element={<ThesesDetails addStudents={true}/>} />
+                  <Route path='public-theses/:id' element={<ThesesDetails addStudents={true} goBackPath='/public-theses'/>} />
                 </Route>
                 
                 <Route element={<RequireAuth allowedRoles={['approver']} />}>

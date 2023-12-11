@@ -27,9 +27,6 @@ const HomePage: React.FC = () => {
                 setITEMS_PER_PAGE(filteredItemsPerPage);
                 setLoaded(true);
             })
-            .catch((error) => {
-                console.error(error);
-            });
     }, [refreshList]);
 
     const [currentPage, setCurrentPage] = useState(1);

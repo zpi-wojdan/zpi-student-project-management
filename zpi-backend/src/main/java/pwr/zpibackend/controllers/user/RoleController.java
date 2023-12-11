@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pwr.zpibackend.models.user.Role;
 import pwr.zpibackend.dto.user.RoleDTO;
-import pwr.zpibackend.services.user.RoleService;
+import pwr.zpibackend.services.user.IRoleService;
 
 import java.util.List;
 
@@ -17,38 +17,40 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController {
 
-    private final RoleService roleService;
+    private final IRoleService roleService;
 
-    @Operation(summary = "Get all roles", description = "Returns all roles from database")
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Get all roles", description = "Returns all roles from database. <br>" +
+            "Requires authenticated user.")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Role>> getAllRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 
-    @Operation(summary = "Get role by id", description = "Returns role with given id")
     @GetMapping("/{roleId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Get role by id", description = "Returns role with given id. <br>" +
+            "Requires authenticated user.")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Role> getRoleById(@PathVariable Long roleId) {
         return ResponseEntity.ok(roleService.getRole(roleId));
     }
 
-    @Operation(summary = "Add role", description = "Adds role to database")
     @PostMapping
+    @Operation(summary = "Add role", description = "Adds role to database. <br>Requires ADMIN role.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Role> addRole(@RequestBody RoleDTO role) {
         return new ResponseEntity<>(roleService.addRole(role), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Update role", description = "Updates role with given id")
     @PutMapping("/{roleId}")
+    @Operation(summary = "Update role", description = "Updates role with given id. <br>Requires ADMIN role.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Role> updateRole(@PathVariable Long roleId, @RequestBody RoleDTO updatedRole) {
         return ResponseEntity.ok(roleService.updateRole(roleId, updatedRole));
     }
 
-    @Operation(summary = "Delete role", description = "Deletes role with given id")
     @DeleteMapping("/{roleId}")
+    @Operation(summary = "Delete role", description = "Deletes role with given id. <br>Requires ADMIN role.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Role> deleteRole(@PathVariable Long roleId) {
         return ResponseEntity.ok(roleService.deleteRole(roleId));

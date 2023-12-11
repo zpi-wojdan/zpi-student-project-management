@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import StudentTable from '../../components/StudentsTable';
 import { ThesisFront, Thesis } from '../../models/thesis/Thesis';
 import { Program } from '../../models/university/Program';
 import Cookies from 'js-cookie';
-import { Employee } from '../../models/user/Employee';
 import { Student } from '../../models/user/Student';
 import api from '../../utils/api';
 import useAuth from "../../auth/useAuth";
@@ -54,11 +53,11 @@ const ThesisStudent: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 404) {
+        ;
+        if (error.response && error.response.status === 404) {
           setLoaded(true);
         }
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -85,14 +84,11 @@ const ThesisStudent: React.FC = () => {
           const response = await api.put(api_access + 'reservation/' + reservation.id,
             JSON.stringify(reservation)
           );
-
           if (response.status === 200) {
             toast.success(t('thesis.readyForApproval'));
-            console.log('All users reservations sent for approval successfully');
           }
         } catch (error) {
           toast.error(t('thesis.readyForApprovalError'));
-          console.error(`Failed to update reservations for reservation: ${reservation}`, error);
         }
       }
     }
@@ -129,16 +125,16 @@ const ThesisStudent: React.FC = () => {
       })
 
       .catch((error) => {
-        console.error(error);
+        ;
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 2000);
 
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        else if (error.response.status === 404) {
+        else if (error.response && error.response.status === 404) {
           toast.error(t('thesis.downloadNoDataError'));
         }
         else
@@ -199,7 +195,7 @@ const ThesisStudent: React.FC = () => {
                 <p>{thesis.nameEN}</p>
               )}
               <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' ? (
+              {i18n.language === 'pl' || !thesis.descriptionEN ? (
                 <p>{thesis.descriptionPL}</p>
               ) : (
                 <p>{thesis.descriptionEN}</p>

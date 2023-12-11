@@ -19,10 +19,10 @@ import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.user.Employee;
-import pwr.zpibackend.services.thesis.CommentService;
-import pwr.zpibackend.services.thesis.ThesisService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.thesis.CommentService;
+import pwr.zpibackend.services.impl.thesis.ThesisService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;

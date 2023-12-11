@@ -20,9 +20,10 @@ import ChoiceConfirmation from '../../components/ChoiceConfirmation';
 
 type ThesisDetailsProps = {
   addStudents: boolean;
+  goBackPath: string;
 }
 
-const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
+const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -57,8 +58,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -89,8 +89,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
         navigate("/theses");
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -130,11 +129,9 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
 
           if (response.status === 200) {
             toast.success(t('thesis.readyForApproval'));
-            console.log('All users reservations sent for approval successfully');
           }
         } catch (error) {
           toast.error(t('thesis.readyForApprovalError'));
-          console.error(`Failed to update reservations for reservation: ${reservation}`, error);
         }
       }
     }
@@ -171,16 +168,16 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
       })
 
       .catch((error) => {
-        console.error(error);
+        ;
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 2000);
 
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        else if (error.response.status === 404) {
+        else if (error.response && error.response.status === 404) {
           toast.error(t('thesis.downloadNoDataError'));
         }
         else
@@ -247,7 +244,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
     <div className='page-margin'>
       <div className='d-flex justify-content-between align-items-center mb-3'>
         <div className='d-flex justify-content-begin align-items-center'>
-          <button type="button" className="custom-button another-color" onClick={() => navigate('/public-theses')}>
+          <button type="button" className="custom-button another-color" onClick={() => navigate(goBackPath)}>
             &larr; {t('general.management.goBack')}
           </button>
           {(thesis && addStudents && (thesis.status.name === 'Approved' && thesis?.occupied < thesis?.numPeople && (
@@ -327,7 +324,7 @@ const ThesesDetails = ({addStudents}:ThesisDetailsProps) => {
                 <p>{thesis.nameEN}</p>
               )}
               <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' ? (
+              {i18n.language === 'pl' || !thesis.descriptionEN ? (
                 <p>{thesis.descriptionPL}</p>
               ) : (
                 <p>{thesis.descriptionEN}</p>

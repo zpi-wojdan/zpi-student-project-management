@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
-      id: create_table_student_and_employee
-      author: ALL
+      id: create_tables
+      author: Marta_Zuzia_Kuba_Piotr
       changes:
         - createTable:
             tableName: role
@@ -36,6 +36,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
+              - column:
+                    name: num_theses
+                    type: INT
+                    constraints:
+                      nullable: false
 
         - createTable:
             tableName: status
@@ -175,6 +180,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
+
         - createTable:
             tableName: program
             columns:
@@ -322,6 +328,11 @@ databaseChangeLog:
                     referencedTableName: department
                     referencedColumnNames: id
                     nullable: false
+              - column:
+                    name: num_theses
+                    type: INT
+                    constraints:
+                      nullable: false
 
         - createTable:
             tableName: thesis
@@ -368,7 +379,7 @@ databaseChangeLog:
                     foreignKeyName: fk_thesis_cycle
                     referencedTableName: study_cycle
                     referencedColumnNames: id
-                    nullable: false
+                    nullable: true
               - column:
                   name: status
                   type: bigint
@@ -393,6 +404,10 @@ databaseChangeLog:
                     referencedTableName: student
                     referencedColumnNames: id
                     nullable: true
+              - column:
+                  name: creation_time
+                  type: TIMESTAMP
+                  valueComputed: now()
 
         - createTable:
             tableName: reservation
@@ -518,10 +533,7 @@ databaseChangeLog:
                     referencedTableName: role
                     referencedColumnNames: id
                     nullable: false
-  - changeSet:
-      id: updating_thesis_and_employee_and_adding_comments
-      author: Kuba
-      changes:
+
         - createTable:
             tableName: comment
             columns:
@@ -541,7 +553,7 @@ databaseChangeLog:
                     referencedColumnNames: id
               - column:
                   name: content
-                  type: VARCHAR(255)
+                  type: VARCHAR(1000)
                   constraints:
                     nullable: false
               - column:
@@ -557,40 +569,6 @@ databaseChangeLog:
                     foreignKeyName: thesis_fk
                     referencedTableName: thesis
                     referencedColumnNames: id
-
-        - addColumn:
-            tableName: thesis
-            columns:
-              - column:
-                  name: creation_time
-                  type: TIMESTAMP
-                  valueComputed: now()
-              - column: # wywalić
-                  name: comment_id
-                  type: BIGINT
-                  constraints:
-                    nullable: true
-                    foreignKeyName: comment_fk
-                    referencedTableName: comment
-                    referencedColumnNames: id
-                    deleteCascade: true
-
-        - addColumn:
-            tableName: employee
-            columns:
-              - column:
-                  name: comment_id
-                  type: BIGINT
-                  constraints:
-                      nullable: true
-                      foreignKeyName: comment_fk
-                      referencedTableName: comment
-                      referencedColumnNames: id
-
-  - changeSet:
-      id: create_table_student_and_employee
-      author: Zuzia
-      changes:
         - createTable:
             tableName: deadline
             columns:
@@ -618,44 +596,3 @@ databaseChangeLog:
                     type: date
                     constraints:
                         nullable: false
-  - changeSet:
-      id: alter_table_thesis_add_nulls
-      author: Piotr
-      changes:
-        - dropNotNullConstraint:
-            tableName: thesis
-            columnName: cycle_id
-        - dropColumn:
-            tableName: thesis
-            columnName: comment_id
-
-  - changeSet:
-      id: modify_content_size_comment
-      author: Kuba
-      changes:
-        - modifyDataType:
-            tableName: comment
-            columnName: content
-            newDataType: varchar(1000)
-
-  - changeSet:
-        id: add_num_theses_to_title_and_employee
-        author: Zuzia
-        changes:
-          - addColumn:
-              tableName: title
-              columns:
-                - column:
-                    name: num_theses
-                    type: INT
-                    constraints:
-                      nullable: false
-          - addColumn:
-              tableName: employee
-              columns:
-                - column:
-                    name: num_theses
-                    type: INT
-                    constraints:
-                      nullable: false
-

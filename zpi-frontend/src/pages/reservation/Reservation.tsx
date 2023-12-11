@@ -9,6 +9,7 @@ import { Thesis } from '../../models/thesis/Thesis';
 import api from '../../utils/api';
 import { useTranslation } from "react-i18next";
 import api_access from '../../utils/api_access';
+import { Program } from '../../models/university/Program';
 
 type ReservationProps = {
     admin: boolean;
@@ -25,6 +26,7 @@ function ReservationPage({ admin }: ReservationProps) {
     const [reservations, setReservations] = useState<string[]>(admin ? [""] : ["", ""]);
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
+    const [wrongProgramCycle, setWrongProgramCycle] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
     const [user, setUser] = useState<Student>();
     const [showAddButton, setShowAddButton] = useState<boolean>(true);
@@ -52,16 +54,19 @@ function ReservationPage({ admin }: ReservationProps) {
         const updatedErrors = [...errors];
         const updatedStudents = [...students];
         const updatedDoubles = [...doubles];
+        const updatedWrongProgramCycle = [...wrongProgramCycle];
 
         updatedReservations.splice(index, 1);
         updatedErrors.splice(index, 1);
         updatedStudents.splice(index, 1);
         updatedDoubles.splice(index, 1);
+        updatedWrongProgramCycle.splice(index, 1);
 
         setReservations(updatedReservations);
         setErrors(updatedErrors);
         setStudents(updatedStudents);
         setDoubles(updatedDoubles);
+        setWrongProgramCycle(updatedWrongProgramCycle);
         setShowAddButton(true);
     };
 
@@ -92,6 +97,7 @@ function ReservationPage({ admin }: ReservationProps) {
     const handleReservationBlur = async (index: number) => {
         const reservation = reservations[index];
         const newErrors = [...errors];
+        const newWrongProgramCycle = [...wrongProgramCycle];
         const newStudents = [...students];
 
         if (reservation === "") {
@@ -103,7 +109,6 @@ function ReservationPage({ admin }: ReservationProps) {
         }
 
         if (!isReservationValid(index, reservation)) {
-            console.error(`Invalid reservation number: ${reservation}`);
             newStudents[index] = {} as Student;
             setStudents(newStudents);
             newErrors[index] = true;
@@ -115,27 +120,33 @@ function ReservationPage({ admin }: ReservationProps) {
 
         await api.get(api_access + `student/index/${reservation}`)
             .then(response => {
-                newStudents[index] = response.data as Student;
+                if ((response.data as Student).studentProgramCycles.some((spc: any) => thesis.programs.some((p: Program) => p.name === spc.program.name)) &&
+                    (response.data as Student).studentProgramCycles.some((spc: any) => thesis.studyCycle?.name === spc.cycle.name)) {
+                    newStudents[index] = response.data as Student;
+                } else {
+                    newStudents[index] = {} as Student;
+                    newWrongProgramCycle[index] = true;
+                }
             })
             .catch(error => {
                 newStudents[index] = {} as Student;
                 newErrors[index] = true;
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
             })
         setStudents(newStudents);
         setErrors(newErrors);
+        setWrongProgramCycle(newWrongProgramCycle);
     };
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         if (reservations.every((reservation, index) => isReservationValid(index, reservation))) {
-            let allReservationsSuccessful = true;
 
-            for (const reservation of reservations) {
-                const responseBody = {
+            const requestBody = reservations.map((reservation) => {
+                return {
                     thesisId: thesis.id,
                     student: students.find(student => student.index === reservation),
                     reservationDate: new Date(),
@@ -143,46 +154,39 @@ function ReservationPage({ admin }: ReservationProps) {
                     confirmedByStudent: admin,
                     confirmedBySupervisor: admin,
                 };
-                console.log(JSON.stringify(responseBody));
+            });
 
-                const response = await api.post(api_access + "reservation", JSON.stringify(responseBody), {
-                    headers: {
-                        'Content-Type': 'application/json'
+            const response = await api.post(api_access + "reservation/list", JSON.stringify(requestBody), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+                .then(response => {
+                    if (response.status === 201) {
+                        toast.success(t('reservation.reservationSuccessful'));
+                        navigate("/public-theses/" + thesis.id)
                     }
-
                 })
-                    .then(response => {
-                        if (response.status === 201) {
-                            console.log(`Reservation ${reservation} created successfully`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`Failed to submit reservation ${reservation}`);
-                        console.error(error)
-                        allReservationsSuccessful = false;
-                        if (error.response.status === 401 || error.response.status === 403) {
-                            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-                            handleSignOut(navigate);
-                        }
-                        if (error.response.status === 409) {
-                            toast.error(t('reservation.studentAlreadyReserved', {
-                                index: error.response.data.message,
-                            }));
-                        }
-                    });
-            }
+                .catch(error => {
+                    if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+                        setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+                        handleSignOut(navigate);
+                    }
+                    else if (error.response && error.response.status === 409) {
+                        toast.error(t('reservation.studentAlreadyReserved', {
+                            index: error.response.data.message,
+                        }));
+                    }
+                    else {
+                        toast.error(t('reservation.reservationError'));
+                    }
+                });
 
-            if (allReservationsSuccessful) {
-                toast.success(t('reservation.reservationSuccessful'));
-                navigate("/public-theses/" + thesis.id)
-            } else {
-                toast.error(t('reservation.reservationError'));
-            }
         } else {
             for (const reservation of reservations) {
                 handleReservationBlur(reservations.indexOf(reservation));
             }
-            console.error("Invalid reservation numbers");
         }
     };
 
@@ -211,7 +215,7 @@ function ReservationPage({ admin }: ReservationProps) {
                     <tbody>
                         {reservations.map((reservation, index) => (
                             <tr key={index}>
-                                <td style={{whiteSpace: "nowrap"}}>
+                                <td style={{ whiteSpace: "nowrap" }}>
                                     <label htmlFor={`reservation-${index}`} className="col-form-label">
                                         {t('general.people.student')} {index + 1}:
                                     </label>
@@ -225,6 +229,7 @@ function ReservationPage({ admin }: ReservationProps) {
                                         onChange={(e) => handleReservationChange(index, e.target.value)}
                                         onBlur={() => handleReservationBlur(index)}
                                         placeholder={t('general.people.index')}
+                                        readOnly={!admin && index === 0}
                                     />
                                 </td>
                                 <td>
@@ -248,13 +253,13 @@ function ReservationPage({ admin }: ReservationProps) {
                                     )}
                                 </td>
                                 <td>
-                                    <p className={errors[index] ? "col-form-label text-danger" : "col-form-label mb-0"}>
+                                    <p className={errors[index] || doubles[index] || wrongProgramCycle[index] ? "col-form-label text-danger" : "col-form-label mb-0"}>
                                         {students[index] && students[index].name !== undefined ?
                                             students[index].name + ' ' + students[index].surname
                                             : (errors[index] ?
                                                 (doubles[index] ? t('reservation.indexUsedInAnotherRow') :
                                                     t('reservation.wrongIndex')
-                                                ) : ''
+                                                ) : (wrongProgramCycle[index] ? t('reservation.wrongProgramCycle') : "")
                                             )}
                                     </p>
                                 </td>

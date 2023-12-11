@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Thesis } from '../../../models/thesis/Thesis';
 import { Program } from '../../../models/university/Program';
 import api from '../../../utils/api';
@@ -30,8 +30,7 @@ const ThesisDetails: React.FC = () => {
         setLoaded(true);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -43,11 +42,9 @@ const ThesisDetails: React.FC = () => {
     api.get(api_access + 'program')
       .then((response) => {
         setPrograms(response.data);
-        console.log(programs);
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -77,8 +74,7 @@ const ThesisDetails: React.FC = () => {
         navigate("/theses");
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -173,7 +169,7 @@ const ThesisDetails: React.FC = () => {
                 <p>{thesis.nameEN}</p>
               )}
               <p className="bold">{t('general.university.description')}:</p>
-              {i18n.language === 'pl' ? (
+              {i18n.language === 'pl' || !thesis.descriptionEN ? (
                 <p>{thesis.descriptionPL}</p>
               ) : (
                 <p>{thesis.descriptionEN}</p>

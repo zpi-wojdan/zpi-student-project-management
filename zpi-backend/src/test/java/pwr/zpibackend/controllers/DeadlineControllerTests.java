@@ -15,9 +15,9 @@ import pwr.zpibackend.dto.university.DeadlineDTO;
 import pwr.zpibackend.exceptions.AlreadyExistsException;
 import pwr.zpibackend.exceptions.NotFoundException;
 import pwr.zpibackend.models.university.Deadline;
-import pwr.zpibackend.services.university.DeadlineService;
-import pwr.zpibackend.services.user.EmployeeService;
-import pwr.zpibackend.services.user.StudentService;
+import pwr.zpibackend.services.impl.university.DeadlineService;
+import pwr.zpibackend.services.impl.user.EmployeeService;
+import pwr.zpibackend.services.impl.user.StudentService;
 
 import java.time.LocalDate;
 import java.util.List;

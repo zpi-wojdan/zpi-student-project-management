@@ -224,7 +224,7 @@ const ClearDataByCycle: React.FC = () => {
                 setThesesArchiveLoaded(true);
             })
             .catch((error) => {
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -252,7 +252,7 @@ const ClearDataByCycle: React.FC = () => {
                 setStudentsLoaded(true);
             })
             .catch((error) => {
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -272,8 +272,7 @@ const ClearDataByCycle: React.FC = () => {
             setAvailableSupervisorThesesArchive(supervisors);
         })
         .catch((error) => {
-            console.error(error);
-            if (error.response.status === 401 || error.response.status === 403) {
+            if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
             }
@@ -290,8 +289,7 @@ const ClearDataByCycle: React.FC = () => {
             setAvailableCyclesStudents(sortedCycles);
             })
             .catch((error) => {
-                console.error(error);
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -308,8 +306,7 @@ const ClearDataByCycle: React.FC = () => {
               setAvailableFacultiesStudents(sortedFaculties);
             })
             .catch((error) => {
-              console.error(error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -326,8 +323,7 @@ const ClearDataByCycle: React.FC = () => {
                 setAvailableFieldsStudents(sortedStudyFields);
             })
             .catch((error) => {
-                console.error(error)
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -344,8 +340,7 @@ const ClearDataByCycle: React.FC = () => {
                 setAvailableSpecializationsStudents(sortedSpecializations);
             })
             .catch((error) => {
-                console.error(error)
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                     setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                     handleSignOut(navigate);
                 }
@@ -920,8 +915,7 @@ const ClearDataByCycle: React.FC = () => {
               toast.success(t("thesis.deleteSuccesfulBulk"));
             })
             .catch((error) => {
-              console.log("Error", error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
@@ -1087,8 +1081,7 @@ const ClearDataByCycle: React.FC = () => {
               toast.success(t("student.deleteSuccesfulBulk"));
             })
             .catch((error) => {
-              console.log("Error", error);
-              if (error.response.status === 401 || error.response.status === 403) {
+              if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
               }
