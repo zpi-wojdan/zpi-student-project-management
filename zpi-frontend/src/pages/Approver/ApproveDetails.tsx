@@ -60,6 +60,8 @@ const ApproveDetails: React.FC = () => {
   const [confirmClicked, setConfirmClicked] = useState(false);
   const [rejectClicked, setRejectClicked] = useState(false);
 
+  const [rejected, setRejected] = useState(false);
+
   useEffect(() => {
     const response = api.get(api_access +`thesis/${id}`)
       .then((response) => {
@@ -81,6 +83,7 @@ const ApproveDetails: React.FC = () => {
           comments: thesisDb.comments,
         };
         setThesis(t);
+        setStatusName(t.status.name);
         setLoaded(true);
       })
       .catch((error) => {
@@ -330,13 +333,18 @@ const ApproveDetails: React.FC = () => {
 
             api.put(api_access +`thesis/${id}`, thesisDTO)
               .then(() => {
-                setKey(k => k + 1);
-                setCommentsKey(k => k + 1);
+                setRejected(true);
+                const name =  statuses.find(s => s.name === 'Rejected')?.name ?? "";
+                if (name !== ""){
+                  setStatusName(name);
+                }
                 toast.success(t("thesis.rejectionSuccessful"));
                 if (thesisDTO) {
                   setStatusName(statuses.find(s => s.id = thesisDTO?.statusId)?.name)
                 }
                 setShowRejectConfirmation(false);
+                setKey(k => k+1);
+                setCommentsKey(k => k + 1);
               })
               .catch((error) => {
                 if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
@@ -362,7 +370,6 @@ const ApproveDetails: React.FC = () => {
     else {
       toast.error(t("thesis.rejectionError"));
     }
-    // setUpdatedDatabase(true);
   };
 
   const handleRejectCancel = () => {
@@ -474,7 +481,7 @@ const ApproveDetails: React.FC = () => {
         <button type="button" className="custom-button another-color" onClick={() => navigate(-1)}>
           &larr; {t('general.management.goBack')}
         </button>
-        {loaded ? (<React.Fragment>
+        {(loaded && !rejected) ? (<React.Fragment>
           {!showRejectConfirmation && (
             <>
               <button

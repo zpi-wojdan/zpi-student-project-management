@@ -151,7 +151,7 @@ const DeadlineList: React.FC = () => {
                                         className='text'
                                     />
 
-                                    <span className='text'> z {totalPages}</span>
+                                    <span className='text'> {t('general.pagination')} {totalPages}</span>
                                     <button
                                         onClick={() => handlePageChange(currentPage + 1)}
                                         disabled={currentPage === totalPages}
@@ -260,7 +260,7 @@ const DeadlineList: React.FC = () => {
                                 className='text'
                             />
 
-                            <span className='text'> z {totalPages}</span>
+                            <span className='text'> {t('general.pagination')} {totalPages}</span>
                             <button
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}

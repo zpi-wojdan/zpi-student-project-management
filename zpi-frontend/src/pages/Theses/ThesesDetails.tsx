@@ -230,6 +230,7 @@ const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
     }
     return u?.roles?.some(role => (role.name === 'admin' || role.name === 'approver')) ?? false
   }
+
   const gotCommentSectionRightsBySupervisor = () => {
     let u: (Student & Employee) | undefined;
     if (user === null || user === undefined) {

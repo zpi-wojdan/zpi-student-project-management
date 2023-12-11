@@ -598,7 +598,7 @@ const ApproveList: React.FC = () => {
           <div className='d-flex justify-content-begin  align-items-center'>
             <button
               type="button"
-              className="custom-button"
+              className={`custom-button ${thesesFormIndexes.size === 0 ? 'another-color' : ''}`}
               onClick={() => handleConfirmClick()}
               disabled={thesesFormIndexes.size === 0}
             >
@@ -674,7 +674,7 @@ const ApproveList: React.FC = () => {
                         className='text'
                       />
 
-                      <span className='text'> z {totalPages}</span>
+                      <span className='text'> {t('general.pagination')} {totalPages}</span>
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
@@ -781,7 +781,7 @@ const ApproveList: React.FC = () => {
                 className='text'
               />
 
-              <span className='text'> z {totalPages}</span>
+              <span className='text'> {t('general.pagination')} {totalPages}</span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}

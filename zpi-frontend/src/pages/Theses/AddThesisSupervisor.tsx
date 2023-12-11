@@ -177,6 +177,7 @@ function AddThesisPageSupervisor() {
     let supervisorIndex: number = formData.supervisorId;
     let pplCount = formData.numPeople;
     let cycleId: number | null;
+    let studentIndexesHelp: string[] = [];
 
     if (formData.studyCycleId && formData.studyCycleId !== -1) {
       cycleId = formData.studyCycleId;
@@ -265,6 +266,9 @@ function AddThesisPageSupervisor() {
         newErrorsKeys.studentIndexes = "thesis.addStudentsError";
         isValid = false;
       }
+      else{
+        studentIndexesHelp = formData.studentIndexes;
+      }
     }
     else {
       if (!statusIndex || statusIndex === -1) {
@@ -303,6 +307,7 @@ function AddThesisPageSupervisor() {
 
     let dto: ThesisDTO = {
       ...formData,
+      studentIndexes: studentIndexesHelp,
       supervisorId: supervisorIndex,
       programIds: filteredPrograms,
       numPeople: pplCount,
@@ -434,7 +439,7 @@ function AddThesisPageSupervisor() {
             {thesis ? t('general.management.save') : t('general.management.add')}
           </button>}
           <button id="save-draft-button" type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
-            {thesis ? t('general.management.save') : t('general.management.addAsDraft')}
+            {thesis ? t('general.management.saveAsDraft') : t('general.management.addAsDraft')}
           </button>
         </div>
         <div>
