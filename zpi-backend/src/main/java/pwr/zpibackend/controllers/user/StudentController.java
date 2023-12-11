@@ -59,9 +59,6 @@ public class StudentController {
     @PutMapping("/bulk/cycle/{cycleId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Student>> deleteStudents(@PathVariable Long cycleId, @RequestBody List<Long> studentIds) {
-        System.out.println("cycleId: " + cycleId);
-        System.out.println("studentIds:\n");
-        studentIds.forEach(System.out::println);
         return new ResponseEntity<>(studentService.deleteStudentsInBulk(cycleId, studentIds), HttpStatus.OK);
     }
 
