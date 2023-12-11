@@ -223,6 +223,8 @@
       "thesisGroups": "Groups of students for the zpi project"
   },
   "reservation": {
+      "acceptConfirmation": "Reservation has been accepted",
+      "acceptError": "Reservation has not been accepted",
       "addPerson": "Add person",
       "deleteConfirmation": "Are you sure you want to delete this reservation?",
       "deleteError": "Reservation cannot be deleted",
@@ -379,6 +381,8 @@
       "saveChanges": "Save changes",
       "saveDraft": "Save draft",
       "sendRejection": "If you want to reject this thesis, you have to write an explanation in the comment section below.",
+      "sentForApproval": "Thesis has been sent for approval",
+      "sentForApprovalError": "Thesis has not been sent for approval",
       "supervisorNotExists": "Supervisor does not exist!",
       "thesisName": "Thesis name",
       "updateError": "Thesis has not been updated",

@@ -60,6 +60,14 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.updateReservation(reservation, id), HttpStatus.OK);
     }
 
+    @PutMapping("/list_theses/{thesisId}")
+    @Operation(summary = "Update reservation", description = "Updates reservation with given id. <br>" +
+            "Requires ADMIN, SUPERVISOR or STUDENT role.")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_STUDENT')")
+    public ResponseEntity<List<Reservation>> updateReservationForThesis(@RequestBody List<Reservation> reservations, @PathVariable Long thesisId) {
+        return new ResponseEntity<>(reservationService.updateReservationsForThesis(thesisId, reservations), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete reservation", description = "Deletes reservation with given id. <br>" +
             "Requires ADMIN, SUPERVISOR or STUDENT role.")

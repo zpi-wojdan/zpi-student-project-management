@@ -23,7 +23,7 @@ type ThesisDetailsProps = {
   goBackPath: string;
 }
 
-const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
+const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
   // @ts-ignore
   const { auth, setAuth } = useAuth();
   const { i18n, t } = useTranslation();
@@ -58,7 +58,7 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
         setLoaded(true);
       })
       .catch((error) => {
-        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -83,13 +83,13 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
   };
 
   const handleConfirmDelete = () => {
-    api.delete(api_access +`thesis/${id}`)
+    api.delete(api_access + `thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
         navigate("/theses");
       })
       .catch((error) => {
-        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -120,22 +120,27 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
   const handleReadyForApproval = async () => {
     if (thesis?.reservations) {
       for (const reservation of thesis.reservations) {
-        try {
-          reservation.readyForApproval = true;
-          reservation.sentForApprovalDate = new Date();
-          const response = await api.put(api_access + 'reservation/' + reservation.id,
-            JSON.stringify(reservation)
-          );
+        reservation.readyForApproval = true;
+        reservation.sentForApprovalDate = new Date();
+      }
+      api.put(api_access + 'reservation/list_theses/' + thesis.id,
+        JSON.stringify(thesis.reservations), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
 
           if (response.status === 200) {
-            toast.success(t('thesis.readyForApproval'));
+            toast.success(t('thesis.sentForApproval'));
           }
-        } catch (error) {
-          toast.error(t('thesis.readyForApprovalError'));
-        }
-      }
+        })
+        .catch((error) => {
+          toast.error(t('thesis.sentForApprovalError'));
+        });
     }
-  };
+  }
+
 
   const downloadDeclaration = () => {
     let url = api_access + 'report/pdf/thesis-declaration/' + thesis?.id;
@@ -173,7 +178,7 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
           toast.dismiss(toastId);
         }, 2000);
 
-        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
@@ -285,7 +290,7 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
               ) : null}
           </React.Fragment>
           ) : (<></>)}
-          
+
           {(loaded && (thesis?.status.name == "Draft" || thesis?.status.name == "Rejected")) ? (<React.Fragment>
             <button type="button" className="custom-button" onClick={() => { navigate(`/my/edit/${id}`, { state: { thesis } }) }}>
               {t('thesis.edit')}

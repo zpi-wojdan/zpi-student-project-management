@@ -41,45 +41,49 @@ function StudentTable({ students, thesis }: StudentTableProps) {
   const handleAcceptReservation = (reservation: Reservation) => {
     reservation.confirmedByLeader = true;
     reservation.confirmedByStudent = true;
-    api.put(api_access + `reservation/${reservation.id}`, reservation)
+    api.put(api_access + `reservation/${reservation.id}`, reservation, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
       .then((response) => {
         if (response.status === 200) {
-          toast.success(t('reservation.deleteSuccessful'));
+          toast.success(t('reservation.acceptConfirmation'));
           window.location.reload();
         }
       })
       .catch((error) => {
-        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
-        toast.error(t('reservation.deleteError'));
+        toast.error(t('reservation.acceptError'));
       });
   }
 
   const handleAcceptReservationSupervisor = () => {
     thesis.reservations.forEach((res) => {
       res.confirmedBySupervisor = true;
-      api.put(api_access +`reservation/${res.id}`, res)
-        .then((response) => {
-          if (response.status === 200) {
-            toast.success(t('reservation.deleteSuccessful'));
-            window.location.reload();
-          }
-        })
-        .catch((error) => {
-          if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
-            setAuth({ ...auth, reasonOfLogout: 'token_expired' });
-            handleSignOut(navigate);
-          }
-          toast.error(t('reservation.deleteError'));
-        });
-    })
+    });
+    api.put(api_access + `reservation/list_theses/${thesis.id}`, thesis.reservations)
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success(t('reservation.acceptConfirmation'));
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          setAuth({ ...auth, reasonOfLogout: 'token_expired' });
+          handleSignOut(navigate);
+        }
+        toast.error(t('reservation.acceptError'));
+      });
   }
 
   function handleConfirmDeleteSupervisor(): void {
     thesis.reservations.forEach((res) => {
-      api.delete(api_access +`reservation/${res.id}`)
+      api.delete(api_access + `reservation/${res.id}`)
         .then((response) => {
           if (response.status === 200) {
             toast.success(t('reservation.reservationDeleted'));
@@ -87,7 +91,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
           }
         })
         .catch((error) => {
-          if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+          if (error.response && (error.response.status === 401 || error.response.status === 403)) {
             setAuth({ ...auth, reasonOfLogout: 'token_expired' });
             handleSignOut(navigate);
           }
@@ -108,7 +112,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
         }
       })
       .catch((error) => {
-        if (error.response && (error.response.status === 401 ||  error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           setAuth({ ...auth, reasonOfLogout: 'token_expired' });
           handleSignOut(navigate);
         }
