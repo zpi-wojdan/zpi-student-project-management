@@ -71,8 +71,11 @@
   },
   "general": {
       "clearData": {
+          "archiveTheses": "Archiwizuj tematy",
           "choice": "Wybierz \"Tematy\" lub \"Studenci\"",
-          "clearSystem": "Czyszczenie systemu"
+          "clearStudents": "Usuń studentów",
+          "clearSystem": "Czyszczenie systemu",
+          "clearTheses": "Usuń tematy"
       },
       "management": {
           "abbreviationExists": "Podany skrót już istnieje!",
@@ -82,6 +85,7 @@
           "addAsDraft": "Zapisz wersję roboczą",
           "addNext": "Dodaj następny",
           "all": "Wszystkie",
+          "archiveSelected": "Zarchiwizuj zaznaczone",
           "annul": "Anuluj",
           "cancel": "Anuluj",
           "choose": "Wybierz",
@@ -108,6 +112,7 @@
           "rejectSelected": "Odrzuć wybrane",
           "reserve": "Zarezerwuj",
           "save": "Zapisz",
+          "saveAsDraft": "Zapisz wersję roboczą",
           "search": "Wyszukaj",
           "select": "Wybierz",
           "selectAll": "Zaznacz wszystkie",
@@ -118,6 +123,7 @@
           "wrongFormat": "Zły format",
           "yes": "Tak"
       },
+      "pagination": "z",
       "people": {
           "adminLC": "administrator",
           "approverLC": "zatwierdzający",
@@ -334,6 +340,7 @@
       "thesis": "temat"
   },
   "thesis": {
+      "acceptArchiveBulk": "Czy na pewno chcesz zarchiwizować zaznaczone tematy? ({{idCount}})",
       "acceptConfirmation": "Czy na pewno chcesz zaakceptować ten temat?",
       "acceptConfirmationBulk": "Czy na pewno chcesz zaakceptować zaznaczone tematy?",
       "acceptDeletionBulk": "Czy na pewno chcesz usunąć zaznaczone tematy? ({{idCount}})",
@@ -347,6 +354,8 @@
       "addStudentsMessage": "Dodanie studentów do tematu jest opcjonalne.",
       "addStudentsWarning": "Studenci nie zostaną zapisani, jeśli temat zostanie zapisany do wersji roboczych!",
       "addSuccessful": "Temat został dodany",
+      "archiveErrorBulk": "Zaznaczone tematy nie zostały zarchiwizowane",
+      "archiveSuccesfulBulk": "Zaznaczone tematy zostały zarchiwizowane",
       "deleteConfirmation": "Czy na pewno chcesz usunąć ten temat?",
       "deleteError": "Temat nie może zostać usunięty!",
       "deleteErrorBulk": "Zaznaczone tematy nie zostały usunięte",

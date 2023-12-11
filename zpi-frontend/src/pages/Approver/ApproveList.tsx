@@ -598,7 +598,7 @@ const ApproveList: React.FC = () => {
           <div className='d-flex justify-content-begin  align-items-center'>
             <button
               type="button"
-              className="custom-button"
+              className={`custom-button ${thesesFormIndexes.size === 0 ? 'another-color' : ''}`}
               onClick={() => handleConfirmClick()}
               disabled={thesesFormIndexes.size === 0}
             >
