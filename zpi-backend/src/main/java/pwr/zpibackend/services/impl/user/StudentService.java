@@ -77,6 +77,7 @@ public class StudentService implements IStudentService {
         return newStudent;
     }
 
+    @Transactional
     public Student updateStudent(Long id, StudentDTO updatedStudent) {
         if (studentRepository.existsByIndex(updatedStudent.getIndex())) {
             if (!(Objects.equals(studentRepository.findByIndex(updatedStudent.getIndex()).get().getId(), id)))
@@ -107,7 +108,7 @@ public class StudentService implements IStudentService {
         return student;
     }
 
-
+    @Transactional
     public Student deleteStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
 
@@ -143,14 +144,13 @@ public class StudentService implements IStudentService {
         return newSpcSet;
     }
 
+    @Transactional
     public List<Student> deleteStudentsInBulk(Long cycleId, List<Long> studentsIds) {
         List<Student> studentsByCycle = studentRepository.findByStudentProgramCycles_Cycle_Id(cycleId);
         List<Student> studentsToDelete = studentsByCycle.stream()
                 .filter(student -> studentsIds.contains(student.getId()))
                 .toList();
         List<Student> deletedStudents = new ArrayList<>();
-
-        studentsToDelete.forEach(stud -> System.out.println(stud.getId()));
 
         for (Student stud : studentsToDelete) {
             Set<StudentProgramCycle> studentProgramCycles = stud.getStudentProgramCycles();
@@ -172,6 +172,7 @@ public class StudentService implements IStudentService {
             List<Reservation> reservations = reservationRepository.findAllByStudent_Id(stud.getId());
             for (Reservation r : reservations){
                 if (r.getThesis().getStudyCycle().getId().equals(cycleId)){
+                    r.setStudent(null);
                     reservationRepository.delete(r);
                 }
             }
@@ -182,7 +183,6 @@ public class StudentService implements IStudentService {
             for (Thesis t : theses){
                 if (t.getStudyCycle().getId().equals(cycleId)){
                     t.setLeader(null);
-//                    thesisRepository.delete(t);
                     // nie usuwam tylko aktualizuję, żeby temat został
                     thesisRepository.save(t);   }
             }

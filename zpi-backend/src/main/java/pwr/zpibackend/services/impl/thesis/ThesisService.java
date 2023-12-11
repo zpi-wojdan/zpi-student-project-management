@@ -304,7 +304,7 @@ public class ThesisService implements IThesisService {
             if (thesisOptional.isPresent()) {
                 Thesis thesis = thesisOptional.get();
 
-                if (status.getName().equals("Rejected")) {
+                if (status.getName().equals("Rejected") || (status.getName().equals("Closed") && thesis.getOccupied() > 0)) {
                     reservationRepository.deleteAll(new ArrayList<>(thesis.getReservations()));
                     thesis.getReservations().clear();
                     thesis.setOccupied(0);
