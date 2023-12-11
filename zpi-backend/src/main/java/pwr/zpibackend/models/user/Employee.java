@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Department;
