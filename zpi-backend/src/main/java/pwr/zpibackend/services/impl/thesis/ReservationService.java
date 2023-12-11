@@ -82,7 +82,8 @@ public class ReservationService implements IReservationService {
                 throw new AlreadyExistsException(reservation.getStudent().getIndex());
             }
 
-            Student student = studentRepository.findById(reservation.getStudent().getId()).get();
+            Student student = studentRepository.findById(reservation.getStudent().getId()).orElseThrow(() ->
+                    new NotFoundException("Student with id " + reservation.getStudent().getId() + " does not exist."));
             Reservation newReservation = createReservationFromDTO(reservation, student);
 
             Optional<Thesis> thesisOptional = thesisRepository.findById(reservation.getThesisId());
@@ -138,8 +139,8 @@ public class ReservationService implements IReservationService {
 
     @Transactional
     public List<Reservation> updateReservationsForThesis(Long thesisId, List<Reservation> newReservations) {
-        List<Reservation> reservations = reservationRepository.findByThesis(thesisRepository.findById(thesisId).get());
-
+        List<Reservation> reservations = reservationRepository.findByThesis(thesisRepository.findById(thesisId)
+                .orElseThrow(() -> new NotFoundException("Thesis with id " + thesisId + " does not exist.")));
         for (Reservation res: reservations){
             for (Reservation newRes: newReservations){
                 if (res.getId() == newRes.getId()){
@@ -149,7 +150,6 @@ public class ReservationService implements IReservationService {
                                 res.getStudent(), res.getThesis().getSupervisor(),
                                 res.getThesis());
                     }
-
                     res.setConfirmedByLeader(newRes.isConfirmedByLeader());
                     res.setConfirmedBySupervisor(newRes.isConfirmedBySupervisor());
                     res.setReadyForApproval(newRes.isReadyForApproval());
@@ -158,7 +158,8 @@ public class ReservationService implements IReservationService {
                 }
             }
         }
-        return reservationRepository.saveAll(reservations);
+        reservationRepository.saveAll(reservations);
+        return reservations;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)

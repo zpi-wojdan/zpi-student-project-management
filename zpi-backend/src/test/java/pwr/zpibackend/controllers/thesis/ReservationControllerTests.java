@@ -103,6 +103,18 @@ public class ReservationControllerTests {
     }
 
     @Test
+    public void testAddListReservationShouldReturnStatusCreated() throws Exception {
+        String requestBody = objectMapper.writeValueAsString(List.of(reservationDTO));
+
+        mockMvc.perform(post(BASE_URL+"/list")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isCreated());
+
+        verify(reservationService).addListReservation(any(List.class));
+    }
+
+    @Test
     public void testGetAllReservations() throws Exception {
         Mockito.when(reservationService.getAllReservations()).thenReturn(reservations);
 
@@ -179,6 +191,20 @@ public class ReservationControllerTests {
                 .andExpect(content().json(objectMapper.writeValueAsString(newReservation)));
 
         verify(reservationService).updateReservation(any(Reservation.class), eq(1L));
+    }
+
+    @Test
+    public void testUpdateListReservationShouldReturnStatusOk() throws Exception {
+
+        Mockito.when(reservationService.updateReservationsForThesis(eq(1L), any(List.class))).thenReturn(reservations);
+
+        mockMvc.perform(put(BASE_URL + "/list_theses/{id}", 1L)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(reservations)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(reservations)));
+
+        verify(reservationService).updateReservationsForThesis(eq(1L), any(List.class));
     }
 
     @Test

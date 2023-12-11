@@ -29,12 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static java.util.Optional.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ReservationServiceTests {
@@ -268,6 +267,57 @@ public class ReservationServiceTests {
     }
 
     @Test
+    public void testAddListReservation() {
+        ReservationDTO reservationDTO1 = new ReservationDTO();
+        reservationDTO1.setThesisId(1L);
+        reservationDTO1.setStudent(students.get(0));
+        reservationDTO1.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
+
+        ReservationDTO reservationDTO2 = new ReservationDTO();
+        reservationDTO2.setThesisId(2L);
+        reservationDTO2.setStudent(students.get(1));
+        reservationDTO2.setReservationDate(LocalDateTime.parse("2023-10-06T12:34:56"));
+
+        List<ReservationDTO> reservationDTOList = List.of(reservationDTO1, reservationDTO2);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        thesisList.get(0).setStatus(statuses.get(3));
+        thesisList.get(1).setStatus(statuses.get(3));
+        thesisList.get(0).setReservations(new ArrayList<>());
+        thesisList.get(1).setReservations(new ArrayList<>());
+        when(statusRepository.findByName("Approved")).thenReturn(ofNullable(statuses.get(3)));
+
+        when(thesisRepository.findById(1L)).thenReturn(of(thesisList.get(0)));
+        when(thesisRepository.findById(2L)).thenReturn(of(thesisList.get(1)));
+        when(studentRepository.findById(1L)).thenReturn(of(students.get(0)));
+        when(studentRepository.findById(2L)).thenReturn(of(students.get(1)));
+        when(reservationRepository.findByStudent_Mail(students.get(0).getMail())).thenReturn(null);
+        when(reservationRepository.findByStudent_Mail(students.get(1).getMail())).thenReturn(null);
+        when(reservationRepository.saveAllAndFlush(any())).thenReturn(reservations);
+
+        List<Reservation> result = reservationService.addListReservation(reservationDTOList);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(reservationRepository, times(1)).saveAllAndFlush(any(List.class));
+        verify(mailService, times(2)).sendHtmlMailMessage(anyString(), any(), any(Student.class), any(), any(Thesis.class));
+    }
+
+    @Test
+    public void testAddListReservationThesisNotFound() {
+        ReservationDTO reservationDTO = new ReservationDTO();
+        reservationDTO.setThesisId(100L);
+        reservationDTO.setStudent(students.get(0));
+        reservationDTO.setReservationDate(LocalDateTime.parse("2023-10-05T12:34:56"));
+
+        List<ReservationDTO> reservationDTOList = List.of(reservationDTO);
+
+        when(thesisRepository.findById(100L)).thenReturn(empty());
+
+        assertThrows(NotFoundException.class, () -> reservationService.addListReservation(reservationDTOList));
+    }
+
+    @Test
     public void testUpdateReservation(){
         when(reservationRepository.findById(1L)).thenReturn(ofNullable(reservation));
         when(reservationRepository.save(reservation)).thenReturn(reservation);
@@ -293,6 +343,46 @@ public class ReservationServiceTests {
         when(reservationRepository.save(reservation)).thenReturn(reservation);
         Reservation result = reservationService.updateReservation(updatedReservation, 1L);
         assert result.getId() == reservation.getId();
+    }
+
+    @Test
+    public void testUpdateReservationsForThesis() {
+        Reservation newReservation = new Reservation();
+        newReservation.setId(1L);
+        newReservation.setConfirmedByLeader(true);
+        newReservation.setConfirmedBySupervisor(false);
+        newReservation.setReadyForApproval(true);
+        newReservation.setConfirmedByStudent(false);
+        newReservation.setSentForApprovalDate(LocalDateTime.now());
+
+        List<Reservation> newReservations = List.of(newReservation);
+
+        when(thesisRepository.findById(1L)).thenReturn(ofNullable(thesisList.get(0)));
+        when(reservationRepository.findByThesis(thesisList.get(0))).thenReturn(reservations);
+
+        List<Reservation> result = reservationService.updateReservationsForThesis(1L, newReservations);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(reservationRepository, times(1)).saveAll(result);
+    }
+
+    @Test
+    public void testUpdateReservationsForThesisThesisNotFound() {
+
+        Reservation newReservation = new Reservation();
+        newReservation.setId(1L);
+        newReservation.setConfirmedByLeader(true);
+        newReservation.setConfirmedBySupervisor(false);
+        newReservation.setReadyForApproval(true);
+        newReservation.setConfirmedByStudent(false);
+        newReservation.setSentForApprovalDate(LocalDateTime.now());
+
+        List<Reservation> newReservations = List.of(newReservation);
+
+        when(thesisRepository.findById(100L)).thenReturn(empty());
+
+        assertThrows(NotFoundException.class, () -> reservationService.updateReservationsForThesis(100L, newReservations));
     }
 
     @Test
