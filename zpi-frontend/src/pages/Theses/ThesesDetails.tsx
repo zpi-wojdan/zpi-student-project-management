@@ -124,7 +124,10 @@ const ThesesDetails = ({addStudents, goBackPath}:ThesisDetailsProps) => {
           reservation.readyForApproval = true;
           reservation.sentForApprovalDate = new Date();
           const response = await api.put(api_access + 'reservation/' + reservation.id,
-            JSON.stringify(reservation)
+            JSON.stringify(reservation), {
+              headers: {
+                  'Content-Type': 'application/json'
+              }}
           );
 
           if (response.status === 200) {
