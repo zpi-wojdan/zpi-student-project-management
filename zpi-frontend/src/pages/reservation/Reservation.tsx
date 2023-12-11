@@ -142,6 +142,7 @@ function ReservationPage({ admin }: ReservationProps) {
     };
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        reservations.forEach((reservation, index) => handleReservationBlur(index));
         e.preventDefault();
         if (reservations.every((reservation, index) => isReservationValid(index, reservation))) {
 
@@ -271,7 +272,7 @@ function ReservationPage({ admin }: ReservationProps) {
                                 <td>
                                     <button
                                         type="button"
-                                        className="custom-button another-color form-control"
+                                        className="custom-button form-control"
                                         onClick={addReservationInput}
                                     >
                                         {t('reservation.addPerson')}
