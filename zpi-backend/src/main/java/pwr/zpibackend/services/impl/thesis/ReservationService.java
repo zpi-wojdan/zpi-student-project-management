@@ -136,6 +136,31 @@ public class ReservationService implements IReservationService {
                 .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " does not exist."));
     }
 
+    @Transactional
+    public List<Reservation> updateReservationsForThesis(Long thesisId, List<Reservation> newReservations) {
+        List<Reservation> reservations = reservationRepository.findByThesis(thesisRepository.findById(thesisId).get());
+
+        for (Reservation res: reservations){
+            for (Reservation newRes: newReservations){
+                if (res.getId() == newRes.getId()){
+                    if (!res.isReadyForApproval() && newRes.isReadyForApproval()) {
+                        mailService.sendHtmlMailMessage(res.getThesis().getSupervisor().getMail(),
+                                MailTemplates.RESERVATION_SENT_TO_SUPERVISOR,
+                                res.getStudent(), res.getThesis().getSupervisor(),
+                                res.getThesis());
+                    }
+
+                    res.setConfirmedByLeader(newRes.isConfirmedByLeader());
+                    res.setConfirmedBySupervisor(newRes.isConfirmedBySupervisor());
+                    res.setReadyForApproval(newRes.isReadyForApproval());
+                    res.setConfirmedByStudent(newRes.isConfirmedByStudent());
+                    res.setSentForApprovalDate(newRes.getSentForApprovalDate());
+                }
+            }
+        }
+        return reservationRepository.saveAll(reservations);
+    }
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Reservation deleteReservation(Long id) {
         return reservationRepository.findById(id)

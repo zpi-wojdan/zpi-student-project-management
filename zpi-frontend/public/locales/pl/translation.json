@@ -222,6 +222,8 @@
       "thesisGroups": "Grupy studentów do projektu zpi"
   },
   "reservation": {
+      "acceptConfirmation": "Rezerwacja została zaakceptowana",
+      "acceptError": "Rezerwacja nie została zaakceptowana",
       "addPerson": "Dodaj osobę",
       "deleteConfirmation": "Czy na pewno chcesz anulować tę rezerwację?",
       "deleteError": "Rezerwacja nie może zostać anulowana!",
@@ -377,6 +379,8 @@
       "saveChanges": "Zapisz zmiany",
       "saveDraft": "Zapisz wersję roboczą",
       "sendRejection": "Jeśli chcesz odrzucić ten temat, musisz napisać wyjaśnienie w znajdującej się poniżej sekcji komentarzy",
+      "sentForApproval": "Temat został przesłany do akceptacji",
+      "sentForApprovalError": "Temat nie został przesłany do akceptacji",
       "supervisorNotExists": "Prowadzący nie istnieje w systemie!",
       "thesisName": "Nazwa tematu",
       "updateError": "Temat nie został zaktualizowany",
