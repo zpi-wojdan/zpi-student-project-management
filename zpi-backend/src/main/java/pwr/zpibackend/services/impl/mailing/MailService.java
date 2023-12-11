@@ -33,17 +33,7 @@ public class MailService implements IMailService {
     public void sendHtmlMailMessage(String recipient, MailTemplates template, Student student,
             Employee employee, Thesis thesis) {
         try {
-            // utworzenie odpowiedniego template html z danymi
-            String language;
-            if (thesis != null && thesis.getPrograms() != null && !thesis.getPrograms().isEmpty()) {
-                language = thesis.getPrograms().stream()
-                        .findFirst()
-                        .map(Program::language)
-                        .orElse("pl");
-            } else {
-                // domyślnie język polski
-                language = "pl";
-            }
+            
 
             String name;
             if (student != null && recipient.equals(student.getMail())) {
@@ -52,15 +42,15 @@ public class MailService implements IMailService {
                 name = employee.getName() + " " + employee.getSurname();
             }
 
-            Locale locale = Locale.forLanguageTag(language);
-            Context context = new Context(locale);
+            Context context = new Context(Locale.getDefault());
             
             // thesis cannot be null 
             if (thesis == null) {
                 throw new IllegalArgumentException("Thesis cannot be null");
             }
             context.setVariable("name", name);
-            context.setVariable("thesis", language.equals("pl") ? thesis.getNamePL() : thesis.getNameEN());
+            context.setVariable("thesis_pl", thesis.getNamePL());
+            context.setVariable("thesis_en", thesis.getNameEN());
             context.setVariable("url", getLinkReservation(thesis.getId()));
 
             String html = templateEngine.process(template.getTemplateName(), context);
@@ -71,7 +61,7 @@ public class MailService implements IMailService {
             // ustawienie parametrów wiadomości
             helper.setFrom(fromEmail);
             helper.setTo(recipient);
-            helper.setSubject(template.getSubject(language));
+            helper.setSubject(template.getSubject());
             helper.setText(html, true);
 
             // wysłanie wiadomości

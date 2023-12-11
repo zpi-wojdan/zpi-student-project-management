@@ -257,8 +257,8 @@ public class ReservationService implements IReservationService {
         } else if (!newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
             mailService.sendHtmlMailMessage(student.getMail(), MailTemplates.RESERVATION_STUDENT,
                     student, null, thesis);
-        } else {
-            if (!(newReservation.getStudent().equals(thesis.getLeader()))) {
+        } else  if (newReservation.isConfirmedByLeader() && newReservation.isConfirmedByStudent()) {
+            if (newReservation.isConfirmedBySupervisor()) {
                 mailService.sendHtmlMailMessage(student.getMail(),
                         MailTemplates.RESERVATION_ADMIN, student, null, thesis);
             }

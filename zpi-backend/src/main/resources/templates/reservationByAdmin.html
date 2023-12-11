@@ -1,4 +1,5 @@
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
     <table class="body-wrap"
         style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; width: 100%; background-color: #F6F6F6; margin: 0;">
@@ -36,6 +37,40 @@
                                                     style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                                     <td class="content-block"
                                                         style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;"
+                                                        th:text="#{greeting_pl(${name})}">
+                                                    </td>
+                                                </tr>
+                                                <tr
+                                                    style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                    <td class="content-block"
+                                                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
+                                                        <p th:text="#{reservationByAdmin_pl(${thesis_pl})}">
+                                                        <p th:text="#{reservationButtonAnnotation_pl}"></p>
+                                                    </td>
+                                                </tr>
+                                                <tr
+                                                    style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; text-align: center">
+                                                    <td class="content-block"
+                                                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px; text-align: center;">
+                                                        <a class="btn-primary"
+                                                            style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 5px; text-transform: capitalize; background-color: #9A342D; margin: 0; border-color: #9A342D; border-style: solid; border-width: 8px 16px;"
+                                                            th:href="${url}" th:text="#{reservationButton_pl}">
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                                <tr
+                                                    style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                    <td>
+                                                        <hr
+                                                            style="border-top: 1px solid #ccc; margin: 10px 0; width: 100%;">
+                                                    </td>
+                                                </tr>
+
+                                                <tr
+                                                    style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+                                                    <td class="content-block"
+                                                        style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;"
                                                         th:text="#{greeting(${name})}">
                                                     </td>
                                                 </tr>
@@ -43,7 +78,7 @@
                                                     style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                                     <td class="content-block"
                                                         style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;">
-                                                        <p th:text="#{reservationByAdmin(${thesis})}">
+                                                        <p th:text="#{reservationByAdmin(${thesis_en})}">
                                                         <p th:text="#{reservationButtonAnnotation}"></p>
                                                     </td>
                                                 </tr>
@@ -72,4 +107,5 @@
         </tbody>
     </table>
 </body>
+
 </html>
