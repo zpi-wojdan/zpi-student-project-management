@@ -500,8 +500,6 @@ const ClearDataByCycle: React.FC = () => {
     };
 
     const handleToggleSidebarThesesArchive = () => {
-        console.log(selectedToClear);
-
         if (!sidebarOpen && selectedToClear === ClearingMode.ARCHIVE_THESES) {
             setSelectedFacultyAbbrThesesArchive(submittedFacultyAbbrThesesArchive)
             setSelectedFieldAbbrThesesArchive(submittedFieldAbbrThesesArchive)
@@ -994,7 +992,6 @@ const ClearDataByCycle: React.FC = () => {
               toast.success(t("thesis.archiveSuccesfulBulk"));
             })
             .catch((error) => {
-              console.log("Error", error);
               if (error.response.status === 401 || error.response.status === 403) {
                 setAuth({ ...auth, reasonOfLogout: 'token_expired' });
                 handleSignOut(navigate);
