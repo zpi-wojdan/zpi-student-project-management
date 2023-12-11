@@ -41,7 +41,11 @@ function StudentTable({ students, thesis }: StudentTableProps) {
   const handleAcceptReservation = (reservation: Reservation) => {
     reservation.confirmedByLeader = true;
     reservation.confirmedByStudent = true;
-    api.put(api_access + `reservation/${reservation.id}`, reservation)
+    api.put(api_access + `reservation/${reservation.id}`, reservation, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
       .then((response) => {
         if (response.status === 200) {
           toast.success(t('reservation.acceptConfirmation'));
