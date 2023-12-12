@@ -127,6 +127,10 @@ public class ReservationService implements IReservationService {
                                 reservation.getThesis());
                     }
 
+                    if (!reservation.isConfirmedBySupervisor() && newReservation.isConfirmedBySupervisor()) {
+                        reservation.getThesis().setStatus(statusRepository.findByName("Assigned").orElse(null));
+                    }
+
                     reservation.setConfirmedByLeader(newReservation.isConfirmedByLeader());
                     reservation.setConfirmedBySupervisor(newReservation.isConfirmedBySupervisor());
                     reservation.setReadyForApproval(newReservation.isReadyForApproval());
@@ -150,6 +154,11 @@ public class ReservationService implements IReservationService {
                                 res.getStudent(), res.getThesis().getSupervisor(),
                                 res.getThesis());
                     }
+                    
+                    if (!res.isConfirmedBySupervisor() && newRes.isConfirmedBySupervisor()) {
+                        res.getThesis().setStatus(statusRepository.findByName("Assigned").orElse(null));
+                    }
+                    
                     res.setConfirmedByLeader(newRes.isConfirmedByLeader());
                     res.setConfirmedBySupervisor(newRes.isConfirmedBySupervisor());
                     res.setReadyForApproval(newRes.isReadyForApproval());
