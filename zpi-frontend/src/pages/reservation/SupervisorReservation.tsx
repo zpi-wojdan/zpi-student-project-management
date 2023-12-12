@@ -22,7 +22,21 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
 
-    const [reservations, setReservations] = useState<string[]>(Array(numPeople || 1).fill(""));
+    const calculateArraySize = (numPeople: number | undefined) => {
+        if (numPeople){ 
+            if (numPeople < 3) {
+                return 3;
+            } 
+            else if (numPeople > 5) {
+                return 5;
+            } else {
+                return numPeople;
+            }
+        }
+        return 0;
+    };
+
+    const [reservations, setReservations] = useState<string[]>(Array(calculateArraySize(numPeople)).fill(""));
     const [errors, setErrors] = useState<boolean[]>([]);
     const [doubles, setDoubles] = useState<boolean[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
@@ -101,6 +115,19 @@ function SupervisorReservationPage({ numPeople, studentIndexes, setStudentIndexe
         setErrors(newErrors);
         setStudentIndexes(reservations);
     };
+
+    useEffect(() => {
+        const emptyCount = reservations.filter((value) => value === "").length;
+        if (!showList) {
+          if (reservations.length === emptyCount) {
+            setReservations([]);
+          }
+        } else {
+            if (reservations.length === 0){
+                setReservations(Array(calculateArraySize(numPeople)).fill(""));
+            }
+        }
+      }, [showList]);      
 
     return (
         <div className="page-margin">

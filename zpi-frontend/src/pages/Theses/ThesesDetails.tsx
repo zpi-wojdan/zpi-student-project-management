@@ -131,9 +131,7 @@ const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
         }
       })
         .then((response) => {
-          if (response.status === 200) {
-            toast.success(t('thesis.sentForApproval'));
-          }
+          toast.success(t('thesis.sentForApproval'));
           window.location.reload();
         })
         .catch((error) => {
