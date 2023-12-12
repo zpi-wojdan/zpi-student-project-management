@@ -436,7 +436,7 @@ function AddThesisPageSupervisor() {
           </button>
           {submittedTheses < JSON.parse(Cookies.get("user") || "{}").numTheses &&
           <button id="save-button" type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
-            {thesis ? t('general.management.save') : t('general.management.add')}
+            {t('general.management.send')}
           </button>}
           <button id="save-draft-button" type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
             {thesis ? t('general.management.saveAsDraft') : t('general.management.addAsDraft')}
