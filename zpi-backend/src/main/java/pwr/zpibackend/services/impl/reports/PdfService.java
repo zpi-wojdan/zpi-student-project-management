@@ -9,6 +9,12 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.core.ApplicationContext;
+import org.apache.poi.util.IOUtils;
+import org.apache.xmlbeans.ResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import pwr.zpibackend.dto.reports.StudentInReportsDTO;
 import pwr.zpibackend.dto.reports.SupervisorDTO;
@@ -24,7 +30,10 @@ import pwr.zpibackend.services.reports.IPdfService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -50,8 +59,8 @@ public class PdfService implements IPdfService {
     private static final Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, "Cp1250", 12);
     private static final Font sectionFont = FontFactory.getFont(FontFactory.TIMES_BOLD, "Cp1250");
     private static final Color headerColor = WebColors.getRGBColor("#9A342D");
-    private static final String imageLogoPlPath = "src/main/resources/images/logoPl.png";
-    private static final String imageLogoEnPath = "src/main/resources/images/logoEn.png";
+    private static final String imageLogoPlPath = "images/logoPl.png";
+    private static final String imageLogoEnPath = "images/logoEn.png";
     private static final float imageSize = 200.0f;
     private static final String thesisGroupsReportName = "grupy_zpi";
     private static final String studentsWithoutThesisReportName = "studenci_bez_tematu_zpi";
@@ -398,8 +407,13 @@ public class PdfService implements IPdfService {
 
     private void createDeclarationContent(ThesisGroupDTO thesisGroupData, String language, Document document,
                                           PdfWriter writer) throws DocumentException, IOException {
+
         String imagePath = language.equals("pl") ? imageLogoPlPath : imageLogoEnPath;
-        Image image = Image.getInstance(imagePath);
+
+        Resource resource = new ClassPathResource(imagePath);
+        InputStream inputStream = resource.getInputStream();
+
+        Image image = Image.getInstance(IOUtils.toByteArray(inputStream));
         image.scaleToFit(imageSize, imageSize);
         float x = document.left();
         float y = document.top() - image.getScaledHeight();
