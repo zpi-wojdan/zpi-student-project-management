@@ -3,12 +3,14 @@ package pwr.zpibackend.services.impl.thesis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
 import pwr.zpibackend.exceptions.NotFoundException;
+import pwr.zpibackend.models.thesis.Comment;
 import pwr.zpibackend.models.thesis.Reservation;
 import pwr.zpibackend.models.thesis.Status;
 import pwr.zpibackend.models.university.StudyCycle;
@@ -66,7 +68,9 @@ public class ThesisServiceTests {
     private Thesis thesis;
     private List<Thesis> publicTheses;
     private List<Status> statuses;
-    private Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+    private final Sort sort = Sort.by(Sort.Direction.DESC, "studyCycle.name", "id");
+    private final Reservation reservation = new Reservation();
+    private final Comment comment = new Comment();
 
     @BeforeEach
     public void setUp() {
@@ -391,7 +395,7 @@ public class ThesisServiceTests {
     }
 
     @Test
-    public void testGetAllThesesByStatusId() {
+    public void testGetAllThesesByStatusName() {
         String statusName = "Draft";
         when(thesisRepository.findAllByStatusName(statusName, sort)).thenReturn(theses);
 
@@ -420,7 +424,7 @@ public class ThesisServiceTests {
     }
 
     @Test
-    public void testGetAllThesesExcludingStatusIdNotFound() {
+    public void testGetAllThesesExcludingStatusNameNotFound() {
         String statusName = "Draft";
         when(statusRepository.findByName(statusName)).thenReturn(Optional.empty());
 
@@ -428,7 +432,7 @@ public class ThesisServiceTests {
     }
 
     @Test
-    public void testGetAllThesesForEmployeeByStatusId() {
+    public void testGetAllThesesForEmployeeByStatusName() {
         Long empId = 1L;
         String statName = "Draft";
         when(thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName, sort)).thenReturn(theses);
@@ -439,7 +443,7 @@ public class ThesisServiceTests {
     }
 
     @Test
-    public void testGetAllThesesForEmployeeByStatusIdNotFound() {
+    public void testGetAllThesesForEmployeeByStatusNameNotFound() {
         Long empId = 1L;
         String statName = "Draft";
         when(thesisRepository.findAllBySupervisorIdAndStatusName(empId, statName, sort)).thenReturn(Collections.emptyList());
@@ -543,7 +547,8 @@ public class ThesisServiceTests {
 
         when(statusRepository.findByName(statName)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> thesisService.updateThesesStatusInBulk(statName, thesesIds));
-    }    @Test
+    }
+    @Test
     public void testAddThesisNotFoundException() {
         ThesisDTO thesisDTO = new ThesisDTO();
         Employee employee = new Employee();
@@ -607,5 +612,61 @@ public class ThesisServiceTests {
 
         verify(reservationRepository, times(1)).findByStudentId(studentId);
         verify(thesisRepository, never()).findByReservations_Id(anyLong());
+    }
+
+    @Test
+    public void testDeleteThesesByStudyCycle() {
+        Long cycId = 1L;
+        List<Thesis> theses1 = theses;
+        theses1.forEach(t -> {
+            t.setReservations(Collections.singletonList(reservation));
+            t.setComments(Collections.singletonList(comment));
+        });
+
+        when(thesisRepository.findAllByStudyCycle_Id(cycId)).thenReturn(theses1);
+        doNothing().when(reservationRepository).deleteAll(anyList());
+        doNothing().when(commentRepository).deleteAll(anyList());
+        doNothing().when(thesisRepository).deleteAll(anyList());
+
+        List<Thesis> t = thesisService.deleteThesesByStudyCycle(cycId);
+        verify(thesisRepository, times(1)).findAllByStudyCycle_Id(cycId);
+        verify(reservationRepository, times(1)).deleteAll(anyList());
+        verify(commentRepository, times(1)).deleteAll(anyList());
+        verify(thesisRepository, times(1)).deleteAll(anyList());
+    }
+
+    @Test
+    public void testDeleteThesesByStudyCycleFailure(){
+        Long cycId = 1L;
+        when(thesisRepository.findAllByStudyCycle_Id(cycId)).thenReturn(null);
+        assertThrows(NullPointerException.class, () -> thesisService.deleteThesesByStudyCycle(cycId));
+    }
+
+    @Test
+    public void testDeleteThesesInBulk(){
+        List<Long> thesesIds = List.of(1L, 2L, 3L);
+        List<Thesis> theses1 = theses;
+        theses1.forEach(t -> {
+            t.setReservations(Collections.singletonList(reservation));
+            t.setComments(Collections.singletonList(comment));
+        });
+
+        when(thesisRepository.findAllById(thesesIds)).thenReturn(theses1);
+        doNothing().when(reservationRepository).deleteAll(anyList());
+        doNothing().when(commentRepository).deleteAll(anyList());
+        doNothing().when(thesisRepository).deleteAll(anyList());
+
+        List<Thesis> t = thesisService.deleteThesesInBulk(thesesIds);
+        verify(thesisRepository, times(1)).findAllById(thesesIds);
+        verify(reservationRepository, times(1)).deleteAll(anyList());
+        verify(commentRepository, times(1)).deleteAll(anyList());
+        verify(thesisRepository, times(1)).deleteAll(anyList());
+    }
+
+    @Test
+    public void testDeleteThesesInBulkFailure(){
+        List<Long> thesesIds = List.of(1L, 2L, 3L);
+        when(thesisRepository.findAllById(thesesIds)).thenReturn(null);
+        assertThrows(NullPointerException.class, () -> thesisService.deleteThesesInBulk(thesesIds));
     }
 }

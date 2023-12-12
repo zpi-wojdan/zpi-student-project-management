@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 import pwr.zpibackend.config.GoogleAuthService;
 import pwr.zpibackend.dto.thesis.ThesisDTO;
@@ -24,20 +27,17 @@ import pwr.zpibackend.models.user.Student;
 import pwr.zpibackend.models.thesis.Thesis;
 import pwr.zpibackend.models.university.Program;
 import pwr.zpibackend.models.university.StudyCycle;
+import pwr.zpibackend.repositories.thesis.StatusRepository;
 import pwr.zpibackend.services.impl.user.EmployeeService;
 import pwr.zpibackend.services.impl.user.StudentService;
 import pwr.zpibackend.services.impl.thesis.ThesisService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -263,8 +263,7 @@ class ThesisControllerTests {
         String requestBody = objectMapper.writeValueAsString(thesisDTO);
         String responseBody = objectMapper.writeValueAsString(updatedThesis);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put(BASE_URL + "/{id}", 1L)
+        mockMvc.perform(put(BASE_URL + "/{id}", 1L)
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -285,8 +284,7 @@ class ThesisControllerTests {
 
         doThrow(NotFoundException.class).when(thesisService).updateThesis(1L, thesisDTO);
         try {
-            mockMvc.perform(MockMvcRequestBuilders
-                    .put(BASE_URL + "/{id}", 1L)
+            mockMvc.perform(put(BASE_URL + "/{id}", 1L)
                     .content(asJsonString(thesisDTO))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON));
@@ -424,36 +422,80 @@ class ThesisControllerTests {
 
     @Test
     public void testUpdateThesesStatusInBulk() throws Exception {
-        String statName = "Pending approval";
         List<Long> thesesIds = Arrays.asList(1L, 2L);
+        Mockito.when(thesisService.updateThesesStatusInBulk("Closed", thesesIds)).thenReturn(theses);
 
-        Mockito.when(thesisService.updateThesesStatusInBulk(statName, thesesIds)).thenReturn(theses);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/thesis/bulk/{statName}", statName)
+        mockMvc.perform(put(BASE_URL + "/bulk/Closed")
                 .content(asJsonString(thesesIds))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(thesisService).updateThesesStatusInBulk(statName, thesesIds);
+        verify(thesisService).updateThesesStatusInBulk("Closed", thesesIds);
     }
 
     @Test
     public void testUpdateThesesStatusInBulkNotFound() throws Exception{
-        String statName = "xd";
         List<Long> thesesIds = Arrays.asList(1L, 2L);
+        Mockito.when(thesisService.updateThesesStatusInBulk("xd", thesesIds)).thenThrow(new NotFoundException());
 
-        Mockito.when(thesisService.updateThesesStatusInBulk(statName, thesesIds)).thenThrow(new NotFoundException());
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/thesis/bulk/{statName}", statName)
+        mockMvc.perform(put(BASE_URL  + "/bulk/xd")
                 .content(asJsonString(thesesIds))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        verify(thesisService).updateThesesStatusInBulk(statName, thesesIds);
+        verify(thesisService).updateThesesStatusInBulk("xd", thesesIds);
+    }
+
+    @Test
+    public void testDeleteThesesByStudyCycle() throws Exception {
+        Long studyCycleId = 1L;
+        List<Thesis> thesesToDelete = Collections.singletonList(thesis);
+
+        Mockito.when(thesisService.deleteThesesByStudyCycle(studyCycleId)).thenReturn(thesesToDelete);
+
+        mockMvc.perform(delete(BASE_URL + "/bulk/cycle/{id}", studyCycleId))
+                .andExpect(status().isOk());
+
+        verify(thesisService).deleteThesesByStudyCycle(studyCycleId);
+    }
+
+    @Test
+    public void testDeleteThesesByStudyCycleFailure() throws Exception {
+        Long studyCycleId = 1L;
+        Mockito.when(thesisService.deleteThesesByStudyCycle(studyCycleId)).thenThrow(new NotFoundException());
+        mockMvc.perform(delete(BASE_URL + "/bulk/cycle/{id}", studyCycleId))
+                .andExpect(status().isNotFound());
+        verify(thesisService).deleteThesesByStudyCycle(studyCycleId);
+    }
+
+    @Test
+    public void testDeleteThesesInBulk() throws Exception {
+        List<Long> thesesIds = Arrays.asList(1L, 2L);
+        List<Thesis> thesesToDelete = Collections.singletonList(thesis);
+
+        Mockito.when(thesisService.deleteThesesInBulk(thesesIds)).thenReturn(thesesToDelete);
+
+        mockMvc.perform(put(BASE_URL + "/bulk")
+                .content(asJsonString(thesesIds))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(thesisService).deleteThesesInBulk(thesesIds);
+    }
+
+    @Test
+    public void testDeleteThesesInBulkFailure() throws Exception{
+        List<Long> thesesIds = Arrays.asList(1L, 2L);
+        Mockito.when(thesisService.deleteThesesInBulk(thesesIds)).thenThrow(new NotFoundException());
+        mockMvc.perform(put(BASE_URL + "/bulk")
+                .content(asJsonString(thesesIds))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(thesisService).deleteThesesInBulk(thesesIds);
     }
 
 }
