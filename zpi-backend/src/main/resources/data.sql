@@ -372,7 +372,6 @@ VALUES
 INSERT INTO student_program_cycle (student_id, program_id, cycle_id)
 VALUES
     ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ITEP-000P-OSIE7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '456789@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '567890@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '789012@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
@@ -387,7 +386,6 @@ VALUES
     ((SELECT id FROM student WHERE mail = '765432@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '654321@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
 
-    ((SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-CBEP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '901234@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
 
@@ -412,9 +410,9 @@ VALUES
     ((SELECT id FROM student WHERE mail = '544314@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-TELP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '433215@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-TELP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
     ((SELECT id FROM student WHERE mail = '322116@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '211017@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
+    ((SELECT id FROM student WHERE mail = '211017@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2022/23-Z')),
     ((SELECT id FROM student WHERE mail = '100918@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-ISTP-000P-OSIW7'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z')),
-    ((SELECT id FROM student WHERE mail = '100918@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-INAP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'));
+    ((SELECT id FROM student WHERE mail = '100918@student.pwr.edu.pl'), (SELECT id FROM program WHERE name = 'W04-INAP-000P-OSME3'), (SELECT id FROM study_cycle WHERE name = '2022/23-Z'));
 
 
 INSERT INTO program_cycle (program_id, cycle_id)
@@ -543,4 +541,4 @@ WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii';
 
 INSERT INTO Thesis (name_pl, name_en, description_pl, description_en, num_people, supervisor, cycle_id, status, creation_time)
 VALUES
-    ('XD', 'Mobile application for lovers of old castles', 'Opis1', 'Description1', 5, (SELECT e.id FROM Employee e WHERE e.mail = '255356@student.pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Approved'), NOW());
+    ('Aplikacja webowa dla miłośników starych budynków', 'Web application for lovers of old buildings', 'Opis1', 'Description1', 5, (SELECT e.id FROM Employee e WHERE e.mail = '255356@student.pwr.edu.pl'), (SELECT id FROM study_cycle WHERE name = '2023/24-Z'), (SELECT id FROM status WHERE name = 'Approved'), NOW());
