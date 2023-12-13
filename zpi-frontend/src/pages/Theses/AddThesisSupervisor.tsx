@@ -34,13 +34,12 @@ function AddThesisPageSupervisor() {
   const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
   const thesis = location.state?.thesis as Thesis;
-  const [thesisId, setThesisId] = useState<number>();
   const [formData, setFormData] = useState<ThesisDTO>({
     namePL: '',
     nameEN: '',
     descriptionPL: '',
     descriptionEN: '',
-    numPeople: 4,
+    numPeople: thesis?.numPeople ?? 4,
     supervisorId: -1,
     programIds: [-1],
     studyCycleId: -1,
@@ -161,7 +160,6 @@ function AddThesisPageSupervisor() {
           statusId: thesis.status.id,
         };
       });
-      setThesisId(thesis.id);
     }
   }, [thesis]);
 
@@ -261,7 +259,7 @@ function AddThesisPageSupervisor() {
         isValid = false;
       }
 
-      if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
+      if (formData.studentIndexes.length > 0 && formData.studentIndexes.every(index => index.length === 0)) {
         newErrors.studentIndexes = errorRequireText
         newErrorsKeys.studentIndexes = "thesis.addStudentsError";
         isValid = false;
@@ -304,7 +302,6 @@ function AddThesisPageSupervisor() {
     if (!isValid) {
       return [isValid, null];
     }
-
     let dto: ThesisDTO = {
       ...formData,
       studentIndexes: studentIndexesHelp,
@@ -436,7 +433,7 @@ function AddThesisPageSupervisor() {
           </button>
           {submittedTheses < JSON.parse(Cookies.get("user") || "{}").numTheses &&
           <button id="save-button" type="submit" className="custom-button" onClick={() => setIsDraft(false)}>
-            {t('general.management.send')}
+            {thesis ? t('general.management.save') : t('general.management.add')}
           </button>}
           <button id="save-draft-button" type="submit" className="custom-button" onClick={() => setIsDraft(true)}>
             {thesis ? t('general.management.saveAsDraft') : t('general.management.addAsDraft')}

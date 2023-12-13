@@ -187,7 +187,7 @@ const ClearDataByCycle: React.FC = () => {
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     useEffect(() => {
         //  theses:
-        api.get(api_access + 'thesis')
+        api.get(api_access + 'thesis/status/exclude/Draft')
             .then((response) => {
                 const thesesResponse: ThesisFront[] = response.data.map((thesisDb: Thesis) => {
                     const thesis: ThesisFront = {
@@ -210,7 +210,7 @@ const ClearDataByCycle: React.FC = () => {
                     return thesis;
                 });
                 const closed = thesesResponse.filter(t => t.status.name === 'Closed');
-                const notClosed = thesesResponse.filter(t => t.status.name !== 'Closed');
+                const notClosed = thesesResponse.filter(t => t.status.name !== 'Closed' && t.status.name !== 'Draft');
 
                 setTheses(notClosed);
                 setClosedTheses(closed);
@@ -2018,7 +2018,7 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
+                                                    onClick={() => { navigate(`/theses/${thesis.id}`) }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>
@@ -2158,7 +2158,7 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
+                                                    onClick={() => { navigate(`/theses/${thesis.id}`) }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>

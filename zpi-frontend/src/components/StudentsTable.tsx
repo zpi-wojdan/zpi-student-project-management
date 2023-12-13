@@ -67,10 +67,8 @@ function StudentTable({ students, thesis }: StudentTableProps) {
     });
     api.put(api_access + `reservation/list_theses/${thesis.id}`, thesis.reservations)
       .then((response) => {
-        if (response.status === 200) {
-          toast.success(t('reservation.acceptConfirmation'));
-          window.location.reload();
-        }
+        toast.success(t('reservation.acceptConfirmation'));
+        window.location.reload();
       })
       .catch((error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {

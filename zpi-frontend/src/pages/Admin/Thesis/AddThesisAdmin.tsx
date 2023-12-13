@@ -32,13 +32,12 @@ function AddThesisPageAdmin() {
   const [errorKeys, setErrorsKeys] = useState<Record<string, string>>({});
 
   const thesis = location.state?.thesis as Thesis;
-  const [thesisId, setThesisId] = useState<number>();
   const [formData, setFormData] = useState<ThesisDTO>({
     namePL: '',
     nameEN: '',
     descriptionPL: '',
     descriptionEN: '',
-    numPeople: 4,
+    numPeople: thesis?.numPeople ?? 4,
     supervisorId: -1,
     programIds: [-1],
     studyCycleId: -1,
@@ -163,7 +162,6 @@ function AddThesisPageAdmin() {
             statusId: thesis.status.id,
           };
         });
-        setThesisId(thesis.id);
       }
     }, [thesis]);
   
@@ -269,7 +267,7 @@ function AddThesisPageAdmin() {
           isValid = false;
         }
 
-        if (!formData.studentIndexes.every(index => index.length > 0 && index.length === 0)) {
+        if (formData.studentIndexes.length > 0 && formData.studentIndexes.every(index => index.length === 0)) {
           newErrors.studentIndexes = errorRequireText
           newErrorsKeys.studentIndexes = "thesis.addStudentsError";
           isValid = false;
