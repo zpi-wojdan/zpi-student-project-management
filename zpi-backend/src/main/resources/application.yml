@@ -81,3 +81,7 @@ spring:
 
 frontend:
   url: ${FRONTEND_URL:http://localhost:3000}
+
+springdoc:
+    swagger-ui:
+        path: /api/swagger-ui.html
