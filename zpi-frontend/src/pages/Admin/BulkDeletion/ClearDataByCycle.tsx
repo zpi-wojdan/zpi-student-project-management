@@ -2018,7 +2018,7 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
+                                                    onClick={() => { navigate(`/theses/${thesis.id}`) }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>
@@ -2158,7 +2158,7 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/manage/${thesis.id}`) }}
+                                                    onClick={() => { navigate(`/theses/${thesis.id}`) }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>
