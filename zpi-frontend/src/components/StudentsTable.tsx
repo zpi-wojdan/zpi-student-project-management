@@ -84,7 +84,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
       api.delete(api_access + `reservation/${res.id}`)
         .then((response) => {
           if (response.status === 200) {
-            toast.success(t('reservation.reservationDeleted'));
+            toast.success(t('reservation.deleteSuccessful'));
             window.location.reload();
           }
         })
@@ -105,7 +105,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
     api.delete(api_access + `reservation/${reservationToDelete.id}`)
       .then((response) => {
         if (response.status === 200) {
-          toast.success(t('reservation.reservationDeleted'));
+          toast.success(t('reservation.deleteSuccessful'));
           window.location.reload();
         }
       })
