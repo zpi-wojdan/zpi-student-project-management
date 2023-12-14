@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import ChoiceConfirmation from "../../../components/ChoiceConfirmation";
 import { Alert } from "react-bootstrap";
 import api_access from "../../../utils/api_access";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 
 const ClearDataByCycle: React.FC = () => {
@@ -1197,779 +1198,796 @@ const ClearDataByCycle: React.FC = () => {
 
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
             {/* sidebar - usuwanie tematów */}
-            
+
             {selectedToClear === ClearingMode.DELETE_THESES ? (
                 <>
-                
-                <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <button className={`bold custom-button ${allowFilteringThesesDeleting() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebarThesesDeleting()}>
-                    {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
-                </button>
-                <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
-                <div className="mb-4">
-                <label className="bold" htmlFor="supervisors">
-                    {t('general.people.supervisor')}:
-                </label>
-                <div className="supervisor-checkbox-list">
-                    {availableSupervisorsThesesDeleting.map((supervisor) => (
-                    <div key={supervisor.id} className="checkbox-item mb-2">
-                        <input
-                        type="checkbox"
-                        id={`supervisor-${supervisor.id}`}
-                        value={supervisor.id}
-                        checked={selectedSupervisorsThesesDeleting.includes(supervisor.id)}
-                        onChange={() => {
-                            const updatedSupervisors = selectedSupervisorsThesesDeleting.includes(supervisor.id)
-                            ? selectedSupervisorsThesesDeleting.filter((id) => id !== supervisor.id)
-                            : [...selectedSupervisorsThesesDeleting, supervisor.id];
-                            setSelectedSupervisorsThesesDeleting(updatedSupervisors);
-                        }}
-                        className="custom-checkbox"
-                        />
-                        <label style={{ marginLeft: '5px' }} htmlFor={`supervisor-${supervisor.id}`}>
-                        {`${supervisor.title.name} ${supervisor.name} ${supervisor.surname}`}
-                        </label>
+
+                    <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                        <button
+                            className={`bold custom-button ${allowFilteringThesesDeleting() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`}
+                            onClick={() => handleToggleSidebarThesesDeleting()}>
+                            {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
+                        </button>
+                        <h3 className='bold my-4'
+                            style={{textAlign: 'center'}}>{t('general.management.filtration')}</h3>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="supervisors">
+                                {t('general.people.supervisor')}:
+                            </label>
+                            <div className="supervisor-checkbox-list">
+                                {availableSupervisorsThesesDeleting.map((supervisor) => (
+                                    <div key={supervisor.id} className="checkbox-item mb-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`supervisor-${supervisor.id}`}
+                                            value={supervisor.id}
+                                            checked={selectedSupervisorsThesesDeleting.includes(supervisor.id)}
+                                            onChange={() => {
+                                                const updatedSupervisors = selectedSupervisorsThesesDeleting.includes(supervisor.id)
+                                                    ? selectedSupervisorsThesesDeleting.filter((id) => id !== supervisor.id)
+                                                    : [...selectedSupervisorsThesesDeleting, supervisor.id];
+                                                setSelectedSupervisorsThesesDeleting(updatedSupervisors);
+                                            }}
+                                            className="custom-checkbox"
+                                        />
+                                        <label style={{marginLeft: '5px'}} htmlFor={`supervisor-${supervisor.id}`}>
+                                            {`${supervisor.title.name} ${supervisor.name} ${supervisor.surname}`}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="cycle">
+                                {t('general.university.studyCycle')}:
+                            </label>
+                            <select
+                                id="cycle"
+                                name="cycle"
+                                value={selectedCycleNameThesesDeleting}
+                                onChange={(e) => {
+                                    setSelectedCycleNameThesesDeleting(e.target.value);
+                                }}
+                                className="form-control"
+                            >
+                                <option value="">{t('general.management.choose')}</option>
+                                {availableCyclesThesesDeleting.map((cycle) => (
+                                    <option key={cycle.id} value={cycle.name}>
+                                        {cycle.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="faculty">
+                                {t('general.university.faculty')}:
+                            </label>
+                            <select
+                                id="faculty"
+                                name="faculty"
+                                value={selectedFacultyAbbrThesesDeleting}
+                                onChange={(e) => {
+                                    setSelectedFacultyAbbrThesesDeleting(e.target.value);
+                                    setSelectedFieldAbbrThesesDeleting("")
+                                    setSelectedSpecializationAbbrThesesDeleting("")
+                                }}
+                                className="form-control"
+                            >
+                                <option value="">{t('general.management.choose')}</option>
+                                {availableFacultiesThesesDeleting.map((faculty) => (
+                                    <option key={faculty.abbreviation} value={faculty.abbreviation}>
+                                        {faculty.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="studyField">
+                                {t('general.university.field')}:
+                            </label>
+                            <select
+                                id="studyField"
+                                name="studyField"
+                                value={selectedFieldAbbrThesesDeleting}
+                                onChange={(e) => {
+                                    setSelectedFieldAbbrThesesDeleting(e.target.value);
+                                    setSelectedSpecializationAbbrThesesDeleting("")
+                                }}
+                                className="form-control"
+                                disabled={selectedFacultyAbbrThesesDeleting === ""}
+                            >
+                                <option value={""}>{t('general.management.choose')}</option>
+                                {selectedFacultyAbbrThesesDeleting !== "" &&
+                                    availableFieldsThesesDeleting
+                                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrThesesDeleting)
+                                        .map((field, fIndex) => (
+                                            <option key={fIndex} value={field.abbreviation}>
+                                                {field.name}
+                                            </option>
+                                        ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="specialization">
+                                {t('general.university.specialization')}:
+                            </label>
+                            <select
+                                id="specialization"
+                                name="specialization"
+                                value={selectedSpecializationAbbrThesesDeleting}
+                                onChange={(e) => {
+                                    setSelectedSpecializationAbbrThesesDeleting(e.target.value);
+                                }}
+                                className="form-control"
+                                disabled={selectedFieldAbbrThesesDeleting === ""}
+                            >
+                                <option value={""}>{t('general.management.choose')}</option>
+                                {selectedFieldAbbrThesesDeleting !== "" &&
+                                    availableSpecializationsThesesDeleting
+                                        .filter((s) => s.studyField.abbreviation === selectedFieldAbbrThesesDeleting)
+                                        .map((specialization, sIndex) => (
+                                            <option key={sIndex} value={specialization.abbreviation}>
+                                                {specialization.name}
+                                            </option>
+                                        ))}
+                            </select>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="d-flex justify-content-center my-4">
+                            <button className="custom-button another-color"
+                                    onClick={() => {
+                                        handleDeleteFiltersThesesDeleting()
+                                    }}>
+                                {t('general.management.filterClear')}
+                            </button>
+                            <button className="custom-button" onClick={() => handleFiltrationThesesDeleting(true)}>
+                                {t('general.management.filter')}
+                            </button>
+                        </div>
                     </div>
-                    ))}
-                </div>
-                </div>
-                <hr className="my-4" />
-                <div className="mb-4">
-                    <label className="bold" htmlFor="cycle">
-                        {t('general.university.studyCycle')}:
-                    </label>
-                    <select
-                        id="cycle"
-                        name="cycle"
-                        value={selectedCycleNameThesesDeleting}
-                        onChange={(e) => {
-                        setSelectedCycleNameThesesDeleting(e.target.value);
-                        }}
-                        className="form-control"
-                    >
-                        <option value="">{t('general.management.choose')}</option>
-                        {availableCyclesThesesDeleting.map((cycle) => (
-                        <option key={cycle.id} value={cycle.name}>
-                            {cycle.name}
-                        </option>
-                        ))}
-                    </select>
-                </div>
-                <hr className="my-4" />
-                <div className="mb-4">
-                <label className="bold" htmlFor="faculty">
-                    {t('general.university.faculty')}:
-                </label>
-                <select
-                    id="faculty"
-                    name="faculty"
-                    value={selectedFacultyAbbrThesesDeleting}
-                    onChange={(e) => {
-                    setSelectedFacultyAbbrThesesDeleting(e.target.value);
-                    setSelectedFieldAbbrThesesDeleting("")
-                    setSelectedSpecializationAbbrThesesDeleting("")
-                    }}
-                    className="form-control"
-                >
-                    <option value="">{t('general.management.choose')}</option>
-                    {availableFacultiesThesesDeleting.map((faculty) => (
-                    <option key={faculty.abbreviation} value={faculty.abbreviation}>
-                        {faculty.name}
-                    </option>
-                    ))}
-                </select>
-                </div>
-                <div className="mb-4">
-                <label className="bold" htmlFor="studyField">
-                    {t('general.university.field')}:
-                </label>
-                <select
-                    id="studyField"
-                    name="studyField"
-                    value={selectedFieldAbbrThesesDeleting}
-                    onChange={(e) => {
-                    setSelectedFieldAbbrThesesDeleting(e.target.value);
-                    setSelectedSpecializationAbbrThesesDeleting("")
-                    }}
-                    className="form-control"
-                    disabled={selectedFacultyAbbrThesesDeleting === ""}
-                >
-                    <option value={""}>{t('general.management.choose')}</option>
-                    {selectedFacultyAbbrThesesDeleting !== "" &&
-                    availableFieldsThesesDeleting
-                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrThesesDeleting)
-                        .map((field, fIndex) => (
-                        <option key={fIndex} value={field.abbreviation}>
-                            {field.name}
-                        </option>
-                        ))}
-                </select>
-                </div>
-                <div className="mb-4">
-                <label className="bold" htmlFor="specialization">
-                    {t('general.university.specialization')}:
-                </label>
-                <select
-                    id="specialization"
-                    name="specialization"
-                    value={selectedSpecializationAbbrThesesDeleting}
-                    onChange={(e) => {
-                    setSelectedSpecializationAbbrThesesDeleting(e.target.value);
-                    }}
-                    className="form-control"
-                    disabled={selectedFieldAbbrThesesDeleting === ""}
-                >
-                    <option value={""}>{t('general.management.choose')}</option>
-                    {selectedFieldAbbrThesesDeleting !== "" &&
-                    availableSpecializationsThesesDeleting
-                        .filter((s) => s.studyField.abbreviation === selectedFieldAbbrThesesDeleting)
-                        .map((specialization, sIndex) => (
-                        <option key={sIndex} value={specialization.abbreviation}>
-                            {specialization.name}
-                        </option>
-                        ))}
-                </select>
-                </div>
-                <hr className="my-4" />
-                <div className="d-flex justify-content-center my-4">
-                <button className="custom-button another-color"
-                    onClick={() => { handleDeleteFiltersThesesDeleting() }}>
-                    {t('general.management.filterClear')}
-                </button>
-                <button className="custom-button" onClick={() => handleFiltrationThesesDeleting(true)}>
-                    {t('general.management.filter')}
-                </button>
-                </div>
-            </div>
-                
+
                 </>
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            // sidebar - studenci
+                // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                // sidebar - studenci
             ) : selectedToClear === ClearingMode.STUDENTS ? (
                 <>
-                
-                <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                    <button className={`bold custom-button ${allowFilteringStudents() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebarStudents()}>
-                    {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
-                    </button>
-                    <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
-                    <div className="mb-4">
 
-                    <div className="mb-4">
-                        <label className="bold" htmlFor="cycle">
-                            {t('general.university.studyCycle')}:
-                        </label>
-                        <select
-                            id="cycle"
-                            name="cycle"
-                            value={selectedCycleNameStudents}
-                            onChange={(e) => {
-                                const cycle = e.target.value;
-                                setSelectedCycleNameStudents(cycle);
-                            }}
-                            className="form-control"
-                        >
-                            <option value="">{t('general.management.choose')}</option>
-                            {availableCyclesStudents.map((cycle) => (
-                            <option key={cycle.id} value={cycle.name}>
-                                {cycle.name}
-                            </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <hr className="my-4" />
-
-                    <label className="bold" htmlFor="facultyStud">
-                        {t('general.university.faculty')}:
-                    </label>
-                    <select
-                        id="facultyStud"
-                        name="facultyStud"
-                        value={selectedFacultyAbbrStudents}
-                        onChange={(e) => {
-                        setSelectedFacultyAbbrStudents(e.target.value);
-                        setSelectedFieldAbbrStudents("")
-                        setSelectedSpecializationAbbrStudents("")
-                        }}
-                        className="form-control"
-                    >
-                        <option value="">{t('general.management.choose')}</option>
-                        {availableFacultiesStudents.map((faculty) => (
-                        <option key={faculty.abbreviation} value={faculty.abbreviation}>
-                            {faculty.name}
-                        </option>
-                        ))}
-                    </select>
-                    </div>
-                    <div className="mb-4">
-                    <label className="bold" htmlFor="studyFieldStud">
-                        {t('general.university.field')}:
-                    </label>
-                    <select
-                        id="studyFieldStud"
-                        name="studyFieldStud"
-                        value={selectedFieldAbbrStudents}
-                        onChange={(e) => {
-                            setSelectedFieldAbbrStudents(e.target.value);
-                            setSelectedSpecializationAbbrStudents("")
-                        }}
-                        className="form-control"
-                        disabled={selectedFacultyAbbrStudents === ""}
-                    >
-                        <option value={""}>{t('general.management.choose')}</option>
-                        {selectedFacultyAbbrStudents !== "" &&
-                        availableFieldsStudents
-                            .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrStudents)
-                            .map((field, fIndex) => (
-                            <option key={fIndex} value={field.abbreviation}>
-                                {field.name}
-                            </option>
-                            ))}
-                    </select>
-                    </div>
-                    <div className="mb-4">
-                    <label className="bold" htmlFor="specializationStud">
-                        {t('general.university.specialization')}:
-                    </label>
-                    <select
-                        id="specializationStud"
-                        name="specializationStud"
-                        value={selectedSpecializationAbbrStudents}
-                        onChange={(e) => {
-                            setSelectedSpecializationAbbrStudents(e.target.value);
-                        }}
-                        className="form-control"
-                        disabled={selectedFieldAbbrStudents === ""}
-                    >
-                        <option value={""}>{t('general.management.choose')}</option>
-                        {selectedFieldAbbrStudents !== "" &&
-                        availableSpecializationsStudents
-                            .filter((s) => s.studyField.abbreviation === selectedFieldAbbrStudents)
-                            .map((specialization, sIndex) => (
-                            <option key={sIndex} value={specialization.abbreviation}>
-                                {specialization.name}
-                            </option>
-                            ))}
-                    </select>
-                    </div>
-                    <hr className="my-4" />
-                    <div className="d-flex justify-content-center my-4">
-                    <button className="custom-button another-color"
-                        onClick={() => { handleDeleteFiltersStudents() }}>
-                        {t('general.management.filterClear')}
-                    </button>
-                    <button className="custom-button" onClick={() => handleFiltrationStudents(true)}>
-                        {t('general.management.filter')}
-                    </button>
-                    </div>
-                </div>
-                
-                </>
-            ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? ( 
-                <>
-                
                     <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-                    <button className={`bold custom-button ${allowFilteringThesesArchive() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`} onClick={() => handleToggleSidebarThesesArchive()}>
-                        {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
-                    </button>
-                    <h3 className='bold my-4' style={{ textAlign: 'center' }}>{t('general.management.filtration')}</h3>
-                    <div className="mb-4">
-                    <label className="bold" htmlFor="supervisors">
-                        {t('general.people.supervisor')}:
-                    </label>
-                    <div className="supervisor-checkbox-list">
-                        {availableSupervisorsThesesArchive.map((supervisor) => (
-                        <div key={supervisor.id} className="checkbox-item mb-2">
-                            <input
-                            type="checkbox"
-                            id={`supervisor-${supervisor.id}`}
-                            value={supervisor.id}
-                            checked={selectedSupervisorsThesesArchive.includes(supervisor.id)}
-                            onChange={() => {
-                                const updatedSupervisors = selectedSupervisorsThesesArchive.includes(supervisor.id)
-                                ? selectedSupervisorsThesesArchive.filter((id) => id !== supervisor.id)
-                                : [...selectedSupervisorsThesesArchive, supervisor.id];
-                                setSelectedSupervisorsThesesArchive(updatedSupervisors);
-                            }}
-                            className="custom-checkbox"
-                            />
-                            <label style={{ marginLeft: '5px' }} htmlFor={`supervisor-${supervisor.id}`}>
-                            {`${supervisor.title.name} ${supervisor.name} ${supervisor.surname}`}
+                        <button
+                            className={`bold custom-button ${allowFilteringStudents() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`}
+                            onClick={() => handleToggleSidebarStudents()}>
+                            {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
+                        </button>
+                        <h3 className='bold my-4'
+                            style={{textAlign: 'center'}}>{t('general.management.filtration')}</h3>
+                        <div className="mb-4">
+
+                            <div className="mb-4">
+                                <label className="bold" htmlFor="cycle">
+                                    {t('general.university.studyCycle')}:
+                                </label>
+                                <select
+                                    id="cycle"
+                                    name="cycle"
+                                    value={selectedCycleNameStudents}
+                                    onChange={(e) => {
+                                        const cycle = e.target.value;
+                                        setSelectedCycleNameStudents(cycle);
+                                    }}
+                                    className="form-control"
+                                >
+                                    <option value="">{t('general.management.choose')}</option>
+                                    {availableCyclesStudents.map((cycle) => (
+                                        <option key={cycle.id} value={cycle.name}>
+                                            {cycle.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <hr className="my-4"/>
+
+                            <label className="bold" htmlFor="facultyStud">
+                                {t('general.university.faculty')}:
                             </label>
+                            <select
+                                id="facultyStud"
+                                name="facultyStud"
+                                value={selectedFacultyAbbrStudents}
+                                onChange={(e) => {
+                                    setSelectedFacultyAbbrStudents(e.target.value);
+                                    setSelectedFieldAbbrStudents("")
+                                    setSelectedSpecializationAbbrStudents("")
+                                }}
+                                className="form-control"
+                            >
+                                <option value="">{t('general.management.choose')}</option>
+                                {availableFacultiesStudents.map((faculty) => (
+                                    <option key={faculty.abbreviation} value={faculty.abbreviation}>
+                                        {faculty.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                        ))}
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="studyFieldStud">
+                                {t('general.university.field')}:
+                            </label>
+                            <select
+                                id="studyFieldStud"
+                                name="studyFieldStud"
+                                value={selectedFieldAbbrStudents}
+                                onChange={(e) => {
+                                    setSelectedFieldAbbrStudents(e.target.value);
+                                    setSelectedSpecializationAbbrStudents("")
+                                }}
+                                className="form-control"
+                                disabled={selectedFacultyAbbrStudents === ""}
+                            >
+                                <option value={""}>{t('general.management.choose')}</option>
+                                {selectedFacultyAbbrStudents !== "" &&
+                                    availableFieldsStudents
+                                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrStudents)
+                                        .map((field, fIndex) => (
+                                            <option key={fIndex} value={field.abbreviation}>
+                                                {field.name}
+                                            </option>
+                                        ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="specializationStud">
+                                {t('general.university.specialization')}:
+                            </label>
+                            <select
+                                id="specializationStud"
+                                name="specializationStud"
+                                value={selectedSpecializationAbbrStudents}
+                                onChange={(e) => {
+                                    setSelectedSpecializationAbbrStudents(e.target.value);
+                                }}
+                                className="form-control"
+                                disabled={selectedFieldAbbrStudents === ""}
+                            >
+                                <option value={""}>{t('general.management.choose')}</option>
+                                {selectedFieldAbbrStudents !== "" &&
+                                    availableSpecializationsStudents
+                                        .filter((s) => s.studyField.abbreviation === selectedFieldAbbrStudents)
+                                        .map((specialization, sIndex) => (
+                                            <option key={sIndex} value={specialization.abbreviation}>
+                                                {specialization.name}
+                                            </option>
+                                        ))}
+                            </select>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="d-flex justify-content-center my-4">
+                            <button className="custom-button another-color"
+                                    onClick={() => {
+                                        handleDeleteFiltersStudents()
+                                    }}>
+                                {t('general.management.filterClear')}
+                            </button>
+                            <button className="custom-button" onClick={() => handleFiltrationStudents(true)}>
+                                {t('general.management.filter')}
+                            </button>
+                        </div>
                     </div>
-                    </div>
-                    <hr className="my-4" />
-                    <div className="mb-4">
-                        <label className="bold" htmlFor="cycle">
-                            {t('general.university.studyCycle')}:
-                        </label>
-                        <select
-                            id="cycle"
-                            name="cycle"
-                            value={selectedCycleNameThesesArchive}
-                            onChange={(e) => {
-                                setSelectedCycleNameThesesArchive(e.target.value);
-                            }}
-                            className="form-control"
-                        >
-                            <option value="">{t('general.management.choose')}</option>
-                            {availableCyclesThesesArchive.map((cycle) => (
-                            <option key={cycle.id} value={cycle.name}>
-                                {cycle.name}
-                            </option>
-                            ))}
-                        </select>
-                    </div>
-                    <hr className="my-4" />
-                    <div className="mb-4">
-                    <label className="bold" htmlFor="faculty">
-                        {t('general.university.faculty')}:
-                    </label>
-                    <select
-                        id="faculty"
-                        name="faculty"
-                        value={selectedFacultyAbbrThesesArchive}
-                        onChange={(e) => {
-                            setSelectedFacultyAbbrThesesArchive(e.target.value);
-                            setSelectedFieldAbbrThesesArchive("")
-                            setSelectedSpecializationAbbrThesesArchive("")
-                        }}
-                        className="form-control"
-                    >
-                        <option value="">{t('general.management.choose')}</option>
-                        {availableFacultiesThesesArchive.map((faculty) => (
-                        <option key={faculty.abbreviation} value={faculty.abbreviation}>
-                            {faculty.name}
-                        </option>
-                        ))}
-                    </select>
-                    </div>
-                    <div className="mb-4">
-                    <label className="bold" htmlFor="studyField">
-                        {t('general.university.field')}:
-                    </label>
-                    <select
-                        id="studyField"
-                        name="studyField"
-                        value={selectedFieldAbbrThesesArchive}
-                        onChange={(e) => {
-                            setSelectedFieldAbbrThesesArchive(e.target.value);
-                            setSelectedSpecializationAbbrThesesArchive("");
-                        }}
-                        className="form-control"
-                        disabled={selectedFacultyAbbrThesesArchive === ""}
-                    >
-                        <option value={""}>{t('general.management.choose')}</option>
-                        {selectedFacultyAbbrThesesArchive !== "" &&
-                        availableFieldsThesesArchive
-                            .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrThesesArchive)
-                            .map((field, fIndex) => (
-                            <option key={fIndex} value={field.abbreviation}>
-                                {field.name}
-                            </option>
-                            ))}
-                    </select>
-                    </div>
-                    <div className="mb-4">
-                    <label className="bold" htmlFor="specialization">
-                        {t('general.university.specialization')}:
-                    </label>
-                    <select
-                        id="specialization"
-                        name="specialization"
-                        value={selectedSpecializationAbbrThesesArchive}
-                        onChange={(e) => {
-                        setSelectedSpecializationAbbrThesesArchive(e.target.value);
-                        }}
-                        className="form-control"
-                        disabled={selectedFieldAbbrThesesArchive === ""}
-                    >
-                        <option value={""}>{t('general.management.choose')}</option>
-                        {selectedFieldAbbrThesesArchive !== "" &&
-                        availableSpecializationsThesesArchive
-                            .filter((s) => s.studyField.abbreviation === selectedFieldAbbrThesesArchive)
-                            .map((specialization, sIndex) => (
-                            <option key={sIndex} value={specialization.abbreviation}>
-                                {specialization.name}
-                            </option>
-                            ))}
-                    </select>
-                    </div>
-                    <hr className="my-4" />
-                    <div className="d-flex justify-content-center my-4">
-                    <button className="custom-button another-color"
-                        onClick={() => { handleDeleteFiltersThesesArchive() }}>
-                        {t('general.management.filterClear')}
-                    </button>
-                    <button className="custom-button" onClick={() => handleFiltrationThesesArchive(true)}>
-                        {t('general.management.filter')}
-                    </button>
-                    </div>
-                </div>
-                
+
                 </>
-             ) : null}
+            ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                <>
+
+                    <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                        <button
+                            className={`bold custom-button ${allowFilteringThesesArchive() ? '' : 'another-color'} sidebar-button ${sidebarOpen ? 'open' : ''}`}
+                            onClick={() => handleToggleSidebarThesesArchive()}>
+                            {t('general.management.filtration')} {sidebarOpen ? '◀' : '▶'}
+                        </button>
+                        <h3 className='bold my-4'
+                            style={{textAlign: 'center'}}>{t('general.management.filtration')}</h3>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="supervisors">
+                                {t('general.people.supervisor')}:
+                            </label>
+                            <div className="supervisor-checkbox-list">
+                                {availableSupervisorsThesesArchive.map((supervisor) => (
+                                    <div key={supervisor.id} className="checkbox-item mb-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`supervisor-${supervisor.id}`}
+                                            value={supervisor.id}
+                                            checked={selectedSupervisorsThesesArchive.includes(supervisor.id)}
+                                            onChange={() => {
+                                                const updatedSupervisors = selectedSupervisorsThesesArchive.includes(supervisor.id)
+                                                    ? selectedSupervisorsThesesArchive.filter((id) => id !== supervisor.id)
+                                                    : [...selectedSupervisorsThesesArchive, supervisor.id];
+                                                setSelectedSupervisorsThesesArchive(updatedSupervisors);
+                                            }}
+                                            className="custom-checkbox"
+                                        />
+                                        <label style={{marginLeft: '5px'}} htmlFor={`supervisor-${supervisor.id}`}>
+                                            {`${supervisor.title.name} ${supervisor.name} ${supervisor.surname}`}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="cycle">
+                                {t('general.university.studyCycle')}:
+                            </label>
+                            <select
+                                id="cycle"
+                                name="cycle"
+                                value={selectedCycleNameThesesArchive}
+                                onChange={(e) => {
+                                    setSelectedCycleNameThesesArchive(e.target.value);
+                                }}
+                                className="form-control"
+                            >
+                                <option value="">{t('general.management.choose')}</option>
+                                {availableCyclesThesesArchive.map((cycle) => (
+                                    <option key={cycle.id} value={cycle.name}>
+                                        {cycle.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="faculty">
+                                {t('general.university.faculty')}:
+                            </label>
+                            <select
+                                id="faculty"
+                                name="faculty"
+                                value={selectedFacultyAbbrThesesArchive}
+                                onChange={(e) => {
+                                    setSelectedFacultyAbbrThesesArchive(e.target.value);
+                                    setSelectedFieldAbbrThesesArchive("")
+                                    setSelectedSpecializationAbbrThesesArchive("")
+                                }}
+                                className="form-control"
+                            >
+                                <option value="">{t('general.management.choose')}</option>
+                                {availableFacultiesThesesArchive.map((faculty) => (
+                                    <option key={faculty.abbreviation} value={faculty.abbreviation}>
+                                        {faculty.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="studyField">
+                                {t('general.university.field')}:
+                            </label>
+                            <select
+                                id="studyField"
+                                name="studyField"
+                                value={selectedFieldAbbrThesesArchive}
+                                onChange={(e) => {
+                                    setSelectedFieldAbbrThesesArchive(e.target.value);
+                                    setSelectedSpecializationAbbrThesesArchive("");
+                                }}
+                                className="form-control"
+                                disabled={selectedFacultyAbbrThesesArchive === ""}
+                            >
+                                <option value={""}>{t('general.management.choose')}</option>
+                                {selectedFacultyAbbrThesesArchive !== "" &&
+                                    availableFieldsThesesArchive
+                                        .filter((fi) => fi.faculty.abbreviation === selectedFacultyAbbrThesesArchive)
+                                        .map((field, fIndex) => (
+                                            <option key={fIndex} value={field.abbreviation}>
+                                                {field.name}
+                                            </option>
+                                        ))}
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="bold" htmlFor="specialization">
+                                {t('general.university.specialization')}:
+                            </label>
+                            <select
+                                id="specialization"
+                                name="specialization"
+                                value={selectedSpecializationAbbrThesesArchive}
+                                onChange={(e) => {
+                                    setSelectedSpecializationAbbrThesesArchive(e.target.value);
+                                }}
+                                className="form-control"
+                                disabled={selectedFieldAbbrThesesArchive === ""}
+                            >
+                                <option value={""}>{t('general.management.choose')}</option>
+                                {selectedFieldAbbrThesesArchive !== "" &&
+                                    availableSpecializationsThesesArchive
+                                        .filter((s) => s.studyField.abbreviation === selectedFieldAbbrThesesArchive)
+                                        .map((specialization, sIndex) => (
+                                            <option key={sIndex} value={specialization.abbreviation}>
+                                                {specialization.name}
+                                            </option>
+                                        ))}
+                            </select>
+                        </div>
+                        <hr className="my-4"/>
+                        <div className="d-flex justify-content-center my-4">
+                            <button className="custom-button another-color"
+                                    onClick={() => {
+                                        handleDeleteFiltersThesesArchive()
+                                    }}>
+                                {t('general.management.filterClear')}
+                            </button>
+                            <button className="custom-button" onClick={() => handleFiltrationThesesArchive(true)}>
+                                {t('general.management.filter')}
+                            </button>
+                        </div>
+                    </div>
+
+                </>
+            ) : null}
 
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-            
+
             {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
             {/* wspólne */}
+            <div className="d-flex justify-content-begin align-items-center">
+                <button
+                    className={`custom-button ${selectedToClear === ClearingMode.STUDENTS ? '' : 'another-color'}`}
+                    onClick={chooseStudents}
+                >
+                    {t('general.clearData.clearStudents')}
+                </button>
+
+                <button
+                    className={`custom-button ${selectedToClear === ClearingMode.ARCHIVE_THESES ? '' : 'another-color'}`}
+                    onClick={chooseThesesArchive}
+                >
+                    {t('general.clearData.archiveTheses')}
+                </button>
+
+                <button
+                    className={`custom-button ${selectedToClear === ClearingMode.DELETE_THESES ? '' : 'another-color'}`}
+                    onClick={chooseThesesDeleting}
+                >
+                    {t('general.clearData.clearTheses')}
+                </button>
+            </div>
             {(!thesesDeletingLoaded || !studentsLoaded || !thesesArchiveLoaded) ? (
                 <div className='info-no-data'>
-                    <p>{t('general.management.load')}</p>
+                    <LoadingSpinner height="50vh" />
                 </div>
             ) : (<React.Fragment>
                 {theses.length === 0 ? (
-                <div className='info-no-data'>
-                    <p>{t('general.management.noData')}</p>
-                </div>
+                    <div className='info-no-data'>
+                        <p>{t('general.management.noData')}</p>
+                    </div>
                 ) : (<React.Fragment>
-                    
-                <div className="d-flex justify-content-begin align-items-center">
-                    <button 
-                        className={`custom-button ${selectedToClear === ClearingMode.STUDENTS ? '' : 'another-color'}`}
-                        onClick={chooseStudents}
-                    >
-                        {t('general.clearData.clearStudents')}
-                    </button>
+                    <div className="d-flex justify-content-begin align-items-center mt-3">
 
-                    <button 
-                        className={`custom-button ${selectedToClear === ClearingMode.ARCHIVE_THESES ? '' : 'another-color'}`}
-                        onClick={chooseThesesArchive}
-                    >
-                        {t('general.clearData.archiveTheses')}
-                    </button>
+                        {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
-                    <button 
-                        className={`custom-button ${selectedToClear === ClearingMode.DELETE_THESES ? '' : 'another-color'}`}
-                        onClick={chooseThesesDeleting}
-                    >
-                        {t('general.clearData.clearTheses')}
-                    </button>
-                </div>
-                <div className="d-flex justify-content-begin align-items-center mt-3">
-
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-                {/* Przyciski usuwające i ich potwierdzanie */}
-                {selectedToClear === ClearingMode.DELETE_THESES ? (
-                        <>
-                            <button
-                                type="button"
-                                className={`custom-button ${thesesDeletingFormIndexes.size === 0 ? 'another-color' : ''}`}
-                                onClick={() => handleConfirmClickThesesDeleting()}
-                                disabled={thesesDeletingFormIndexes.size === 0}
+                        {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                        {/* Przyciski usuwające i ich potwierdzanie */}
+                        {selectedToClear === ClearingMode.DELETE_THESES ? (
+                            <>
+                                <button
+                                    type="button"
+                                    className={`custom-button ${thesesDeletingFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                    onClick={() => handleConfirmClickThesesDeleting()}
+                                    disabled={thesesDeletingFormIndexes.size === 0}
                                 >
-                                {t('general.management.deleteSelected')}
-                            </button>
+                                    {t('general.management.deleteSelected')}
+                                </button>
 
-                            {showDeleteConfirmationThesesDeleting && (
-                            <tr>
-                                <td colSpan={5}>
-                                    <ChoiceConfirmation
-                                        isOpen={showDeleteConfirmationThesesDeleting}
-                                        onClose={handleConfirmCancelThesesDeleting}
-                                        onConfirm={handleConfirmAcceptThesesDeleting}
-                                        onCancel={handleConfirmCancelThesesDeleting}
-                                        questionText={t('thesis.acceptDeletionBulk', { idCount: thesesDeletingFormIndexes.size })}
-                                    />
-                                </td>
-                            </tr>
-                            )}
-                        </>
-                    ) : selectedToClear === ClearingMode.STUDENTS ? (
+                                {showDeleteConfirmationThesesDeleting && (
+                                    <tr>
+                                        <td colSpan={5}>
+                                            <ChoiceConfirmation
+                                                isOpen={showDeleteConfirmationThesesDeleting}
+                                                onClose={handleConfirmCancelThesesDeleting}
+                                                onConfirm={handleConfirmAcceptThesesDeleting}
+                                                onCancel={handleConfirmCancelThesesDeleting}
+                                                questionText={t('thesis.acceptDeletionBulk', {idCount: thesesDeletingFormIndexes.size})}
+                                            />
+                                        </td>
+                                    </tr>
+                                )}
+                            </>
+                        ) : selectedToClear === ClearingMode.STUDENTS ? (
                             <>
                                 {submittedCycleNameStudents === "" ? (
                                     <Alert variant="warning" className="m-0">
                                         {t('student.filterCycles')}
                                     </Alert>
                                 ) : (
-                                    <>      
-                                    <button
-                                        type="button"
-                                        className={`custom-button ${studentsFormIndexes.size === 0 ? 'another-color' : ''}`}
-                                        onClick={() => handleConfirmClickStudents()}
-                                        disabled={studentsFormIndexes.size === 0}
-                                    >
-                                        {t('general.management.deleteSelected')}
-                                    </button>
-    
-                                    {showAcceptConfirmationStudents && (
-                                    <tr>
-                                        <td colSpan={5}>
-                                            <ChoiceConfirmation
-                                                isOpen={showAcceptConfirmationStudents}
-                                                onClose={handleConfirmCancelStudents}
-                                                onConfirm={handleConfirmAcceptStudents}
-                                                onCancel={handleConfirmCancelStudents}
-                                                questionText={t('student.acceptDeletionBulk', { idCount: studentsFormIndexes.size })}
-                                            />
-                                        </td>
-                                    </tr>
-                                    )}
+                                    <>
+                                        <button
+                                            type="button"
+                                            className={`custom-button ${studentsFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                            onClick={() => handleConfirmClickStudents()}
+                                            disabled={studentsFormIndexes.size === 0}
+                                        >
+                                            {t('general.management.deleteSelected')}
+                                        </button>
+
+                                        {showAcceptConfirmationStudents && (
+                                            <tr>
+                                                <td colSpan={5}>
+                                                    <ChoiceConfirmation
+                                                        isOpen={showAcceptConfirmationStudents}
+                                                        onClose={handleConfirmCancelStudents}
+                                                        onConfirm={handleConfirmAcceptStudents}
+                                                        onCancel={handleConfirmCancelStudents}
+                                                        questionText={t('student.acceptDeletionBulk', {idCount: studentsFormIndexes.size})}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        )}
                                     </>
                                 )}
                             </>
-                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
-                        <>
-                            <button
-                                type="button"
-                                className={`custom-button ${thesesArchiveFormIndexes.size === 0 ? 'another-color' : ''}`}
-                                onClick={() => handleConfirmClickThesesArchive()}
-                                disabled={thesesArchiveFormIndexes.size === 0}
+                        ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                            <>
+                                <button
+                                    type="button"
+                                    className={`custom-button ${thesesArchiveFormIndexes.size === 0 ? 'another-color' : ''}`}
+                                    onClick={() => handleConfirmClickThesesArchive()}
+                                    disabled={thesesArchiveFormIndexes.size === 0}
                                 >
-                                {t('general.management.archiveSelected')}
-                            </button>
+                                    {t('general.management.archiveSelected')}
+                                </button>
 
-                            {showDeleteConfirmationThesesArchive && (
-                            <tr>
-                                <td colSpan={5}>
-                                    <ChoiceConfirmation
-                                        isOpen={showDeleteConfirmationThesesArchive}
-                                        onClose={handleConfirmCancelThesesArchive}
-                                        onConfirm={handleConfirmAcceptThesesArchive}
-                                        onCancel={handleConfirmCancelThesesArchive}
-                                        questionText={t('thesis.acceptArchiveBulk', { idCount: thesesArchiveFormIndexes.size })}
-                                    />
-                                </td>
-                            </tr>
-                            )}
-                        </>
-                    ) : null}
-                    </div>
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-                {/* search bar i paginacja górna */}
-                <div className='d-flex justify-content-between align-items-center'>
-                    {selectedToClear === ClearingMode.DELETE_THESES ? (
-                        <>
-                            <SearchBar
-                                searchTerm={searchTermThesesDeleting}
-                                setSearchTerm={setSearchTermThesesDeleting}
-                                placeholder={t('general.management.search')}
-                            />
-                            {currentITEMS_PER_PAGE.length > 1 && (
-                            <div className="d-flex justify-content-between">
-                                <div className="d-flex align-items-center">
-                                <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
-                                <select
-                                    value={thesesDeletingPerPage}
-                                    onChange={(e) => {
-                                        setThesesDeletingPerPage(e.target.value);
-                                        setChosenThesesDeletingPerPage(e.target.value);
-                                        handlePageChangeThesesDeleting(1);
-                                    }}
-                                >
-                                {currentITEMS_PER_PAGE.map((value) => (
-                                    <option key={value} value={value}>
-                                        {value}
-                                    </option>
-                                ))}
-                                </select>
-                                </div>
-                                <div style={{ marginLeft: '30px' }}>
-                                    {thesesDeletingPerPage !== 'All' && (
-                                        <div className="pagination">
-                                            <button
-                                                onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting - 1)}
-                                                disabled={currentPageThesesDeleting === 1}
-                                                className='custom-button'
-                                            >
-                                                &lt;
-                                            </button>
-
-                                            <input
-                                                type="number"
-                                                value={inputValueThesesDeleting}
-                                                onChange={(e) => {
-                                                    const newPage = parseInt(e.target.value, 10);
-                                                    setInputValueThesesDeleting(newPage);
-                                                }}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        handlePageChangeThesesDeleting(inputValueThesesDeleting);
-                                                    }
-                                                }}
-                                                onBlur={() => {
-                                                    handlePageChangeThesesDeleting(inputValueThesesDeleting);
-                                                }}
-                                                className='text'
+                                {showDeleteConfirmationThesesArchive && (
+                                    <tr>
+                                        <td colSpan={5}>
+                                            <ChoiceConfirmation
+                                                isOpen={showDeleteConfirmationThesesArchive}
+                                                onClose={handleConfirmCancelThesesArchive}
+                                                onConfirm={handleConfirmAcceptThesesArchive}
+                                                onCancel={handleConfirmCancelThesesArchive}
+                                                questionText={t('thesis.acceptArchiveBulk', {idCount: thesesArchiveFormIndexes.size})}
                                             />
+                                        </td>
+                                    </tr>
+                                )}
+                            </>
+                        ) : null}
+                    </div>
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
-                                            <span className='text'> {t('general.pagination')} {totalPagesThesesDeleting}</span>
-                                            <button
-                                                onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
-                                                disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
-                                                className='custom-button'
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                    {/* search bar i paginacja górna */}
+                    <div className='d-flex justify-content-between align-items-center'>
+                        {selectedToClear === ClearingMode.DELETE_THESES ? (
+                            <>
+                                <SearchBar
+                                    searchTerm={searchTermThesesDeleting}
+                                    setSearchTerm={setSearchTermThesesDeleting}
+                                    placeholder={t('general.management.search')}
+                                />
+                                {currentITEMS_PER_PAGE.length > 1 && (
+                                    <div className="d-flex justify-content-between">
+                                        <div className="d-flex align-items-center">
+                                            <label style={{marginRight: '10px'}}>{t('general.management.view')}:</label>
+                                            <select
+                                                value={thesesDeletingPerPage}
+                                                onChange={(e) => {
+                                                    setThesesDeletingPerPage(e.target.value);
+                                                    setChosenThesesDeletingPerPage(e.target.value);
+                                                    handlePageChangeThesesDeleting(1);
+                                                }}
                                             >
-                                                &gt;
-                                            </button>
+                                                {currentITEMS_PER_PAGE.map((value) => (
+                                                    <option key={value} value={value}>
+                                                        {value}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                            )}
-                        </>    
-                    ) : selectedToClear === ClearingMode.STUDENTS ? (
-                        <>
-                            <SearchBar
-                                searchTerm={searchTermStudents}
-                                setSearchTerm={setSearchTermStudents}
-                                placeholder={t('general.management.search')}
-                            />
-                            {currentITEMS_PER_PAGE.length > 1 && (
-                            <div className="d-flex justify-content-between">
-                                <div className="d-flex align-items-center">
-                                <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
-                                <select
-                                    value={studentsPerPage}
-                                    onChange={(e) => {
-                                    setStudentsPerPage(e.target.value);
-                                    setChosenStudentsPerPage(e.target.value);
-                                    handlePageChangeStudents(1);
-                                    }}
-                                >
-                                {currentITEMS_PER_PAGE.map((value) => (
-                                <option key={value} value={value}>
-                                    {value}
-                                </option>
-                                ))}
-                                </select>
-                                </div>
-                                <div style={{ marginLeft: '30px' }}>
-                                {studentsPerPage !== 'All' && (
-                                    <div className="pagination">
-                                    <button
-                                        onClick={() => handlePageChangeStudents(currentPageStudents - 1)}
-                                        disabled={currentPageStudents === 1}
-                                        className='custom-button'
-                                    >
-                                        &lt;
-                                    </button>
+                                        <div style={{marginLeft: '30px'}}>
+                                            {thesesDeletingPerPage !== 'All' && (
+                                                <div className="pagination">
+                                                    <button
+                                                        onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting - 1)}
+                                                        disabled={currentPageThesesDeleting === 1}
+                                                        className='custom-button'
+                                                    >
+                                                        &lt;
+                                                    </button>
 
-                                    <input
-                                        type="number"
-                                        value={inputValueStudents}
-                                        onChange={(e) => {
-                                        const newPage = parseInt(e.target.value, 10);
-                                            setInputValueStudents(newPage);
-                                        }}
-                                        onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handlePageChangeStudents(inputValueStudents);
-                                        }
-                                        }}
-                                        onBlur={() => {
-                                            handlePageChangeStudents(inputValueStudents);
-                                        }}
-                                        className='text'
-                                    />
+                                                    <input
+                                                        type="number"
+                                                        value={inputValueThesesDeleting}
+                                                        onChange={(e) => {
+                                                            const newPage = parseInt(e.target.value, 10);
+                                                            setInputValueThesesDeleting(newPage);
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                handlePageChangeThesesDeleting(inputValueThesesDeleting);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            handlePageChangeThesesDeleting(inputValueThesesDeleting);
+                                                        }}
+                                                        className='text'
+                                                    />
 
-                                    <span className='text'> {t('general.pagination')} {totalPagesStudents}</span>
-                                    <button
-                                        onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
-                                        disabled={currentPageStudents === totalPagesStudents}
-                                        className='custom-button'
-                                    >
-                                        &gt;
-                                    </button>
+                                                    <span
+                                                        className='text'> {t('general.pagination')} {totalPagesThesesDeleting}</span>
+                                                    <button
+                                                        onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
+                                                        disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
+                                                        className='custom-button'
+                                                    >
+                                                        &gt;
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
-                                </div>
-                            </div>
-                            )}
-                        </>    
-                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
-                        <>
-                            <SearchBar
-                                searchTerm={searchTermThesesArchive}
-                                setSearchTerm={setSearchTermThesesArchive}
-                                placeholder={t('general.management.search')}
-                            />
-                            {currentITEMS_PER_PAGE.length > 1 && (
-                            <div className="d-flex justify-content-between">
-                                <div className="d-flex align-items-center">
-                                <label style={{ marginRight: '10px' }}>{t('general.management.view')}:</label>
-                                <select
-                                    value={thesesArchivePerPage}
-                                    onChange={(e) => {
-                                        setThesesArchivePerPage(e.target.value);
-                                        setChosenThesesArchivePerPage(e.target.value);
-                                        handlePageChangeThesesArchive(1);
-                                    }}
-                                >
-                                {currentITEMS_PER_PAGE.map((value) => (
-                                    <option key={value} value={value}>
-                                        {value}
-                                    </option>
-                                ))}
-                                </select>
-                                </div>
-                                <div style={{ marginLeft: '30px' }}>
-                                    {thesesArchivePerPage !== 'All' && (
-                                        <div className="pagination">
-                                            <button
-                                                onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive - 1)}
-                                                disabled={currentPageThesesArchive === 1}
-                                                className='custom-button'
-                                            >
-                                                &lt;
-                                            </button>
-
-                                            <input
-                                                type="number"
-                                                value={inputValueThesesArchive}
+                            </>
+                        ) : selectedToClear === ClearingMode.STUDENTS ? (
+                            <>
+                                <SearchBar
+                                    searchTerm={searchTermStudents}
+                                    setSearchTerm={setSearchTermStudents}
+                                    placeholder={t('general.management.search')}
+                                />
+                                {currentITEMS_PER_PAGE.length > 1 && (
+                                    <div className="d-flex justify-content-between">
+                                        <div className="d-flex align-items-center">
+                                            <label style={{marginRight: '10px'}}>{t('general.management.view')}:</label>
+                                            <select
+                                                value={studentsPerPage}
                                                 onChange={(e) => {
-                                                    const newPage = parseInt(e.target.value, 10);
-                                                    setInputValueThesesArchive(newPage);
+                                                    setStudentsPerPage(e.target.value);
+                                                    setChosenStudentsPerPage(e.target.value);
+                                                    handlePageChangeStudents(1);
                                                 }}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        handlePageChangeThesesArchive(inputValueThesesArchive);
-                                                    }
-                                                }}
-                                                onBlur={() => {
-                                                    handlePageChangeThesesArchive(inputValueThesesArchive);
-                                                }}
-                                                className='text'
-                                            />
-
-                                            <span className='text'> {t('general.pagination')} {totalPagesThesesArchive}</span>
-                                            <button
-                                                onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
-                                                disabled={currentPageThesesArchive === totalPagesThesesArchive}
-                                                className='custom-button'
                                             >
-                                                &gt;
-                                            </button>
+                                                {currentITEMS_PER_PAGE.map((value) => (
+                                                    <option key={value} value={value}>
+                                                        {value}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                            )}
-                        </>    
-                    ) : null}
-                </div>
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                                        <div style={{marginLeft: '30px'}}>
+                                            {studentsPerPage !== 'All' && (
+                                                <div className="pagination">
+                                                    <button
+                                                        onClick={() => handlePageChangeStudents(currentPageStudents - 1)}
+                                                        disabled={currentPageStudents === 1}
+                                                        className='custom-button'
+                                                    >
+                                                        &lt;
+                                                    </button>
 
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-                {/* usuwanie tematów */}                    
-                {selectedToClear === ClearingMode.DELETE_THESES ? (
-                    <>
-                        {afterSearchThesesDeleting.length === 0 ? (
-                            <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                                <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
-                            </div>
-                        ) : (
-                            <table className="custom-table" key={`theses-deleting-table-${key}`}>
-                                <thead>
+                                                    <input
+                                                        type="number"
+                                                        value={inputValueStudents}
+                                                        onChange={(e) => {
+                                                            const newPage = parseInt(e.target.value, 10);
+                                                            setInputValueStudents(newPage);
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                handlePageChangeStudents(inputValueStudents);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            handlePageChangeStudents(inputValueStudents);
+                                                        }}
+                                                        className='text'
+                                                    />
+
+                                                    <span
+                                                        className='text'> {t('general.pagination')} {totalPagesStudents}</span>
+                                                    <button
+                                                        onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
+                                                        disabled={currentPageStudents === totalPagesStudents}
+                                                        className='custom-button'
+                                                    >
+                                                        &gt;
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                            <>
+                                <SearchBar
+                                    searchTerm={searchTermThesesArchive}
+                                    setSearchTerm={setSearchTermThesesArchive}
+                                    placeholder={t('general.management.search')}
+                                />
+                                {currentITEMS_PER_PAGE.length > 1 && (
+                                    <div className="d-flex justify-content-between">
+                                        <div className="d-flex align-items-center">
+                                            <label style={{marginRight: '10px'}}>{t('general.management.view')}:</label>
+                                            <select
+                                                value={thesesArchivePerPage}
+                                                onChange={(e) => {
+                                                    setThesesArchivePerPage(e.target.value);
+                                                    setChosenThesesArchivePerPage(e.target.value);
+                                                    handlePageChangeThesesArchive(1);
+                                                }}
+                                            >
+                                                {currentITEMS_PER_PAGE.map((value) => (
+                                                    <option key={value} value={value}>
+                                                        {value}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div style={{marginLeft: '30px'}}>
+                                            {thesesArchivePerPage !== 'All' && (
+                                                <div className="pagination">
+                                                    <button
+                                                        onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive - 1)}
+                                                        disabled={currentPageThesesArchive === 1}
+                                                        className='custom-button'
+                                                    >
+                                                        &lt;
+                                                    </button>
+
+                                                    <input
+                                                        type="number"
+                                                        value={inputValueThesesArchive}
+                                                        onChange={(e) => {
+                                                            const newPage = parseInt(e.target.value, 10);
+                                                            setInputValueThesesArchive(newPage);
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                handlePageChangeThesesArchive(inputValueThesesArchive);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            handlePageChangeThesesArchive(inputValueThesesArchive);
+                                                        }}
+                                                        className='text'
+                                                    />
+
+                                                    <span
+                                                        className='text'> {t('general.pagination')} {totalPagesThesesArchive}</span>
+                                                    <button
+                                                        onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
+                                                        disabled={currentPageThesesArchive === totalPagesThesesArchive}
+                                                        className='custom-button'
+                                                    >
+                                                        &gt;
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : null}
+                    </div>
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                    {/* usuwanie tematów */}
+                    {selectedToClear === ClearingMode.DELETE_THESES ? (
+                        <>
+                            {afterSearchThesesDeleting.length === 0 ? (
+                                <div style={{textAlign: 'center', marginTop: '40px'}}>
+                                    <p style={{fontSize: '1.5em'}}>{t('general.management.noSearchData')}</p>
+                                </div>
+                            ) : (
+                                <table className="custom-table" key={`theses-deleting-table-${key}`}>
+                                    <thead>
                                     <tr>
-                                        <th style={{ width: '3%', textAlign: 'center' }}>
+                                        <th style={{width: '3%', textAlign: 'center'}}>
                                             <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
                                             <input
                                                 type='checkbox'
@@ -1978,31 +1996,34 @@ const ClearDataByCycle: React.FC = () => {
                                                 onChange={checkAllCheckboxesChangeThesesDeleting}
                                             />
                                         </th>
-                                        <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                                        <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                                        <th style={{ width: '14%' }}>{t('general.people.supervisor')}</th>
-                                        <th style={{ width: '10%' }}>{t('general.university.status')}</th>
-                                        <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                                        <th style={{width: '3%', textAlign: 'center'}}>#</th>
+                                        <th style={{width: '60%'}}>{t('general.university.thesis')}</th>
+                                        <th style={{width: '14%'}}>{t('general.people.supervisor')}</th>
+                                        <th style={{width: '10%'}}>{t('general.university.status')}</th>
+                                        <th style={{
+                                            width: '10%',
+                                            textAlign: 'center'
+                                        }}>{t('general.management.details')}</th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     {currentThesesDeleting.map((thesis, index) => (
                                         <tr key={thesis.id}>
                                             <td>
-                                                <div style={{ textAlign: 'center' }}>
-                                                <input
-                                                    type="checkbox"
-                                                    className='custom-checkbox'
-                                                    checked={thesesDeletingFormIndexes.has(thesis.id)}
-                                                    onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        checkCheckboxThesesDeleting(thesis.id);
-                                                    } else {
-                                                        uncheckCheckboxThesesDeleting(thesis.id);
-                                                    }
-                                                    }}
-                                                    style={{ transform: 'scale(1.25)' }}
-                                                />
+                                                <div style={{textAlign: 'center'}}>
+                                                    <input
+                                                        type="checkbox"
+                                                        className='custom-checkbox'
+                                                        checked={thesesDeletingFormIndexes.has(thesis.id)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                checkCheckboxThesesDeleting(thesis.id);
+                                                            } else {
+                                                                uncheckCheckboxThesesDeleting(thesis.id);
+                                                            }
+                                                        }}
+                                                        style={{transform: 'scale(1.25)'}}
+                                                    />
                                                 </div>
                                             </td>
                                             <td className="centered">{indexOfFirstThesesDeleting + index + 1}</td>
@@ -2018,30 +2039,32 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/theses/${thesis.id}`) }}
+                                                    onClick={() => {
+                                                        navigate(`/theses/${thesis.id}`)
+                                                    }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-                    // usuwanie studentów
-                ) : selectedToClear === ClearingMode.STUDENTS ? (
-                    <>
-                        {afterSearchStudents.length === 0 ? (
-                            <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                                <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
-                            </div>
-                        ) : (
-                            <table className="custom-table" key={`students-table-${key}`}>
-                                <thead>
+                                    </tbody>
+                                </table>
+                            )}
+                        </>
+                        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                        // usuwanie studentów
+                    ) : selectedToClear === ClearingMode.STUDENTS ? (
+                        <>
+                            {afterSearchStudents.length === 0 ? (
+                                <div style={{textAlign: 'center', marginTop: '40px'}}>
+                                    <p style={{fontSize: '1.5em'}}>{t('general.management.noSearchData')}</p>
+                                </div>
+                            ) : (
+                                <table className="custom-table" key={`students-table-${key}`}>
+                                    <thead>
                                     <tr>
-                                        <th style={{ width: '3%', textAlign: 'center' }}>
+                                        <th style={{width: '3%', textAlign: 'center'}}>
                                             <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
                                             <input
                                                 type='checkbox'
@@ -2051,31 +2074,34 @@ const ClearDataByCycle: React.FC = () => {
                                                 disabled={submittedCycleNameStudents === ""}
                                             />
                                         </th>
-                                        <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                                        <th style={{ width: '14%' }}>{t('general.people.index')}</th>
-                                        <th style={{ width: '35%' }}>{t('general.people.name')}</th>
-                                        <th style={{ width: '35%' }}>{t('general.people.surname')}</th>
-                                        <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                                        <th style={{width: '3%', textAlign: 'center'}}>#</th>
+                                        <th style={{width: '14%'}}>{t('general.people.index')}</th>
+                                        <th style={{width: '35%'}}>{t('general.people.name')}</th>
+                                        <th style={{width: '35%'}}>{t('general.people.surname')}</th>
+                                        <th style={{
+                                            width: '10%',
+                                            textAlign: 'center'
+                                        }}>{t('general.management.details')}</th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     {currentStudents.map((student, index) => (
                                         <tr key={student.mail}>
                                             <td>
-                                                <div style={{ textAlign: 'center' }}>
+                                                <div style={{textAlign: 'center'}}>
                                                     <input
                                                         type="checkbox"
                                                         className='custom-checkbox'
                                                         checked={studentsFormIndexes.has(student.id)}
                                                         onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            checkCheckboxStudents(student.id);
-                                                        } else {
-                                                            uncheckCheckboxStudents(student.id);
-                                                        }
+                                                            if (e.target.checked) {
+                                                                checkCheckboxStudents(student.id);
+                                                            } else {
+                                                                uncheckCheckboxStudents(student.id);
+                                                            }
                                                         }}
                                                         disabled={submittedCycleNameStudents === ""}
-                                                        style={{ transform: 'scale(1.25)' }}
+                                                        style={{transform: 'scale(1.25)'}}
                                                     />
                                                 </div>
                                             </td>
@@ -2086,30 +2112,32 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/students/${student.id}`) }}
+                                                    onClick={() => {
+                                                        navigate(`/students/${student.id}`)
+                                                    }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-                    // archiwizowanie tematów
-                ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
-                    <>
-                        {afterSearchThesesArchive.length === 0 ? (
-                            <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                                <p style={{ fontSize: '1.5em' }}>{t('general.management.noSearchData')}</p>
-                            </div>
-                        ) : (
-                            <table className="custom-table" key={`theses-archive-table-${key}`}>
-                                <thead>
+                                    </tbody>
+                                </table>
+                            )}
+                        </>
+                        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                        // archiwizowanie tematów
+                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                        <>
+                            {afterSearchThesesArchive.length === 0 ? (
+                                <div style={{textAlign: 'center', marginTop: '40px'}}>
+                                    <p style={{fontSize: '1.5em'}}>{t('general.management.noSearchData')}</p>
+                                </div>
+                            ) : (
+                                <table className="custom-table" key={`theses-archive-table-${key}`}>
+                                    <thead>
                                     <tr>
-                                        <th style={{ width: '3%', textAlign: 'center' }}>
+                                        <th style={{width: '3%', textAlign: 'center'}}>
                                             <div style={{fontSize: '0.75em'}}>{t('general.management.selectAll')}</div>
                                             <input
                                                 type='checkbox'
@@ -2118,31 +2146,34 @@ const ClearDataByCycle: React.FC = () => {
                                                 onChange={checkAllCheckboxesChangeThesesArchive}
                                             />
                                         </th>
-                                        <th style={{ width: '3%', textAlign: 'center' }}>#</th>
-                                        <th style={{ width: '60%' }}>{t('general.university.thesis')}</th>
-                                        <th style={{ width: '14%' }}>{t('general.people.supervisor')}</th>
-                                        <th style={{ width: '10%' }}>{t('general.university.status')}</th>
-                                        <th style={{ width: '10%', textAlign: 'center' }}>{t('general.management.details')}</th>
+                                        <th style={{width: '3%', textAlign: 'center'}}>#</th>
+                                        <th style={{width: '60%'}}>{t('general.university.thesis')}</th>
+                                        <th style={{width: '14%'}}>{t('general.people.supervisor')}</th>
+                                        <th style={{width: '10%'}}>{t('general.university.status')}</th>
+                                        <th style={{
+                                            width: '10%',
+                                            textAlign: 'center'
+                                        }}>{t('general.management.details')}</th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     {currentThesesArchive.map((thesis, index) => (
                                         <tr key={thesis.id}>
                                             <td>
-                                                <div style={{ textAlign: 'center' }}>
-                                                <input
-                                                    type="checkbox"
-                                                    className='custom-checkbox'
-                                                    checked={thesesArchiveFormIndexes.has(thesis.id)}
-                                                    onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        checkCheckboxThesesArchive(thesis.id);
-                                                    } else {
-                                                        uncheckCheckboxThesesArchive(thesis.id);
-                                                    }
-                                                    }}
-                                                    style={{ transform: 'scale(1.25)' }}
-                                                />
+                                                <div style={{textAlign: 'center'}}>
+                                                    <input
+                                                        type="checkbox"
+                                                        className='custom-checkbox'
+                                                        checked={thesesArchiveFormIndexes.has(thesis.id)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                checkCheckboxThesesArchive(thesis.id);
+                                                            } else {
+                                                                uncheckCheckboxThesesArchive(thesis.id);
+                                                            }
+                                                        }}
+                                                        style={{transform: 'scale(1.25)'}}
+                                                    />
                                                 </div>
                                             </td>
                                             <td className="centered">{indexOfFirstThesesArchive + index + 1}</td>
@@ -2158,151 +2189,153 @@ const ClearDataByCycle: React.FC = () => {
                                             <td>
                                                 <button
                                                     className="custom-button coverall"
-                                                    onClick={() => { navigate(`/theses/${thesis.id}`) }}
+                                                    onClick={() => {
+                                                        navigate(`/theses/${thesis.id}`)
+                                                    }}
                                                 >
                                                     <i className="bi bi-arrow-right"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
-                ) : (
-                    <div className='info-no-data'>
-                        <p>{t('general.clearData.choice')}</p>
-                    </div>
-                )}
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                                    </tbody>
+                                </table>
+                            )}
+                        </>
+                    ) : (
+                        <div className='info-no-data'>
+                            <p>{t('general.clearData.choice')}</p>
+                        </div>
+                    )}
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
 
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
-                {/* dolna paginacja */}
-                {selectedToClear === ClearingMode.DELETE_THESES ? (
-                    <>
-                        {(currentITEMS_PER_PAGE.length > 1 && thesesDeletingPerPage !== 'All') && (
-                            <div className="pagination">
-                                <button
-                                    onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting - 1)}
-                                    disabled={currentPageThesesDeleting === 1}
-                                    className='custom-button'
-                                >
-                                    &lt;
-                                </button>
-            
-                                <input
-                                    type="number"
-                                    value={inputValueThesesDeleting}
-                                    onChange={(e) => {
-                                        const newPage = parseInt(e.target.value, 10);
-                                        setInputValueThesesDeleting(newPage);
-                                    }}
-                                    onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handlePageChangeThesesDeleting(inputValueThesesDeleting);
-                                    }
-                                    }}
-                                    onBlur={() => {
-                                        handlePageChangeThesesDeleting(inputValueThesesDeleting);
-                                    }}
-                                    className='text'
-                                />
-            
-                                <span className='text'> {t('general.pagination')} {totalPagesThesesDeleting}</span>
-                                <button
-                                    onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
-                                    disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
-                                    className='custom-button'
-                                >
-                                    &gt;
-                                </button>
-                            </div>
-                        )}  
-                    </>
-                ) : selectedToClear === ClearingMode.STUDENTS ? (
-                    <>
-                        {(currentITEMS_PER_PAGE.length > 1 && studentsPerPage !== 'All') && (
-                            <div className="pagination">
-                                <button
-                                    onClick={() => handlePageChangeStudents(currentPageStudents - 1)}
-                                    disabled={currentPageStudents === 1}
-                                    className='custom-button'
-                                >
-                                    &lt;
-                                </button>
-            
-                                <input
-                                    type="number"
-                                    value={inputValueStudents}
-                                    onChange={(e) => {
-                                        const newPage = parseInt(e.target.value, 10);
-                                        setInputValueStudents(newPage);
-                                    }}
-                                    onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handlePageChangeStudents(inputValueStudents);
-                                    }
-                                    }}
-                                    onBlur={() => {
-                                        handlePageChangeStudents(inputValueStudents);
-                                    }}
-                                    className='text'
-                                />
-            
-                                <span className='text'> {t('general.pagination')} {totalPagesStudents}</span>
-                                <button
-                                    onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
-                                    disabled={currentPageStudents === totalPagesStudents}
-                                    className='custom-button'
-                                >
-                                    &gt;
-                                </button>
-                            </div>
-                        )}  
-                    </>
-                ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
-                    <>
-                        {(currentITEMS_PER_PAGE.length > 1 && thesesArchivePerPage !== 'All') && (
-                            <div className="pagination">
-                                <button
-                                    onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive - 1)}
-                                    disabled={currentPageThesesArchive === 1}
-                                    className='custom-button'
-                                >
-                                    &lt;
-                                </button>
-            
-                                <input
-                                    type="number"
-                                    value={inputValueThesesArchive}
-                                    onChange={(e) => {
-                                        const newPage = parseInt(e.target.value, 10);
-                                        setInputValueThesesArchive(newPage);
-                                    }}
-                                    onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handlePageChangeThesesArchive(inputValueThesesArchive);
-                                    }
-                                    }}
-                                    onBlur={() => {
-                                        handlePageChangeThesesArchive(inputValueThesesArchive);
-                                    }}
-                                    className='text'
-                                />
-            
-                                <span className='text'> {t('general.pagination')} {totalPagesThesesArchive}</span>
-                                <button
-                                    onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
-                                    disabled={currentPageThesesArchive === totalPagesThesesArchive}
-                                    className='custom-button'
-                                >
-                                    &gt;
-                                </button>
-                            </div>
-                        )}  
-                    </>
-                ) : null}
-                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
+                    {/* dolna paginacja */}
+                    {selectedToClear === ClearingMode.DELETE_THESES ? (
+                        <>
+                            {(currentITEMS_PER_PAGE.length > 1 && thesesDeletingPerPage !== 'All') && (
+                                <div className="pagination">
+                                    <button
+                                        onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting - 1)}
+                                        disabled={currentPageThesesDeleting === 1}
+                                        className='custom-button'
+                                    >
+                                        &lt;
+                                    </button>
+
+                                    <input
+                                        type="number"
+                                        value={inputValueThesesDeleting}
+                                        onChange={(e) => {
+                                            const newPage = parseInt(e.target.value, 10);
+                                            setInputValueThesesDeleting(newPage);
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handlePageChangeThesesDeleting(inputValueThesesDeleting);
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            handlePageChangeThesesDeleting(inputValueThesesDeleting);
+                                        }}
+                                        className='text'
+                                    />
+
+                                    <span className='text'> {t('general.pagination')} {totalPagesThesesDeleting}</span>
+                                    <button
+                                        onClick={() => handlePageChangeThesesDeleting(currentPageThesesDeleting + 1)}
+                                        disabled={currentPageThesesDeleting === totalPagesThesesDeleting}
+                                        className='custom-button'
+                                    >
+                                        &gt;
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : selectedToClear === ClearingMode.STUDENTS ? (
+                        <>
+                            {(currentITEMS_PER_PAGE.length > 1 && studentsPerPage !== 'All') && (
+                                <div className="pagination">
+                                    <button
+                                        onClick={() => handlePageChangeStudents(currentPageStudents - 1)}
+                                        disabled={currentPageStudents === 1}
+                                        className='custom-button'
+                                    >
+                                        &lt;
+                                    </button>
+
+                                    <input
+                                        type="number"
+                                        value={inputValueStudents}
+                                        onChange={(e) => {
+                                            const newPage = parseInt(e.target.value, 10);
+                                            setInputValueStudents(newPage);
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handlePageChangeStudents(inputValueStudents);
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            handlePageChangeStudents(inputValueStudents);
+                                        }}
+                                        className='text'
+                                    />
+
+                                    <span className='text'> {t('general.pagination')} {totalPagesStudents}</span>
+                                    <button
+                                        onClick={() => handlePageChangeStudents(currentPageStudents + 1)}
+                                        disabled={currentPageStudents === totalPagesStudents}
+                                        className='custom-button'
+                                    >
+                                        &gt;
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                        <>
+                            {(currentITEMS_PER_PAGE.length > 1 && thesesArchivePerPage !== 'All') && (
+                                <div className="pagination">
+                                    <button
+                                        onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive - 1)}
+                                        disabled={currentPageThesesArchive === 1}
+                                        className='custom-button'
+                                    >
+                                        &lt;
+                                    </button>
+
+                                    <input
+                                        type="number"
+                                        value={inputValueThesesArchive}
+                                        onChange={(e) => {
+                                            const newPage = parseInt(e.target.value, 10);
+                                            setInputValueThesesArchive(newPage);
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handlePageChangeThesesArchive(inputValueThesesArchive);
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            handlePageChangeThesesArchive(inputValueThesesArchive);
+                                        }}
+                                        className='text'
+                                    />
+
+                                    <span className='text'> {t('general.pagination')} {totalPagesThesesArchive}</span>
+                                    <button
+                                        onClick={() => handlePageChangeThesesArchive(currentPageThesesArchive + 1)}
+                                        disabled={currentPageThesesArchive === totalPagesThesesArchive}
+                                        className='custom-button'
+                                    >
+                                        &gt;
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : null}
+                    {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 </React.Fragment>)}
             </React.Fragment>)}
         </div>
