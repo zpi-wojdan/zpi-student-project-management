@@ -16,8 +16,9 @@ import SearchBar from "../../../components/SearchBar";
 import useAuth from "../../../auth/useAuth";
 import { toast } from "react-toastify";
 import ChoiceConfirmation from "../../../components/ChoiceConfirmation";
-import { Alert } from "react-bootstrap";
+import { Alert, Spinner } from "react-bootstrap";
 import api_access from "../../../utils/api_access";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 
 const ClearDataByCycle: React.FC = () => {
@@ -85,6 +86,14 @@ const ClearDataByCycle: React.FC = () => {
     const [availableSpecializationsThesesArchive, setAvailableSpecializationsThesesArchive] = useState<Specialization[]>([]);
     const [selectedSpecializationAbbrThesesArchive, setSelectedSpecializationAbbrThesesArchive] = useState<string>("");
     const [submittedSpecializationAbbrThesesArchive, setSubmittedSpecializationAbbrThesesArchive] = useState<string>("");
+    const availableStatuses: { [key: string]: string } = {
+        "Pending approval": t('status.pending'),
+        "Rejected": t('status.rejected'),
+        "Approved": t('status.approved'),
+        "Assigned": t('status.assigned')
+    };
+    const [selectedStatusesNameThesesArchive, setSelectedStatusesNameThesesArchive] = useState<string>("");
+    const [submittedStatusesNameThesesArchive, setSubmittedStatusesNameThesesArchive] = useState<string>("");
 
     //  studentów:
     const [filteredStudents, setFilteredStudents] = useState<Student[]>(students);
@@ -493,6 +502,7 @@ const ClearDataByCycle: React.FC = () => {
         localStorage.setItem('thesesArchiveFilterSpecialization', selectedSpecializationAbbrThesesArchive);
         localStorage.setItem('thesesArchiveFilterCycle', selectedCycleNameThesesArchive);
         localStorage.setItem('thesesArchiveFilterSupervisors', JSON.stringify(selectedSupervisorsThesesArchive));
+        localStorage.setItem('thesesArchiveFilterStatuses', JSON.stringify(selectedStatusesNameThesesArchive));
 
         if (toogle){
             handleToggleSidebarThesesArchive()
@@ -506,6 +516,7 @@ const ClearDataByCycle: React.FC = () => {
             setSelectedSpecializationAbbrThesesArchive(submittedSpecializationAbbrThesesArchive)
             setSelectedCycleNameThesesArchive(submittedCycleNameThesesArchive)
             setSelectedSupervisorsThesesArchive(submittedSupervisorsThesesArchive)
+            setSelectedStatusesNameThesesArchive(submittedStatusesNameThesesArchive);
         }
         if (selectedToClear === ClearingMode.ARCHIVE_THESES){
             setSidebarOpen(!sidebarOpen);
@@ -518,18 +529,21 @@ const ClearDataByCycle: React.FC = () => {
         setSelectedFieldAbbrThesesArchive("");
         setSelectedSpecializationAbbrThesesArchive("");
         setSelectedSupervisorsThesesArchive([]);
+        setSelectedStatusesNameThesesArchive("");
     
         localStorage.removeItem('thesesArchiveFilterFaculty');
         localStorage.removeItem('thesesArchiveFilterField');
         localStorage.removeItem('thesesArchiveFilterSpecialization');
         localStorage.removeItem('thesesArchiveFilterCycle');
         localStorage.removeItem('thesesArchiveFilterSupervisors');
+        localStorage.removeItem('thesesArchiveFilterStatuses');
     
         setSubmittedCycleNameThesesArchive("");
         setSubmittedFacultyAbbrThesesArchive("");
         setSubmittedFieldAbbrThesesArchive("");
         setSubmittedSpecializationAbbrThesesArchive("");
         setSubmittedSupervisorsThesesArchive([]);
+        setSubmittedStatusesNameThesesArchive("");
     
         setFilteredThesesArchive(theses);
     };
@@ -544,13 +558,15 @@ const ClearDataByCycle: React.FC = () => {
           const specializationFilter = selectedSpecializationAbbrThesesArchive ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === selectedSpecializationAbbrThesesArchive : false) : () => true;
           const cycleFilter = selectedCycleNameThesesArchive ? (thesis: ThesisFront) => thesis.studyCycle?.name === selectedCycleNameThesesArchive : () => true;
           const supervisorFilter = selectedSupervisorsThesesArchive.length ? (thesis: ThesisFront) => selectedSupervisorsThesesArchive.includes(thesis.supervisor.id) : () => true;
-    
+          const statusFilter = selectedStatusesNameThesesArchive ? (thesis: ThesisFront) => thesis.status.name === selectedStatusesNameThesesArchive : () => true;
+
           const newFilteredTheses = theses.filter(thesis =>
             facultyFilter(thesis) &&
             fieldFilter(thesis) &&
             specializationFilter(thesis) &&
             cycleFilter(thesis) &&
-            supervisorFilter(thesis)
+            supervisorFilter(thesis) &&
+            statusFilter(thesis)
           );
           setFilteredThesesArchive(newFilteredTheses);
         }
@@ -559,26 +575,30 @@ const ClearDataByCycle: React.FC = () => {
           const savedFieldAbbr = localStorage.getItem('thesesArchiveFilterField') || '';
           const savedSpecializationAbbr = localStorage.getItem('thesesArchiveFilterSpecialization') || '';
           const savedCycleName = localStorage.getItem('thesesArchiveFilterCycle') || '';
-          const savedsupervisors = JSON.parse(localStorage.getItem('thesesArchiveFilterSupervisors') || '[]');
-    
-          setSubmittedFacultyAbbrThesesArchive(savedFacultyAbbr)
-          setSubmittedFieldAbbrThesesArchive(savedFieldAbbr)
-          setSubmittedSpecializationAbbrThesesArchive(savedSpecializationAbbr)
-          setSubmittedCycleNameThesesArchive(savedCycleName)
-          setSubmittedSupervisorsThesesArchive(savedsupervisors)
+          const savedSupervisors = JSON.parse(localStorage.getItem('thesesArchiveFilterSupervisors') || '[]');
+          const savedStatusName = localStorage.getItem('thesesArchiveFilterStatuses') || '';
+
+          setSubmittedFacultyAbbrThesesArchive(savedFacultyAbbr);
+          setSubmittedFieldAbbrThesesArchive(savedFieldAbbr);
+          setSubmittedSpecializationAbbrThesesArchive(savedSpecializationAbbr);
+          setSubmittedCycleNameThesesArchive(savedCycleName);
+          setSubmittedSupervisorsThesesArchive(savedSupervisors);
+          setSubmittedStatusesNameThesesArchive(savedStatusName);
     
           const facultyFilter = savedFacultyAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.faculty.abbreviation === savedFacultyAbbr) : () => true;
           const fieldFilter = savedFieldAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.studyField ? p.studyField.abbreviation === savedFieldAbbr : p.specialization.studyField.abbreviation === selectedFieldAbbrThesesArchive) : () => true;
           const specializationFilter = savedSpecializationAbbr ? (thesis: ThesisFront) => thesis.programs.some(p => p.specialization ? p.specialization.abbreviation === savedSpecializationAbbr : false) : () => true;
           const cycleFilter = savedCycleName ? (thesis: ThesisFront) => thesis.studyCycle?.name === savedCycleName : () => true;
-          const supervisorFilter = savedsupervisors.length ? (thesis: ThesisFront) => savedsupervisors.includes(thesis.supervisor.id) : () => true;
-    
+          const supervisorFilter = savedSupervisors.length ? (thesis: ThesisFront) => savedSupervisors.includes(thesis.supervisor.id) : () => true;
+          const statusFilter = selectedStatusesNameThesesArchive ? (thesis: ThesisFront) => thesis.status.name === selectedStatusesNameThesesArchive : () => true;
+
           const newFilteredTheses = theses.filter(thesis =>
             facultyFilter(thesis) &&
             fieldFilter(thesis) &&
             specializationFilter(thesis) &&
             cycleFilter(thesis) &&
-            supervisorFilter(thesis)
+            supervisorFilter(thesis) &&
+            statusFilter(thesis)
           );
           setFilteredThesesArchive(newFilteredTheses);
         }
@@ -590,7 +610,8 @@ const ClearDataByCycle: React.FC = () => {
             submittedFieldAbbrThesesArchive ||
             submittedSpecializationAbbrThesesArchive ||
             submittedCycleNameThesesArchive ||
-            submittedSupervisorsThesesArchive.length > 0
+            submittedSupervisorsThesesArchive.length > 0 ||
+            submittedStatusesNameThesesArchive
         )){
             return true
         }
@@ -1184,13 +1205,11 @@ const ClearDataByCycle: React.FC = () => {
     }
 
     const statusLabels: { [key: string]: string } = {
-        "Draft": t('status.draft'),
         "Pending approval": t('status.pending'),
         "Rejected": t('status.rejected'),
         "Approved": t('status.approved'),
         "Assigned": t('status.assigned'),
-        "Closed": t('status.closed')
-      }
+    }
 
     return (
         <div className='page-margin'>
@@ -1503,6 +1522,28 @@ const ClearDataByCycle: React.FC = () => {
                     </div>
                     <hr className="my-4" />
                     <div className="mb-4">
+                        <label className="bold" htmlFor="status">
+                            {t('general.university.status')}:
+                        </label>
+                        <select
+                            id="status"
+                            name="status"
+                            value={selectedStatusesNameThesesArchive}
+                            onChange={(e) => {
+                                setSelectedStatusesNameThesesArchive(e.target.value);
+                            }}
+                            className="form-control"
+                        >
+                            <option value="">{t('general.management.choose')}</option>
+                            {Object.keys(availableStatuses).map((statusKey) => (
+                            <option key={statusKey} value={statusKey}>
+                                {availableStatuses[statusKey]}
+                            </option>
+                            ))}
+                        </select>
+                    </div>
+                    <hr className="my-4" />
+                    <div className="mb-4">
                         <label className="bold" htmlFor="cycle">
                             {t('general.university.studyCycle')}:
                         </label>
@@ -1619,14 +1660,10 @@ const ClearDataByCycle: React.FC = () => {
             {/* wspólne */}
             {(!thesesDeletingLoaded || !studentsLoaded || !thesesArchiveLoaded) ? (
                 <div className='info-no-data'>
-                    <p>{t('general.management.load')}</p>
+                    <LoadingSpinner height="50vh" />
                 </div>
             ) : (<React.Fragment>
-                {theses.length === 0 ? (
-                <div className='info-no-data'>
-                    <p>{t('general.management.noData')}</p>
-                </div>
-                ) : (<React.Fragment>
+                
                     
                 <div className="d-flex justify-content-begin align-items-center">
                     <button 
@@ -1656,7 +1693,7 @@ const ClearDataByCycle: React.FC = () => {
 
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 {/* Przyciski usuwające i ich potwierdzanie */}
-                {selectedToClear === ClearingMode.DELETE_THESES ? (
+                {(selectedToClear === ClearingMode.DELETE_THESES) && closedTheses.length !== 0 ? (
                         <>
                             <button
                                 type="button"
@@ -1681,7 +1718,7 @@ const ClearDataByCycle: React.FC = () => {
                             </tr>
                             )}
                         </>
-                    ) : selectedToClear === ClearingMode.STUDENTS ? (
+                    ) : selectedToClear === ClearingMode.STUDENTS && students.length !== 0 ? (
                             <>
                                 {submittedCycleNameStudents === "" ? (
                                     <Alert variant="warning" className="m-0">
@@ -1714,7 +1751,7 @@ const ClearDataByCycle: React.FC = () => {
                                     </>
                                 )}
                             </>
-                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES && theses.length !== 0 ? (
                         <>
                             <button
                                 type="button"
@@ -1746,7 +1783,7 @@ const ClearDataByCycle: React.FC = () => {
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 {/* search bar i paginacja górna */}
                 <div className='d-flex justify-content-between align-items-center'>
-                    {selectedToClear === ClearingMode.DELETE_THESES ? (
+                    {selectedToClear === ClearingMode.DELETE_THESES && closedTheses.length !== 0 ? (
                         <>
                             <SearchBar
                                 searchTerm={searchTermThesesDeleting}
@@ -1815,7 +1852,7 @@ const ClearDataByCycle: React.FC = () => {
                             </div>
                             )}
                         </>    
-                    ) : selectedToClear === ClearingMode.STUDENTS ? (
+                    ) : selectedToClear === ClearingMode.STUDENTS && students.length !== 0 ? (
                         <>
                             <SearchBar
                                 searchTerm={searchTermStudents}
@@ -1884,7 +1921,7 @@ const ClearDataByCycle: React.FC = () => {
                             </div>
                             )}
                         </>    
-                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                    ) : selectedToClear === ClearingMode.ARCHIVE_THESES && theses.length !== 0 ? (
                         <>
                             <SearchBar
                                 searchTerm={searchTermThesesArchive}
@@ -1959,7 +1996,7 @@ const ClearDataByCycle: React.FC = () => {
 
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 {/* usuwanie tematów */}                    
-                {selectedToClear === ClearingMode.DELETE_THESES ? (
+                {selectedToClear === ClearingMode.DELETE_THESES && closedTheses.length !== 0 ? (
                     <>
                         {afterSearchThesesDeleting.length === 0 ? (
                             <div style={{ textAlign: 'center', marginTop: '40px' }}>
@@ -2031,7 +2068,7 @@ const ClearDataByCycle: React.FC = () => {
                     </>
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                     // usuwanie studentów
-                ) : selectedToClear === ClearingMode.STUDENTS ? (
+                ) : selectedToClear === ClearingMode.STUDENTS && students.length !== 0 ? (
                     <>
                         {afterSearchStudents.length === 0 ? (
                             <div style={{ textAlign: 'center', marginTop: '40px' }}>
@@ -2099,7 +2136,7 @@ const ClearDataByCycle: React.FC = () => {
                     </>
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                     // archiwizowanie tematów
-                ) : selectedToClear === ClearingMode.ARCHIVE_THESES ? (
+                ) : selectedToClear === ClearingMode.ARCHIVE_THESES && theses.length !== 0 ? (
                     <>
                         {afterSearchThesesArchive.length === 0 ? (
                             <div style={{ textAlign: 'center', marginTop: '40px' }}>
@@ -2171,7 +2208,7 @@ const ClearDataByCycle: React.FC = () => {
                     </>
                 ) : (
                     <div className='info-no-data'>
-                        <p>{t('general.clearData.choice')}</p>
+                        <p>{t('general.management.noData')}</p>
                     </div>
                 )}
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
@@ -2304,7 +2341,7 @@ const ClearDataByCycle: React.FC = () => {
                 ) : null}
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */}
                 </React.Fragment>)}
-            </React.Fragment>)}
+
         </div>
     )
 

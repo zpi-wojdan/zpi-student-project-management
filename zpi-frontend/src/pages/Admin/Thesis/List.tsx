@@ -66,12 +66,11 @@ const ThesisList: React.FC = () => {
   const [selectedSpecializationAbbr, setSelectedSpecializationAbbr] = useState<string>("");
   const [submittedSpecializationAbbr, setSubmittedSpecializationAbbr] = useState<string>("");
   const availableStatuses: { [key: string]: string } = {
-    Draft: t('status.draft'),
     "Pending approval": t('status.pending'),
-    Rejected: t('status.rejected'),
-    Approved: t('status.approved'),
-    Assigned: t('status.assigned'),
-    Closed: t('status.closed'),
+    "Rejected": t('status.rejected'),
+    "Approved": t('status.approved'),
+    "Assigned": t('status.assigned'),
+    "Closed": t('status.closed'),
   };
   const [selectedStatusName, setSelectedStatusName] = useState<string>("");
   const [submittedStatusName, setSubmittedStatusName] = useState<string>("");
@@ -381,7 +380,6 @@ const ThesisList: React.FC = () => {
   };
 
   const statusLabels: { [key:string]:string } = {
-    "Draft": t('status.draft'),
     "Pending approval": t('status.pending'),
     "Rejected": t('status.rejected'),
     "Approved": t('status.approved'),

@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import handleSignOut from "../../auth/Logout";
 import useAuth from "../../auth/useAuth";
-import Cookies from 'js-cookie';
-import { toast } from 'react-toastify';
 import { Student } from '../../models/user/Student';
-import { Thesis } from '../../models/thesis/Thesis';
 import { useTranslation } from "react-i18next";
 import api from "../../utils/api";
 import api_access from '../../utils/api_access';
