@@ -310,7 +310,6 @@ function AddThesisPageAdmin() {
       if (!isValid) {
         return [isValid, null];
       }
-
       const dto: ThesisDTO = {
         ...formData,
         studentIndexes: studentIndexesHelp,
@@ -319,7 +318,6 @@ function AddThesisPageAdmin() {
         numPeople: pplCount,
         studyCycleId: cycleId
       }
-
       return [isValid, dto];
     };
 

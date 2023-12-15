@@ -296,7 +296,7 @@
       "beforeSupervisorAccept": "Reservation is waiting for supervisor's approval",
       "leaderAccept": "New reservation is waiting for your approval",
       "noReservation": "You are not assigned to any thesis yet",
-      "pendingApproval": "Thesis is waiting for the committee's approval"
+      "supervisorReservation": "You have been registered by a supervisor. Confirm or reject your reservation."
   },
   "study_cycle": {
       "add": "Add study cycle",

@@ -292,7 +292,7 @@
       "beforeSupervisorAccept": "Rezerwacja oczekuje na akceptacje prowadzącego",
       "leaderAccept": "Nowa rezerwacja oczekuje na Twoje zatwierdzenie",
       "noReservation": "Nie jesteś jeszcze zapisany na żaden temat",
-      "pendingApproval": "Temat oczekuje na akceptacje komisji"
+      "supervisorReservation": "Zostałeś zapisany przez prowadzącego. Potwierdź lub odrzuć rezerwację."
   },
   "study_cycle": {
       "add": "Dodaj cykl",

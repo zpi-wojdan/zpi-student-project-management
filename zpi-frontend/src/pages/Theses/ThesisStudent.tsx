@@ -154,9 +154,10 @@ const ThesisStudent: React.FC = () => {
               <Alert variant="info">
                 {t('studentThesis.leaderAccept')}
               </Alert>}
-            {(thesis && thesis.status.name === "PendingApproval") ? (
+            {(thesis && !thesis.reservations.find((reservation) => reservation.student.id === user?.id)?.confirmedByStudent && 
+            thesis.reservations.find((reservation) => reservation.student.id === user?.id)?.confirmedBySupervisor) ? (
               <Alert variant="info">
-                {t('studentThesis.pendingApproval')}
+                {t('studentThesis.supervisorReservation')}
               </Alert>
             ) : ((thesis && thesis.reservations.every(r => r.readyForApproval)) ? (
               (thesis.reservations.every(r => r.confirmedBySupervisor) ?
