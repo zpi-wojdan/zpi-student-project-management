@@ -931,6 +931,7 @@ const ClearDataByCycle: React.FC = () => {
             .then(() => {
               setKey(k => k+1);
               setThesesDeletingFormIndexes(new Set());
+              resetCheckboxesToDefault();
               toast.success(t("thesis.deleteSuccesfulBulk"));
             })
             .catch((error) => {
@@ -1010,6 +1011,7 @@ const ClearDataByCycle: React.FC = () => {
             .then(() => {
               setKey(k => k+1);
               setThesesArchiveFormIndexes(new Set());
+              resetCheckboxesToDefault();
               toast.success(t("thesis.archiveSuccesfulBulk"));
             })
             .catch((error) => {
@@ -1096,6 +1098,7 @@ const ClearDataByCycle: React.FC = () => {
             .then(() => {
               setKey(k => k+1);
               setStudentsFormIndexes(new Set());
+              resetCheckboxesToDefault();
               toast.success(t("student.deleteSuccesfulBulk"));
             })
             .catch((error) => {
@@ -1209,6 +1212,7 @@ const ClearDataByCycle: React.FC = () => {
         "Rejected": t('status.rejected'),
         "Approved": t('status.approved'),
         "Assigned": t('status.assigned'),
+        "Closed": t('status.closed')
     }
 
     return (

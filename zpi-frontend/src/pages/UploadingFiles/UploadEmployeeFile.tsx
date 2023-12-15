@@ -19,7 +19,6 @@ function UplaodEmployeeFilePage() {
 
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidEmployeeData | null>(null);
   const [sentData, setSentData] = useState(false);
-  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
   const [invalidIndicesOpen, setInvalidIndicesOpen] = useState(false);
@@ -125,7 +124,6 @@ function UplaodEmployeeFilePage() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleUpload = () => {
-    setRecordsSaved(0);
     setInvalidJsonData(null);
 
     selectedFiles.forEach((file) => {
@@ -141,7 +139,7 @@ function UplaodEmployeeFilePage() {
       api.post(api_access + 'file/employee', formData)
         .then((response) => {
           const invalidData = JSON.parse(response.data.invalidData);
-          const recordsSavedCount = invalidData.saved_records;
+          const recordsSavedCount = invalidData.saved_records as number;
 
           const invalidDataWithFilename = {
             ...invalidData,
@@ -227,11 +225,9 @@ function UplaodEmployeeFilePage() {
               ...(invalidDataWithFilename.invalid_data || []),
             ],
           }));
-          
-          setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
           setSentData(true);
 
-          toast.success(t('uploadFiles.recordsSaved') + recordsSaved)
+          toast.success(t('uploadFiles.recordsSaved') + recordsSavedCount)
         })
         .catch((error) => {
           toast.error(t('uploadFiles.filesNotSentError'));
