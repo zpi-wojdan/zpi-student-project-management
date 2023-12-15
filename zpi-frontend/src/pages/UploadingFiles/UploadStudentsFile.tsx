@@ -20,7 +20,6 @@ function UploadStudentFilePage() {
   
   const [invalidJsonData, setInvalidJsonData] = useState<InvalidStudentData | null>(null);
   const [sentData, setSentData] = useState(false);
-  const [recordsSaved, setRecordsSaved] = useState<number | null>(0);
 
   const [databaseRepetitions, setDatabaseRepetitions] = useState(false);
   const [invalidIndicesOpen, setInvalidIndicesOpen] = useState(false);
@@ -106,7 +105,6 @@ function UploadStudentFilePage() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleUpload = () => {
-    setRecordsSaved(0);
     setInvalidJsonData(null);
 
     selectedFiles.forEach((file) => {
@@ -122,7 +120,7 @@ function UploadStudentFilePage() {
       api.post(api_access + 'file/student', formData)
         .then((response) => {
           const invalidData = JSON.parse(response.data.invalidData);
-          const recordsSavedCount = invalidData.saved_records;
+          const recordsSavedCount = invalidData.saved_records as number;
 
           const invalidDataWithFilename = {
             ...invalidData,
@@ -187,11 +185,9 @@ function UploadStudentFilePage() {
               ...(invalidDataWithFilename.invalid_data || []),
             ],
           }));
-          
-          setRecordsSaved((prevRecords) => prevRecords + recordsSavedCount);
-          setSentData(true);
 
-          toast.success(t('uploadFiles.recordsSaved') + recordsSaved)
+          setSentData(true);
+          toast.success(t('uploadFiles.recordsSaved') + recordsSavedCount)
         })
         .catch((error) => {
           toast.error(t('uploadFiles.filesNotSentError'));

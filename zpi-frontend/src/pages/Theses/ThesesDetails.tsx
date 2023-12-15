@@ -86,7 +86,7 @@ const ThesesDetails = ({ addStudents, goBackPath }: ThesisDetailsProps) => {
     api.delete(api_access + `thesis/${id}`)
       .then(() => {
         toast.success(t('thesis.deleteSuccessful'));
-        navigate("/theses");
+        navigate(goBackPath);
       })
       .catch((error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
