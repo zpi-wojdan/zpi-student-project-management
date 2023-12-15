@@ -142,6 +142,10 @@ function StudentTable({ students, thesis }: StudentTableProps) {
         if (thisStudent && thesis.reservations.every((res) => !res.readyForApproval)) {
           newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;
         }
+
+        if (thisStudent && thesis.reservations.every((res) => res.confirmedBySupervisor) && !thesis.reservations.find((res) => res.student === thisStudent)?.confirmedByStudent) {
+          newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;
+        }
         setShowButtonDelete(newShowButtonDelete)
 
       } else if (user.roles && user.roles.some(role => role.name === "admin")) {
