@@ -500,8 +500,6 @@ VALUES
     ((SELECT id FROM student WHERE mail = '765432@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-11 12:00:00', TIMESTAMP '2023-11-18 13:00:00'),
     ((SELECT id FROM student WHERE mail = '654321@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Wieloosobowa i wielopoziomowa gra komputerowa'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-12 18:00:00', TIMESTAMP '2023-11-18 13:00:00'),
 
-    ((SELECT id FROM student WHERE mail = '123456@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'System wspomagający rozpoznawania obrazów'LIMIT 1), true, true, true, true, TIMESTAMP '2023-11-15 12:00:00', TIMESTAMP '2023-11-19 12:00:00'),
-
     ((SELECT id FROM student WHERE mail = '678901@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii'LIMIT 1), true, false, true, false, TIMESTAMP '2023-11-15 17:00:00', null),
     ((SELECT id FROM student WHERE mail = '901234@student.pwr.edu.pl'LIMIT 1), (SELECT id FROM thesis WHERE name_pl = 'Mobilna aplikacja dla miłośników astronomii'LIMIT 1), true, false, true, false, TIMESTAMP '2023-11-15 17:00:00', null);
 

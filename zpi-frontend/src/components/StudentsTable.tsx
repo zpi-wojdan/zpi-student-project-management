@@ -84,7 +84,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
       api.delete(api_access + `reservation/${res.id}`)
         .then((response) => {
           if (response.status === 200) {
-            toast.success(t('reservation.reservationDeleted'));
+            toast.success(t('reservation.deleteSuccessful'));
             window.location.reload();
           }
         })
@@ -105,7 +105,7 @@ function StudentTable({ students, thesis }: StudentTableProps) {
     api.delete(api_access + `reservation/${reservationToDelete.id}`)
       .then((response) => {
         if (response.status === 200) {
-          toast.success(t('reservation.reservationDeleted'));
+          toast.success(t('reservation.deleteSuccessful'));
           window.location.reload();
         }
       })
@@ -140,6 +140,10 @@ function StudentTable({ students, thesis }: StudentTableProps) {
 
         const thisStudent = students.find((stu) => stu.mail === user.mail);
         if (thisStudent && thesis.reservations.every((res) => !res.readyForApproval)) {
+          newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;
+        }
+
+        if (thisStudent && thesis.reservations.every((res) => res.confirmedBySupervisor) && !thesis.reservations.find((res) => res.student === thisStudent)?.confirmedByStudent) {
           newShowButtonDelete[students.findIndex((stu) => stu === thisStudent)] = true;
         }
         setShowButtonDelete(newShowButtonDelete)
