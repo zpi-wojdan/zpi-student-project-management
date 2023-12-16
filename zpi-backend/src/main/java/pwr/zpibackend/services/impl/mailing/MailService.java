@@ -64,7 +64,7 @@ public class MailService implements IMailService {
             helper.setText(html, true);
 
             // wysłanie wiadomości
-            // javaMailSender.send(message);
+            javaMailSender.send(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
